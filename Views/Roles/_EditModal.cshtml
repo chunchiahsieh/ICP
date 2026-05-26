@@ -1,0 +1,39 @@
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">編輯</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" name="Id" />
+                    <div class="alert alert-danger crud-form-error d-none" role="alert"></div>
+                    <div class="mb-3">
+                        <label class="form-label">RoleCode</label>
+                        <input type="text" class="form-control form-control-sm" name="RoleCode" maxlength="100" />
+                        <div class="text-danger small crud-field-error" data-field-error="RoleCode"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">RoleName</label>
+                        <input type="text" class="form-control form-control-sm" name="RoleName" maxlength="100" />
+                        <div class="text-danger small crud-field-error" data-field-error="RoleName"></div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="IsEnabled" id="roleIsEnabled" checked />
+                        <label class="form-check-label" for="roleIsEnabled">IsEnabled</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control form-control-sm" name="Description" rows="3" maxlength="500"></textarea>
+                        <div class="text-danger small crud-field-error" data-field-error="Description"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary btn-sm" id="btnSaveEdit">儲存</button>
+            </div>
+        </div>
+    </div>
+</div>

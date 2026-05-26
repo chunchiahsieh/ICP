@@ -1,0 +1,71 @@
+@model ICP.Models.RolesSearchListViewModel
+@{
+    var filterColumns = new[]
+    {
+        ("filter-RoleCode", "RoleCode"),
+        ("filter-RoleName", "RoleName"),
+        ("filter-IsEnabled", "IsEnabled"),
+        ("filter-Description", "Description"),
+        ("filter-CreateTime", "CreateTime"),
+        ("filter-CreateUser", "CreateUser"),
+        ("filter-UpdateTime", "UpdateTime"),
+        ("filter-UpdateUser", "UpdateUser")
+    };
+}
+
+<table id="datatable" class="table table-striped">
+    <thead>
+        <tr>
+            <th>RoleCode</th>
+            <th>RoleName</th>
+            <th>IsEnabled</th>
+            <th>Description</th>
+            <th>CreateTime</th>
+            <th>CreateUser</th>
+            <th>UpdateTime</th>
+            <th>UpdateUser</th>
+            <th class="sorting_disabled">Actions</th>
+        </tr>
+        <tr class="users-filter-row">
+            @foreach (var (filterId, column) in filterColumns)
+            {
+                <th class="sorting_disabled">
+                    @await Html.PartialAsync("_ProDataTablesFilter", (filterId, column))
+                </th>
+            }
+            <th class="sorting_disabled"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListData)
+        {
+            <tr data-id="@item.Id">
+                <td>@item.RoleCode</td>
+                <td>@item.RoleName</td>
+                <td>@item.IsEnabled</td>
+                <td>@item.Description</td>
+                <td>@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@item.CreateUser</td>
+                <td>@(item.UpdateTime?.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                <td>@item.UpdateUser</td>
+                <td>
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm btn-crud-edit"
+                            data-permissions="icp.role.edit"
+                            data-permission-name="角色編輯">
+                        編輯
+                    </button>
+                    @if (item.IsEnabled)
+                    {
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm btn-crud-disable"
+                                data-permissions="icp.role.disable"
+                                data-permission-name="角色停用">
+                            停用
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,9 +1,13 @@
 using ICP.Data;
+using ICP.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<PermissionScannerService>();
+builder.Services.AddScoped<PermissionResourceSyncService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

@@ -13,6 +13,11 @@
   function ProDataTablesInitUsers(config) {
     var tableSortState = config.initialSort || [[0, 'desc']];
     var filterSearchDebounceTimers = {};
+    var instanceNs = 'ProDT' + (config.dataDivSelector || '#DataDiv').replace(/[^a-zA-Z0-9]/g, '_');
+
+    function getFiltersInScope() {
+      return $(config.dataDivSelector).find(config.filterDropdownSelector);
+    }
 
     function saveTableSortState() {
       var tableEl = document.querySelector(config.tableSelector);
@@ -30,7 +35,7 @@
 
     function getFilterValues() {
       var values = {};
-      $(config.filterDropdownSelector).each(function () {
+      getFiltersInScope().each(function () {
         values[this.id] = getFilterValuesForDropdown($(this));
       });
       return values;
@@ -111,7 +116,7 @@
     }
 
     function loadFilterOptions(done) {
-      var $filters = $(config.filterDropdownSelector);
+      var $filters = getFiltersInScope();
       if ($filters.length === 0) {
         if (done) done();
         return;
@@ -136,7 +141,7 @@
     }
 
     function initColumnFilters() {
-      $(config.filterDropdownSelector).each(function () {
+      getFiltersInScope().each(function () {
         updateFilterCount($(this));
       });
     }
@@ -175,29 +180,32 @@
             restoreFilterValues(saved);
             initColumnFilters();
             initDataTable();
+            if (typeof config.onAfterRender === 'function') {
+              config.onAfterRender($(config.dataDivSelector));
+            }
           });
         }
       });
     }
 
-    // Event bindings (namespaced by selectors so other pages won't break).
+    // Event bindings scoped per instance.
     $(document)
-      .off('click.ProDataTables', '.filter-confirm')
-      .off('click.ProDataTables', '.filter-reset')
-      .off('click.ProDataTables', '.filter-select-all')
-      .off('click.ProDataTables', '.filter-clear')
-      .off('change.ProDataTables', '.column-filter-cb')
-      .off('click.ProDataTables', '.filter-search-input')
-      .off('keydown.ProDataTables', '.filter-search-input')
-      .off('input.ProDataTables', '.filter-search-input')
-      .off('shown.bs.dropdown.ProDataTables', '.column-filter-dropdown')
-      .off('hidden.bs.dropdown.ProDataTables', '.column-filter-dropdown');
+      .off('click.' + instanceNs, config.dataDivSelector + ' .filter-confirm')
+      .off('click.' + instanceNs, config.dataDivSelector + ' .filter-reset')
+      .off('click.' + instanceNs, config.dataDivSelector + ' .filter-select-all')
+      .off('click.' + instanceNs, config.dataDivSelector + ' .filter-clear')
+      .off('change.' + instanceNs, config.dataDivSelector + ' .column-filter-cb')
+      .off('click.' + instanceNs, config.dataDivSelector + ' .filter-search-input')
+      .off('keydown.' + instanceNs, config.dataDivSelector + ' .filter-search-input')
+      .off('input.' + instanceNs, config.dataDivSelector + ' .filter-search-input')
+      .off('shown.bs.dropdown.' + instanceNs, config.dataDivSelector + ' .column-filter-dropdown')
+      .off('hidden.bs.dropdown.' + instanceNs, config.dataDivSelector + ' .column-filter-dropdown');
 
-    $(document).on('change.ProDataTables', '.column-filter-cb', function () {
+    $(document).on('change.' + instanceNs, config.dataDivSelector + ' .column-filter-cb', function () {
       updateFilterCount($(this).closest('.column-filter-dropdown'));
     });
 
-    $(document).on('click.ProDataTables', '.filter-select-all', function (e) {
+    $(document).on('click.' + instanceNs, config.dataDivSelector + ' .filter-select-all', function (e) {
       e.preventDefault();
       e.stopPropagation();
       var $dropdown = $(this).closest('.column-filter-dropdown');
@@ -205,7 +213,7 @@
       updateFilterCount($dropdown);
     });
 
-    $(document).on('click.ProDataTables', '.filter-clear', function (e) {
+    $(document).on('click.' + instanceNs, config.dataDivSelector + ' .filter-clear', function (e) {
       e.preventDefault();
       e.stopPropagation();
       var $dropdown = $(this).closest('.column-filter-dropdown');
@@ -213,7 +221,7 @@
       updateFilterCount($dropdown);
     });
 
-    $(document).on('click.ProDataTables', '.filter-confirm', function (e) {
+    $(document).on('click.' + instanceNs, config.dataDivSelector + ' .filter-confirm', function (e) {
       e.preventDefault();
       e.stopPropagation();
       var $dropdown = $(this).closest('.column-filter-dropdown');
@@ -221,7 +229,7 @@
       Query();
     });
 
-    $(document).on('click.ProDataTables', '.filter-reset', function (e) {
+    $(document).on('click.' + instanceNs, config.dataDivSelector + ' .filter-reset', function (e) {
       e.preventDefault();
       e.stopPropagation();
       var $dropdown = $(this).closest('.column-filter-dropdown');
@@ -235,11 +243,11 @@
       });
     });
 
-    $(document).on('click.ProDataTables keydown.ProDataTables', '.filter-search-input', function (e) {
+    $(document).on('click.' + instanceNs + ' keydown.' + instanceNs, config.dataDivSelector + ' .filter-search-input', function (e) {
       e.stopPropagation();
     });
 
-    $(document).on('input.ProDataTables', '.filter-search-input', function () {
+    $(document).on('input.' + instanceNs, config.dataDivSelector + ' .filter-search-input', function () {
       var $dropdown = $(this).closest('.column-filter-dropdown');
       var term = $(this).val();
 
@@ -253,11 +261,11 @@
       }, config.searchDebounceMs || 300);
     });
 
-    $(document).on('shown.bs.dropdown.ProDataTables', '.column-filter-dropdown', function () {
+    $(document).on('shown.bs.dropdown.' + instanceNs, config.dataDivSelector + ' .column-filter-dropdown', function () {
       $(this).find('.filter-search-input').trigger('focus');
     });
 
-    $(document).on('hidden.bs.dropdown.ProDataTables', '.column-filter-dropdown', function () {
+    $(document).on('hidden.bs.dropdown.' + instanceNs, config.dataDivSelector + ' .column-filter-dropdown', function () {
       var $dropdown = $(this);
       $dropdown.find('.filter-search-input').val('');
       loadDropdownOptions($dropdown, null);
@@ -265,6 +273,8 @@
 
     // Initial load.
     Query();
+
+    return { reload: Query };
   }
 
   global.ProDataTables.initUsers = function (config) {
@@ -275,7 +285,7 @@
     if (!config.filterDropdownSelector) config.filterDropdownSelector = '.column-filter-dropdown';
     if (!config.filterFieldMap) config.filterFieldMap = {};
 
-    ProDataTablesInitUsers(config);
+    return ProDataTablesInitUsers(config);
   };
 })(window, window.jQuery);
 

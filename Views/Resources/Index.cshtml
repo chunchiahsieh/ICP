@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "Resources";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+<div data-permissions="icp.resource.view" data-permission-name="資源查詢">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">Resources</h4>
+        <button type="button"
+                class="btn btn-primary btn-sm"
+                id="btnPermissionScan"
+                data-permissions="icp.resource.scan"
+                data-permission-name="權限掃描同步">
+            PermissionScan
+        </button>
+    </div>
+    <div id="permissionScanMessage" class="alert d-none" role="alert"></div>
+    <div id="DataDiv"></div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script>
+        var filterFieldMap = {
+            'filter-ResourceCode': 'ResourceCodes',
+            'filter-ResourceName': 'ResourceNames',
+            'filter-ResourceType': 'ResourceTypes',
+            'filter-SystemCode': 'SystemCodes',
+            'filter-ModuleCode': 'ModuleCodes',
+            'filter-Route': 'Routes',
+            'filter-Sort': 'Sorts',
+            'filter-IsVisible': 'IsVisibles',
+            'filter-IsEnabled': 'IsEnableds'
+        };
+
+        $(function () {
+            if (window.ProDataTables && ProDataTables.initUsers) {
+                ProDataTables.initUsers({
+                    tableSelector: '#datatable',
+                    dataDivSelector: '#DataDiv',
+                    filterDropdownSelector: '.column-filter-dropdown',
+                    filterFieldMap: filterFieldMap,
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "Resources")',
+                    queryUrl: '@Url.Action("Query", "Resources")',
+                    pageLength: 10,
+                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    initialSort: [[6, 'asc']],
+                    searchDebounceMs: 300
+                });
+            }
+
+            $('#btnPermissionScan').on('click', function () {
+                var $btn = $(this);
+                var $message = $('#permissionScanMessage');
+
+                $btn.prop('disabled', true);
+                $message.addClass('d-none');
+
+                $.post('@Url.Action("PermissionScan", "Admin")')
+                    .done(function (result) {
+                        $message
+                            .removeClass('d-none alert-danger')
+                            .addClass('alert-success')
+                            .text('同步完成：掃描 ' + result.scannedCount +
+                                ' 筆，新增 ' + result.insertedCount +
+                                ' 筆，更新 ' + result.updatedCount + ' 筆。');
+                        window.location.reload();
+                    })
+                    .fail(function () {
+                        $message
+                            .removeClass('d-none alert-success')
+                            .addClass('alert-danger')
+                            .text('PermissionScan 失敗，請稍後再試。');
+                    })
+                    .always(function () {
+                        $btn.prop('disabled', false);
+                    });
+            });
+        });
+    </script>
+}

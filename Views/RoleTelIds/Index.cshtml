@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "使用者角色";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+<div data-permissions="icp.roletelid.view" data-permission-name="使用者角色查詢">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">使用者角色</h4>
+        <div class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    id="btnBatchDelete"
+                    data-permissions="icp.roletelid.delete"
+                    data-permission-name="使用者角色刪除">
+                批次刪除
+            </button>
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="btnOpenBatchCreateWizard"
+                    data-permissions="icp.roletelid.create"
+                    data-permission-name="使用者角色新增">
+                建立權限
+            </button>
+        </div>
+    </div>
+
+    <div id="pageMessage" class="alert alert-success py-2 d-none mb-3" role="alert"></div>
+    <div id="DataDiv"></div>
+</div>
+
+@await Html.PartialAsync("_BatchCreateWizardDrawer")
+@await Html.PartialAsync("_CrudConfirmModal")
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-role-assignment.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            ProRoleTelIds.init({
+                wizardDrawerSelector: '#batchCreateWizardDrawer',
+                rolesPickDivSelector: '#RolesPickDiv',
+                rolesTableSelector: '#rolesPickTable',
+                rolesFilterFieldMap: {
+                    'filter-rolepick-RoleCode': 'RoleCodes',
+                    'filter-rolepick-RoleName': 'RoleNames'
+                },
+                rolesQueryUrl: '@Url.Action("QueryRoles", "RoleTelIds")',
+                rolesFilterOptionsUrl: '@Url.Action("GetFilterOptionsRoles", "RoleTelIds")',
+                usersPickDivSelector: '#UsersPickDiv',
+                usersTableSelector: '#usersPickTable',
+                usersFilterFieldMap: {
+                    'filter-userpick-TelId': 'TelIds',
+                    'filter-userpick-UserName': 'UserNames',
+                    'filter-userpick-DisplayName': 'DisplayNames',
+                    'filter-userpick-DepName': 'DepNames',
+                    'filter-userpick-EmailAddress': 'EmailAddresses'
+                },
+                usersQueryUrl: '@Url.Action("QueryUsers", "RoleTelIds")',
+                usersFilterOptionsUrl: '@Url.Action("GetFilterOptionsUsers", "RoleTelIds")',
+                resultDivSelector: '#DataDiv',
+                resultTableSelector: '#datatable',
+                resultFilterFieldMap: {
+                    'filter-TelId': 'TelIds',
+                    'filter-RoleCode': 'RoleCodes',
+                    'filter-RoleName': 'RoleNames',
+                    'filter-Description': 'Descriptions',
+                    'filter-CreateTime': 'CreateTimes',
+                    'filter-CreateUser': 'CreateUsers',
+                    'filter-UpdateTime': 'UpdateTimes',
+                    'filter-UpdateUser': 'UpdateUsers'
+                },
+                resultQueryUrl: '@Url.Action("Query", "RoleTelIds")',
+                resultFilterOptionsUrl: '@Url.Action("GetFilterOptions", "RoleTelIds")',
+                batchCreateUrl: '@Url.Action("BatchCreate", "RoleTelIds")',
+                batchDeleteUrl: '@Url.Action("BatchDelete", "RoleTelIds")',
+                batchDeleteConfirmMessage: '確定要刪除所選的使用者角色對應嗎？',
+                userPayloadKey: 'telIds'
+            });
+        });
+    </script>
+}

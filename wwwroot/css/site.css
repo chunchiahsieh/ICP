@@ -1,5 +1,23 @@
 /* ICP overrides on top of SB Admin (ilc/styles.css) */
 
+/* ilc/styles.css 內建較舊的 offcanvas 規則：.show 僅還原 transform，未設 visibility。
+   Bootstrap 5 bundle JS 會加 .show，需補上 visibility 否則只會看到 backdrop。 */
+.offcanvas.showing,
+.offcanvas.show:not(.hiding) {
+  transform: none;
+}
+
+.offcanvas.showing,
+.offcanvas.hiding,
+.offcanvas.show {
+  visibility: visible;
+}
+
+.batch-create-wizard-drawer.offcanvas-end {
+  width: 100%;
+  max-width: 100%;
+}
+
 html {
   scroll-behavior: smooth;
 }

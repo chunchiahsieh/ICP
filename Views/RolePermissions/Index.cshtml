@@ -1,0 +1,167 @@
+@{
+
+    ViewData["Title"] = "角色權限";
+
+}
+
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+
+
+<div data-permissions="icp.rolepermission.view" data-permission-name="角色權限查詢">
+
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+
+        <h4 class="mb-0">角色權限</h4>
+
+        <div class="d-flex gap-2">
+
+            <button type="button"
+
+                    class="btn btn-outline-danger btn-sm"
+
+                    id="btnBatchDelete"
+
+                    data-permissions="icp.rolepermission.delete"
+
+                    data-permission-name="角色權限刪除">
+
+                批次刪除
+
+            </button>
+
+            <button type="button"
+
+                    class="btn btn-primary btn-sm"
+
+                    id="btnOpenBatchCreateWizard"
+
+                    data-permissions="icp.rolepermission.create"
+
+                    data-permission-name="角色權限新增">
+
+                建立權限
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="pageMessage" class="alert alert-success py-2 d-none mb-3" role="alert"></div>
+
+
+
+    <h6 class="mb-2">已建立權限</h6>
+
+    <div id="ResultDiv"></div>
+
+</div>
+
+
+
+@await Html.PartialAsync("_BatchCreateWizardDrawer")
+
+@await Html.PartialAsync("_CrudConfirmModal")
+
+
+
+@section Scripts {
+
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+
+    <script src="~/js/pro-role-permissions.js" asp-append-version="true"></script>
+
+    <script>
+
+        $(function () {
+
+            ProRolePermissions.init({
+
+                wizardDrawerSelector: '#batchCreateWizardDrawer',
+
+                rolesPickDivSelector: '#RolesPickDiv',
+
+                rolesTableSelector: '#rolesPickTable',
+
+                rolesFilterFieldMap: {
+
+                    'filter-rolepick-RoleCode': 'RoleCodes',
+
+                    'filter-rolepick-RoleName': 'RoleNames'
+
+                },
+
+                rolesQueryUrl: '@Url.Action("QueryRoles", "RolePermissions")',
+
+                rolesFilterOptionsUrl: '@Url.Action("GetFilterOptionsRoles", "RolePermissions")',
+
+                resourcesPickDivSelector: '#ResourcesPickDiv',
+
+                resourcesTableSelector: '#resourcesPickTable',
+
+                resourcesFilterFieldMap: {
+
+                    'filter-respick-ResourceCode': 'ResourceCodes',
+
+                    'filter-respick-ResourceName': 'ResourceNames',
+
+                    'filter-respick-ResourceType': 'ResourceTypes',
+
+                    'filter-respick-SystemCode': 'SystemCodes',
+
+                    'filter-respick-ModuleCode': 'ModuleCodes'
+
+                },
+
+                resourcesQueryUrl: '@Url.Action("QueryResources", "RolePermissions")',
+
+                resourcesFilterOptionsUrl: '@Url.Action("GetFilterOptionsResources", "RolePermissions")',
+
+                resultDivSelector: '#ResultDiv',
+
+                resultTableSelector: '#datatable',
+
+                resultFilterFieldMap: {
+
+                    'filter-result-RoleCode': 'RoleCodes',
+
+                    'filter-result-RoleName': 'RoleNames',
+
+                    'filter-result-ResourceCode': 'ResourceCodes',
+
+                    'filter-result-ResourceName': 'ResourceNames',
+
+                    'filter-result-ActionCode': 'ActionCodes'
+
+                },
+
+                resultQueryUrl: '@Url.Action("Query", "RolePermissions")',
+
+                resultFilterOptionsUrl: '@Url.Action("GetFilterOptions", "RolePermissions")',
+
+                batchCreateUrl: '@Url.Action("BatchCreate", "RolePermissions")',
+
+                batchDeleteUrl: '@Url.Action("BatchDelete", "RolePermissions")',
+
+                batchDeleteConfirmMessage: '確定要刪除所選的角色權限嗎？'
+
+            });
+
+        });
+
+    </script>
+
+}
+

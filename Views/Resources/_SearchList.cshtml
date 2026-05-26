@@ -1,0 +1,55 @@
+@model ICP.Models.ResourcesSearchListViewModel
+@{
+    var filterColumns = new[]
+    {
+        ("filter-ResourceCode", "ResourceCode"),
+        ("filter-ResourceName", "ResourceName"),
+        ("filter-ResourceType", "ResourceType"),
+        ("filter-SystemCode", "SystemCode"),
+        ("filter-ModuleCode", "ModuleCode"),
+        ("filter-Route", "Route"),
+        ("filter-Sort", "Sort"),
+        ("filter-IsVisible", "IsVisible"),
+        ("filter-IsEnabled", "IsEnabled")
+    };
+}
+
+<table id="datatable" class="table table-striped">
+    <thead>
+        <tr>
+            <th>ResourceCode</th>
+            <th>ResourceName</th>
+            <th>ResourceType</th>
+            <th>SystemCode</th>
+            <th>ModuleCode</th>
+            <th>Route</th>
+            <th>Sort</th>
+            <th>IsVisible</th>
+            <th>IsEnabled</th>
+        </tr>
+        <tr class="users-filter-row">
+            @foreach (var (filterId, column) in filterColumns)
+            {
+                <th class="sorting_disabled">
+                    @await Html.PartialAsync("_ProDataTablesFilter", (filterId, column))
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListData)
+        {
+            <tr>
+                <td>@item.ResourceCode</td>
+                <td>@item.ResourceName</td>
+                <td>@item.ResourceType</td>
+                <td>@item.SystemCode</td>
+                <td>@item.ModuleCode</td>
+                <td>@item.Route</td>
+                <td>@item.Sort</td>
+                <td>@item.IsVisible</td>
+                <td>@item.IsEnabled</td>
+            </tr>
+        }
+    </tbody>
+</table>

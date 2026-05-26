@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Roles";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+<div data-permissions="icp.role.view" data-permission-name="角色查詢">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">Roles</h4>
+        <button type="button"
+                class="btn btn-primary btn-sm"
+                id="btnCreate"
+                data-permissions="icp.role.create"
+                data-permission-name="角色新增">
+            新增
+        </button>
+    </div>
+    <div id="DataDiv"></div>
+</div>
+
+@await Html.PartialAsync("_EditModal")
+@await Html.PartialAsync("_CrudConfirmModal")
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-crud.js" asp-append-version="true"></script>
+    <script>
+        var filterFieldMap = {
+            'filter-RoleCode': 'RoleCodes',
+            'filter-RoleName': 'RoleNames',
+            'filter-IsEnabled': 'IsEnableds',
+            'filter-Description': 'Descriptions',
+            'filter-CreateTime': 'CreateTimes',
+            'filter-CreateUser': 'CreateUsers',
+            'filter-UpdateTime': 'UpdateTimes',
+            'filter-UpdateUser': 'UpdateUsers'
+        };
+
+        $(function () {
+            var tableInstance;
+            if (window.ProDataTables && ProDataTables.initUsers) {
+                tableInstance = ProDataTables.initUsers({
+                    tableSelector: '#datatable',
+                    dataDivSelector: '#DataDiv',
+                    filterDropdownSelector: '.column-filter-dropdown',
+                    filterFieldMap: filterFieldMap,
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "Roles")',
+                    queryUrl: '@Url.Action("Query", "Roles")',
+                    pageLength: 10,
+                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    initialSort: [[0, 'asc']],
+                    searchDebounceMs: 300
+                });
+            }
+
+            if (window.ProCrud) {
+                ProCrud.init({
+                    getUrl: '@Url.Action("Get", "Roles")',
+                    saveUrl: '@Url.Action("Save", "Roles")',
+                    disableUrl: '@Url.Action("Disable", "Roles")',
+                    createTitle: '新增角色',
+                    editTitle: '編輯角色',
+                    disableConfirmMessage: '確定要停用此角色嗎？',
+                    onSuccess: function () {
+                        if (tableInstance && tableInstance.reload) {
+                            tableInstance.reload();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}
