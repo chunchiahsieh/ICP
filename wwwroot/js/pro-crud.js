@@ -54,7 +54,7 @@
 
   function populateSelect($select, items, valueField, textFn, selectedValue) {
     $select.empty();
-    $select.append($('<option value="">-- 請選擇 --</option>'));
+    $select.append($('<option value="">' + icpMsg('pleaseSelect') + '</option>'));
     $.each(items || [], function (_, item) {
       var value = item[valueField];
       var $option = $('<option></option>').attr('value', value).text(textFn(item));
@@ -74,15 +74,33 @@
     var editModalInstance = getModalInstance(config.editModalSelector || '#editModal');
     var confirmModalInstance = getModalInstance(config.confirmModalSelector || '#crudConfirmModal');
     var pendingConfirmAction = null;
+    var pendingBatchDisable = false;
+    var selectedListIds = new Set();
+    var listContainerSelector = config.listContainerSelector || '#DataDiv';
+
+    function syncListCheckboxes() {
+      $(listContainerSelector).find('tbody tr[data-id]').each(function () {
+        var id = String($(this).data('id'));
+        $(this).find('.row-list-cb').prop('checked', selectedListIds.has(id));
+      });
+
+      var $rows = $(listContainerSelector).find('tbody tr[data-id] .row-list-cb');
+      var $checked = $rows.filter(':checked');
+      $(listContainerSelector).find('.list-select-all').prop(
+        'checked',
+        $rows.length > 0 && $checked.length === $rows.length
+      );
+    }
 
     function reloadTable() {
       if (typeof config.onSuccess === 'function') {
         config.onSuccess();
       }
+      syncListCheckboxes();
     }
 
     function openEditModal(title) {
-      $('#editModalLabel').text(title || '編輯');
+      $('#editModalLabel').text(title || icpMsg('edit'));
       clearFormErrors($form);
       if (editModalInstance) {
         editModalInstance.show();
@@ -157,7 +175,7 @@
     function openCreate() {
       bindModel({});
       loadLookups(null, function () {
-        openEditModal(config.createTitle || '新增');
+        openEditModal(config.createTitle || icpMsg('create'));
       });
     }
 
@@ -165,10 +183,10 @@
       $.get(config.getUrl, { id: id }, function (model) {
         bindModel(model);
         loadLookups(model, function () {
-          openEditModal(config.editTitle || '編輯');
+          openEditModal(config.editTitle || icpMsg('edit'));
         });
       }).fail(function () {
-        alert('載入資料失敗');
+        alert(icpMsg('loadFailed'));
       });
     }
 
@@ -206,13 +224,14 @@
           }
         },
         error: function () {
-          $form.find('.crud-form-error').removeClass('d-none').text('儲存失敗，請稍後再試。');
+          $form.find('.crud-form-error').removeClass('d-none').text(icpMsg('saveFailedRetry'));
         }
       });
     }
 
     function confirmAction(message, actionUrl, id) {
       $('#crudConfirmMessage').text(message);
+      pendingBatchDisable = false;
       pendingConfirmAction = { url: actionUrl, id: id };
       if (confirmModalInstance) {
         confirmModalInstance.show();
@@ -233,14 +252,14 @@
     $(document).on('click', config.disableBtnSelector || '.btn-crud-disable', function () {
       var id = $(this).closest('tr').data('id');
       if (id) {
-        confirmAction(config.disableConfirmMessage || '確定要停用嗎？', config.disableUrl, id);
+        confirmAction(config.disableConfirmMessage || icpMsg('disableConfirm'), config.disableUrl, id);
       }
     });
 
     $(document).on('click', config.deleteBtnSelector || '.btn-crud-delete', function () {
       var id = $(this).closest('tr').data('id');
       if (id) {
-        confirmAction(config.deleteConfirmMessage || '確定要刪除嗎？', config.deleteUrl, id);
+        confirmAction(config.deleteConfirmMessage || icpMsg('deleteConfirm'), config.deleteUrl, id);
       }
     });
 
@@ -249,6 +268,33 @@
     });
 
     $('#crudConfirmOk').on('click', function () {
+      if (pendingBatchDisable) {
+        var ids = Array.from(selectedListIds);
+        pendingBatchDisable = false;
+
+        $.ajax({
+          url: config.batchDisableUrl,
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ ids: ids }),
+          success: function (result) {
+            if (result.success) {
+              if (confirmModalInstance) {
+                confirmModalInstance.hide();
+              }
+              selectedListIds.clear();
+              reloadTable();
+            } else {
+              alert(result.message || icpMsg('operationFailed'));
+            }
+          },
+          error: function () {
+            alert(icpMsg('operationFailedRetry'));
+          }
+        });
+        return;
+      }
+
       if (!pendingConfirmAction) {
         return;
       }
@@ -261,15 +307,62 @@
             }
             reloadTable();
           } else {
-            alert(result.message || '操作失敗');
+            alert(result.message || icpMsg('operationFailed'));
           }
         })
         .fail(function () {
-          alert('操作失敗，請稍後再試。');
+          alert(icpMsg('operationFailedRetry'));
         })
         .always(function () {
           pendingConfirmAction = null;
         });
     });
+
+    if (config.batchDisableUrl) {
+      $(document).on('change', listContainerSelector + ' .row-list-cb', function () {
+        var id = String($(this).data('id'));
+        if ($(this).is(':checked')) {
+          selectedListIds.add(id);
+        } else {
+          selectedListIds.delete(id);
+        }
+        syncListCheckboxes();
+      });
+
+      $(document).on('change', listContainerSelector + ' .list-select-all', function () {
+        var checked = $(this).is(':checked');
+        $(listContainerSelector).find('tbody tr[data-id]').each(function () {
+          var $cb = $(this).find('.row-list-cb');
+          if (!$cb.length) {
+            return;
+          }
+          var id = String($(this).data('id'));
+          $cb.prop('checked', checked);
+          if (checked) {
+            selectedListIds.add(id);
+          } else {
+            selectedListIds.delete(id);
+          }
+        });
+      });
+
+      $(config.batchDisableBtnSelector || '#btnBatchDisable').on('click', function () {
+        if (selectedListIds.size === 0) {
+          alert(icpMsg('selectAtLeastOneRecord'));
+          return;
+        }
+
+        pendingBatchDisable = true;
+        pendingConfirmAction = null;
+        $('#crudConfirmMessage').text(config.batchDisableConfirmMessage || icpMsg('disableConfirm'));
+        if (confirmModalInstance) {
+          confirmModalInstance.show();
+        }
+      });
+
+      $($(config.confirmModalSelector || '#crudConfirmModal')).on('hidden.bs.modal', function () {
+        pendingBatchDisable = false;
+      });
+    }
   };
 })(window, window.jQuery);

@@ -4,6 +4,7 @@ using ICP.Models;
 using ICP.Models.Icp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
@@ -22,10 +23,14 @@ public class RolesController : Controller
     };
 
     private readonly ApplicationDbContext _icpDb;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public RolesController(ApplicationDbContext icpDb)
+    public RolesController(
+        ApplicationDbContext icpDb,
+        IStringLocalizer<SharedResource> localizer)
     {
         _icpDb = icpDb;
+        _localizer = localizer;
     }
 
     public IActionResult Index()
@@ -81,7 +86,7 @@ public class RolesController : Controller
                 var entity = await _icpDb.Roles.FirstOrDefaultAsync(r => r.Id == model.Id.Value, cancellationToken);
                 if (entity is null)
                 {
-                    return CrudJsonHelper.Failure("找不到資料");
+                    return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
                 }
 
                 entity.RoleCode = model.RoleCode.Trim();
@@ -109,7 +114,7 @@ public class RolesController : Controller
         }
         catch (DbUpdateException ex)
         {
-            var message = CrudAuditHelper.MapDbUpdateException(ex) ?? "儲存失敗";
+            var message = CrudAuditHelper.MapDbUpdateException(ex, _localizer) ?? _localizer["Message.SaveFailed"];
             return CrudJsonHelper.Failure(message);
         }
     }
@@ -121,13 +126,49 @@ public class RolesController : Controller
         var entity = await _icpDb.Roles.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
         if (entity is null)
         {
-            return CrudJsonHelper.Failure("找不到資料");
+            return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
         }
 
         entity.IsEnabled = false;
         CrudAuditHelper.ApplyUpdateAudit(entity, User.Identity?.Name);
         await _icpDb.SaveChangesAsync(cancellationToken);
         return CrudJsonHelper.Success();
+    }
+
+    [HttpPost]
+    [IgnoreAntiforgeryToken]
+    public async Task<IActionResult> BatchDisable(
+        [FromBody] RolesBatchDisableModel model,
+        CancellationToken cancellationToken = default)
+    {
+        if (model.Ids.Count == 0)
+        {
+            return CrudJsonHelper.Failure(_localizer["Message.SelectRecords"]);
+        }
+
+        var ids = model.Ids.Distinct().ToList();
+        var entities = await _icpDb.Roles
+            .Where(r => ids.Contains(r.Id) && r.IsEnabled)
+            .ToListAsync(cancellationToken);
+
+        if (entities.Count == 0)
+        {
+            return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
+        }
+
+        foreach (var entity in entities)
+        {
+            entity.IsEnabled = false;
+            CrudAuditHelper.ApplyUpdateAudit(entity, User.Identity?.Name);
+        }
+
+        await _icpDb.SaveChangesAsync(cancellationToken);
+
+        return new JsonResult(new
+        {
+            success = true,
+            disabledCount = entities.Count
+        });
     }
 
     [HttpPost]

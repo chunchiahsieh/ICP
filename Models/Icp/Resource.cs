@@ -24,7 +24,7 @@ public class Resource
     [MaxLength(50)]
     public string ModuleCode { get; set; } = string.Empty;
 
-    /// <summary>資源代碼（例如 icp.user.create）</summary>
+    /// <summary>資源代碼（例如 icp.permission.user.create）</summary>
     [MaxLength(200)]
     public string ResourceCode { get; set; } = string.Empty;
 

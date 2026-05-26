@@ -5,6 +5,7 @@ using ICP.Models.Icp;
 using ICP.Models.Ilc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
@@ -39,11 +40,16 @@ public class RoleTelIdsController : Controller
 
     private readonly ApplicationDbContext _icpDb;
     private readonly IlcDbContext _ilcDb;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public RoleTelIdsController(ApplicationDbContext icpDb, IlcDbContext ilcDb)
+    public RoleTelIdsController(
+        ApplicationDbContext icpDb,
+        IlcDbContext ilcDb,
+        IStringLocalizer<SharedResource> localizer)
     {
         _icpDb = icpDb;
         _ilcDb = ilcDb;
+        _localizer = localizer;
     }
 
     public IActionResult Index()
@@ -59,7 +65,7 @@ public class RoleTelIdsController : Controller
     {
         if (model.RoleIds.Count == 0 || model.TelIds.Count == 0)
         {
-            return CrudJsonHelper.Failure("請至少選擇一筆角色與一筆使用者");
+            return CrudJsonHelper.Failure(_localizer["Message.SelectRoleAndUser"]);
         }
 
         var roleIds = model.RoleIds.Distinct().ToList();
@@ -76,7 +82,7 @@ public class RoleTelIdsController : Controller
 
         if (roles.Count == 0 || telIds.Count == 0)
         {
-            return CrudJsonHelper.Failure("找不到有效的角色或使用者");
+            return CrudJsonHelper.Failure(_localizer["Message.ValidRoleUserNotFound"]);
         }
 
         var validRoleIds = roles.Select(r => r.Id).ToHashSet();
@@ -140,7 +146,7 @@ public class RoleTelIdsController : Controller
     {
         if (model.Ids.Count == 0)
         {
-            return CrudJsonHelper.Failure("請至少選擇一筆資料");
+            return CrudJsonHelper.Failure(_localizer["Message.SelectRecords"]);
         }
 
         var ids = model.Ids.Distinct().ToList();
@@ -150,7 +156,7 @@ public class RoleTelIdsController : Controller
 
         if (entities.Count == 0)
         {
-            return CrudJsonHelper.Failure("找不到資料");
+            return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
         }
 
         _icpDb.RolesTelId.RemoveRange(entities);

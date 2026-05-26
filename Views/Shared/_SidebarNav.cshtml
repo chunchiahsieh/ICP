@@ -1,34 +1,34 @@
 <div class="sb-sidenav-menu-heading">
-    <i class="fas fa-wrench"></i> Function
+    <i class="fas fa-wrench"></i> @Localizer["Nav.Function"]
 </div>
 <div id="Aulist">
     <a class="nav-link" asp-controller="Home" asp-action="Index">
         <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-        Home
+        @Localizer["Nav.Home"]
     </a>
     <a class="nav-link" asp-controller="Home" asp-action="Privacy">
         <div class="sb-nav-link-icon"><i class="far fa-star"></i></div>
-        Privacy
+        @Localizer["Nav.Privacy"]
     </a>
 </div>
 
-<div class="sb-sidenav-menu-heading"><i class="fas fa-cog"></i> setting</div>
+<div class="sb-sidenav-menu-heading"><i class="fas fa-cog"></i> @Localizer["Nav.Setting"]</div>
 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePermission" aria-expanded="false" aria-controls="collapsePermission">
     <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
-    Permission
+    @Localizer["Nav.Permission"]
     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
 </a>
 <div class="collapse" id="collapsePermission" aria-labelledby="headingPermission" data-bs-parent="#sidenavAccordion">
     <nav class="sb-sidenav-menu-nested nav">
-        <a class="nav-link" asp-controller="Users" asp-action="Index">Users</a>
-        <a class="nav-link" asp-controller="Resources" asp-action="Index">Resources</a>
-        <a class="nav-link" asp-controller="Roles" asp-action="Index">Roles</a>
-        <a class="nav-link" asp-controller="RolePermissions" asp-action="Index">RolePermissions</a>
-        <a class="nav-link" asp-controller="RoleTelIds" asp-action="Index">RoleTelIds</a>
-        <a class="nav-link" asp-controller="RoleDepIds" asp-action="Index">RoleDepIds</a>
+        <a class="nav-link" asp-controller="Users" asp-action="Index">@Localizer["Nav.Users"]</a>
+        <a class="nav-link" asp-controller="Resources" asp-action="Index">@Localizer["Nav.Resources"]</a>
+        <a class="nav-link" asp-controller="Roles" asp-action="Index">@Localizer["Nav.Roles"]</a>
+        <a class="nav-link" asp-controller="RolePermissions" asp-action="Index">@Localizer["Nav.RolePermissions"]</a>
+        <a class="nav-link" asp-controller="RoleTelIds" asp-action="Index">@Localizer["Nav.RoleTelIds"]</a>
+        <a class="nav-link" asp-controller="RoleDepIds" asp-action="Index">@Localizer["Nav.RoleDepIds"]</a>
     </nav>
 </div>
-<a class="nav-link" asp-controller="Home" asp-action="Index">
+<a class="nav-link" asp-controller="Login" asp-action="Logout">
     <div class="sb-nav-link-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
-    Logout
+    @Localizer["Common.Logout"]
 </a>

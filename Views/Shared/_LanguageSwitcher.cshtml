@@ -1,0 +1,32 @@
+@using System.Globalization
+@{
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path.Value) ? "/" : $"{Context.Request.Path}{Context.Request.QueryString}";
+    var current = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var isZhTw = CultureInfo.CurrentUICulture.Name.Equals("zh-TW", StringComparison.OrdinalIgnoreCase)
+        || CultureInfo.CurrentUICulture.Name.Equals("zh-Hant", StringComparison.OrdinalIgnoreCase);
+}
+<div class="dropdown">
+    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        @Localizer["Common.Language"]
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <a class="dropdown-item @(isZhTw ? "active" : "")"
+               href="@Url.Action("Set", "Culture", new { culture = "zh-TW", returnUrl })">
+                @Localizer["Culture.ZhTW"]
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item @(current.Equals("en", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+               href="@Url.Action("Set", "Culture", new { culture = "en", returnUrl })">
+                @Localizer["Culture.En"]
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item @(current.Equals("ja", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+               href="@Url.Action("Set", "Culture", new { culture = "ja", returnUrl })">
+                @Localizer["Culture.Ja"]
+            </a>
+        </li>
+    </ul>
+</div>

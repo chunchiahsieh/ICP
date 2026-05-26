@@ -85,3 +85,73 @@ html {
 .users-filter-actions .btn {
   flex: 1;
 }
+
+/* DataTables + Bootstrap 5：分頁列與每頁筆數選單 */
+div.dataTables_wrapper {
+  width: 100%;
+}
+
+div.dataTables_wrapper div.dataTables_length,
+div.dataTables_wrapper div.dataTables_info,
+div.dataTables_wrapper div.dataTables_paginate {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+div.dataTables_wrapper div.dataTables_length label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+
+div.dataTables_wrapper div.dataTables_length select {
+  width: auto;
+  min-width: 5rem;
+  display: inline-block;
+  height: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 2rem 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+}
+
+div.dataTables_wrapper div.dataTables_paginate {
+  text-align: right;
+}
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin: 0;
+  gap: 0.25rem;
+}
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination li.paginate_button a {
+  position: relative;
+  display: block;
+  padding: 0.375rem 0.75rem;
+  color: #0d6efd;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+}
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination li.paginate_button.active a,
+div.dataTables_wrapper div.dataTables_paginate ul.pagination li.paginate_button a:hover {
+  color: #fff;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination li.paginate_button.disabled a {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #dee2e6;
+}

@@ -1,0 +1,474 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Auth.FailedContactIs" xml:space="preserve">
+    <value>Authentication failed. Contact IS or sign in with your staff ID.</value>
+  </data>
+  <data name="Auth.PleaseLoginFirst" xml:space="preserve">
+    <value>Please sign in first.</value>
+  </data>
+  <data name="Common.Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Common.BatchDelete" xml:space="preserve">
+    <value>Batch Delete</value>
+  </data>
+  <data name="Common.BatchDisable" xml:space="preserve">
+    <value>Batch Disable</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common.Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Common.Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Common.Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="Common.CreatePermission" xml:space="preserve">
+    <value>Create Assignment</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Common.Disable" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Common.Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Common.Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Common.LoggedInAs" xml:space="preserve">
+    <value>Logged in as:</value>
+  </data>
+  <data name="Common.Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Common.Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Common.NoMatches" xml:space="preserve">
+    <value>No matches</value>
+  </data>
+  <data name="Common.None" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="Common.PleaseSelect" xml:space="preserve">
+    <value>-- Please select --</value>
+  </data>
+  <data name="Common.Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="Common.SelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="Common.SelectAllPage" xml:space="preserve">
+    <value>Select all on page</value>
+  </data>
+  <data name="Common.Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Culture.En" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Culture.Ja" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="Culture.ZhTW" xml:space="preserve">
+    <value>Traditional Chinese</value>
+  </data>
+  <data name="DataTables.EmptyTable" xml:space="preserve">
+    <value>No data available in table</value>
+  </data>
+  <data name="DataTables.Info" xml:space="preserve">
+    <value>Showing _START_ to _END_ of _TOTAL_ entries</value>
+  </data>
+  <data name="DataTables.InfoEmpty" xml:space="preserve">
+    <value>Showing 0 to 0 of 0 entries</value>
+  </data>
+  <data name="DataTables.InfoFiltered" xml:space="preserve">
+    <value>(filtered from _MAX_ total entries)</value>
+  </data>
+  <data name="DataTables.LengthMenu" xml:space="preserve">
+    <value>Show _MENU_ entries</value>
+  </data>
+  <data name="DataTables.LengthMenuItem" xml:space="preserve">
+    <value>{0} entries</value>
+  </data>
+  <data name="DataTables.LoadingRecords" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="DataTables.Paginate.First" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="DataTables.Paginate.Last" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <data name="DataTables.Paginate.Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="DataTables.Paginate.Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="DataTables.Processing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+  <data name="DataTables.Search" xml:space="preserve">
+    <value>Search:</value>
+  </data>
+  <data name="DataTables.ZeroRecords" xml:space="preserve">
+    <value>No matching records found</value>
+  </data>
+  <data name="Error.RoleCodeExists" xml:space="preserve">
+    <value>RoleCode already exists</value>
+  </data>
+  <data name="Error.RoleDepIdExists" xml:space="preserve">
+    <value>This DepID and role combination already exists</value>
+  </data>
+  <data name="Error.RolePermissionExists" xml:space="preserve">
+    <value>This role, resource and action combination already exists</value>
+  </data>
+  <data name="Error.RoleTelIdExists" xml:space="preserve">
+    <value>This TELID and role combination already exists</value>
+  </data>
+  <data name="Home.Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Home.Feature" xml:space="preserve">
+    <value>Feature</value>
+  </data>
+  <data name="Home.HomeDesc" xml:space="preserve">
+    <value>System home</value>
+  </data>
+  <data name="Home.PrivacyDesc" xml:space="preserve">
+    <value>Privacy policy</value>
+  </data>
+  <data name="Home.SidebarPlaceholder" xml:space="preserve">
+    <value>Sidebar and user info are placeholders until login and permissions are fully enabled.</value>
+  </data>
+  <data name="Home.Subtitle" xml:space="preserve">
+    <value>ASP.NET Core MVC (.NET 9)</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Home.Welcome" xml:space="preserve">
+    <value>Welcome to ICP</value>
+  </data>
+  <data name="Js.SelectedCount" xml:space="preserve">
+    <value>{0} selected</value>
+  </data>
+  <data name="Login.LoginButton" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login.LoginFailed" xml:space="preserve">
+    <value>Login failed. Please try again later.</value>
+  </data>
+  <data name="Login.Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Login.StaffId" xml:space="preserve">
+    <value>Staff ID</value>
+  </data>
+  <data name="Login.Title" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login.WrongStaffId" xml:space="preserve">
+    <value>Wrong Staff ID !!</value>
+  </data>
+  <data name="Message.BatchCreateSuccess" xml:space="preserve">
+    <value>Created: {0} added, {1} skipped.</value>
+  </data>
+  <data name="Message.CreateFailed" xml:space="preserve">
+    <value>Create failed</value>
+  </data>
+  <data name="Message.CreateFailedRetry" xml:space="preserve">
+    <value>Create failed. Please try again later.</value>
+  </data>
+  <data name="Message.DeleteConfirm" xml:space="preserve">
+    <value>Delete this item?</value>
+  </data>
+  <data name="Message.DeleteFailed" xml:space="preserve">
+    <value>Delete failed</value>
+  </data>
+  <data name="Message.DeleteFailedRetry" xml:space="preserve">
+    <value>Delete failed. Please try again later.</value>
+  </data>
+  <data name="Message.DeleteSuccess" xml:space="preserve">
+    <value>Deleted {0} record(s).</value>
+  </data>
+  <data name="Message.DisableConfirm" xml:space="preserve">
+    <value>Disable this item?</value>
+  </data>
+  <data name="Message.LoadFailed" xml:space="preserve">
+    <value>Failed to load data</value>
+  </data>
+  <data name="Message.OperationFailed" xml:space="preserve">
+    <value>Operation failed</value>
+  </data>
+  <data name="Message.OperationFailedRetry" xml:space="preserve">
+    <value>Operation failed. Please try again later.</value>
+  </data>
+  <data name="Message.RecordsNotFound" xml:space="preserve">
+    <value>Records not found</value>
+  </data>
+  <data name="Message.SaveFailed" xml:space="preserve">
+    <value>Save failed</value>
+  </data>
+  <data name="Message.SaveFailedRetry" xml:space="preserve">
+    <value>Save failed. Please try again later.</value>
+  </data>
+  <data name="Message.SelectRecords" xml:space="preserve">
+    <value>Select at least one record</value>
+  </data>
+  <data name="Message.SelectRoleAndResource" xml:space="preserve">
+    <value>Select at least one Role and one Resource</value>
+  </data>
+  <data name="Message.ValidRoleResourceNotFound" xml:space="preserve">
+    <value>No valid Role or Resource found</value>
+  </data>
+  <data name="Nav.Function" xml:space="preserve">
+    <value>Function</value>
+  </data>
+  <data name="Nav.Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Nav.Permission" xml:space="preserve">
+    <value>Permission</value>
+  </data>
+  <data name="Nav.Privacy" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="Nav.Resources" xml:space="preserve">
+    <value>Resources</value>
+  </data>
+  <data name="Nav.RoleDepIds" xml:space="preserve">
+    <value>Department Roles</value>
+  </data>
+  <data name="Nav.RolePermissions" xml:space="preserve">
+    <value>Role Permissions</value>
+  </data>
+  <data name="Nav.Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="Nav.RoleTelIds" xml:space="preserve">
+    <value>User Roles</value>
+  </data>
+  <data name="Nav.Setting" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Nav.Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Permission.Resource.Scan" xml:space="preserve">
+    <value>Permission scan sync</value>
+  </data>
+  <data name="Permission.Resource.View" xml:space="preserve">
+    <value>Resource query</value>
+  </data>
+  <data name="Permission.Role.Create" xml:space="preserve">
+    <value>Role create</value>
+  </data>
+  <data name="Permission.Role.Disable" xml:space="preserve">
+    <value>Role disable</value>
+  </data>
+  <data name="Permission.Role.Edit" xml:space="preserve">
+    <value>Role edit</value>
+  </data>
+  <data name="Permission.Role.View" xml:space="preserve">
+    <value>Role query</value>
+  </data>
+  <data name="Permission.RoleDepId.Create" xml:space="preserve">
+    <value>Department role create</value>
+  </data>
+  <data name="Permission.RoleDepId.Delete" xml:space="preserve">
+    <value>Department role delete</value>
+  </data>
+  <data name="Permission.RoleDepId.View" xml:space="preserve">
+    <value>Department role query</value>
+  </data>
+  <data name="Permission.RolePermission.Create" xml:space="preserve">
+    <value>Role permission create</value>
+  </data>
+  <data name="Permission.RolePermission.Delete" xml:space="preserve">
+    <value>Role permission delete</value>
+  </data>
+  <data name="Permission.RolePermission.View" xml:space="preserve">
+    <value>Role permission query</value>
+  </data>
+  <data name="Permission.RoleTelId.Create" xml:space="preserve">
+    <value>User role create</value>
+  </data>
+  <data name="Permission.RoleTelId.Delete" xml:space="preserve">
+    <value>User role delete</value>
+  </data>
+  <data name="Permission.RoleTelId.View" xml:space="preserve">
+    <value>User role query</value>
+  </data>
+  <data name="Permission.User.View" xml:space="preserve">
+    <value>User query</value>
+  </data>
+  <data name="Resources.ScanFailed" xml:space="preserve">
+    <value>PermissionScan failed. Please try again later.</value>
+  </data>
+  <data name="Resources.ScanSyncComplete" xml:space="preserve">
+    <value>Sync complete: scanned {0}, inserted {1}, updated {2}, disabled legacy {3}, migrated role permissions {4}.</value>
+  </data>
+  <data name="Resources.Title" xml:space="preserve">
+    <value>Resource Management</value>
+  </data>
+  <data name="RoleDepIds.BatchDeleteConfirm" xml:space="preserve">
+    <value>Delete selected department role mappings?</value>
+  </data>
+  <data name="RoleDepIds.CreateDrawerTitle" xml:space="preserve">
+    <value>Create department roles</value>
+  </data>
+  <data name="RoleDepIds.Title" xml:space="preserve">
+    <value>Department roles</value>
+  </data>
+  <data name="RolePermissions.BatchDeleteConfirm" xml:space="preserve">
+    <value>Delete selected role permissions?</value>
+  </data>
+  <data name="RolePermissions.CreatedList" xml:space="preserve">
+    <value>Created permissions</value>
+  </data>
+  <data name="RolePermissions.CreateDrawerTitle" xml:space="preserve">
+    <value>Create role permissions</value>
+  </data>
+  <data name="RolePermissions.Title" xml:space="preserve">
+    <value>Role permissions</value>
+  </data>
+  <data name="Roles.BatchDisableConfirm" xml:space="preserve">
+    <value>Disable the selected roles?</value>
+  </data>
+  <data name="Roles.CreateTitle" xml:space="preserve">
+    <value>Add role</value>
+  </data>
+  <data name="Roles.DisableConfirm" xml:space="preserve">
+    <value>Disable this role?</value>
+  </data>
+  <data name="Roles.EditTitle" xml:space="preserve">
+    <value>Edit role</value>
+  </data>
+  <data name="Roles.Title" xml:space="preserve">
+    <value>Role Management</value>
+  </data>
+  <data name="RoleTelIds.BatchDeleteConfirm" xml:space="preserve">
+    <value>Delete selected user role mappings?</value>
+  </data>
+  <data name="RoleTelIds.CreateDrawerTitle" xml:space="preserve">
+    <value>Create user roles</value>
+  </data>
+  <data name="RoleTelIds.Title" xml:space="preserve">
+    <value>User roles</value>
+  </data>
+  <data name="Users.Title" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneDepartment" xml:space="preserve">
+    <value>Select at least one department.</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRecord" xml:space="preserve">
+    <value>Select at least one record.</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneResource" xml:space="preserve">
+    <value>Select at least one resource.</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRole" xml:space="preserve">
+    <value>Select at least one role.</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRoleAndResource" xml:space="preserve">
+    <value>Select at least one role and one resource.</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRoleAndUser" xml:space="preserve">
+    <value>Select at least one role and one user.</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneUser" xml:space="preserve">
+    <value>Select at least one user.</value>
+  </data>
+  <data name="Wizard.EstimatedCreateCount" xml:space="preserve">
+    <value>Estimated records:</value>
+  </data>
+  <data name="Wizard.PickDepartmentsHint" xml:space="preserve">
+    <value>Select departments by DepID. Selections persist across pages.</value>
+  </data>
+  <data name="Wizard.PickResourcesHint" xml:space="preserve">
+    <value>Select resources to assign. Selections persist across pages.</value>
+  </data>
+  <data name="Wizard.PickRolesHint" xml:space="preserve">
+    <value>Select roles to assign. Selections persist across pages.</value>
+  </data>
+  <data name="Wizard.PickUsersHint" xml:space="preserve">
+    <value>Select users by TELID. Selections persist across pages.</value>
+  </data>
+  <data name="Wizard.PreviewIntro" xml:space="preserve">
+    <value>Review assignments. Duplicate combinations will be skipped.</value>
+  </data>
+  <data name="Wizard.SelectedDepartments" xml:space="preserve">
+    <value>Selected departments</value>
+  </data>
+  <data name="Wizard.SelectedResources" xml:space="preserve">
+    <value>Selected resources</value>
+  </data>
+  <data name="Wizard.SelectedRoles" xml:space="preserve">
+    <value>Selected roles</value>
+  </data>
+  <data name="Wizard.SelectedUsers" xml:space="preserve">
+    <value>Selected users</value>
+  </data>
+  <data name="Wizard.Step1Roles" xml:space="preserve">
+    <value>1 Select roles</value>
+  </data>
+  <data name="Wizard.Step2Departments" xml:space="preserve">
+    <value>2 Select departments</value>
+  </data>
+  <data name="Wizard.Step2Resources" xml:space="preserve">
+    <value>2 Select resources</value>
+  </data>
+  <data name="Wizard.Step2Users" xml:space="preserve">
+    <value>2 Select users</value>
+  </data>
+  <data name="Wizard.Step3Confirm" xml:space="preserve">
+    <value>3 Confirm</value>
+  </data>
+  <data name="Message.ValidRoleUserNotFound" xml:space="preserve">
+    <value>No valid role or user found</value>
+  </data>
+  <data name="Message.SelectRoleAndDepartment" xml:space="preserve">
+    <value>Select at least one role and one department.</value>
+  </data>
+  <data name="Message.ValidRoleDepartmentNotFound" xml:space="preserve">
+    <value>No valid role or department found</value>
+  </data>
+  <data name="Message.SelectRoleAndUser" xml:space="preserve">
+    <value>Select at least one role and one user.</value>
+  </data>
+</root>

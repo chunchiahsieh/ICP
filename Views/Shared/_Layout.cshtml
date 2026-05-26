@@ -1,11 +1,17 @@
+@using System.Globalization
 @inject IConfiguration Configuration
+@inject ICP.Services.LoginSessionService LoginSession
+@inject Microsoft.Extensions.Localization.IStringLocalizer<ICP.SharedResource> Localizer
 @{
     var brandName = Configuration["App:BrandName"] ?? "ICP";
     var titleSuffix = Configuration["App:TitleSuffix"] ?? "ICP";
     var pageTitle = ViewData["Title"]?.ToString();
+    var currentUser = LoginSession.GetCurrentUser();
+    var displayLabel = currentUser?.DisplayName ?? currentUser?.UserName ?? currentUser?.TelId ?? "Guest";
+    var telIdLabel = currentUser?.TelId;
 }
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -50,16 +56,22 @@
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" type="button" aria-label="Toggle navigation">
             <i class="fas fa-bars"></i>
         </button>
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0"></form>
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <partial name="_LanguageSwitcher" />
+        </form>
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><span class="dropdown-item-text text-muted">Guest</span></li>
+                    <li><span class="dropdown-item-text fw-semibold">@displayLabel</span></li>
+                    @if (!string.IsNullOrEmpty(telIdLabel))
+                    {
+                        <li><span class="dropdown-item-text text-muted small">@telIdLabel</span></li>
+                    }
                     <li><hr class="dropdown-divider" /></li>
-                    <li><span class="dropdown-item-text small">登入功能待實作</span></li>
+                    <li><a class="dropdown-item" asp-controller="Login" asp-action="Logout">@Localizer["Common.Logout"]</a></li>
                 </ul>
             </li>
         </ul>
@@ -73,8 +85,8 @@
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
-                    <div class="small">Logged in as:</div>
-                    @brandName
+                    <div class="small">@Localizer["Common.LoggedInAs"]</div>
+                    @displayLabel
                 </div>
             </nav>
         </div>
@@ -88,6 +100,8 @@
         </div>
     </div>
 
+    <partial name="_IcpScriptI18n" />
+    <script src="~/js/icp-i18n.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/ilc/all.js" asp-append-version="true"></script>

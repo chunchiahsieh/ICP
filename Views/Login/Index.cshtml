@@ -1,0 +1,100 @@
+@using System.Globalization
+@{
+    Layout = null;
+    ViewData["Title"] = Localizer["Login.Title"];
+}
+@if (TempData["ReturnMsg"] is string returnMsg && !string.IsNullOrEmpty(returnMsg))
+{
+    <script type="text/javascript">
+        var message = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(returnMsg));
+        alert(message);
+    </script>
+}
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.Name">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>@Localizer["Login.Title"] - ICP</title>
+    <link rel="stylesheet" href="~/css/ilc/styles.css" asp-append-version="true" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</head>
+<style>
+    #ErrMSG {
+        color: red;
+    }
+    .login-lang-switch {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+</style>
+<body class="bg-dark">
+    <div class="login-lang-switch">
+        <partial name="_LanguageSwitcher" />
+    </div>
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header">
+                                    <h3 class="text-center font-weight-light my-4">@Localizer["Login.Title"]</h3>
+                                </div>
+                                <div class="card-body">
+                                    <form onsubmit="return false;">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="StaffID" type="text" placeholder="@Localizer["Login.StaffId"]" autocomplete="username" />
+                                            <label for="StaffID">@Localizer["Login.StaffId"]</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="inputPassword" type="password" placeholder="@Localizer["Login.Password"]" autocomplete="current-password" />
+                                            <label for="inputPassword">@Localizer["Login.Password"]</label>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                            <p class="small mb-0" id="ErrMSG"></p>
+                                            <button type="button" class="btn btn-primary" id="btnLogin">@Localizer["Login.LoginButton"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function login() {
+            var telId = $('#StaffID').val();
+            $('#ErrMSG').text('');
+            $.ajax({
+                url: '@Url.Action("Login", "Login")',
+                data: { telId: telId },
+                type: 'GET',
+                success: function (result) {
+                    if (result && result.success) {
+                        location.href = '@Url.Action("Index", "Home")?login=' + encodeURIComponent(telId);
+                    } else {
+                        $('#ErrMSG').text(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Login.WrongStaffId"].Value)));
+                    }
+                },
+                error: function () {
+                    $('#ErrMSG').text(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Login.LoginFailed"].Value)));
+                }
+            });
+        }
+
+        $('#btnLogin').on('click', login);
+        $('#StaffID').on('keydown', function (e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>

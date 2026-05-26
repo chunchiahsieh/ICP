@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Localization;
+
 namespace ICP.Helpers;
 
 public static class CrudAuditHelper
@@ -21,28 +23,28 @@ public static class CrudAuditHelper
         entity.UpdateUser = user;
     }
 
-    public static string? MapDbUpdateException(Exception ex)
+    public static string? MapDbUpdateException(Exception ex, IStringLocalizer<SharedResource> localizer)
     {
         var message = ex.InnerException?.Message ?? ex.Message;
 
         if (message.Contains("IX_Roles_RoleCode", StringComparison.OrdinalIgnoreCase))
         {
-            return "RoleCode 已存在";
+            return localizer["Error.RoleCodeExists"];
         }
 
         if (message.Contains("IX_RolesTELID_TELID_RoleId", StringComparison.OrdinalIgnoreCase))
         {
-            return "此 TELID 與角色組合已存在";
+            return localizer["Error.RoleTelIdExists"];
         }
 
         if (message.Contains("IX_RolesDepID_DepID_RoleId", StringComparison.OrdinalIgnoreCase))
         {
-            return "此 DepID 與角色組合已存在";
+            return localizer["Error.RoleDepIdExists"];
         }
 
         if (message.Contains("IX_RolePermissions", StringComparison.OrdinalIgnoreCase))
         {
-            return "此角色、資源與動作組合已存在";
+            return localizer["Error.RolePermissionExists"];
         }
 
         return null;

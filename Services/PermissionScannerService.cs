@@ -1,14 +1,20 @@
 using System.Text.RegularExpressions;
+using ICP;
+using Microsoft.Extensions.Localization;
 
 namespace ICP.Services;
 
 public partial class PermissionScannerService
 {
     private readonly IWebHostEnvironment _environment;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public PermissionScannerService(IWebHostEnvironment environment)
+    public PermissionScannerService(
+        IWebHostEnvironment environment,
+        IStringLocalizer<SharedResource> localizer)
     {
         _environment = environment;
+        _localizer = localizer;
     }
 
     public IReadOnlyList<ScannedPermission> Scan()
@@ -36,15 +42,25 @@ public partial class PermissionScannerService
                     continue;
                 }
 
-                // 從整個 opening tag 讀取屬性（data-permission-name 可能在 data-permissions 之後）
                 var fullOpeningTag = match.Value;
-                var permissionName = ExtractAttributeValue(fullOpeningTag, "data-permission-name");
+                var permissionKey = ExtractAttributeValue(fullOpeningTag, "data-permission-key");
+                var permissionName = ResolveResourceName(permissionKey, fullOpeningTag, content, match, tag, resourceCode);
                 var innerText = ExtractInnerText(content, match.Index + match.Length, tag);
+
+                if (string.IsNullOrWhiteSpace(permissionName) && !string.IsNullOrWhiteSpace(innerText))
+                {
+                    permissionName = innerText.Trim();
+                }
+
+                if (string.IsNullOrWhiteSpace(permissionName) || IsBrokenLocalizerName(permissionName))
+                {
+                    permissionName = resourceCode;
+                }
 
                 results.Add(new ScannedPermission
                 {
                     ResourceCode = resourceCode,
-                    ResourceName = ResolveResourceName(permissionName, innerText, resourceCode),
+                    ResourceName = permissionName,
                     ResourceType = MapResourceType(tag),
                     Route = route,
                     Description = $"Auto-scanned from Views/{relativePath}",
@@ -56,24 +72,90 @@ public partial class PermissionScannerService
         return results;
     }
 
-    private static string ResolveResourceName(string? permissionName, string? innerText, string resourceCode)
+    private string ResolveResourceName(
+        string? permissionKey,
+        string fullOpeningTag,
+        string content,
+        Match match,
+        string tag,
+        string resourceCode)
     {
-        if (!string.IsNullOrWhiteSpace(permissionName))
+        var fromKey = ResolveLocalizedName(permissionKey);
+        if (!string.IsNullOrWhiteSpace(fromKey))
         {
-            return permissionName.Trim();
+            return fromKey;
         }
 
-        if (!string.IsNullOrWhiteSpace(innerText))
+        var legacyName = ExtractAttributeValue(fullOpeningTag, "data-permission-name");
+        if (!string.IsNullOrWhiteSpace(legacyName) && !IsBrokenLocalizerName(legacyName))
         {
-            return innerText.Trim();
+            return legacyName.Trim();
+        }
+
+        var localizerKey = ExtractLocalizerKey(legacyName) ?? ExtractLocalizerKey(fullOpeningTag);
+        fromKey = ResolveLocalizedName(localizerKey);
+        if (!string.IsNullOrWhiteSpace(fromKey))
+        {
+            return fromKey;
+        }
+
+        var innerText = ExtractInnerText(content, match.Index + match.Length, tag);
+        var trimmedInner = innerText?.Trim();
+        if (!string.IsNullOrWhiteSpace(trimmedInner) && !IsBrokenLocalizerName(trimmedInner))
+        {
+            return trimmedInner;
         }
 
         return resourceCode;
     }
 
+    private string? ResolveLocalizedName(string? resourceKey)
+    {
+        if (string.IsNullOrWhiteSpace(resourceKey))
+        {
+            return null;
+        }
+
+        var localized = _localizer[resourceKey.Trim()];
+        if (!localized.ResourceNotFound && !string.IsNullOrWhiteSpace(localized.Value))
+        {
+            return localized.Value.Trim();
+        }
+
+        return SharedResourceNameResolver.TryResolve(_environment, resourceKey);
+    }
+
+    private static bool IsBrokenLocalizerName(string value)
+    {
+        return value.StartsWith("@Localizer[", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string? ExtractLocalizerKey(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return null;
+        }
+
+        var match = LocalizerKeyRegex().Match(raw);
+        return match.Success ? match.Groups["key"].Value.Trim() : null;
+    }
+
     private static string? ExtractAttributeValue(string tagContent, string attributeName)
     {
-        var match = AttributeRegex(attributeName).Match(tagContent);
+        var doubleQuoted = new Regex(
+            $@"\b{Regex.Escape(attributeName)}\s*=\s*""(?<value>(?:[^""\\]|\\.)*)""",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        var match = doubleQuoted.Match(tagContent);
+        if (match.Success)
+        {
+            return match.Groups["value"].Value;
+        }
+
+        var singleQuoted = new Regex(
+            $@"\b{Regex.Escape(attributeName)}\s*=\s*'(?<value>(?:[^'\\]|\\.)*)'",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        match = singleQuoted.Match(tagContent);
         return match.Success ? match.Groups["value"].Value : null;
     }
 
@@ -137,6 +219,9 @@ public partial class PermissionScannerService
     [GeneratedRegex(@"<(?<tag>[a-zA-Z][\w-]*)(?<tagContent>[^>]*)\bdata-permissions\s*=\s*[""'](?<perm>[^""']+)[""'][^>]*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex PermissionTagRegex();
 
+    [GeneratedRegex(@"@Localizer\[""(?<key>[^""]+)""\]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex LocalizerKeyRegex();
+
     [GeneratedRegex(@"<[^>]+>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex HtmlTagRegex();
 
@@ -145,11 +230,4 @@ public partial class PermissionScannerService
 
     [GeneratedRegex(@"\s+", RegexOptions.CultureInvariant)]
     private static partial Regex WhitespaceRegex();
-
-    private static Regex AttributeRegex(string attributeName)
-    {
-        return new Regex(
-            $@"\b{Regex.Escape(attributeName)}\s*=\s*[""'](?<value>[^""']+)[""']",
-            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-    }
 }

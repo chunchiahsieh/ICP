@@ -1,5 +1,6 @@
+@using System.Text.Json
 @{
-    ViewData["Title"] = "使用者角色";
+    ViewData["Title"] = Localizer["RoleTelIds.Title"];
 }
 
 @section Styles {
@@ -7,23 +8,23 @@
     <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
 }
 
-<div data-permissions="icp.roletelid.view" data-permission-name="使用者角色查詢">
+<div data-permissions="icp.permission.roletelid.view" data-permission-key="Permission.RoleTelId.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
-        <h4 class="mb-0">使用者角色</h4>
+        <h4 class="mb-0">@Localizer["RoleTelIds.Title"]</h4>
         <div class="d-flex gap-2">
             <button type="button"
                     class="btn btn-outline-danger btn-sm"
                     id="btnBatchDelete"
-                    data-permissions="icp.roletelid.delete"
-                    data-permission-name="使用者角色刪除">
-                批次刪除
+                    data-permissions="icp.permission.roletelid.delete"
+                    data-permission-key="Permission.RoleTelId.Delete">
+                @Localizer["Common.BatchDelete"]
             </button>
             <button type="button"
                     class="btn btn-primary btn-sm"
                     id="btnOpenBatchCreateWizard"
-                    data-permissions="icp.roletelid.create"
-                    data-permission-name="使用者角色新增">
-                建立權限
+                    data-permissions="icp.permission.roletelid.create"
+                    data-permission-key="Permission.RoleTelId.Create">
+                @Localizer["Common.CreatePermission"]
             </button>
         </div>
     </div>
@@ -79,7 +80,7 @@
                 resultFilterOptionsUrl: '@Url.Action("GetFilterOptions", "RoleTelIds")',
                 batchCreateUrl: '@Url.Action("BatchCreate", "RoleTelIds")',
                 batchDeleteUrl: '@Url.Action("BatchDelete", "RoleTelIds")',
-                batchDeleteConfirmMessage: '確定要刪除所選的使用者角色對應嗎？',
+                batchDeleteConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["RoleTelIds.BatchDeleteConfirm"].Value)),
                 userPayloadKey: 'telIds'
             });
         });

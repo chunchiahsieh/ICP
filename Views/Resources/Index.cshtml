@@ -1,5 +1,6 @@
+@using System.Text.Json
 @{
-    ViewData["Title"] = "Resources";
+    ViewData["Title"] = Localizer["Resources.Title"];
 }
 
 @section Styles {
@@ -7,14 +8,14 @@
     <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
 }
 
-<div data-permissions="icp.resource.view" data-permission-name="資源查詢">
+<div data-permissions="icp.permission.resource.view" data-permission-key="Permission.Resource.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
-        <h4 class="mb-0">Resources</h4>
+        <h4 class="mb-0">@Localizer["Resources.Title"]</h4>
         <button type="button"
                 class="btn btn-primary btn-sm"
                 id="btnPermissionScan"
-                data-permissions="icp.resource.scan"
-                data-permission-name="權限掃描同步">
+                data-permissions="icp.permission.resource.scan"
+                data-permission-key="Permission.Resource.Scan">
             PermissionScan
         </button>
     </div>
@@ -38,21 +39,17 @@
             'filter-IsVisible': 'IsVisibles',
             'filter-IsEnabled': 'IsEnableds'
         };
+        var scanSyncTemplate = @Html.Raw(JsonSerializer.Serialize(Localizer["Resources.ScanSyncComplete"].Value));
+        var scanFailedMessage = @Html.Raw(JsonSerializer.Serialize(Localizer["Resources.ScanFailed"].Value));
 
         $(function () {
             if (window.ProDataTables && ProDataTables.initUsers) {
-                ProDataTables.initUsers({
-                    tableSelector: '#datatable',
-                    dataDivSelector: '#DataDiv',
-                    filterDropdownSelector: '.column-filter-dropdown',
+                ProDataTables.initUsers(ProDataTables.buildConfig({
                     filterFieldMap: filterFieldMap,
                     filterOptionsUrl: '@Url.Action("GetFilterOptions", "Resources")',
                     queryUrl: '@Url.Action("Query", "Resources")',
-                    pageLength: 10,
-                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-                    initialSort: [[6, 'asc']],
-                    searchDebounceMs: 300
-                });
+                    initialSort: [[6, 'asc']]
+                }));
             }
 
             $('#btnPermissionScan').on('click', function () {
@@ -67,16 +64,19 @@
                         $message
                             .removeClass('d-none alert-danger')
                             .addClass('alert-success')
-                            .text('同步完成：掃描 ' + result.scannedCount +
-                                ' 筆，新增 ' + result.insertedCount +
-                                ' 筆，更新 ' + result.updatedCount + ' 筆。');
+                            .text(scanSyncTemplate
+                                .replace('{0}', result.scannedCount)
+                                .replace('{1}', result.insertedCount)
+                                .replace('{2}', result.updatedCount)
+                                .replace('{3}', result.disabledLegacyCount)
+                                .replace('{4}', result.migratedRolePermissionCount));
                         window.location.reload();
                     })
                     .fail(function () {
                         $message
                             .removeClass('d-none alert-success')
                             .addClass('alert-danger')
-                            .text('PermissionScan 失敗，請稍後再試。');
+                            .text(scanFailedMessage);
                     })
                     .always(function () {
                         $btn.prop('disabled', false);

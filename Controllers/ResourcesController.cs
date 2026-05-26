@@ -75,7 +75,7 @@ public class ResourcesController : Controller
         string? search,
         CancellationToken cancellationToken)
     {
-        var query = _icpDb.Resources.AsNoTracking();
+        var query = _icpDb.Resources.AsNoTracking().Where(r => r.IsEnabled);
 
         return column switch
         {
@@ -94,7 +94,7 @@ public class ResourcesController : Controller
 
     private async Task<List<Resource>> QueryResourcesAsync(ResourcesSearchModel criteria, CancellationToken cancellationToken)
     {
-        var query = _icpDb.Resources.AsNoTracking();
+        var query = _icpDb.Resources.AsNoTracking().Where(r => r.IsEnabled);
 
         if (criteria.ResourceCodes.Count > 0)
         {

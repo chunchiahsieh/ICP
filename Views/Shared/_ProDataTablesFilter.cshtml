@@ -1,24 +1,23 @@
-@model (string Id, string Column)
-
-<div class="dropdown column-filter-dropdown" id="@Model.Id" data-column="@Model.Column">
+@model (string FilterId, string Column)
+<div class="dropdown column-filter-dropdown" id="@Model.FilterId" data-column="@Model.Column">
     <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle w-100"
-            data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-boundary="viewport">
-        篩選 <span class="filter-count">(0)</span>
+            data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-boundary="viewport" aria-expanded="false">
+        @Localizer["Common.Filter"] <span class="filter-count">(0)</span>
     </button>
     <div class="dropdown-menu users-filter-menu p-2">
         <input type="text"
                class="form-control form-control-sm filter-search-input mb-2"
-               placeholder="搜尋..."
+               placeholder="@Localizer["Common.Search"]"
                autocomplete="off" />
-        <div class="users-filter-toolbar d-flex gap-2 mb-2">
-            <button type="button" class="btn btn-link btn-sm p-0 filter-select-all">全選</button>
-            <button type="button" class="btn btn-link btn-sm p-0 filter-clear">清除</button>
+        <div class="users-filter-toolbar d-flex justify-content-between mb-2">
+            <button type="button" class="btn btn-link btn-sm p-0 filter-select-all">@Localizer["Common.SelectAll"]</button>
+            <button type="button" class="btn btn-link btn-sm p-0 filter-clear">@Localizer["Common.Clear"]</button>
         </div>
-        <div class="users-filter-empty text-muted small d-none">無符合項目</div>
+        <div class="users-filter-empty text-muted small d-none">@Localizer["Common.NoMatches"]</div>
         <div class="users-filter-options"></div>
         <div class="users-filter-actions d-flex gap-2 mt-2">
-            <button type="button" class="btn btn-primary btn-sm filter-confirm">確定</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm filter-reset">重設</button>
+            <button type="button" class="btn btn-primary btn-sm filter-confirm">@Localizer["Common.Confirm"]</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm filter-reset">@Localizer["Common.Reset"]</button>
         </div>
     </div>
 </div>

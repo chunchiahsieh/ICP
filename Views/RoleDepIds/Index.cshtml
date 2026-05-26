@@ -1,5 +1,6 @@
+@using System.Text.Json
 @{
-    ViewData["Title"] = "部門角色";
+    ViewData["Title"] = Localizer["RoleDepIds.Title"];
 }
 
 @section Styles {
@@ -7,23 +8,23 @@
     <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
 }
 
-<div data-permissions="icp.roledepid.view" data-permission-name="部門角色查詢">
+<div data-permissions="icp.permission.roledepid.view" data-permission-key="Permission.RoleDepId.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
-        <h4 class="mb-0">部門角色</h4>
+        <h4 class="mb-0">@Localizer["RoleDepIds.Title"]</h4>
         <div class="d-flex gap-2">
             <button type="button"
                     class="btn btn-outline-danger btn-sm"
                     id="btnBatchDelete"
-                    data-permissions="icp.roledepid.delete"
-                    data-permission-name="部門角色刪除">
-                批次刪除
+                    data-permissions="icp.permission.roledepid.delete"
+                    data-permission-key="Permission.RoleDepId.Delete">
+                @Localizer["Common.BatchDelete"]
             </button>
             <button type="button"
                     class="btn btn-primary btn-sm"
                     id="btnOpenBatchCreateWizard"
-                    data-permissions="icp.roledepid.create"
-                    data-permission-name="部門角色新增">
-                建立權限
+                    data-permissions="icp.permission.roledepid.create"
+                    data-permission-key="Permission.RoleDepId.Create">
+                @Localizer["Common.CreatePermission"]
             </button>
         </div>
     </div>
@@ -78,9 +79,9 @@
                 resultFilterOptionsUrl: '@Url.Action("GetFilterOptions", "RoleDepIds")',
                 batchCreateUrl: '@Url.Action("BatchCreate", "RoleDepIds")',
                 batchDeleteUrl: '@Url.Action("BatchDelete", "RoleDepIds")',
-                batchDeleteConfirmMessage: '確定要刪除所選的部門角色對應嗎？',
+                batchDeleteConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["RoleDepIds.BatchDeleteConfirm"].Value)),
                 userPayloadKey: 'depIds',
-                userRequiredMessage: '請至少選擇一筆部門'
+                userRequiredMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Validation.SelectAtLeastOneDepartment"].Value))
             });
         });
     </script>

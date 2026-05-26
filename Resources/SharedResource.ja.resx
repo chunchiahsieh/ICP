@@ -1,0 +1,474 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Auth.FailedContactIs" xml:space="preserve">
+    <value>認証に失敗しました。IS に連絡するか、社員 ID でログインしてください。</value>
+  </data>
+  <data name="Auth.PleaseLoginFirst" xml:space="preserve">
+    <value>先にログインしてください。</value>
+  </data>
+  <data name="Common.Add" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="Common.BatchDelete" xml:space="preserve">
+    <value>一括削除</value>
+  </data>
+  <data name="Common.BatchDisable" xml:space="preserve">
+    <value>一括無効化</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Common.Clear" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="Common.Confirm" xml:space="preserve">
+    <value>確定</value>
+  </data>
+  <data name="Common.Create" xml:space="preserve">
+    <value>作成</value>
+  </data>
+  <data name="Common.CreatePermission" xml:space="preserve">
+    <value>権限を作成</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="Common.Disable" xml:space="preserve">
+    <value>無効化</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="Common.Filter" xml:space="preserve">
+    <value>フィルター</value>
+  </data>
+  <data name="Common.Language" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="Common.LoggedInAs" xml:space="preserve">
+    <value>ログイン:</value>
+  </data>
+  <data name="Common.Logout" xml:space="preserve">
+    <value>ログアウト</value>
+  </data>
+  <data name="Common.Next" xml:space="preserve">
+    <value>次へ</value>
+  </data>
+  <data name="Common.NoMatches" xml:space="preserve">
+    <value>該当なし</value>
+  </data>
+  <data name="Common.None" xml:space="preserve">
+    <value>（なし）</value>
+  </data>
+  <data name="Common.PleaseSelect" xml:space="preserve">
+    <value>-- 選択してください --</value>
+  </data>
+  <data name="Common.Reset" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>検索...</value>
+  </data>
+  <data name="Common.SelectAll" xml:space="preserve">
+    <value>すべて選択</value>
+  </data>
+  <data name="Common.SelectAllPage" xml:space="preserve">
+    <value>ページ内をすべて選択</value>
+  </data>
+  <data name="Common.Submit" xml:space="preserve">
+    <value>作成</value>
+  </data>
+  <data name="Culture.En" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Culture.Ja" xml:space="preserve">
+    <value>日本語</value>
+  </data>
+  <data name="Culture.ZhTW" xml:space="preserve">
+    <value>繁体字中国語</value>
+  </data>
+  <data name="DataTables.EmptyTable" xml:space="preserve">
+    <value>テーブルにデータがありません</value>
+  </data>
+  <data name="DataTables.Info" xml:space="preserve">
+    <value>全 _TOTAL_ 件中 _START_ から _END_ 件を表示</value>
+  </data>
+  <data name="DataTables.InfoEmpty" xml:space="preserve">
+    <value>0 件中 0 件を表示</value>
+  </data>
+  <data name="DataTables.InfoFiltered" xml:space="preserve">
+    <value>（全 _MAX_ 件からフィルタ）</value>
+  </data>
+  <data name="DataTables.LengthMenu" xml:space="preserve">
+    <value>_MENU_ 件表示</value>
+  </data>
+  <data name="DataTables.LengthMenuItem" xml:space="preserve">
+    <value>{0} 件</value>
+  </data>
+  <data name="DataTables.LoadingRecords" xml:space="preserve">
+    <value>読み込み中...</value>
+  </data>
+  <data name="DataTables.Paginate.First" xml:space="preserve">
+    <value>先頭</value>
+  </data>
+  <data name="DataTables.Paginate.Last" xml:space="preserve">
+    <value>最終</value>
+  </data>
+  <data name="DataTables.Paginate.Next" xml:space="preserve">
+    <value>次</value>
+  </data>
+  <data name="DataTables.Paginate.Previous" xml:space="preserve">
+    <value>前</value>
+  </data>
+  <data name="DataTables.Processing" xml:space="preserve">
+    <value>処理中...</value>
+  </data>
+  <data name="DataTables.Search" xml:space="preserve">
+    <value>検索:</value>
+  </data>
+  <data name="DataTables.ZeroRecords" xml:space="preserve">
+    <value>一致するレコードがありません</value>
+  </data>
+  <data name="Error.RoleCodeExists" xml:space="preserve">
+    <value>RoleCode は既に存在します</value>
+  </data>
+  <data name="Error.RoleDepIdExists" xml:space="preserve">
+    <value>この DepID とロールの組み合わせは既に存在します</value>
+  </data>
+  <data name="Error.RolePermissionExists" xml:space="preserve">
+    <value>このロール・リソース・アクションの組み合わせは既に存在します</value>
+  </data>
+  <data name="Error.RoleTelIdExists" xml:space="preserve">
+    <value>この TELID とロールの組み合わせは既に存在します</value>
+  </data>
+  <data name="Home.Description" xml:space="preserve">
+    <value>説明</value>
+  </data>
+  <data name="Home.Feature" xml:space="preserve">
+    <value>機能</value>
+  </data>
+  <data name="Home.HomeDesc" xml:space="preserve">
+    <value>システムホーム</value>
+  </data>
+  <data name="Home.PrivacyDesc" xml:space="preserve">
+    <value>プライバシーポリシー</value>
+  </data>
+  <data name="Home.SidebarPlaceholder" xml:space="preserve">
+    <value>サイドメニューとユーザー情報はプレースホルダーです。</value>
+  </data>
+  <data name="Home.Subtitle" xml:space="preserve">
+    <value>ASP.NET Core MVC (.NET 9)</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="Home.Welcome" xml:space="preserve">
+    <value>ICP システムへようこそ</value>
+  </data>
+  <data name="Js.SelectedCount" xml:space="preserve">
+    <value>{0} 件選択</value>
+  </data>
+  <data name="Login.LoginButton" xml:space="preserve">
+    <value>ログイン</value>
+  </data>
+  <data name="Login.LoginFailed" xml:space="preserve">
+    <value>ログインに失敗しました。しばらくしてから再試行してください。</value>
+  </data>
+  <data name="Login.Password" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="Login.StaffId" xml:space="preserve">
+    <value>社員 ID</value>
+  </data>
+  <data name="Login.Title" xml:space="preserve">
+    <value>ログイン</value>
+  </data>
+  <data name="Login.WrongStaffId" xml:space="preserve">
+    <value>社員 ID が正しくありません !!</value>
+  </data>
+  <data name="Message.BatchCreateSuccess" xml:space="preserve">
+    <value>作成完了: 追加 {0} 件、スキップ {1} 件。</value>
+  </data>
+  <data name="Message.CreateFailed" xml:space="preserve">
+    <value>作成失敗</value>
+  </data>
+  <data name="Message.CreateFailedRetry" xml:space="preserve">
+    <value>作成に失敗しました。</value>
+  </data>
+  <data name="Message.DeleteConfirm" xml:space="preserve">
+    <value>削除しますか？</value>
+  </data>
+  <data name="Message.DeleteFailed" xml:space="preserve">
+    <value>削除失敗</value>
+  </data>
+  <data name="Message.DeleteFailedRetry" xml:space="preserve">
+    <value>削除に失敗しました。</value>
+  </data>
+  <data name="Message.DeleteSuccess" xml:space="preserve">
+    <value>{0} 件削除しました。</value>
+  </data>
+  <data name="Message.DisableConfirm" xml:space="preserve">
+    <value>無効化しますか？</value>
+  </data>
+  <data name="Message.LoadFailed" xml:space="preserve">
+    <value>データの読み込みに失敗しました</value>
+  </data>
+  <data name="Message.OperationFailed" xml:space="preserve">
+    <value>操作失敗</value>
+  </data>
+  <data name="Message.OperationFailedRetry" xml:space="preserve">
+    <value>操作に失敗しました。</value>
+  </data>
+  <data name="Message.RecordsNotFound" xml:space="preserve">
+    <value>データが見つかりません</value>
+  </data>
+  <data name="Message.SaveFailed" xml:space="preserve">
+    <value>保存失敗</value>
+  </data>
+  <data name="Message.SaveFailedRetry" xml:space="preserve">
+    <value>保存に失敗しました。</value>
+  </data>
+  <data name="Message.SelectRecords" xml:space="preserve">
+    <value>1件以上選択してください</value>
+  </data>
+  <data name="Message.SelectRoleAndResource" xml:space="preserve">
+    <value>Role と Resource を1件以上選択してください</value>
+  </data>
+  <data name="Message.ValidRoleResourceNotFound" xml:space="preserve">
+    <value>有効な Role または Resource が見つかりません</value>
+  </data>
+  <data name="Nav.Function" xml:space="preserve">
+    <value>機能</value>
+  </data>
+  <data name="Nav.Home" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="Nav.Permission" xml:space="preserve">
+    <value>権限管理</value>
+  </data>
+  <data name="Nav.Privacy" xml:space="preserve">
+    <value>プライバシー</value>
+  </data>
+  <data name="Nav.Resources" xml:space="preserve">
+    <value>リソース</value>
+  </data>
+  <data name="Nav.RoleDepIds" xml:space="preserve">
+    <value>部門ロール</value>
+  </data>
+  <data name="Nav.RolePermissions" xml:space="preserve">
+    <value>ロール権限</value>
+  </data>
+  <data name="Nav.Roles" xml:space="preserve">
+    <value>ロール</value>
+  </data>
+  <data name="Nav.RoleTelIds" xml:space="preserve">
+    <value>ユーザーロール</value>
+  </data>
+  <data name="Nav.Setting" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Nav.Users" xml:space="preserve">
+    <value>ユーザー</value>
+  </data>
+  <data name="Permission.Resource.Scan" xml:space="preserve">
+    <value>権限スキャン同期</value>
+  </data>
+  <data name="Permission.Resource.View" xml:space="preserve">
+    <value>リソース照会</value>
+  </data>
+  <data name="Permission.Role.Create" xml:space="preserve">
+    <value>ロール追加</value>
+  </data>
+  <data name="Permission.Role.Disable" xml:space="preserve">
+    <value>ロール無効化</value>
+  </data>
+  <data name="Permission.Role.Edit" xml:space="preserve">
+    <value>ロール編集</value>
+  </data>
+  <data name="Permission.Role.View" xml:space="preserve">
+    <value>ロール照会</value>
+  </data>
+  <data name="Permission.RoleDepId.Create" xml:space="preserve">
+    <value>部門ロール追加</value>
+  </data>
+  <data name="Permission.RoleDepId.Delete" xml:space="preserve">
+    <value>部門ロール削除</value>
+  </data>
+  <data name="Permission.RoleDepId.View" xml:space="preserve">
+    <value>部門ロール照会</value>
+  </data>
+  <data name="Permission.RolePermission.Create" xml:space="preserve">
+    <value>ロール権限追加</value>
+  </data>
+  <data name="Permission.RolePermission.Delete" xml:space="preserve">
+    <value>ロール権限削除</value>
+  </data>
+  <data name="Permission.RolePermission.View" xml:space="preserve">
+    <value>ロール権限照会</value>
+  </data>
+  <data name="Permission.RoleTelId.Create" xml:space="preserve">
+    <value>ユーザーロール追加</value>
+  </data>
+  <data name="Permission.RoleTelId.Delete" xml:space="preserve">
+    <value>ユーザーロール削除</value>
+  </data>
+  <data name="Permission.RoleTelId.View" xml:space="preserve">
+    <value>ユーザーロール照会</value>
+  </data>
+  <data name="Permission.User.View" xml:space="preserve">
+    <value>ユーザー照会</value>
+  </data>
+  <data name="Resources.ScanFailed" xml:space="preserve">
+    <value>PermissionScan に失敗しました。</value>
+  </data>
+  <data name="Resources.ScanSyncComplete" xml:space="preserve">
+    <value>同期完了: スキャン {0}、追加 {1}、更新 {2}、旧形式無効化 {3}、ロール権限移行 {4}。</value>
+  </data>
+  <data name="Resources.Title" xml:space="preserve">
+    <value>リソース管理</value>
+  </data>
+  <data name="RoleDepIds.BatchDeleteConfirm" xml:space="preserve">
+    <value>選択した部門ロールを削除しますか？</value>
+  </data>
+  <data name="RoleDepIds.CreateDrawerTitle" xml:space="preserve">
+    <value>部門ロールを作成</value>
+  </data>
+  <data name="RoleDepIds.Title" xml:space="preserve">
+    <value>部門ロール</value>
+  </data>
+  <data name="RolePermissions.BatchDeleteConfirm" xml:space="preserve">
+    <value>選択したロール権限を削除しますか？</value>
+  </data>
+  <data name="RolePermissions.CreatedList" xml:space="preserve">
+    <value>作成済み権限</value>
+  </data>
+  <data name="RolePermissions.CreateDrawerTitle" xml:space="preserve">
+    <value>ロール権限を作成</value>
+  </data>
+  <data name="RolePermissions.Title" xml:space="preserve">
+    <value>ロール権限</value>
+  </data>
+  <data name="Roles.BatchDisableConfirm" xml:space="preserve">
+    <value>選択したロールを無効化しますか？</value>
+  </data>
+  <data name="Roles.CreateTitle" xml:space="preserve">
+    <value>ロール追加</value>
+  </data>
+  <data name="Roles.DisableConfirm" xml:space="preserve">
+    <value>このロールを無効化しますか？</value>
+  </data>
+  <data name="Roles.EditTitle" xml:space="preserve">
+    <value>ロール編集</value>
+  </data>
+  <data name="Roles.Title" xml:space="preserve">
+    <value>ロール管理</value>
+  </data>
+  <data name="RoleTelIds.BatchDeleteConfirm" xml:space="preserve">
+    <value>選択したユーザーロールを削除しますか？</value>
+  </data>
+  <data name="RoleTelIds.CreateDrawerTitle" xml:space="preserve">
+    <value>ユーザーロールを作成</value>
+  </data>
+  <data name="RoleTelIds.Title" xml:space="preserve">
+    <value>ユーザーロール</value>
+  </data>
+  <data name="Users.Title" xml:space="preserve">
+    <value>ユーザー</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneDepartment" xml:space="preserve">
+    <value>部門を1件以上選択してください。</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRecord" xml:space="preserve">
+    <value>1件以上選択してください。</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneResource" xml:space="preserve">
+    <value>リソースを1件以上選択してください。</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRole" xml:space="preserve">
+    <value>ロールを1件以上選択してください。</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRoleAndResource" xml:space="preserve">
+    <value>ロールとリソースを1件以上選択してください。</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRoleAndUser" xml:space="preserve">
+    <value>ロールとユーザーを1件以上選択してください。</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneUser" xml:space="preserve">
+    <value>ユーザーを1件以上選択してください。</value>
+  </data>
+  <data name="Wizard.EstimatedCreateCount" xml:space="preserve">
+    <value>作成予定件数：</value>
+  </data>
+  <data name="Wizard.PickDepartmentsHint" xml:space="preserve">
+    <value>DepID で部門を選択してください。</value>
+  </data>
+  <data name="Wizard.PickResourcesHint" xml:space="preserve">
+    <value>割り当てるリソースを選択してください。</value>
+  </data>
+  <data name="Wizard.PickRolesHint" xml:space="preserve">
+    <value>割り当てるロールを選択してください。</value>
+  </data>
+  <data name="Wizard.PickUsersHint" xml:space="preserve">
+    <value>TELID でユーザーを選択してください。</value>
+  </data>
+  <data name="Wizard.PreviewIntro" xml:space="preserve">
+    <value>割り当て内容を確認してください。重複はスキップされます。</value>
+  </data>
+  <data name="Wizard.SelectedDepartments" xml:space="preserve">
+    <value>選択した部門</value>
+  </data>
+  <data name="Wizard.SelectedResources" xml:space="preserve">
+    <value>選択したリソース</value>
+  </data>
+  <data name="Wizard.SelectedRoles" xml:space="preserve">
+    <value>選択したロール</value>
+  </data>
+  <data name="Wizard.SelectedUsers" xml:space="preserve">
+    <value>選択したユーザー</value>
+  </data>
+  <data name="Wizard.Step1Roles" xml:space="preserve">
+    <value>1 ロール選択</value>
+  </data>
+  <data name="Wizard.Step2Departments" xml:space="preserve">
+    <value>2 部門選択</value>
+  </data>
+  <data name="Wizard.Step2Resources" xml:space="preserve">
+    <value>2 リソース選択</value>
+  </data>
+  <data name="Wizard.Step2Users" xml:space="preserve">
+    <value>2 ユーザー選択</value>
+  </data>
+  <data name="Wizard.Step3Confirm" xml:space="preserve">
+    <value>3 確認</value>
+  </data>
+  <data name="Message.ValidRoleUserNotFound" xml:space="preserve">
+    <value>有効なロールまたはユーザーが見つかりません</value>
+  </data>
+  <data name="Message.SelectRoleAndDepartment" xml:space="preserve">
+    <value>ロールと部門を1件以上選択してください。</value>
+  </data>
+  <data name="Message.ValidRoleDepartmentNotFound" xml:space="preserve">
+    <value>有効なロールまたは部門が見つかりません</value>
+  </data>
+  <data name="Message.SelectRoleAndUser" xml:space="preserve">
+    <value>ロールとユーザーを1件以上選択してください。</value>
+  </data>
+</root>

@@ -3,20 +3,20 @@
      id="batchCreateWizardDrawer"
      aria-labelledby="batchCreateWizardDrawerLabel">
     <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title" id="batchCreateWizardDrawerLabel">建立部門角色</h5>
+        <h5 class="offcanvas-title" id="batchCreateWizardDrawerLabel">@Localizer["RoleDepIds.CreateDrawerTitle"]</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body d-flex flex-column p-0">
         <div class="flex-grow-1 overflow-auto p-3">
             <ul class="nav nav-pills nav-fill mb-3" id="wizardStepIndicator" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <span class="nav-link active disabled" data-wizard-step="1">1 選擇角色</span>
+                    <span class="nav-link active disabled" data-wizard-step="1">@Localizer["Wizard.Step1Roles"]</span>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <span class="nav-link disabled" data-wizard-step="2">2 選擇部門</span>
+                    <span class="nav-link disabled" data-wizard-step="2">@Localizer["Wizard.Step2Departments"]</span>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <span class="nav-link disabled" data-wizard-step="3">3 確認建立</span>
+                    <span class="nav-link disabled" data-wizard-step="3">@Localizer["Wizard.Step3Confirm"]</span>
                 </li>
             </ul>
 
@@ -24,44 +24,44 @@
 
             <div id="wizardStepRoles" class="wizard-step-pane">
                 <p class="text-muted small mb-2">
-                    勾選要指派的角色。可換頁篩選，已選項目會保留。
-                    <span class="fw-semibold" id="rolesStepSelectedHint">已選 0 筆</span>
+                    @Localizer["Wizard.PickRolesHint"]
+                    <span class="fw-semibold" id="rolesStepSelectedHint">@Localizer["Js.SelectedCount", 0]</span>
                 </p>
                 <div id="RolesPickDiv"></div>
             </div>
 
             <div id="wizardStepUsers" class="wizard-step-pane d-none">
                 <p class="text-muted small mb-2">
-                    勾選要指派的部門（以 DepID 為準）。可換頁篩選，已選項目會保留。
-                    <span class="fw-semibold" id="usersStepSelectedHint">已選 0 筆</span>
+                    @Localizer["Wizard.PickDepartmentsHint"]
+                    <span class="fw-semibold" id="usersStepSelectedHint">@Localizer["Js.SelectedCount", 0]</span>
                 </p>
                 <div id="UsersPickDiv"></div>
             </div>
 
             <div id="wizardStepPreview" class="wizard-step-pane d-none">
-                <p class="text-muted small mb-3">請確認以下指派內容。重複組合將自動略過。</p>
+                <p class="text-muted small mb-3">@Localizer["Wizard.PreviewIntro"]</p>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <h6 class="mb-2">已選角色 <span class="badge text-bg-secondary" id="previewRoleCount">0</span></h6>
+                        <h6 class="mb-2">@Localizer["Wizard.SelectedRoles"] <span class="badge text-bg-secondary" id="previewRoleCount">0</span></h6>
                         <ul class="list-group list-group-flush border rounded small preview-list" id="previewRoleList" style="max-height: 200px; overflow-y: auto;"></ul>
                     </div>
                     <div class="col-md-6">
-                        <h6 class="mb-2">已選部門 <span class="badge text-bg-secondary" id="previewUserCount">0</span></h6>
+                        <h6 class="mb-2">@Localizer["Wizard.SelectedDepartments"] <span class="badge text-bg-secondary" id="previewUserCount">0</span></h6>
                         <ul class="list-group list-group-flush border rounded small preview-list" id="previewUserList" style="max-height: 200px; overflow-y: auto;"></ul>
                     </div>
                 </div>
                 <div class="alert alert-info mt-3 mb-0 py-2" role="status">
-                    預計建立筆數：<strong id="previewEstimatedCount">0</strong>
+                    @Localizer["Wizard.EstimatedCreateCount"]<strong id="previewEstimatedCount">0</strong>
                     （<span id="previewFormula">0 × 0</span>）
                 </div>
             </div>
         </div>
         <div class="border-top p-3 d-flex gap-2 justify-content-end flex-shrink-0 bg-body">
-            <button type="button" class="btn btn-secondary btn-sm" id="btnWizardCancel" data-bs-dismiss="offcanvas">取消</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none" id="btnWizardBack">上一步</button>
-            <button type="button" class="btn btn-primary btn-sm" id="btnWizardNext">下一步</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnWizardCancel" data-bs-dismiss="offcanvas">@Localizer["Common.Cancel"]</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm d-none" id="btnWizardBack">@Localizer["Common.Back"]</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnWizardNext">@Localizer["Common.Next"]</button>
             <button type="button" class="btn btn-primary btn-sm d-none" id="btnWizardSubmit">
-                <span class="wizard-submit-label">建立</span>
+                <span class="wizard-submit-label">@Localizer["Common.Submit"]</span>
                 <span class="spinner-border spinner-border-sm d-none wizard-submit-spinner" role="status" aria-hidden="true"></span>
             </button>
         </div>

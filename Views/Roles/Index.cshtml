@@ -1,5 +1,6 @@
+@using System.Text.Json
 @{
-    ViewData["Title"] = "Roles";
+    ViewData["Title"] = Localizer["Roles.Title"];
 }
 
 @section Styles {
@@ -7,16 +8,25 @@
     <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
 }
 
-<div data-permissions="icp.role.view" data-permission-name="角色查詢">
+<div data-permissions="icp.permission.role.view" data-permission-key="Permission.Role.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
-        <h4 class="mb-0">Roles</h4>
-        <button type="button"
-                class="btn btn-primary btn-sm"
-                id="btnCreate"
-                data-permissions="icp.role.create"
-                data-permission-name="角色新增">
-            新增
-        </button>
+        <h4 class="mb-0">@Localizer["Roles.Title"]</h4>
+        <div class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    id="btnBatchDisable"
+                    data-permissions="icp.permission.role.disable"
+                    data-permission-key="Permission.Role.Disable">
+                @Localizer["Common.BatchDisable"]
+            </button>
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="btnCreate"
+                    data-permissions="icp.permission.role.create"
+                    data-permission-key="Permission.Role.Create">
+                @Localizer["Common.Add"]
+            </button>
+        </div>
     </div>
     <div id="DataDiv"></div>
 </div>
@@ -44,18 +54,12 @@
         $(function () {
             var tableInstance;
             if (window.ProDataTables && ProDataTables.initUsers) {
-                tableInstance = ProDataTables.initUsers({
-                    tableSelector: '#datatable',
-                    dataDivSelector: '#DataDiv',
-                    filterDropdownSelector: '.column-filter-dropdown',
+                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
                     filterFieldMap: filterFieldMap,
                     filterOptionsUrl: '@Url.Action("GetFilterOptions", "Roles")',
                     queryUrl: '@Url.Action("Query", "Roles")',
-                    pageLength: 10,
-                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-                    initialSort: [[0, 'asc']],
-                    searchDebounceMs: 300
-                });
+                    initialSort: [[1, 'asc']]
+                }));
             }
 
             if (window.ProCrud) {
@@ -63,9 +67,11 @@
                     getUrl: '@Url.Action("Get", "Roles")',
                     saveUrl: '@Url.Action("Save", "Roles")',
                     disableUrl: '@Url.Action("Disable", "Roles")',
-                    createTitle: '新增角色',
-                    editTitle: '編輯角色',
-                    disableConfirmMessage: '確定要停用此角色嗎？',
+                    batchDisableUrl: '@Url.Action("BatchDisable", "Roles")',
+                    batchDisableConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Roles.BatchDisableConfirm"].Value)),
+                    createTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Roles.CreateTitle"].Value)),
+                    editTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Roles.EditTitle"].Value)),
+                    disableConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Roles.DisableConfirm"].Value)),
                     onSuccess: function () {
                         if (tableInstance && tableInstance.reload) {
                             tableInstance.reload();

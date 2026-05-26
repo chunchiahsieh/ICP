@@ -4,6 +4,7 @@ using ICP.Models;
 using ICP.Models.Icp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
@@ -34,10 +35,14 @@ public class RolePermissionsController : Controller
     };
 
     private readonly ApplicationDbContext _icpDb;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public RolePermissionsController(ApplicationDbContext icpDb)
+    public RolePermissionsController(
+        ApplicationDbContext icpDb,
+        IStringLocalizer<SharedResource> localizer)
     {
         _icpDb = icpDb;
+        _localizer = localizer;
     }
 
     public IActionResult Index()
@@ -53,7 +58,7 @@ public class RolePermissionsController : Controller
     {
         if (model.RoleIds.Count == 0 || model.ResourceIds.Count == 0)
         {
-            return CrudJsonHelper.Failure("請至少選擇一筆 Role 與一筆 Resource");
+            return CrudJsonHelper.Failure(_localizer["Message.SelectRoleAndResource"]);
         }
 
         var roleIds = model.RoleIds.Distinct().ToList();
@@ -71,7 +76,7 @@ public class RolePermissionsController : Controller
 
         if (roles.Count == 0 || resources.Count == 0)
         {
-            return CrudJsonHelper.Failure("找不到有效的 Role 或 Resource");
+            return CrudJsonHelper.Failure(_localizer["Message.ValidRoleResourceNotFound"]);
         }
 
         var validRoleIds = roles.Select(r => r.Id).ToHashSet();
@@ -137,7 +142,7 @@ public class RolePermissionsController : Controller
     {
         if (model.Ids.Count == 0)
         {
-            return CrudJsonHelper.Failure("請至少選擇一筆資料");
+            return CrudJsonHelper.Failure(_localizer["Message.SelectRecords"]);
         }
 
         var ids = model.Ids.Distinct().ToList();
@@ -147,7 +152,7 @@ public class RolePermissionsController : Controller
 
         if (entities.Count == 0)
         {
-            return CrudJsonHelper.Failure("找不到資料");
+            return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
         }
 
         _icpDb.RolePermissions.RemoveRange(entities);

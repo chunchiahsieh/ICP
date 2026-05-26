@@ -5,6 +5,7 @@ using ICP.Models.Icp;
 using ICP.Models.Ilc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
@@ -38,11 +39,16 @@ public class RoleDepIdsController : Controller
 
     private readonly ApplicationDbContext _icpDb;
     private readonly IlcDbContext _ilcDb;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public RoleDepIdsController(ApplicationDbContext icpDb, IlcDbContext ilcDb)
+    public RoleDepIdsController(
+        ApplicationDbContext icpDb,
+        IlcDbContext ilcDb,
+        IStringLocalizer<SharedResource> localizer)
     {
         _icpDb = icpDb;
         _ilcDb = ilcDb;
+        _localizer = localizer;
     }
 
     public IActionResult Index()
@@ -58,7 +64,7 @@ public class RoleDepIdsController : Controller
     {
         if (model.RoleIds.Count == 0 || model.DepIds.Count == 0)
         {
-            return CrudJsonHelper.Failure("請至少選擇一筆角色與一筆部門");
+            return CrudJsonHelper.Failure(_localizer["Message.SelectRoleAndDepartment"]);
         }
 
         var roleIds = model.RoleIds.Distinct().ToList();
@@ -75,7 +81,7 @@ public class RoleDepIdsController : Controller
 
         if (roles.Count == 0 || depIds.Count == 0)
         {
-            return CrudJsonHelper.Failure("找不到有效的角色或部門");
+            return CrudJsonHelper.Failure(_localizer["Message.ValidRoleDepartmentNotFound"]);
         }
 
         var validRoleIds = roles.Select(r => r.Id).ToHashSet();
@@ -139,7 +145,7 @@ public class RoleDepIdsController : Controller
     {
         if (model.Ids.Count == 0)
         {
-            return CrudJsonHelper.Failure("請至少選擇一筆資料");
+            return CrudJsonHelper.Failure(_localizer["Message.SelectRecords"]);
         }
 
         var ids = model.Ids.Distinct().ToList();
@@ -149,7 +155,7 @@ public class RoleDepIdsController : Controller
 
         if (entities.Count == 0)
         {
-            return CrudJsonHelper.Failure("找不到資料");
+            return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
         }
 
         _icpDb.RolesDepId.RemoveRange(entities);

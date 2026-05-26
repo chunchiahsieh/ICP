@@ -4,7 +4,28 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ICP</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="ICP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 標記類別為 ICP.SharedResource；嵌入名稱須為 ICP.Resources.SharedResource 以符合 AddLocalization ResourcesPath -->
+    <EmbeddedResource Update="Resources\SharedResource.resx">
+      <ManifestResourceName>ICP.Resources.SharedResource</ManifestResourceName>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\SharedResource.en.resx">
+      <DependentUpon>SharedResource.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\SharedResource.ja.resx">
+      <DependentUpon>SharedResource.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\SharedResource.zh-TW.resx">
+      <DependentUpon>SharedResource.resx</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Temps\**" />
@@ -14,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.16">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

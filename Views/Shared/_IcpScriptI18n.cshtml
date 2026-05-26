@@ -1,0 +1,12 @@
+@using System.Text.Json
+@using ICP.Services
+@inject Microsoft.Extensions.Localization.IStringLocalizer<ICP.SharedResource> ScriptLocalizer
+@{
+    var i18n = IcpScriptI18nBuilder.Build(ScriptLocalizer);
+    var dataTables = IcpScriptI18nBuilder.BuildDataTablesLanguage(ScriptLocalizer);
+}
+<script>
+    window.IcpI18n = @Html.Raw(JsonSerializer.Serialize(i18n));
+    window.IcpDataTablesLanguage = @Html.Raw(JsonSerializer.Serialize(dataTables));
+    window.IcpDataTablesLengthMenu = @Html.Raw(JsonSerializer.Serialize(IcpScriptI18nBuilder.BuildDataTablesLengthMenu(ScriptLocalizer)));
+</script>

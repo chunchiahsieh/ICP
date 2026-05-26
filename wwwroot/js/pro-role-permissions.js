@@ -75,6 +75,14 @@
   global.ProRolePermissions.init = function (config) {
     config = config || {};
 
+    function proDt(overrides) {
+      return global.ProDataTables.buildConfig($.extend({
+        filterDropdownSelector: '.column-filter-dropdown',
+        searchDebounceMs: 300,
+        pageLength: 10
+      }, overrides || {}));
+    }
+
     var currentStep = 1;
     var selectedRoles = new Map();
     var selectedResources = new Map();
@@ -106,8 +114,8 @@
     }
 
     function updateStepHints() {
-      $('#rolesStepSelectedHint').text('已選 ' + selectedRoles.size + ' 筆');
-      $('#resourcesStepSelectedHint').text('已選 ' + selectedResources.size + ' 筆');
+      $('#rolesStepSelectedHint').text(icpMsg('selectedCount', selectedRoles.size));
+      $('#resourcesStepSelectedHint').text(icpMsg('selectedCount', selectedResources.size));
     }
 
     function updateStepIndicator(step) {
@@ -141,19 +149,15 @@
         return;
       }
 
-      rolesTableInstance = ProDataTables.initUsers({
+      rolesTableInstance = ProDataTables.initUsers(proDt({
         tableSelector: config.rolesTableSelector,
         dataDivSelector: config.rolesPickDivSelector,
-        filterDropdownSelector: '.column-filter-dropdown',
         filterFieldMap: config.rolesFilterFieldMap,
         filterOptionsUrl: config.rolesFilterOptionsUrl,
         queryUrl: config.rolesQueryUrl,
-        pageLength: 10,
-        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         initialSort: [[1, 'asc']],
-        searchDebounceMs: 300,
         onAfterRender: restoreRolePicks
-      });
+      }));
       rolesTableInitialized = true;
     }
 
@@ -162,19 +166,15 @@
         return;
       }
 
-      resourcesTableInstance = ProDataTables.initUsers({
+      resourcesTableInstance = ProDataTables.initUsers(proDt({
         tableSelector: config.resourcesTableSelector,
         dataDivSelector: config.resourcesPickDivSelector,
-        filterDropdownSelector: '.column-filter-dropdown',
         filterFieldMap: config.resourcesFilterFieldMap,
         filterOptionsUrl: config.resourcesFilterOptionsUrl,
         queryUrl: config.resourcesQueryUrl,
-        pageLength: 10,
-        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         initialSort: [[1, 'asc']],
-        searchDebounceMs: 300,
         onAfterRender: restoreResourcePicks
-      });
+      }));
       resourcesTableInitialized = true;
     }
 
@@ -214,7 +214,7 @@
         );
       });
       if (roleCount === 0) {
-        $roleList.append('<li class="list-group-item py-1 text-muted">（無）</li>');
+        $roleList.append('<li class="list-group-item py-1 text-muted">' + icpMsg('none') + '</li>');
       }
 
       var $resourceList = $('#previewResourceList').empty();
@@ -226,7 +226,7 @@
         );
       });
       if (resourceCount === 0) {
-        $resourceList.append('<li class="list-group-item py-1 text-muted">（無）</li>');
+        $resourceList.append('<li class="list-group-item py-1 text-muted">' + icpMsg('none') + '</li>');
       }
     }
 
@@ -292,19 +292,15 @@
     }
 
     if (global.ProDataTables && ProDataTables.initUsers) {
-      resultTableInstance = ProDataTables.initUsers({
+      resultTableInstance = ProDataTables.initUsers(proDt({
         tableSelector: config.resultTableSelector,
         dataDivSelector: config.resultDivSelector,
-        filterDropdownSelector: '.column-filter-dropdown',
         filterFieldMap: config.resultFilterFieldMap,
         filterOptionsUrl: config.resultFilterOptionsUrl,
         queryUrl: config.resultQueryUrl,
-        pageLength: 10,
-        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         initialSort: [[1, 'asc']],
-        searchDebounceMs: 300,
         onAfterRender: restoreListSelection
-      });
+      }));
     }
 
     $('#btnOpenBatchCreateWizard').on('click', function () {
@@ -325,7 +321,7 @@
     $('#btnWizardNext').on('click', function () {
       if (currentStep === 1) {
         if (selectedRoles.size === 0) {
-          showWizardAlert('請至少選擇一筆角色');
+          showWizardAlert(icpMsg('selectAtLeastOneRole'));
           return;
         }
         showStep(2);
@@ -465,7 +461,7 @@
 
     $('#btnBatchDelete').on('click', function () {
       if (selectedListIds.size === 0) {
-        showPageMessage('danger', '請至少選擇一筆資料');
+        showPageMessage('danger', icpMsg('selectAtLeastOneRecord'));
         return;
       }
 
@@ -498,13 +494,13 @@
             if (resultTableInstance && resultTableInstance.reload) {
               resultTableInstance.reload();
             }
-            showPageMessage('success', '已刪除 ' + (result.deletedCount || ids.length) + ' 筆。');
+            showPageMessage('success', icpMsg('deleteSuccess', result.deletedCount || ids.length));
           } else {
-            showPageMessage('danger', result.message || '刪除失敗');
+            showPageMessage('danger', result.message || icpMsg('deleteFailed'));
           }
         },
         error: function () {
-          showPageMessage('danger', '刪除失敗，請稍後再試。');
+          showPageMessage('danger', icpMsg('deleteFailedRetry'));
         }
       });
     });

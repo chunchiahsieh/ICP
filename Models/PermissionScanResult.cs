@@ -8,5 +8,9 @@ public class PermissionScanResult
 
     public int UpdatedCount { get; set; }
 
+    public int DisabledLegacyCount { get; set; }
+
+    public int MigratedRolePermissionCount { get; set; }
+
     public IReadOnlyList<string> ResourceCodes { get; set; } = [];
 }
