@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "首頁";
+}
+
+<br />
+<h4>歡迎使用 ICP 系統</h4>
+<p class="text-muted">ASP.NET Core MVC (.NET 9)</p>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>功能</th>
+                <th>說明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a asp-controller="Home" asp-action="Index">Home</a></td>
+                <td>系統首頁</td>
+            </tr>
+            <tr>
+                <td><a asp-controller="Home" asp-action="Privacy">Privacy</a></td>
+                <td>隱私權政策</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p class="small text-muted">左側選單與使用者資訊為版型佔位；完整功能選單將於登入與權限模組就緒後啟用。</p>

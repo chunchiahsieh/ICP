@@ -1,0 +1,153 @@
+@model ICP.Models.UsersSearchListViewModel
+
+
+
+@{
+
+    var filterColumns = new[] {
+
+        ("filter-KeyId", "KeyId"),
+
+        ("filter-DepName", "DepName"),
+
+        ("filter-UserName", "UserName"),
+
+        ("filter-TelId", "TelId"),
+
+        ("filter-EmailAddress", "EmailAddress"),
+
+        ("filter-DisplayName", "DisplayName"),
+
+        ("filter-DepId", "DepId"),
+
+        ("filter-DepName2", "DepName2"),
+
+        ("filter-CreateDate", "CreateDate")
+
+    };
+
+}
+
+
+
+<table id="datatable" class="table table-striped">
+
+    <thead>
+
+        <tr>
+
+            <th>keyID</th>
+
+            <th>DepName</th>
+
+            <th>UserName</th>
+
+            <th>TELID</th>
+
+            <th>EmailAddress</th>
+
+            <th>DisplayName</th>
+
+            <th>DepID</th>
+
+            <th>DepName2</th>
+
+            <th>Create_Date</th>
+
+        </tr>
+
+        <tr class="users-filter-row">
+
+            @foreach (var (filterId, column) in filterColumns)
+
+            {
+
+                <th class="sorting_disabled">
+
+                    <div class="dropdown column-filter-dropdown" id="@filterId" data-column="@column">
+
+                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle w-100"
+
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-boundary="viewport">
+
+                            篩選 <span class="filter-count">(0)</span>
+
+                        </button>
+
+                        <div class="dropdown-menu users-filter-menu p-2">
+
+                            <input type="text"
+
+                                   class="form-control form-control-sm filter-search-input mb-2"
+
+                                   placeholder="搜尋..."
+
+                                   autocomplete="off" />
+
+                            <div class="users-filter-toolbar d-flex gap-2 mb-2">
+
+                                <button type="button" class="btn btn-link btn-sm p-0 filter-select-all">全選</button>
+
+                                <button type="button" class="btn btn-link btn-sm p-0 filter-clear">清除</button>
+
+                            </div>
+
+                            <div class="users-filter-empty text-muted small d-none">無符合項目</div>
+
+                            <div class="users-filter-options"></div>
+
+                            <div class="users-filter-actions d-flex gap-2 mt-2">
+
+                                <button type="button" class="btn btn-primary btn-sm filter-confirm">確定</button>
+
+                                <button type="button" class="btn btn-outline-secondary btn-sm filter-reset">重設</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </th>
+
+            }
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model.ListData)
+
+        {
+
+            <tr>
+
+                <td>@item.KeyId</td>
+
+                <td>@item.DepName</td>
+
+                <td>@item.UserName</td>
+
+                <td>@item.TelId</td>
+
+                <td>@item.EmailAddress</td>
+
+                <td>@item.DisplayName</td>
+
+                <td>@item.DepId</td>
+
+                <td>@item.DepName2</td>
+
+                <td>@item.CreateDate</td>
+
+            </tr>
+
+        }
+
+    </tbody>
+
+</table>
+
+

@@ -1,0 +1,29 @@
+<div class="sb-sidenav-menu-heading">
+    <i class="fas fa-wrench"></i> Function
+</div>
+<div id="Aulist">
+    <a class="nav-link" asp-controller="Home" asp-action="Index">
+        <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+        Home
+    </a>
+    <a class="nav-link" asp-controller="Home" asp-action="Privacy">
+        <div class="sb-nav-link-icon"><i class="far fa-star"></i></div>
+        Privacy
+    </a>
+</div>
+
+<div class="sb-sidenav-menu-heading"><i class="fas fa-cog"></i> setting</div>
+<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePermission" aria-expanded="false" aria-controls="collapsePermission">
+    <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+    Permission
+    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+</a>
+<div class="collapse" id="collapsePermission" aria-labelledby="headingPermission" data-bs-parent="#sidenavAccordion">
+    <nav class="sb-sidenav-menu-nested nav">
+        <a class="nav-link" asp-controller="Users" asp-action="Index">Users</a>
+    </nav>
+</div>
+<a class="nav-link" asp-controller="Home" asp-action="Index">
+    <div class="sb-nav-link-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+    Logout
+</a>

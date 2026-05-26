@@ -1,0 +1,69 @@
+/* ICP overrides on top of SB Admin (ilc/styles.css) */
+
+html {
+  scroll-behavior: smooth;
+}
+
+#datatable thead tr.users-filter-row th {
+  vertical-align: top;
+  background-color: #f8f9fa;
+  font-weight: normal;
+  padding: 0.35rem;
+}
+
+#datatable thead .users-filter-query-cell {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+#datatable thead tr.users-filter-row th.sorting_disabled {
+  cursor: default;
+  pointer-events: auto;
+}
+
+#datatable thead tr.users-filter-row th.sorting_disabled::before,
+#datatable thead tr.users-filter-row th.sorting_disabled::after {
+  display: none !important;
+}
+
+.users-filter-menu {
+  min-width: 12rem;
+  max-height: 320px;
+}
+
+.users-filter-menu .filter-search-input {
+  width: 100%;
+  font-size: 14px;
+}
+
+.users-filter-options {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.users-filter-options .form-check {
+  margin-bottom: 0.25rem;
+  padding-left: 1.5rem;
+  font-size: 14px;
+}
+
+.users-filter-options .form-check-label {
+  word-break: break-word;
+}
+
+.users-filter-empty {
+  padding: 0.25rem 0;
+}
+
+.users-filter-toolbar .btn-link {
+  text-decoration: none;
+}
+
+.users-filter-actions {
+  border-top: 1px solid #dee2e6;
+  padding-top: 0.5rem;
+}
+
+.users-filter-actions .btn {
+  flex: 1;
+}

@@ -1,0 +1,583 @@
+@{
+
+    ViewData["Title"] = "Users";
+
+}
+
+
+
+@section Styles {
+
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+
+}
+
+
+
+<br />
+
+<div id="DataDiv"></div>
+
+
+
+@section Scripts {
+
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+
+    <script>
+
+        var filterFieldMap = {
+
+            'filter-KeyId': 'KeyIds',
+
+            'filter-DepName': 'DepNames',
+
+            'filter-UserName': 'UserNames',
+
+            'filter-TelId': 'TelIds',
+
+            'filter-EmailAddress': 'EmailAddresses',
+
+            'filter-DisplayName': 'DisplayNames',
+
+            'filter-DepId': 'DepIds',
+
+            'filter-DepName2': 'DepNames2',
+
+            'filter-CreateDate': 'CreateDates'
+
+        };
+
+
+
+        $(function () {
+            if (window.ProDataTables && ProDataTables.initUsers) {
+                ProDataTables.initUsers({
+                    tableSelector: '#datatable',
+                    dataDivSelector: '#DataDiv',
+                    filterDropdownSelector: '.column-filter-dropdown',
+                    filterFieldMap: filterFieldMap,
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "Users")',
+                    queryUrl: '@Url.Action("Query", "Users")',
+                    pageLength: 10,
+                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    initialSort: [[0, 'desc']],
+                    searchDebounceMs: 300
+                });
+            }
+        });
+
+        var filterSearchDebounceTimers = {};
+
+        var tableSortState = [[0, 'desc']];
+
+
+
+        $(function () {
+
+            return;
+
+            Query();
+
+
+
+            $(document).on('change', '.column-filter-cb', function () {
+
+                updateFilterCount($(this).closest('.column-filter-dropdown'));
+
+            });
+
+
+
+            $(document).on('click', '.filter-select-all', function (e) {
+
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                var $dropdown = $(this).closest('.column-filter-dropdown');
+
+                $dropdown.find('.users-filter-options .form-check:visible .column-filter-cb').prop('checked', true);
+
+                updateFilterCount($dropdown);
+
+            });
+
+
+
+            $(document).on('click', '.filter-clear', function (e) {
+
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                var $dropdown = $(this).closest('.column-filter-dropdown');
+
+                $dropdown.find('.users-filter-options .form-check:visible .column-filter-cb').prop('checked', false);
+
+                updateFilterCount($dropdown);
+
+            });
+
+
+
+            $(document).on('click', '.filter-confirm', function (e) {
+
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                var $dropdown = $(this).closest('.column-filter-dropdown');
+
+                closeFilterDropdown($dropdown);
+
+                Query();
+
+            });
+
+
+
+            $(document).on('click', '.filter-reset', function (e) {
+
+                e.preventDefault();
+
+                e.stopPropagation();
+
+                var $dropdown = $(this).closest('.column-filter-dropdown');
+
+                $dropdown.find('.filter-search-input').val('');
+
+                $dropdown.find('.column-filter-cb').prop('checked', false);
+
+                updateFilterCount($dropdown);
+
+                loadDropdownOptions($dropdown, null, function () {
+
+                    closeFilterDropdown($dropdown);
+
+                    Query();
+
+                });
+
+            });
+
+
+
+            $(document).on('click keydown', '.filter-search-input', function (e) {
+
+                e.stopPropagation();
+
+            });
+
+
+
+            $(document).on('input', '.filter-search-input', function () {
+
+                var $dropdown = $(this).closest('.column-filter-dropdown');
+
+                var term = $(this).val();
+
+                filterCheckboxList($dropdown, term);
+
+
+
+                var dropdownId = $dropdown.attr('id');
+
+                clearTimeout(filterSearchDebounceTimers[dropdownId]);
+
+                filterSearchDebounceTimers[dropdownId] = setTimeout(function () {
+
+                    var searchTerm = (term || '').trim();
+
+                    loadDropdownOptions($dropdown, searchTerm.length > 0 ? searchTerm : null);
+
+                }, 300);
+
+            });
+
+
+
+            $(document).on('shown.bs.dropdown', '.column-filter-dropdown', function () {
+
+                $(this).find('.filter-search-input').trigger('focus');
+
+            });
+
+
+
+            $(document).on('hidden.bs.dropdown', '.column-filter-dropdown', function () {
+
+                var $dropdown = $(this);
+
+                $dropdown.find('.filter-search-input').val('');
+
+                loadDropdownOptions($dropdown, null);
+
+            });
+
+        });
+
+
+
+        function closeFilterDropdown($dropdown) {
+
+            var toggle = $dropdown.find('[data-bs-toggle="dropdown"]')[0];
+
+            if (toggle && window.bootstrap && bootstrap.Dropdown) {
+
+                bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
+
+            }
+
+        }
+
+
+
+        function saveTableSortState() {
+
+            var tableEl = document.getElementById('datatable');
+
+            if (!tableEl || !$.fn.dataTable.isDataTable(tableEl)) {
+
+                return;
+
+            }
+
+            var api = $('#datatable').DataTable();
+
+            tableSortState = api.order();
+
+        }
+
+
+
+        function getFilterValues() {
+
+            var values = {};
+
+            $('.column-filter-dropdown').each(function () {
+
+                values[this.id] = getFilterValuesForDropdown($(this));
+
+            });
+
+            return values;
+
+        }
+
+
+
+        function getFilterValuesForDropdown($dropdown) {
+
+            return $dropdown.find('.column-filter-cb:checked').map(function () {
+
+                return $(this).val();
+
+            }).get();
+
+        }
+
+
+
+        function buildQueryPayload(saved) {
+
+            var payload = {};
+
+            $.each(filterFieldMap, function (dropdownId, paramName) {
+
+                var selected = (saved && saved[dropdownId]) ? saved[dropdownId] : [];
+
+                $.each(selected, function (index, value) {
+
+                    payload[paramName + '[' + index + ']'] = value;
+
+                });
+
+            });
+
+            return payload;
+
+        }
+
+
+
+        function renderCheckboxOptions($dropdown, options) {
+
+            var $container = $dropdown.find('.users-filter-options');
+
+            $container.empty();
+
+            $.each(options, function (index, value) {
+
+                var id = $dropdown.attr('id') + '-cb-' + index;
+
+                var $item = $('<div class="form-check"></div>');
+
+                $item.append(
+
+                    $('<input type="checkbox" class="form-check-input column-filter-cb">')
+
+                        .attr('id', id)
+
+                        .attr('value', value)
+
+                );
+
+                $item.append(
+
+                    $('<label class="form-check-label"></label>')
+
+                        .attr('for', id)
+
+                        .text(value)
+
+                );
+
+                $container.append($item);
+
+            });
+
+        }
+
+
+
+        function restoreChecks($dropdown, values) {
+
+            $dropdown.find('.column-filter-cb').each(function () {
+
+                $(this).prop('checked', values.indexOf($(this).val()) >= 0);
+
+            });
+
+            updateFilterCount($dropdown);
+
+        }
+
+
+
+        function filterCheckboxList($dropdown, term) {
+
+            term = (term || '').toLowerCase().trim();
+
+            var visibleCount = 0;
+
+            $dropdown.find('.users-filter-options .form-check').each(function () {
+
+                var text = $(this).find('.form-check-label').text().toLowerCase();
+
+                var match = !term || text.indexOf(term) >= 0;
+
+                $(this).toggle(match);
+
+                if (match) {
+
+                    visibleCount++;
+
+                }
+
+            });
+
+            $dropdown.find('.users-filter-empty').toggleClass('d-none', visibleCount > 0);
+
+        }
+
+
+
+        function loadDropdownOptions($dropdown, search, done) {
+
+            var column = $dropdown.data('column');
+
+            var selected = getFilterValuesForDropdown($dropdown);
+
+            var params = { column: column };
+
+            if (search) {
+
+                params.search = search;
+
+            }
+
+
+
+            $.get('@Url.Action("GetFilterOptions", "Users")', params, function (options) {
+
+                renderCheckboxOptions($dropdown, options);
+
+                restoreChecks($dropdown, selected);
+
+                var currentTerm = $dropdown.find('.filter-search-input').val();
+
+                filterCheckboxList($dropdown, currentTerm);
+
+                if (done) {
+
+                    done();
+
+                }
+
+            });
+
+        }
+
+
+
+        function loadFilterOptions(done) {
+
+            var $filters = $('.column-filter-dropdown');
+
+            if ($filters.length === 0) {
+
+                if (done) done();
+
+                return;
+
+            }
+
+
+
+            var pending = $filters.length;
+
+            $filters.each(function () {
+
+                var $dropdown = $(this);
+
+                loadDropdownOptions($dropdown, null, function () {
+
+                    pending--;
+
+                    if (pending === 0 && done) {
+
+                        done();
+
+                    }
+
+                });
+
+            });
+
+        }
+
+
+
+        function restoreFilterValues(saved) {
+
+            if (!saved) return;
+
+            $.each(saved, function (dropdownId, values) {
+
+                var $dropdown = $('#' + dropdownId);
+
+                restoreChecks($dropdown, values);
+
+            });
+
+        }
+
+
+
+        function updateFilterCount($dropdown) {
+
+            var count = $dropdown.find('.column-filter-cb:checked').length;
+
+            $dropdown.find('.filter-count').text('(' + count + ')');
+
+        }
+
+
+
+        function initColumnFilters() {
+
+            $('.column-filter-dropdown').each(function () {
+
+                updateFilterCount($(this));
+
+            });
+
+        }
+
+
+
+        function initDataTable() {
+
+            var tableEl = document.getElementById('datatable');
+
+            if (!tableEl) {
+
+                return;
+
+            }
+
+            if ($.fn.dataTable.isDataTable(tableEl)) {
+
+                $('#datatable').DataTable().destroy();
+
+            }
+
+            $('#datatable').DataTable({
+
+                orderCellsTop: true,
+
+                order: tableSortState,
+
+                searching: false,
+
+                pageLength: 25,
+
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+
+                destroy: true
+
+            });
+
+        }
+
+
+
+        function Query() {
+
+            saveTableSortState();
+
+            var saved = getFilterValues();
+
+            $('#DataDiv').empty();
+
+            $.ajax({
+
+                url: '@Url.Action("Query", "Users")',
+
+                type: 'POST',
+
+                traditional: true,
+
+                data: buildQueryPayload(saved),
+
+                success: function (data) {
+
+                    $('#DataDiv').html(data);
+
+                    loadFilterOptions(function () {
+
+                        restoreFilterValues(saved);
+
+                        initColumnFilters();
+
+                        initDataTable();
+
+                    });
+
+                }
+
+            });
+
+        }
+
+    </script>
+
+}
+
+
