@@ -1,12 +1,12 @@
 @using System.Globalization
 @inject IConfiguration Configuration
-@inject ICP.Services.LoginSessionService LoginSession
+@inject ICP.Services.UserAuthService UserAuth
 @inject Microsoft.Extensions.Localization.IStringLocalizer<ICP.SharedResource> Localizer
 @{
     var brandName = Configuration["App:BrandName"] ?? "ICP";
     var titleSuffix = Configuration["App:TitleSuffix"] ?? "ICP";
     var pageTitle = ViewData["Title"]?.ToString();
-    var currentUser = LoginSession.GetCurrentUser();
+    var currentUser = UserAuth.GetSessionUserInfo();
     var displayLabel = currentUser?.DisplayName ?? currentUser?.UserName ?? currentUser?.TelId ?? "Guest";
     var telIdLabel = currentUser?.TelId;
 }
@@ -52,7 +52,11 @@
 </head>
 <body>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand ps-3" asp-controller="Home" asp-action="Index">@brandName</a>
+
+        <a class="navbar-brand ps-3 d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+            <img src="~/Files/TEL_tm_rgb.png" alt="TEL Logo" style="height: 28px; width: auto;" />
+            <span>@brandName</span>
+        </a>
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" type="button" aria-label="Toggle navigation">
             <i class="fas fa-bars"></i>
         </button>

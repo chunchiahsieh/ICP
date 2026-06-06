@@ -1,21 +1,34 @@
-<div class="sb-sidenav-menu-heading">
-    <i class="fas fa-wrench"></i> @Localizer["Nav.Function"]
-</div>
-<div id="Aulist">
-    <a class="nav-link" asp-controller="Home" asp-action="Index">
-        <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-        @Localizer["Nav.Home"]
-    </a>
-    <a class="nav-link" asp-controller="Home" asp-action="Privacy">
-        <div class="sb-nav-link-icon"><i class="far fa-star"></i></div>
-        @Localizer["Nav.Privacy"]
-    </a>
-</div>
+<div class="sb-sidenav-menu-heading">@Localizer["Nav.Function"]</div>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.ShipInfo"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.AddDiSa"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.MassUpdateNonNcpi"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.MassUpdateNcpi"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.Export"]</a>
 
-<div class="sb-sidenav-menu-heading"><i class="fas fa-cog"></i> @Localizer["Nav.Setting"]</div>
+<div class="sb-sidenav-menu-heading">@Localizer["Nav.Setting"]</div>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.EtaDelDateTable"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.BuCode"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.OrderType"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.WhCode"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.DeliveryToList"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.PickUpLocation"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.DefaultDeliveryWh"]</a>
+
+<div class="sb-sidenav-menu-heading">@Localizer["Nav.Report"]</div>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.ShippingReport"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.CompareIcpVsArUr"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.MassDataReport"]</a>
+
+<div class="sb-sidenav-menu-heading">@Localizer["Nav.Forwarder"]</div>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.ForwarderDataUpload"]</a>
+
+<div class="sb-sidenav-menu-heading">@Localizer["Nav.Broker"]</div>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.CustomsDataDownload"]</a>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.TariffData"]</a>
+
+<div class="sb-sidenav-menu-heading">@Localizer["Nav.Admin"]</div>
 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePermission" aria-expanded="false" aria-controls="collapsePermission">
-    <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
-    @Localizer["Nav.Permission"]
+    @Localizer["Nav.Permissions"]
     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
 </a>
 <div class="collapse" id="collapsePermission" aria-labelledby="headingPermission" data-bs-parent="#sidenavAccordion">
@@ -28,6 +41,8 @@
         <a class="nav-link" asp-controller="RoleDepIds" asp-action="Index">@Localizer["Nav.RoleDepIds"]</a>
     </nav>
 </div>
+<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.DropDownList"]</a>
+
 <a class="nav-link" asp-controller="Login" asp-action="Logout">
     <div class="sb-nav-link-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
     @Localizer["Common.Logout"]

@@ -1,0 +1,85 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = Localizer["Roles.Title"];
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+<div data-permissions="Views.Permission.Roles.View" data-i18n-key="Views.Permission.Roles.View">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["Roles.Title"]</h4>
+        <div class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    id="btnBatchDisable"
+                    data-permissions="Views.Permission.Roles.Disable"
+                    data-i18n-key="Views.Permission.Roles.Disable">
+                @Localizer["Common.BatchDisable"]
+            </button>
+
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="btnCreate"
+                    data-permissions="Views.Permission.Roles.Create"
+                    data-i18n-key="Views.Permission.Roles.Create">
+                @Localizer["Common.Add"]
+            </button>
+        </div>
+    </div>
+    <div id="DataDiv"></div>
+</div>
+
+@await Html.PartialAsync("View.EditModal")
+@await Html.PartialAsync("_CrudConfirmModal")
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-crud.js" asp-append-version="true"></script>
+    <script>
+        var filterFieldMap = {
+            'filter-RoleCode': 'RoleCodes',
+            'filter-RoleName': 'RoleNames',
+            'filter-IsEnabled': 'IsEnableds',
+            'filter-Description': 'Descriptions',
+            'filter-CreateTime': 'CreateTimes',
+            'filter-CreateUser': 'CreateUsers',
+            'filter-UpdateTime': 'UpdateTimes',
+            'filter-UpdateUser': 'UpdateUsers'
+        };
+
+        $(function () {
+            var tableInstance;
+            if (window.ProDataTables && ProDataTables.initUsers) {
+                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+                    filterFieldMap: filterFieldMap,
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "Roles")',
+                    queryUrl: '@Url.Action("Query", "Roles")',
+                    initialSort: [[1, 'asc']]
+                }));
+            }
+
+            if (window.ProCrud) {
+                ProCrud.init({
+                    getUrl: '@Url.Action("Get", "Roles")',
+                    saveUrl: '@Url.Action("Save", "Roles")',
+                    disableUrl: '@Url.Action("Disable", "Roles")',
+                    batchDisableUrl: '@Url.Action("BatchDisable", "Roles")',
+                    batchDisableConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Roles.BatchDisableConfirm"].Value)),
+                    createTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Roles.CreateTitle"].Value)),
+                    editTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Roles.EditTitle"].Value)),
+                    disableConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Roles.DisableConfirm"].Value)),
+                    onSuccess: function () {
+                        if (tableInstance && tableInstance.reload) {
+                            tableInstance.reload();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

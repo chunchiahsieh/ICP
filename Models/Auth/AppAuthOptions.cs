@@ -4,7 +4,9 @@ public class AppAuthOptions
 {
     public const string SectionName = "App";
 
-    public string Mode { get; set; } = "DEV";
+    public string Mode { get; set; } = "PRD";//"DEV";
+
+    public string? SimulatedWindowsIdentity { get; set; }
 
     public DevUserOptions DevUser { get; set; } = new();
 }

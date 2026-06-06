@@ -1,4 +1,5 @@
 using ICP.Data;
+using ICP.Infrastructure;
 using ICP.Models;
 using ICP.Models.Ilc;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ICP.Controllers;
 
+[PermissionModule]
 public class UsersController : Controller
 {
     private const int FilterOptionsLimit = 500;
@@ -32,14 +34,14 @@ public class UsersController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return View("View");
     }
 
     [HttpPost]
     public async Task<IActionResult> Query([FromForm] UsersSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryUsersAsync(criteria, cancellationToken);
-        return PartialView("_SearchList", new UsersSearchListViewModel { ListData = list });
+        return PartialView("View.List", new UsersSearchListViewModel { ListData = list });
     }
 
     [HttpGet]

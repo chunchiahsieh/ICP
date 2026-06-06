@@ -1,5 +1,6 @@
 using ICP.Data;
 using ICP.Helpers;
+using ICP.Infrastructure;
 using ICP.Models;
 using ICP.Models.Icp;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
+[PermissionModule]
 public class RolePermissionsController : Controller
 {
     private static readonly HashSet<string> AllowedFilterColumns = new(StringComparer.OrdinalIgnoreCase)
@@ -47,7 +49,7 @@ public class RolePermissionsController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return View("View");
     }
 
     [HttpPost]
@@ -169,7 +171,7 @@ public class RolePermissionsController : Controller
     public async Task<IActionResult> QueryRoles([FromForm] RolesSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryRolesPickAsync(criteria, cancellationToken);
-        return PartialView("_RolesPickList", new RolesSearchListViewModel { ListData = list });
+        return PartialView("View.RolesPickList", new RolesSearchListViewModel { ListData = list });
     }
 
     [HttpGet]
@@ -199,7 +201,7 @@ public class RolePermissionsController : Controller
     public async Task<IActionResult> QueryResources([FromForm] ResourcesSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryResourcesPickAsync(criteria, cancellationToken);
-        return PartialView("_ResourcesPickList", new ResourcesSearchListViewModel { ListData = list });
+        return PartialView("View.ResourcesPickList", new ResourcesSearchListViewModel { ListData = list });
     }
 
     [HttpGet]
@@ -232,7 +234,7 @@ public class RolePermissionsController : Controller
     public async Task<IActionResult> Query([FromForm] RolePermissionsSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryRolePermissionsAsync(criteria, cancellationToken);
-        return PartialView("_SearchList", new RolePermissionsSearchListViewModel { ListData = list });
+        return PartialView("View.List", new RolePermissionsSearchListViewModel { ListData = list });
     }
 
     [HttpGet]

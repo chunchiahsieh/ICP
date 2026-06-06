@@ -43,8 +43,9 @@ public partial class PermissionScannerService
                 }
 
                 var fullOpeningTag = match.Value;
-                var permissionKey = ExtractAttributeValue(fullOpeningTag, "data-permission-key");
-                var permissionName = ResolveResourceName(permissionKey, fullOpeningTag, content, match, tag, resourceCode);
+                var i18nKey = ExtractAttributeValue(fullOpeningTag, "data-i18n-key")
+                    ?? ExtractAttributeValue(fullOpeningTag, "data-permission-key");
+                var permissionName = ResolveResourceName(i18nKey, fullOpeningTag, content, match, tag, resourceCode);
                 var innerText = ExtractInnerText(content, match.Index + match.Length, tag);
 
                 if (string.IsNullOrWhiteSpace(permissionName) && !string.IsNullOrWhiteSpace(innerText))
@@ -73,14 +74,14 @@ public partial class PermissionScannerService
     }
 
     private string ResolveResourceName(
-        string? permissionKey,
+        string? i18nKey,
         string fullOpeningTag,
         string content,
         Match match,
         string tag,
         string resourceCode)
     {
-        var fromKey = ResolveLocalizedName(permissionKey);
+        var fromKey = ResolveLocalizedName(i18nKey);
         if (!string.IsNullOrWhiteSpace(fromKey))
         {
             return fromKey;
@@ -203,7 +204,25 @@ public partial class PermissionScannerService
             : relativeViewPath;
 
         var parts = withoutExt.Split('/');
+        if (parts.Length >= 2 &&
+            parts[0].Equals("Permission", StringComparison.OrdinalIgnoreCase))
+        {
+            parts = parts[1..];
+        }
+
+        if (parts.Length > 0 &&
+            parts[0].Equals("RoleResources", StringComparison.OrdinalIgnoreCase))
+        {
+            parts[0] = "Resources";
+        }
+
         if (parts.Length == 1)
+        {
+            return $"/{parts[0]}";
+        }
+
+        if (parts[^1].Equals("View", StringComparison.OrdinalIgnoreCase)
+            && !parts[^1].Contains('.'))
         {
             return $"/{parts[0]}";
         }

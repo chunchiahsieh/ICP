@@ -252,11 +252,56 @@
   <data name="Message.SelectRoleAndResource" xml:space="preserve">
     <value>Role と Resource を1件以上選択してください</value>
   </data>
+  <data name="ErrorPage.Message" xml:space="preserve">
+    <value>この機能はまだ利用できません。後でもう一度お試しください。</value>
+  </data>
+  <data name="ErrorPage.Title" xml:space="preserve">
+    <value>ERROR</value>
+  </data>
   <data name="Message.ValidRoleResourceNotFound" xml:space="preserve">
     <value>有効な Role または Resource が見つかりません</value>
   </data>
+  <data name="Nav.Admin" xml:space="preserve">
+    <value>ADMIN</value>
+  </data>
+  <data name="Nav.AddDiSa" xml:space="preserve">
+    <value>Add DI/SA</value>
+  </data>
+  <data name="Nav.Broker" xml:space="preserve">
+    <value>BROKER</value>
+  </data>
+  <data name="Nav.BuCode" xml:space="preserve">
+    <value>BU Code</value>
+  </data>
+  <data name="Nav.CompareIcpVsArUr" xml:space="preserve">
+    <value>Compare ICP vs AR/UR</value>
+  </data>
+  <data name="Nav.CustomsDataDownload" xml:space="preserve">
+    <value>Customs Data Download</value>
+  </data>
+  <data name="Nav.DefaultDeliveryWh" xml:space="preserve">
+    <value>Default Delivery W/H</value>
+  </data>
+  <data name="Nav.DeliveryToList" xml:space="preserve">
+    <value>Delivery To List</value>
+  </data>
+  <data name="Nav.DropDownList" xml:space="preserve">
+    <value>Drop Down List</value>
+  </data>
+  <data name="Nav.EtaDelDateTable" xml:space="preserve">
+    <value>ETA-Del Date Table</value>
+  </data>
+  <data name="Nav.Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Nav.Forwarder" xml:space="preserve">
+    <value>FORWARDER</value>
+  </data>
+  <data name="Nav.ForwarderDataUpload" xml:space="preserve">
+    <value>Forwarder Data Upload</value>
+  </data>
   <data name="Nav.Function" xml:space="preserve">
-    <value>機能</value>
+    <value>FUNCTION</value>
   </data>
   <data name="Nav.Home" xml:space="preserve">
     <value>ホーム</value>
@@ -266,6 +311,27 @@
   </data>
   <data name="Nav.Privacy" xml:space="preserve">
     <value>プライバシー</value>
+  </data>
+  <data name="Nav.MassDataReport" xml:space="preserve">
+    <value>Mass Data Report</value>
+  </data>
+  <data name="Nav.MassUpdateNonNcpi" xml:space="preserve">
+    <value>Mass Update-non NCPI</value>
+  </data>
+  <data name="Nav.MassUpdateNcpi" xml:space="preserve">
+    <value>Mass Update-NCPI</value>
+  </data>
+  <data name="Nav.OrderType" xml:space="preserve">
+    <value>Order Type</value>
+  </data>
+  <data name="Nav.Permissions" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="Nav.PickUpLocation" xml:space="preserve">
+    <value>Pick Up Location</value>
+  </data>
+  <data name="Nav.Report" xml:space="preserve">
+    <value>REPORT</value>
   </data>
   <data name="Nav.Resources" xml:space="preserve">
     <value>リソース</value>
@@ -283,7 +349,19 @@
     <value>ユーザーロール</value>
   </data>
   <data name="Nav.Setting" xml:space="preserve">
-    <value>設定</value>
+    <value>SETTING</value>
+  </data>
+  <data name="Nav.ShipInfo" xml:space="preserve">
+    <value>Ship Info</value>
+  </data>
+  <data name="Nav.ShippingReport" xml:space="preserve">
+    <value>Shipping Report</value>
+  </data>
+  <data name="Nav.TariffData" xml:space="preserve">
+    <value>Tariff Data</value>
+  </data>
+  <data name="Nav.WhCode" xml:space="preserve">
+    <value>W/H Code</value>
   </data>
   <data name="Nav.Users" xml:space="preserve">
     <value>ユーザー</value>
@@ -334,6 +412,54 @@
     <value>ユーザーロール照会</value>
   </data>
   <data name="Permission.User.View" xml:space="preserve">
+    <value>ユーザー照会</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.Create" xml:space="preserve">
+    <value>部門ロール追加</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.Delete" xml:space="preserve">
+    <value>部門ロール削除</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.View" xml:space="preserve">
+    <value>部門ロール照会</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.Create" xml:space="preserve">
+    <value>ロール権限追加</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.Delete" xml:space="preserve">
+    <value>ロール権限削除</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.View" xml:space="preserve">
+    <value>ロール権限照会</value>
+  </data>
+  <data name="Views.Permission.RoleResources.Scan" xml:space="preserve">
+    <value>権限スキャン同期</value>
+  </data>
+  <data name="Views.Permission.RoleResources.View" xml:space="preserve">
+    <value>リソース照会</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.Create" xml:space="preserve">
+    <value>ユーザーロール追加</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.Delete" xml:space="preserve">
+    <value>ユーザーロール削除</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.View" xml:space="preserve">
+    <value>ユーザーロール照会</value>
+  </data>
+  <data name="Views.Permission.Roles.Create" xml:space="preserve">
+    <value>ロール追加</value>
+  </data>
+  <data name="Views.Permission.Roles.Disable" xml:space="preserve">
+    <value>ロール無効化</value>
+  </data>
+  <data name="Views.Permission.Roles.Edit" xml:space="preserve">
+    <value>ロール編集</value>
+  </data>
+  <data name="Views.Permission.Roles.View" xml:space="preserve">
+    <value>ロール照会</value>
+  </data>
+  <data name="Views.Permission.Users.View" xml:space="preserve">
     <value>ユーザー照会</value>
   </data>
   <data name="Resources.ScanFailed" xml:space="preserve">

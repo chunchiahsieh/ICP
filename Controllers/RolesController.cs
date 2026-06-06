@@ -1,5 +1,6 @@
 using ICP.Data;
 using ICP.Helpers;
+using ICP.Infrastructure;
 using ICP.Models;
 using ICP.Models.Icp;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
+[PermissionModule]
 public class RolesController : Controller
 {
     private static readonly HashSet<string> AllowedFilterColumns = new(StringComparer.OrdinalIgnoreCase)
@@ -35,7 +37,7 @@ public class RolesController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return View("View");
     }
 
     [HttpGet]
@@ -175,7 +177,7 @@ public class RolesController : Controller
     public async Task<IActionResult> Query([FromForm] RolesSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryRolesAsync(criteria, cancellationToken);
-        return PartialView("_SearchList", new RolesSearchListViewModel { ListData = list });
+        return PartialView("View.List", new RolesSearchListViewModel { ListData = list });
     }
 
     [HttpGet]

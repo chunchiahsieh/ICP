@@ -1,5 +1,6 @@
 using ICP.Data;
 using ICP.Helpers;
+using ICP.Infrastructure;
 using ICP.Models;
 using ICP.Models.Icp;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ICP.Controllers;
 
+[PermissionModule]
 public class ResourcesController : Controller
 {
     private static readonly HashSet<string> AllowedFilterColumns = new(StringComparer.OrdinalIgnoreCase)
@@ -31,7 +33,7 @@ public class ResourcesController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return View("View");
     }
 
     [HttpGet]
@@ -52,7 +54,7 @@ public class ResourcesController : Controller
     public async Task<IActionResult> Query([FromForm] ResourcesSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryResourcesAsync(criteria, cancellationToken);
-        return PartialView("_SearchList", new ResourcesSearchListViewModel { ListData = list });
+        return PartialView("View.List", new ResourcesSearchListViewModel { ListData = list });
     }
 
     [HttpGet]

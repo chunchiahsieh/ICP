@@ -252,11 +252,56 @@
   <data name="Message.SelectRoleAndResource" xml:space="preserve">
     <value>請至少選擇一筆 Role 與一筆 Resource</value>
   </data>
+  <data name="ErrorPage.Message" xml:space="preserve">
+    <value>此功能尚未建立，請稍後再試。</value>
+  </data>
+  <data name="ErrorPage.Title" xml:space="preserve">
+    <value>ERROR</value>
+  </data>
   <data name="Message.ValidRoleResourceNotFound" xml:space="preserve">
     <value>找不到有效的 Role 或 Resource</value>
   </data>
+  <data name="Nav.Admin" xml:space="preserve">
+    <value>ADMIN</value>
+  </data>
+  <data name="Nav.AddDiSa" xml:space="preserve">
+    <value>Add DI/SA</value>
+  </data>
+  <data name="Nav.Broker" xml:space="preserve">
+    <value>BROKER</value>
+  </data>
+  <data name="Nav.BuCode" xml:space="preserve">
+    <value>BU Code</value>
+  </data>
+  <data name="Nav.CompareIcpVsArUr" xml:space="preserve">
+    <value>Compare ICP vs AR/UR</value>
+  </data>
+  <data name="Nav.CustomsDataDownload" xml:space="preserve">
+    <value>Customs Data Download</value>
+  </data>
+  <data name="Nav.DefaultDeliveryWh" xml:space="preserve">
+    <value>Default Delivery W/H</value>
+  </data>
+  <data name="Nav.DeliveryToList" xml:space="preserve">
+    <value>Delivery To List</value>
+  </data>
+  <data name="Nav.DropDownList" xml:space="preserve">
+    <value>Drop Down List</value>
+  </data>
+  <data name="Nav.EtaDelDateTable" xml:space="preserve">
+    <value>ETA-Del Date Table</value>
+  </data>
+  <data name="Nav.Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Nav.Forwarder" xml:space="preserve">
+    <value>FORWARDER</value>
+  </data>
+  <data name="Nav.ForwarderDataUpload" xml:space="preserve">
+    <value>Forwarder Data Upload</value>
+  </data>
   <data name="Nav.Function" xml:space="preserve">
-    <value>功能</value>
+    <value>FUNCTION</value>
   </data>
   <data name="Nav.Home" xml:space="preserve">
     <value>首頁</value>
@@ -266,6 +311,27 @@
   </data>
   <data name="Nav.Privacy" xml:space="preserve">
     <value>隱私權</value>
+  </data>
+  <data name="Nav.MassDataReport" xml:space="preserve">
+    <value>Mass Data Report</value>
+  </data>
+  <data name="Nav.MassUpdateNonNcpi" xml:space="preserve">
+    <value>Mass Update-non NCPI</value>
+  </data>
+  <data name="Nav.MassUpdateNcpi" xml:space="preserve">
+    <value>Mass Update-NCPI</value>
+  </data>
+  <data name="Nav.OrderType" xml:space="preserve">
+    <value>Order Type</value>
+  </data>
+  <data name="Nav.Permissions" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="Nav.PickUpLocation" xml:space="preserve">
+    <value>Pick Up Location</value>
+  </data>
+  <data name="Nav.Report" xml:space="preserve">
+    <value>REPORT</value>
   </data>
   <data name="Nav.Resources" xml:space="preserve">
     <value>資源</value>
@@ -283,7 +349,19 @@
     <value>人員角色</value>
   </data>
   <data name="Nav.Setting" xml:space="preserve">
-    <value>設定</value>
+    <value>SETTING</value>
+  </data>
+  <data name="Nav.ShipInfo" xml:space="preserve">
+    <value>Ship Info</value>
+  </data>
+  <data name="Nav.ShippingReport" xml:space="preserve">
+    <value>Shipping Report</value>
+  </data>
+  <data name="Nav.TariffData" xml:space="preserve">
+    <value>Tariff Data</value>
+  </data>
+  <data name="Nav.WhCode" xml:space="preserve">
+    <value>W/H Code</value>
   </data>
   <data name="Nav.Users" xml:space="preserve">
     <value>使用者</value>
@@ -334,6 +412,54 @@
     <value>使用者角色查詢</value>
   </data>
   <data name="Permission.User.View" xml:space="preserve">
+    <value>使用者查詢</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.Create" xml:space="preserve">
+    <value>部門角色新增</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.Delete" xml:space="preserve">
+    <value>部門角色刪除</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.View" xml:space="preserve">
+    <value>部門角色查詢</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.Create" xml:space="preserve">
+    <value>角色權限新增</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.Delete" xml:space="preserve">
+    <value>角色權限刪除</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.View" xml:space="preserve">
+    <value>角色權限查詢</value>
+  </data>
+  <data name="Views.Permission.RoleResources.Scan" xml:space="preserve">
+    <value>權限掃描同步</value>
+  </data>
+  <data name="Views.Permission.RoleResources.View" xml:space="preserve">
+    <value>資源查詢</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.Create" xml:space="preserve">
+    <value>使用者角色新增</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.Delete" xml:space="preserve">
+    <value>使用者角色刪除</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.View" xml:space="preserve">
+    <value>使用者角色查詢</value>
+  </data>
+  <data name="Views.Permission.Roles.Create" xml:space="preserve">
+    <value>角色新增</value>
+  </data>
+  <data name="Views.Permission.Roles.Disable" xml:space="preserve">
+    <value>角色停用</value>
+  </data>
+  <data name="Views.Permission.Roles.Edit" xml:space="preserve">
+    <value>角色編輯</value>
+  </data>
+  <data name="Views.Permission.Roles.View" xml:space="preserve">
+    <value>角色查詢</value>
+  </data>
+  <data name="Views.Permission.Users.View" xml:space="preserve">
     <value>使用者查詢</value>
   </data>
   <data name="Resources.ScanFailed" xml:space="preserve">

@@ -8,14 +8,14 @@ namespace ICP.Filters;
 
 public class RequireLoginFilter : IAsyncActionFilter
 {
-    private readonly LoginSessionService _loginSessionService;
+    private readonly UserAuthService _userAuthService;
     private readonly IStringLocalizer<SharedResource> _localizer;
 
     public RequireLoginFilter(
-        LoginSessionService loginSessionService,
+        UserAuthService userAuthService,
         IStringLocalizer<SharedResource> localizer)
     {
-        _loginSessionService = loginSessionService;
+        _userAuthService = userAuthService;
         _localizer = localizer;
     }
 
@@ -27,7 +27,7 @@ public class RequireLoginFilter : IAsyncActionFilter
             return;
         }
 
-        if (_loginSessionService.IsAuthenticated)
+        if (_userAuthService.IsAuthenticated)
         {
             await next();
             return;

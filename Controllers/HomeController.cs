@@ -3,32 +3,27 @@ using ICP.Models;
 using ICP.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly LoginSessionService _loginSessionService;
-    private readonly IStringLocalizer<SharedResource> _localizer;
+    private readonly UserAuthService _userAuthService;
 
     public HomeController(
         ILogger<HomeController> logger,
-        LoginSessionService loginSessionService,
-        IStringLocalizer<SharedResource> localizer)
+        UserAuthService userAuthService)
     {
         _logger = logger;
-        _loginSessionService = loginSessionService;
-        _localizer = localizer;
+        _userAuthService = userAuthService;
     }
 
     [AllowAnonymous]
-    public async Task<IActionResult> Index(string? login, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string Login = "", string Type = "", CancellationToken cancellationToken = default)
     {
-        if (!await _loginSessionService.TryEstablishSessionAsync(login, cancellationToken))
+        if (!await _userAuthService.TempDataSet(this, Login, Type, cancellationToken))
         {
-            TempData["ReturnMsg"] = _localizer["Auth.FailedContactIs"].Value;
             return RedirectToAction("Index", "Login");
         }
 

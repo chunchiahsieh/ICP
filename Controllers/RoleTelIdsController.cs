@@ -1,5 +1,6 @@
 using ICP.Data;
 using ICP.Helpers;
+using ICP.Infrastructure;
 using ICP.Models;
 using ICP.Models.Icp;
 using ICP.Models.Ilc;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
+[PermissionModule]
 public class RoleTelIdsController : Controller
 {
     private static readonly HashSet<string> AllowedFilterColumns = new(StringComparer.OrdinalIgnoreCase)
@@ -54,7 +56,7 @@ public class RoleTelIdsController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return View("View");
     }
 
     [HttpPost]
@@ -173,7 +175,7 @@ public class RoleTelIdsController : Controller
     public async Task<IActionResult> QueryRoles([FromForm] RolesSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryRolesPickAsync(criteria, cancellationToken);
-        return PartialView("_RolesPickList", new RolesSearchListViewModel { ListData = list });
+        return PartialView("View.RolesPickList", new RolesSearchListViewModel { ListData = list });
     }
 
     [HttpGet]
@@ -203,7 +205,7 @@ public class RoleTelIdsController : Controller
     public async Task<IActionResult> QueryUsers([FromForm] UsersSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryUsersPickAsync(criteria, cancellationToken);
-        return PartialView("_UsersPickList", new UsersSearchListViewModel { ListData = list });
+        return PartialView("View.UsersPickList", new UsersSearchListViewModel { ListData = list });
     }
 
     [HttpGet]
@@ -236,7 +238,7 @@ public class RoleTelIdsController : Controller
     public async Task<IActionResult> Query([FromForm] RoleTelIdsSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryRoleTelIdsAsync(criteria, cancellationToken);
-        return PartialView("_SearchList", new RoleTelIdsSearchListViewModel { ListData = list });
+        return PartialView("View.List", new RoleTelIdsSearchListViewModel { ListData = list });
     }
 
     [HttpGet]

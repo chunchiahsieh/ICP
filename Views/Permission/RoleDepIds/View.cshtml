@@ -1,0 +1,88 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = Localizer["RoleDepIds.Title"];
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+<div data-permissions="Views.Permission.RoleDepIds.View" data-i18n-key="Views.Permission.RoleDepIds.View">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["RoleDepIds.Title"]</h4>
+        <div class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    id="btnBatchDelete"
+                    data-permissions="Views.Permission.RoleDepIds.Delete"
+                    data-i18n-key="Views.Permission.RoleDepIds.Delete">
+                @Localizer["Common.BatchDelete"]
+            </button>
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="btnOpenBatchCreateWizard"
+                    data-permissions="Views.Permission.RoleDepIds.Create"
+                    data-i18n-key="Views.Permission.RoleDepIds.Create">
+                @Localizer["Common.CreatePermission"]
+            </button>
+        </div>
+    </div>
+
+    <div id="pageMessage" class="alert alert-success py-2 d-none mb-3" role="alert"></div>
+    <div id="DataDiv"></div>
+</div>
+
+@await Html.PartialAsync("View.BatchCreateWizardDrawer")
+@await Html.PartialAsync("_CrudConfirmModal")
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-role-assignment.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            ProRoleDepIds.init({
+                wizardDrawerSelector: '#batchCreateWizardDrawer',
+                rolesPickDivSelector: '#RolesPickDiv',
+                rolesTableSelector: '#rolesPickTable',
+                rolesFilterFieldMap: {
+                    'filter-rolepick-RoleCode': 'RoleCodes',
+                    'filter-rolepick-RoleName': 'RoleNames'
+                },
+                rolesQueryUrl: '@Url.Action("QueryRoles", "RoleDepIds")',
+                rolesFilterOptionsUrl: '@Url.Action("GetFilterOptionsRoles", "RoleDepIds")',
+                usersPickDivSelector: '#UsersPickDiv',
+                usersTableSelector: '#usersPickTable',
+                usersFilterFieldMap: {
+                    'filter-userpick-DepId': 'DepIds',
+                    'filter-userpick-DepName': 'DepNames',
+                    'filter-userpick-DisplayName': 'DisplayNames',
+                    'filter-userpick-UserName': 'UserNames'
+                },
+                usersQueryUrl: '@Url.Action("QueryUsers", "RoleDepIds")',
+                usersFilterOptionsUrl: '@Url.Action("GetFilterOptionsUsers", "RoleDepIds")',
+                resultDivSelector: '#DataDiv',
+                resultTableSelector: '#datatable',
+                resultFilterFieldMap: {
+                    'filter-DepId': 'DepIds',
+                    'filter-RoleCode': 'RoleCodes',
+                    'filter-RoleName': 'RoleNames',
+                    'filter-Description': 'Descriptions',
+                    'filter-CreateTime': 'CreateTimes',
+                    'filter-CreateUser': 'CreateUsers',
+                    'filter-UpdateTime': 'UpdateTimes',
+                    'filter-UpdateUser': 'UpdateUsers'
+                },
+                resultQueryUrl: '@Url.Action("Query", "RoleDepIds")',
+                resultFilterOptionsUrl: '@Url.Action("GetFilterOptions", "RoleDepIds")',
+                batchCreateUrl: '@Url.Action("BatchCreate", "RoleDepIds")',
+                batchDeleteUrl: '@Url.Action("BatchDelete", "RoleDepIds")',
+                batchDeleteConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["RoleDepIds.BatchDeleteConfirm"].Value)),
+                userPayloadKey: 'depIds',
+                userRequiredMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Validation.SelectAtLeastOneDepartment"].Value))
+            });
+        });
+    </script>
+}

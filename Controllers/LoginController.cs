@@ -7,45 +7,32 @@ namespace ICP.Controllers;
 [AllowAnonymous]
 public class LoginController : Controller
 {
-    private readonly LoginSessionService _loginSessionService;
-    private readonly UserInfoResolver _userInfoResolver;
+    private readonly UserAuthService _userAuthService;
 
-    public LoginController(
-        LoginSessionService loginSessionService,
-        UserInfoResolver userInfoResolver)
+    public LoginController(UserAuthService userAuthService)
     {
-        _loginSessionService = loginSessionService;
-        _userInfoResolver = userInfoResolver;
+        _userAuthService = userAuthService;
     }
 
     [HttpGet]
     public IActionResult Index()
     {
-        _loginSessionService.ClearSession();
+        _userAuthService.SessionClear(this);
         return View();
     }
 
     [HttpGet]
-    public async Task<IActionResult> Login(string? telId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Login(string TELID = "", CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(telId))
-        {
-            return Json(new { success = false });
-        }
-
-        var user = await _userInfoResolver.ResolveFromTelIdAsync(telId, cancellationToken);
-        var success = user is not null && !string.IsNullOrWhiteSpace(user.TelId);
-        return Json(new { success });
+        var userInfo = await _userAuthService.GetUserInfo(TELID, cancellationToken);
+        var result = string.IsNullOrEmpty(userInfo.TelId) ? "E" : "Y";
+        return Json(result);
     }
-
-    [HttpPost]
-    public Task<IActionResult> LoginPost([FromForm] string? telId, CancellationToken cancellationToken) =>
-        Login(telId, cancellationToken);
 
     [HttpGet]
     public IActionResult Logout()
     {
-        _loginSessionService.ClearSession();
+        _userAuthService.SessionClear(this);
         return RedirectToAction(nameof(Index));
     }
 }

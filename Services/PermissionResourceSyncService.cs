@@ -10,6 +10,34 @@ public class PermissionResourceSyncService
 {
     private const string LegacyPrefix = "icp.";
     private const string PermissionPrefix = "icp.permission.";
+    private const string ViewsPermissionPrefix = "Views.Permission.";
+
+    private static readonly Dictionary<string, string> IcpPermissionToViewsPermission =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["icp.permission.user.view"] = "Views.Permission.Users.View",
+            ["icp.permission.resource.view"] = "Views.Permission.RoleResources.View",
+            ["icp.permission.resource.scan"] = "Views.Permission.RoleResources.Scan",
+            ["icp.permission.role.view"] = "Views.Permission.Roles.View",
+            ["icp.permission.role.create"] = "Views.Permission.Roles.Create",
+            ["icp.permission.role.disable"] = "Views.Permission.Roles.Disable",
+            ["icp.permission.role.edit"] = "Views.Permission.Roles.Edit",
+            ["icp.permission.rolepermission.view"] = "Views.Permission.RolePermissions.View",
+            ["icp.permission.rolepermission.create"] = "Views.Permission.RolePermissions.Create",
+            ["icp.permission.rolepermission.delete"] = "Views.Permission.RolePermissions.Delete",
+            ["icp.permission.roletelid.view"] = "Views.Permission.RoleTelIds.View",
+            ["icp.permission.roletelid.create"] = "Views.Permission.RoleTelIds.Create",
+            ["icp.permission.roletelid.delete"] = "Views.Permission.RoleTelIds.Delete",
+            ["icp.permission.roledepid.view"] = "Views.Permission.RoleDepIds.View",
+            ["icp.permission.roledepid.create"] = "Views.Permission.RoleDepIds.Create",
+            ["icp.permission.roledepid.delete"] = "Views.Permission.RoleDepIds.Delete",
+        };
+
+    private static readonly Dictionary<string, string> ViewsPermissionToIcpPermission =
+        IcpPermissionToViewsPermission.ToDictionary(
+            kvp => kvp.Value,
+            kvp => kvp.Key,
+            StringComparer.OrdinalIgnoreCase);
 
     private readonly ApplicationDbContext _dbContext;
 
@@ -81,6 +109,9 @@ public class PermissionResourceSyncService
         var (disabledLegacyCount, migratedRolePermissionCount) =
             await MigrateAndDisableAllLegacyResourcesAsync(actor, cancellationToken);
 
+        var (disabledIcpPermissionCount, migratedFromIcpPermissionCount) =
+            await MigrateAndDisableIcpPermissionResourcesAsync(actor, cancellationToken);
+
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return new PermissionScanResult
@@ -88,8 +119,8 @@ public class PermissionResourceSyncService
             ScannedCount = scannedItems.Count,
             InsertedCount = inserted,
             UpdatedCount = updated,
-            DisabledLegacyCount = disabledLegacyCount,
-            MigratedRolePermissionCount = migratedRolePermissionCount,
+            DisabledLegacyCount = disabledLegacyCount + disabledIcpPermissionCount,
+            MigratedRolePermissionCount = migratedRolePermissionCount + migratedFromIcpPermissionCount,
             ResourceCodes = resourceCodes
         };
     }
@@ -97,6 +128,13 @@ public class PermissionResourceSyncService
     private static string ResolveModuleCode(string resourceCode)
     {
         var segments = resourceCode.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (segments.Length >= 3 &&
+            segments[0].Equals("Views", StringComparison.OrdinalIgnoreCase) &&
+            segments[1].Equals("Permission", StringComparison.OrdinalIgnoreCase))
+        {
+            return segments[2];
+        }
+
         if (segments.Length >= 2 &&
             segments[0].Equals("icp", StringComparison.OrdinalIgnoreCase) &&
             segments[1].Equals("permission", StringComparison.OrdinalIgnoreCase))
@@ -132,19 +170,61 @@ public class PermissionResourceSyncService
         return PermissionPrefix + resourceCode[LegacyPrefix.Length..];
     }
 
+    private static string? ToViewsPermissionResourceCode(string resourceCode)
+    {
+        if (resourceCode.StartsWith(ViewsPermissionPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return resourceCode;
+        }
+
+        if (IcpPermissionToViewsPermission.TryGetValue(resourceCode, out var viewsCode))
+        {
+            return viewsCode;
+        }
+
+        var permissionCode = ToPermissionResourceCode(resourceCode);
+        if (!string.IsNullOrWhiteSpace(permissionCode) &&
+            IcpPermissionToViewsPermission.TryGetValue(permissionCode, out viewsCode))
+        {
+            return viewsCode;
+        }
+
+        return null;
+    }
+
     private async Task DisableLegacyCodeIfAnyAsync(
         string resourceCode,
         string actor,
         CancellationToken cancellationToken)
     {
-        var legacyCode = ToLegacyResourceCode(resourceCode);
-        if (string.IsNullOrWhiteSpace(legacyCode))
+        if (resourceCode.StartsWith(ViewsPermissionPrefix, StringComparison.OrdinalIgnoreCase) &&
+            ViewsPermissionToIcpPermission.TryGetValue(resourceCode, out var icpPermissionCode))
         {
+            await DisableResourceByCodeAsync(icpPermissionCode, actor, cancellationToken);
+
+            var legacyCode = ToLegacyResourceCode(icpPermissionCode);
+            if (!string.IsNullOrWhiteSpace(legacyCode))
+            {
+                await DisableResourceByCodeAsync(legacyCode, actor, cancellationToken);
+            }
+
             return;
         }
 
+        var legacyCodeFromPermission = ToLegacyResourceCode(resourceCode);
+        if (!string.IsNullOrWhiteSpace(legacyCodeFromPermission))
+        {
+            await DisableResourceByCodeAsync(legacyCodeFromPermission, actor, cancellationToken);
+        }
+    }
+
+    private async Task DisableResourceByCodeAsync(
+        string resourceCode,
+        string actor,
+        CancellationToken cancellationToken)
+    {
         var legacy = await _dbContext.Resources
-            .FirstOrDefaultAsync(r => r.ResourceCode == legacyCode, cancellationToken);
+            .FirstOrDefaultAsync(r => r.ResourceCode == resourceCode, cancellationToken);
 
         if (legacy is null || !legacy.IsEnabled)
         {
@@ -179,12 +259,22 @@ public class PermissionResourceSyncService
             }
             else
             {
-                var permissionCode = ToPermissionResourceCode(resource.ResourceCode);
-                if (!string.IsNullOrWhiteSpace(permissionCode) &&
-                    nameByCode.TryGetValue(permissionCode, out scannedName) &&
+                var viewsCode = ToViewsPermissionResourceCode(resource.ResourceCode);
+                if (!string.IsNullOrWhiteSpace(viewsCode) &&
+                    nameByCode.TryGetValue(viewsCode, out scannedName) &&
                     !string.IsNullOrWhiteSpace(scannedName))
                 {
                     resource.ResourceName = scannedName;
+                }
+                else
+                {
+                    var permissionCode = ToPermissionResourceCode(resource.ResourceCode);
+                    if (!string.IsNullOrWhiteSpace(permissionCode) &&
+                        nameByCode.TryGetValue(permissionCode, out scannedName) &&
+                        !string.IsNullOrWhiteSpace(scannedName))
+                    {
+                        resource.ResourceName = scannedName;
+                    }
                 }
             }
 
@@ -218,10 +308,72 @@ public class PermissionResourceSyncService
             .Where(r => r.IsEnabled && permissionCodes.Contains(r.ResourceCode))
             .ToListAsync(cancellationToken);
 
-        var newResourceByCode = newResources.ToDictionary(
-            r => r.ResourceCode,
-            r => r,
-            StringComparer.OrdinalIgnoreCase);
+        return await MigrateRolePermissionsAsync(legacyResources, newResources, actor, cancellationToken);
+    }
+
+    private async Task<(int DisabledLegacyCount, int MigratedRolePermissionCount)> MigrateAndDisableIcpPermissionResourcesAsync(
+        string actor,
+        CancellationToken cancellationToken)
+    {
+        var icpPermissionResources = await _dbContext.Resources
+            .Where(r => r.IsEnabled && r.ResourceCode.StartsWith(PermissionPrefix))
+            .ToListAsync(cancellationToken);
+
+        if (icpPermissionResources.Count == 0)
+        {
+            return (0, 0);
+        }
+
+        var viewsCodes = icpPermissionResources
+            .Select(r => ToViewsPermissionResourceCode(r.ResourceCode))
+            .Where(code => !string.IsNullOrWhiteSpace(code))
+            .Cast<string>()
+            .ToList();
+
+        var viewsResources = await _dbContext.Resources
+            .Where(r => r.IsEnabled && viewsCodes.Contains(r.ResourceCode))
+            .ToListAsync(cancellationToken);
+
+        return await MigrateRolePermissionsAsync(icpPermissionResources, viewsResources, actor, cancellationToken);
+    }
+
+    private async Task<(int DisabledLegacyCount, int MigratedRolePermissionCount)> MigrateRolePermissionsAsync(
+        IReadOnlyList<Resource> legacyResources,
+        IReadOnlyList<Resource> newResources,
+        string actor,
+        CancellationToken cancellationToken)
+    {
+        if (legacyResources.Count == 0)
+        {
+            return (0, 0);
+        }
+
+        var newResourceByLegacyCode = new Dictionary<string, Resource>(StringComparer.OrdinalIgnoreCase);
+        foreach (var legacy in legacyResources)
+        {
+            var viewsCode = ToViewsPermissionResourceCode(legacy.ResourceCode);
+            if (!string.IsNullOrWhiteSpace(viewsCode))
+            {
+                var match = newResources.FirstOrDefault(r =>
+                    r.ResourceCode.Equals(viewsCode, StringComparison.OrdinalIgnoreCase));
+                if (match is not null)
+                {
+                    newResourceByLegacyCode[legacy.ResourceCode] = match;
+                    continue;
+                }
+            }
+
+            var permissionCode = ToPermissionResourceCode(legacy.ResourceCode);
+            if (!string.IsNullOrWhiteSpace(permissionCode))
+            {
+                var match = newResources.FirstOrDefault(r =>
+                    r.ResourceCode.Equals(permissionCode, StringComparison.OrdinalIgnoreCase));
+                if (match is not null)
+                {
+                    newResourceByLegacyCode[legacy.ResourceCode] = match;
+                }
+            }
+        }
 
         var legacyIds = legacyResources.Select(r => r.Id).ToList();
         var legacyRolePermissions = await _dbContext.RolePermissions
@@ -241,8 +393,7 @@ public class PermissionResourceSyncService
 
         foreach (var legacy in legacyResources)
         {
-            var permissionCode = ToPermissionResourceCode(legacy.ResourceCode);
-            newResourceByCode.TryGetValue(permissionCode ?? string.Empty, out var newResource);
+            newResourceByLegacyCode.TryGetValue(legacy.ResourceCode, out var newResource);
 
             var rolePermissionsForLegacy = legacyRolePermissions
                 .Where(rp => rp.ResourceId == legacy.Id)
