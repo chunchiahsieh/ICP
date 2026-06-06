@@ -8,6 +8,11 @@ public class AppAuthOptions
 
     public string? SimulatedWindowsIdentity { get; set; }
 
+    public string SuperUser { get; set; } = "Off";
+
+    public bool IsSuperUserEnabled =>
+        string.Equals(SuperUser, "On", StringComparison.OrdinalIgnoreCase);
+
     public DevUserOptions DevUser { get; set; } = new();
 }
 

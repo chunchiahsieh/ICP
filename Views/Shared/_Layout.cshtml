@@ -53,7 +53,7 @@
 <body>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
 
-        <a class="navbar-brand ps-3 d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+        <a class="navbar-brand ps-3 d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index" data-permissions="Views.Shared._Layout.Home" data-i18n-key="Views.Shared._Layout.Home">
             <img src="~/Files/TEL_tm_rgb.png" alt="TEL Logo" style="height: 28px; width: auto;" />
             <span>@brandName</span>
         </a>
@@ -97,6 +97,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
+                    <div id="icp-page-access-denied" class="alert alert-warning mt-3 d-none" role="alert"></div>
                     @RenderBody()
                 </div>
             </main>
@@ -105,6 +106,7 @@
     </div>
 
     <partial name="_IcpScriptI18n" />
+    <script src="~/js/icp-permissions.js" asp-append-version="true"></script>
     <script src="~/js/icp-i18n.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

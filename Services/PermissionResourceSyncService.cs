@@ -128,6 +128,31 @@ public class PermissionResourceSyncService
     private static string ResolveModuleCode(string resourceCode)
     {
         var segments = resourceCode.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (segments.Length >= 2 &&
+            segments[0].Equals("Nav", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Nav";
+        }
+
+        if (segments.Length >= 2 &&
+            segments[0].Equals("Common", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Common";
+        }
+
+        if (segments.Length >= 3 &&
+            segments[0].Equals("Views", StringComparison.OrdinalIgnoreCase) &&
+            segments[1].Equals("Shared", StringComparison.OrdinalIgnoreCase))
+        {
+            if (segments.Length >= 4 &&
+                segments[2].Equals("_SidebarNav", StringComparison.OrdinalIgnoreCase))
+            {
+                return segments[3];
+            }
+
+            return segments[2];
+        }
+
         if (segments.Length >= 3 &&
             segments[0].Equals("Views", StringComparison.OrdinalIgnoreCase) &&
             segments[1].Equals("Permission", StringComparison.OrdinalIgnoreCase))

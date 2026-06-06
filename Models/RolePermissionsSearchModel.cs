@@ -10,5 +10,7 @@ public class RolePermissionsSearchModel
 
     public List<string> ResourceNames { get; set; } = [];
 
+    public List<string> ResourceTypes { get; set; } = [];
+
     public List<string> ActionCodes { get; set; } = [];
 }

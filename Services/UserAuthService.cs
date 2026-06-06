@@ -21,15 +21,18 @@ public class UserAuthService
     private readonly IlcDbContext _ilcDb;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly AppAuthOptions _authOptions;
+    private readonly UserResourcePermissionService _userResourcePermissionService;
 
     public UserAuthService(
         IlcDbContext ilcDb,
         IHttpContextAccessor httpContextAccessor,
-        IOptions<AppAuthOptions> authOptions)
+        IOptions<AppAuthOptions> authOptions,
+        UserResourcePermissionService userResourcePermissionService)
     {
         _ilcDb = ilcDb;
         _httpContextAccessor = httpContextAccessor;
         _authOptions = authOptions.Value;
+        _userResourcePermissionService = userResourcePermissionService;
     }
 
     private ISession? Session => _httpContextAccessor.HttpContext?.Session;
@@ -108,6 +111,7 @@ public class UserAuthService
         }
 
         SetSessionUserInfo(userInfo);
+        await _userResourcePermissionService.RefreshSessionResourcesAsync(userInfo, cancellationToken);
         controller.TempData["DepName"] = userInfo.DepName;
         controller.TempData["DisplayName"] = userInfo.DisplayName;
         controller.TempData["EmailAddress"] = userInfo.EmailAddress;
@@ -150,6 +154,7 @@ public class UserAuthService
     public void SessionClear(Controller? controller = null)
     {
         Session?.Remove(SessionKey);
+        _userResourcePermissionService.ClearSessionResources();
 
         if (controller is null)
         {

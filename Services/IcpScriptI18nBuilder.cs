@@ -13,6 +13,7 @@ public static class IcpScriptI18nBuilder
             ["selectAtLeastOneResource"] = localizer["Validation.SelectAtLeastOneResource"],
             ["selectAtLeastOneUser"] = localizer["Validation.SelectAtLeastOneUser"],
             ["selectAtLeastOneDepartment"] = localizer["Validation.SelectAtLeastOneDepartment"],
+            ["selectAtLeastOneMailGroup"] = localizer["Validation.SelectAtLeastOneMailGroup"],
             ["selectAtLeastOneRoleAndResource"] = localizer["Validation.SelectAtLeastOneRoleAndResource"],
             ["selectAtLeastOneRoleAndUser"] = localizer["Validation.SelectAtLeastOneRoleAndUser"],
             ["selectAtLeastOneRecord"] = localizer["Validation.SelectAtLeastOneRecord"],
@@ -30,7 +31,8 @@ public static class IcpScriptI18nBuilder
             ["create"] = localizer["Common.Create"],
             ["edit"] = localizer["Common.Edit"],
             ["disableConfirm"] = localizer["Message.DisableConfirm"],
-            ["deleteConfirm"] = localizer["Message.DeleteConfirm"]
+            ["deleteConfirm"] = localizer["Message.DeleteConfirm"],
+            ["permissionAccessDenied"] = localizer["Permission.AccessDenied"]
         };
 
     public static object BuildDataTablesLengthMenu(IStringLocalizer<SharedResource> localizer)

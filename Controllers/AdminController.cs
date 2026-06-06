@@ -7,13 +7,16 @@ public class AdminController : Controller
 {
     private readonly PermissionScannerService _scannerService;
     private readonly PermissionResourceSyncService _syncService;
+    private readonly ResourceRouteRegistryService _routeRegistry;
 
     public AdminController(
         PermissionScannerService scannerService,
-        PermissionResourceSyncService syncService)
+        PermissionResourceSyncService syncService,
+        ResourceRouteRegistryService routeRegistry)
     {
         _scannerService = scannerService;
         _syncService = syncService;
+        _routeRegistry = routeRegistry;
     }
 
     [HttpPost]
@@ -25,6 +28,8 @@ public class AdminController : Controller
             scanned,
             User.Identity?.Name,
             cancellationToken);
+
+        await _routeRegistry.RefreshAsync(cancellationToken);
 
         return Json(result);
     }

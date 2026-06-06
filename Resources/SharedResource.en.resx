@@ -153,6 +153,9 @@
   <data name="Error.RoleDepIdExists" xml:space="preserve">
     <value>This DepID and role combination already exists</value>
   </data>
+  <data name="Error.RoleMailGroupExists" xml:space="preserve">
+    <value>This mail group and role combination already exists</value>
+  </data>
   <data name="Error.RolePermissionExists" xml:space="preserve">
     <value>This role, resource and action combination already exists</value>
   </data>
@@ -258,17 +261,20 @@
   <data name="ErrorPage.Title" xml:space="preserve">
     <value>ERROR</value>
   </data>
+  <data name="Permission.AccessDenied" xml:space="preserve">
+    <value>You do not have permission to access this page.</value>
+  </data>
   <data name="Message.ValidRoleResourceNotFound" xml:space="preserve">
     <value>No valid Role or Resource found</value>
   </data>
   <data name="Nav.Admin" xml:space="preserve">
-    <value>ADMIN</value>
+    <value>Administration</value>
   </data>
   <data name="Nav.AddDiSa" xml:space="preserve">
     <value>Add DI/SA</value>
   </data>
   <data name="Nav.Broker" xml:space="preserve">
-    <value>BROKER</value>
+    <value>Broker</value>
   </data>
   <data name="Nav.BuCode" xml:space="preserve">
     <value>BU Code</value>
@@ -295,19 +301,19 @@
     <value>Export</value>
   </data>
   <data name="Nav.Forwarder" xml:space="preserve">
-    <value>FORWARDER</value>
+    <value>Forwarder</value>
   </data>
   <data name="Nav.ForwarderDataUpload" xml:space="preserve">
     <value>Forwarder Data Upload</value>
   </data>
   <data name="Nav.Function" xml:space="preserve">
-    <value>FUNCTION</value>
+    <value>Functions</value>
   </data>
   <data name="Nav.Home" xml:space="preserve">
     <value>Home</value>
   </data>
   <data name="Nav.Permission" xml:space="preserve">
-    <value>Permission</value>
+    <value>Permission Management</value>
   </data>
   <data name="Nav.Privacy" xml:space="preserve">
     <value>Privacy</value>
@@ -316,10 +322,10 @@
     <value>Mass Data Report</value>
   </data>
   <data name="Nav.MassUpdateNonNcpi" xml:space="preserve">
-    <value>Mass Update-non NCPI</value>
+    <value>Mass Update (non-NCPI)</value>
   </data>
   <data name="Nav.MassUpdateNcpi" xml:space="preserve">
-    <value>Mass Update-NCPI</value>
+    <value>Mass Update (NCPI)</value>
   </data>
   <data name="Nav.OrderType" xml:space="preserve">
     <value>Order Type</value>
@@ -331,13 +337,16 @@
     <value>Pick Up Location</value>
   </data>
   <data name="Nav.Report" xml:space="preserve">
-    <value>REPORT</value>
+    <value>Reports</value>
   </data>
   <data name="Nav.Resources" xml:space="preserve">
     <value>Resources</value>
   </data>
   <data name="Nav.RoleDepIds" xml:space="preserve">
     <value>Department Roles</value>
+  </data>
+  <data name="Nav.RoleMailGroups" xml:space="preserve">
+    <value>Mail Group Roles</value>
   </data>
   <data name="Nav.RolePermissions" xml:space="preserve">
     <value>Role Permissions</value>
@@ -349,7 +358,7 @@
     <value>User Roles</value>
   </data>
   <data name="Nav.Setting" xml:space="preserve">
-    <value>SETTING</value>
+    <value>Settings</value>
   </data>
   <data name="Nav.ShipInfo" xml:space="preserve">
     <value>Ship Info</value>
@@ -364,6 +373,111 @@
     <value>W/H Code</value>
   </data>
   <data name="Nav.Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Views.Shared._Layout.Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
+    <value>Customs Data Download</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
+    <value>Tariff Data</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Forwarder" xml:space="preserve">
+    <value>Forwarder</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload" xml:space="preserve">
+    <value>Forwarder Data Upload</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function" xml:space="preserve">
+    <value>Functions</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.AddDiSa" xml:space="preserve">
+    <value>Add DI/SA</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi" xml:space="preserve">
+    <value>Mass Update (non-NCPI)</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.MassUpdateNcpi" xml:space="preserve">
+    <value>Mass Update (NCPI)</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.ShipInfo" xml:space="preserve">
+    <value>Ship Info</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.CompareIcpVsArUr" xml:space="preserve">
+    <value>Compare ICP vs AR/UR</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.MassDataReport" xml:space="preserve">
+    <value>Mass Data Report</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
+    <value>Shipping Report</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.BuCode" xml:space="preserve">
+    <value>BU Code</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh" xml:space="preserve">
+    <value>Default Delivery W/H</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.DeliveryToList" xml:space="preserve">
+    <value>Delivery To List</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.EtaDelDateTable" xml:space="preserve">
+    <value>ETA-Del Date Table</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.OrderType" xml:space="preserve">
+    <value>Order Type</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.PickUpLocation" xml:space="preserve">
+    <value>Pick Up Location</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.WhCode" xml:space="preserve">
+    <value>W/H Code</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.DropDownList" xml:space="preserve">
+    <value>Drop Down List</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Resources" xml:space="preserve">
+    <value>Resources</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleDepIds" xml:space="preserve">
+    <value>Department Roles</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleMailGroups" xml:space="preserve">
+    <value>Mail Group Roles</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RolePermissions" xml:space="preserve">
+    <value>Role Permissions</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleTelIds" xml:space="preserve">
+    <value>User Roles</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Users" xml:space="preserve">
     <value>Users</value>
   </data>
   <data name="Permission.Resource.Scan" xml:space="preserve">
@@ -423,6 +537,15 @@
   <data name="Views.Permission.RoleDepIds.View" xml:space="preserve">
     <value>Department role query</value>
   </data>
+  <data name="Views.Permission.RoleMailGroups.Create" xml:space="preserve">
+    <value>Mail group role create</value>
+  </data>
+  <data name="Views.Permission.RoleMailGroups.Delete" xml:space="preserve">
+    <value>Mail group role delete</value>
+  </data>
+  <data name="Views.Permission.RoleMailGroups.View" xml:space="preserve">
+    <value>Mail group role query</value>
+  </data>
   <data name="Views.Permission.RolePermissions.Create" xml:space="preserve">
     <value>Role permission create</value>
   </data>
@@ -480,6 +603,42 @@
   <data name="RoleDepIds.Title" xml:space="preserve">
     <value>Department roles</value>
   </data>
+  <data name="RoleMailGroups.BatchDeleteConfirm" xml:space="preserve">
+    <value>Delete selected mail group role mappings?</value>
+  </data>
+  <data name="RoleMailGroups.CreateDrawerTitle" xml:space="preserve">
+    <value>Create mail group roles</value>
+  </data>
+  <data name="RoleMailGroups.Title" xml:space="preserve">
+    <value>Mail group roles</value>
+  </data>
+  <data name="RoleMailGroups.Col.Uid" xml:space="preserve">
+    <value>UID</value>
+  </data>
+  <data name="RoleMailGroups.Col.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RoleMailGroups.Col.Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="RoleMailGroups.Col.RoleCode" xml:space="preserve">
+    <value>Role code</value>
+  </data>
+  <data name="RoleMailGroups.Col.RoleName" xml:space="preserve">
+    <value>Role name</value>
+  </data>
+  <data name="RoleMailGroups.Col.CreateTime" xml:space="preserve">
+    <value>Create time</value>
+  </data>
+  <data name="RoleMailGroups.Col.CreateUser" xml:space="preserve">
+    <value>Create user</value>
+  </data>
+  <data name="RoleMailGroups.Col.UpdateTime" xml:space="preserve">
+    <value>Update time</value>
+  </data>
+  <data name="RoleMailGroups.Col.UpdateUser" xml:space="preserve">
+    <value>Update user</value>
+  </data>
   <data name="RolePermissions.BatchDeleteConfirm" xml:space="preserve">
     <value>Delete selected role permissions?</value>
   </data>
@@ -519,8 +678,29 @@
   <data name="Users.Title" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="Users.Permissions" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="Users.PermissionsModalTitle" xml:space="preserve">
+    <value>User permissions</value>
+  </data>
+  <data name="Users.PermissionsLoadFailed" xml:space="preserve">
+    <value>Unable to load user permissions. Please try again later.</value>
+  </data>
+  <data name="Users.CopyPermissionsJson" xml:space="preserve">
+    <value>Copy JSON to clipboard</value>
+  </data>
+  <data name="Users.CopyPermissionsJsonSuccess" xml:space="preserve">
+    <value>Copied to clipboard</value>
+  </data>
+  <data name="Users.CopyPermissionsJsonFailed" xml:space="preserve">
+    <value>Copy failed. Please try again later.</value>
+  </data>
   <data name="Validation.SelectAtLeastOneDepartment" xml:space="preserve">
     <value>Select at least one department.</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneMailGroup" xml:space="preserve">
+    <value>Select at least one mail group.</value>
   </data>
   <data name="Validation.SelectAtLeastOneRecord" xml:space="preserve">
     <value>Select at least one record.</value>
@@ -546,6 +726,9 @@
   <data name="Wizard.PickDepartmentsHint" xml:space="preserve">
     <value>Select departments by DepID. Selections persist across pages.</value>
   </data>
+  <data name="Wizard.PickMailGroupsHint" xml:space="preserve">
+    <value>Select mail groups to assign (by Address). Selections persist across pages.</value>
+  </data>
   <data name="Wizard.PickResourcesHint" xml:space="preserve">
     <value>Select resources to assign. Selections persist across pages.</value>
   </data>
@@ -561,6 +744,9 @@
   <data name="Wizard.SelectedDepartments" xml:space="preserve">
     <value>Selected departments</value>
   </data>
+  <data name="Wizard.SelectedMailGroups" xml:space="preserve">
+    <value>Selected mail groups</value>
+  </data>
   <data name="Wizard.SelectedResources" xml:space="preserve">
     <value>Selected resources</value>
   </data>
@@ -575,6 +761,9 @@
   </data>
   <data name="Wizard.Step2Departments" xml:space="preserve">
     <value>2 Select departments</value>
+  </data>
+  <data name="Wizard.Step2MailGroups" xml:space="preserve">
+    <value>2 Select mail groups</value>
   </data>
   <data name="Wizard.Step2Resources" xml:space="preserve">
     <value>2 Select resources</value>
@@ -593,6 +782,12 @@
   </data>
   <data name="Message.ValidRoleDepartmentNotFound" xml:space="preserve">
     <value>No valid role or department found</value>
+  </data>
+  <data name="Message.SelectRoleAndMailGroup" xml:space="preserve">
+    <value>Select at least one role and one mail group.</value>
+  </data>
+  <data name="Message.ValidRoleMailGroupNotFound" xml:space="preserve">
+    <value>No valid role or mail group found</value>
   </data>
   <data name="Message.SelectRoleAndUser" xml:space="preserve">
     <value>Select at least one role and one user.</value>

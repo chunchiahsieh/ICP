@@ -20,9 +20,7 @@ public class RoleDepIdsController : Controller
         "RoleName",
         "Description",
         "CreateTime",
-        "CreateUser",
-        "UpdateTime",
-        "UpdateUser"
+        "CreateUser"
     };
 
     private static readonly HashSet<string> AllowedRolePickFilterColumns = new(StringComparer.OrdinalIgnoreCase)
@@ -276,8 +274,6 @@ public class RoleDepIdsController : Controller
             "Description" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.Description), search, cancellationToken),
             "CreateTime" => await SearchFilterHelper.DistinctDateTimeAsync(query.Select(r => r.CreateTime), search, cancellationToken),
             "CreateUser" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.CreateUser), search, cancellationToken),
-            "UpdateTime" => await SearchFilterHelper.DistinctNullableDateTimeAsync(query.Select(r => r.UpdateTime), search, cancellationToken),
-            "UpdateUser" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.UpdateUser), search, cancellationToken),
             _ => []
         };
     }
@@ -374,25 +370,6 @@ public class RoleDepIdsController : Controller
         if (criteria.CreateUsers.Count > 0)
         {
             query = query.Where(r => r.CreateUser != null && criteria.CreateUsers.Contains(r.CreateUser));
-        }
-
-        if (criteria.UpdateTimes.Count > 0)
-        {
-            var updateTimes = criteria.UpdateTimes
-                .Select(v => DateTime.TryParse(v, out var dt) ? (DateTime?)dt : null)
-                .Where(v => v.HasValue)
-                .Select(v => v!.Value)
-                .ToList();
-
-            if (updateTimes.Count > 0)
-            {
-                query = query.Where(r => r.UpdateTime.HasValue && updateTimes.Contains(r.UpdateTime.Value));
-            }
-        }
-
-        if (criteria.UpdateUsers.Count > 0)
-        {
-            query = query.Where(r => r.UpdateUser != null && criteria.UpdateUsers.Contains(r.UpdateUser));
         }
 
         return await query

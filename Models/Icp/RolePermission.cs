@@ -19,7 +19,7 @@ public class RolePermission
     /// <summary>資源 Id（對應 Resources.Id）</summary>
     public Guid ResourceId { get; set; }
 
-    /// <summary>動作代碼（例如 view / create / edit / delete / export / approve）</summary>
+    /// <summary>動作代碼（例如 View / Create / Delete；Menu、Menu Category 為 Allow）</summary>
     [MaxLength(50)]
     public string ActionCode { get; set; } = string.Empty;
 

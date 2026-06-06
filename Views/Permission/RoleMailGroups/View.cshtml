@@ -1,0 +1,86 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = Localizer["RoleMailGroups.Title"];
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+<div data-permissions="Views.Permission.RoleMailGroups.View" data-i18n-key="Views.Permission.RoleMailGroups.View">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["RoleMailGroups.Title"]</h4>
+        <div class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    id="btnBatchDelete"
+                    data-permissions="Views.Permission.RoleMailGroups.Delete"
+                    data-i18n-key="Views.Permission.RoleMailGroups.Delete">
+                @Localizer["Common.BatchDelete"]
+            </button>
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="btnOpenBatchCreateWizard"
+                    data-permissions="Views.Permission.RoleMailGroups.Create"
+                    data-i18n-key="Views.Permission.RoleMailGroups.Create">
+                @Localizer["Common.CreatePermission"]
+            </button>
+        </div>
+    </div>
+
+    <div id="pageMessage" class="alert alert-success py-2 d-none mb-3" role="alert"></div>
+    <div id="DataDiv"></div>
+</div>
+
+@await Html.PartialAsync("View.BatchCreateWizardDrawer")
+@await Html.PartialAsync("_CrudConfirmModal")
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-role-assignment.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            ProRoleMailGroups.init({
+                wizardDrawerSelector: '#batchCreateWizardDrawer',
+                rolesPickDivSelector: '#RolesPickDiv',
+                rolesTableSelector: '#rolesPickTable',
+                rolesFilterFieldMap: {
+                    'filter-rolepick-RoleCode': 'RoleCodes',
+                    'filter-rolepick-RoleName': 'RoleNames'
+                },
+                rolesQueryUrl: '@Url.Action("QueryRoles", "RoleMailGroups")',
+                rolesFilterOptionsUrl: '@Url.Action("GetFilterOptionsRoles", "RoleMailGroups")',
+                usersPickDivSelector: '#MailGroupsPickDiv',
+                usersTableSelector: '#mailGroupsPickTable',
+                usersFilterFieldMap: {
+                    'filter-mailgrouppick-Uid': 'Uids',
+                    'filter-mailgrouppick-Name': 'Names',
+                    'filter-mailgrouppick-Address': 'Addresses'
+                },
+                usersQueryUrl: '@Url.Action("QueryMailGroups", "RoleMailGroups")',
+                usersFilterOptionsUrl: '@Url.Action("GetFilterOptionsMailGroups", "RoleMailGroups")',
+                resultDivSelector: '#DataDiv',
+                resultTableSelector: '#datatable',
+                resultFilterFieldMap: {
+                    'filter-MailGroupName': 'MailGroupNames',
+                    'filter-MailGroupAddress': 'MailGroupAddresses',
+                    'filter-RoleCode': 'RoleCodes',
+                    'filter-RoleName': 'RoleNames',
+                    'filter-CreateTime': 'CreateTimes',
+                    'filter-CreateUser': 'CreateUsers'
+                },
+                resultQueryUrl: '@Url.Action("Query", "RoleMailGroups")',
+                resultFilterOptionsUrl: '@Url.Action("GetFilterOptions", "RoleMailGroups")',
+                batchCreateUrl: '@Url.Action("BatchCreate", "RoleMailGroups")',
+                batchDeleteUrl: '@Url.Action("BatchDelete", "RoleMailGroups")',
+                batchDeleteConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["RoleMailGroups.BatchDeleteConfirm"].Value)),
+                userPayloadKey: 'mailGroupAddresses',
+                userRequiredMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Validation.SelectAtLeastOneMailGroup"].Value)),
+                batchCreateRequiredMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Message.SelectRoleAndMailGroup"].Value))
+            });
+        });
+    </script>
+}

@@ -36,6 +36,8 @@
 
         <tr>
 
+            <th class="sorting_disabled">@Localizer["Users.Permissions"]</th>
+
             <th>keyID</th>
 
             <th>DepName</th>
@@ -57,6 +59,8 @@
         </tr>
 
         <tr class="users-filter-row">
+
+            <th class="sorting_disabled"></th>
 
             @foreach (var (filterId, column) in filterColumns)
 
@@ -123,6 +127,14 @@
         {
 
             <tr>
+
+                <td>
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm btn-user-permissions"
+                            data-key-id="@item.KeyId">
+                        @Localizer["Users.Permissions"]
+                    </button>
+                </td>
 
                 <td>@item.KeyId</td>
 

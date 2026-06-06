@@ -18,6 +18,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<RoleDepId> RolesDepId => Set<RoleDepId>();
 
+    public DbSet<RoleMailGroup> RolesMailGroup => Set<RoleMailGroup>();
+
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -106,6 +108,28 @@ public class ApplicationDbContext : DbContext
 
             entity.HasOne(e => e.Role)
                 .WithMany(e => e.RoleDepIds)
+                .HasForeignKey(e => e.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<RoleMailGroup>(entity =>
+        {
+            entity.ToTable("RolesMailGroup");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Address).HasColumnName("Address").HasMaxLength(255).IsRequired();
+            entity.Property(e => e.IsEnabled).HasDefaultValue(true);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("GETDATE()").IsRequired();
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
+
+            entity.HasIndex(e => new { e.Address, e.RoleId })
+                .IsUnique()
+                .HasDatabaseName("IX_RolesMailGroup_Address_RoleId");
+
+            entity.HasOne(e => e.Role)
+                .WithMany(e => e.RoleMailGroups)
                 .HasForeignKey(e => e.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
         });

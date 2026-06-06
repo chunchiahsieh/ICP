@@ -1,0 +1,69 @@
+<div class="offcanvas offcanvas-end batch-create-wizard-drawer"
+     tabindex="-1"
+     id="batchCreateWizardDrawer"
+     aria-labelledby="batchCreateWizardDrawerLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="batchCreateWizardDrawerLabel">@Localizer["RoleMailGroups.CreateDrawerTitle"]</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column p-0">
+        <div class="flex-grow-1 overflow-auto p-3">
+            <ul class="nav nav-pills nav-fill mb-3" id="wizardStepIndicator" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <span class="nav-link active disabled" data-wizard-step="1">@Localizer["Wizard.Step1Roles"]</span>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <span class="nav-link disabled" data-wizard-step="2">@Localizer["Wizard.Step2MailGroups"]</span>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <span class="nav-link disabled" data-wizard-step="3">@Localizer["Wizard.Step3Confirm"]</span>
+                </li>
+            </ul>
+
+            <div id="wizardAlert" class="alert alert-danger py-2 d-none" role="alert"></div>
+
+            <div id="wizardStepRoles" class="wizard-step-pane">
+                <p class="text-muted small mb-2">
+                    @Localizer["Wizard.PickRolesHint"]
+                    <span class="fw-semibold" id="rolesStepSelectedHint">@Localizer["Js.SelectedCount", 0]</span>
+                </p>
+                <div id="RolesPickDiv"></div>
+            </div>
+
+            <div id="wizardStepUsers" class="wizard-step-pane d-none">
+                <p class="text-muted small mb-2">
+                    @Localizer["Wizard.PickMailGroupsHint"]
+                    <span class="fw-semibold" id="usersStepSelectedHint">@Localizer["Js.SelectedCount", 0]</span>
+                </p>
+                <div id="MailGroupsPickDiv"></div>
+            </div>
+
+            <div id="wizardStepPreview" class="wizard-step-pane d-none">
+                <p class="text-muted small mb-3">@Localizer["Wizard.PreviewIntro"]</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6 class="mb-2">@Localizer["Wizard.SelectedRoles"] <span class="badge text-bg-secondary" id="previewRoleCount">0</span></h6>
+                        <ul class="list-group list-group-flush border rounded small preview-list" id="previewRoleList" style="max-height: 200px; overflow-y: auto;"></ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="mb-2">@Localizer["Wizard.SelectedMailGroups"] <span class="badge text-bg-secondary" id="previewUserCount">0</span></h6>
+                        <ul class="list-group list-group-flush border rounded small preview-list" id="previewUserList" style="max-height: 200px; overflow-y: auto;"></ul>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3 mb-0 py-2" role="status">
+                    @Localizer["Wizard.EstimatedCreateCount"]<strong id="previewEstimatedCount">0</strong>
+                    （<span id="previewFormula">0 × 0</span>）
+                </div>
+            </div>
+        </div>
+        <div class="border-top p-3 d-flex gap-2 justify-content-end flex-shrink-0 bg-body">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnWizardCancel" data-bs-dismiss="offcanvas">@Localizer["Common.Cancel"]</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm d-none" id="btnWizardBack">@Localizer["Common.Back"]</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnWizardNext">@Localizer["Common.Next"]</button>
+            <button type="button" class="btn btn-primary btn-sm d-none" id="btnWizardSubmit">
+                <span class="wizard-submit-label">@Localizer["Common.Submit"]</span>
+                <span class="spinner-border spinner-border-sm d-none wizard-submit-spinner" role="status" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+</div>

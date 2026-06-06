@@ -101,15 +101,18 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<PermissionScannerService>();
 builder.Services.AddScoped<PermissionResourceSyncService>();
+builder.Services.AddSingleton<ResourceRouteRegistryService>();
 builder.Services.AddScoped<UserAuthService>();
+builder.Services.AddScoped<UserResourcePermissionService>();
 builder.Services.AddScoped<RequireLoginFilter>();
+builder.Services.AddScoped<RequireResourcePermissionFilter>();
 
 builder.Services
     .AddControllersWithViews(options =>
     {
         options.Filters.Add<RequireLoginFilter>();
+        options.Filters.Add<RequireResourcePermissionFilter>();
     })
-    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
     .AddDataAnnotationsLocalization(options =>
         options.DataAnnotationLocalizerProvider = (_, factory) =>
             factory.Create(typeof(SharedResource)))
@@ -136,7 +139,22 @@ builder.Services.AddDbContext<IlcDbContext>(options =>
     }
 });
 
+builder.Services.AddDbContext<FiestaDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("FIESTA_Connection");
+    if (!string.IsNullOrWhiteSpace(connectionString))
+    {
+        options.UseSqlServer(connectionString);
+    }
+});
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var routeRegistry = scope.ServiceProvider.GetRequiredService<ResourceRouteRegistryService>();
+    await routeRegistry.RefreshAsync();
+}
 
 var authOptions = app.Services.GetRequiredService<IOptions<AppAuthOptions>>().Value;
 var windowsIdentityMode = isAgaComputer &&
@@ -145,12 +163,13 @@ var windowsIdentityMode = isAgaComputer &&
         : "Negotiate";
 
 Log.Information(
-    "Application starting. ComputerName={ComputerName}, AppSettings={AppSettings}, Environment={EnvironmentName}, WindowsIdentityMode={WindowsIdentityMode}, SimulatedWindowsIdentity={SimulatedWindowsIdentity}",
+    "Application starting. ComputerName={ComputerName}, AppSettings={AppSettings}, Environment={EnvironmentName}, WindowsIdentityMode={WindowsIdentityMode}, SimulatedWindowsIdentity={SimulatedWindowsIdentity}, SuperUser={SuperUser}",
     Environment.MachineName,
     appSettingsProfile,
     app.Environment.EnvironmentName,
     windowsIdentityMode,
-    authOptions.SimulatedWindowsIdentity);
+    authOptions.SimulatedWindowsIdentity,
+    authOptions.SuperUser);
 
 if (!app.Environment.IsDevelopment())
 {

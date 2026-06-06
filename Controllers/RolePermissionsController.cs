@@ -18,6 +18,7 @@ public class RolePermissionsController : Controller
         "RoleName",
         "ResourceCode",
         "ResourceName",
+        "ResourceType",
         "ActionCode"
     };
 
@@ -100,7 +101,7 @@ public class RolePermissionsController : Controller
         {
             foreach (var resource in resources)
             {
-                var actionCode = resource.ResourceCode;
+                var actionCode = RolePermissionActionCodes.Resolve(resource);
                 var key = $"{role.Id}|{resource.Id}|{actionCode}";
                 if (existingSet.Contains(key))
                 {
@@ -327,6 +328,7 @@ public class RolePermissionsController : Controller
             "RoleName" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.Role.RoleName), search, cancellationToken),
             "ResourceCode" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.Resource.ResourceCode), search, cancellationToken),
             "ResourceName" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.Resource.ResourceName), search, cancellationToken),
+            "ResourceType" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.Resource.ResourceType), search, cancellationToken),
             "ActionCode" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.ActionCode), search, cancellationToken),
             _ => []
         };
@@ -356,6 +358,11 @@ public class RolePermissionsController : Controller
         if (criteria.ResourceNames.Count > 0)
         {
             query = query.Where(r => criteria.ResourceNames.Contains(r.Resource.ResourceName));
+        }
+
+        if (criteria.ResourceTypes.Count > 0)
+        {
+            query = query.Where(r => criteria.ResourceTypes.Contains(r.Resource.ResourceType));
         }
 
         if (criteria.ActionCodes.Count > 0)

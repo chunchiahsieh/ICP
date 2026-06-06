@@ -153,6 +153,9 @@
   <data name="Error.RoleDepIdExists" xml:space="preserve">
     <value>此 DepID 與角色組合已存在</value>
   </data>
+  <data name="Error.RoleMailGroupExists" xml:space="preserve">
+    <value>此 MailGroup 與角色組合已存在</value>
+  </data>
   <data name="Error.RolePermissionExists" xml:space="preserve">
     <value>此角色、資源與動作組合已存在</value>
   </data>
@@ -258,50 +261,53 @@
   <data name="ErrorPage.Title" xml:space="preserve">
     <value>ERROR</value>
   </data>
+  <data name="Permission.AccessDenied" xml:space="preserve">
+    <value>您沒有存取此頁面的權限。</value>
+  </data>
   <data name="Message.ValidRoleResourceNotFound" xml:space="preserve">
     <value>找不到有效的 Role 或 Resource</value>
   </data>
   <data name="Nav.Admin" xml:space="preserve">
-    <value>ADMIN</value>
+    <value>系統管理</value>
   </data>
   <data name="Nav.AddDiSa" xml:space="preserve">
-    <value>Add DI/SA</value>
+    <value>新增 DI/SA</value>
   </data>
   <data name="Nav.Broker" xml:space="preserve">
-    <value>BROKER</value>
+    <value>報關</value>
   </data>
   <data name="Nav.BuCode" xml:space="preserve">
-    <value>BU Code</value>
+    <value>BU 代碼</value>
   </data>
   <data name="Nav.CompareIcpVsArUr" xml:space="preserve">
-    <value>Compare ICP vs AR/UR</value>
+    <value>ICP 與 AR/UR 比對</value>
   </data>
   <data name="Nav.CustomsDataDownload" xml:space="preserve">
-    <value>Customs Data Download</value>
+    <value>關務資料下載</value>
   </data>
   <data name="Nav.DefaultDeliveryWh" xml:space="preserve">
-    <value>Default Delivery W/H</value>
+    <value>預設交貨倉庫</value>
   </data>
   <data name="Nav.DeliveryToList" xml:space="preserve">
-    <value>Delivery To List</value>
+    <value>交貨對象清單</value>
   </data>
   <data name="Nav.DropDownList" xml:space="preserve">
-    <value>Drop Down List</value>
+    <value>下拉選單維護</value>
   </data>
   <data name="Nav.EtaDelDateTable" xml:space="preserve">
-    <value>ETA-Del Date Table</value>
+    <value>ETA 交貨日表</value>
   </data>
   <data name="Nav.Export" xml:space="preserve">
-    <value>Export</value>
+    <value>匯出</value>
   </data>
   <data name="Nav.Forwarder" xml:space="preserve">
-    <value>FORWARDER</value>
+    <value>貨代</value>
   </data>
   <data name="Nav.ForwarderDataUpload" xml:space="preserve">
-    <value>Forwarder Data Upload</value>
+    <value>貨代資料上傳</value>
   </data>
   <data name="Nav.Function" xml:space="preserve">
-    <value>FUNCTION</value>
+    <value>功能</value>
   </data>
   <data name="Nav.Home" xml:space="preserve">
     <value>首頁</value>
@@ -313,31 +319,34 @@
     <value>隱私權</value>
   </data>
   <data name="Nav.MassDataReport" xml:space="preserve">
-    <value>Mass Data Report</value>
+    <value>大量資料報表</value>
   </data>
   <data name="Nav.MassUpdateNonNcpi" xml:space="preserve">
-    <value>Mass Update-non NCPI</value>
+    <value>大量更新 (非 NCPI)</value>
   </data>
   <data name="Nav.MassUpdateNcpi" xml:space="preserve">
-    <value>Mass Update-NCPI</value>
+    <value>大量更新 (NCPI)</value>
   </data>
   <data name="Nav.OrderType" xml:space="preserve">
-    <value>Order Type</value>
+    <value>訂單類型</value>
   </data>
   <data name="Nav.Permissions" xml:space="preserve">
-    <value>Permissions</value>
+    <value>權限</value>
   </data>
   <data name="Nav.PickUpLocation" xml:space="preserve">
-    <value>Pick Up Location</value>
+    <value>提貨地點</value>
   </data>
   <data name="Nav.Report" xml:space="preserve">
-    <value>REPORT</value>
+    <value>報表</value>
   </data>
   <data name="Nav.Resources" xml:space="preserve">
     <value>資源</value>
   </data>
   <data name="Nav.RoleDepIds" xml:space="preserve">
     <value>部門角色</value>
+  </data>
+  <data name="Nav.RoleMailGroups" xml:space="preserve">
+    <value>郵件群組角色</value>
   </data>
   <data name="Nav.RolePermissions" xml:space="preserve">
     <value>角色權限</value>
@@ -349,21 +358,126 @@
     <value>人員角色</value>
   </data>
   <data name="Nav.Setting" xml:space="preserve">
-    <value>SETTING</value>
+    <value>設定</value>
   </data>
   <data name="Nav.ShipInfo" xml:space="preserve">
-    <value>Ship Info</value>
+    <value>船務資訊</value>
   </data>
   <data name="Nav.ShippingReport" xml:space="preserve">
-    <value>Shipping Report</value>
+    <value>船務報表</value>
   </data>
   <data name="Nav.TariffData" xml:space="preserve">
-    <value>Tariff Data</value>
+    <value>關稅資料</value>
   </data>
   <data name="Nav.WhCode" xml:space="preserve">
-    <value>W/H Code</value>
+    <value>倉庫代碼</value>
   </data>
   <data name="Nav.Users" xml:space="preserve">
+    <value>使用者</value>
+  </data>
+  <data name="Views.Shared._Layout.Home" xml:space="preserve">
+    <value>首頁</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker" xml:space="preserve">
+    <value>報關</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
+    <value>關務資料下載</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
+    <value>關稅資料</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Forwarder" xml:space="preserve">
+    <value>貨代</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.AddDiSa" xml:space="preserve">
+    <value>新增 DI/SA</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.Export" xml:space="preserve">
+    <value>匯出</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi" xml:space="preserve">
+    <value>大量更新 (非 NCPI)</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.MassUpdateNcpi" xml:space="preserve">
+    <value>大量更新 (NCPI)</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.ShipInfo" xml:space="preserve">
+    <value>船務資訊</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Logout" xml:space="preserve">
+    <value>登出</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report" xml:space="preserve">
+    <value>報表</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.CompareIcpVsArUr" xml:space="preserve">
+    <value>ICP 與 AR/UR 比對</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.MassDataReport" xml:space="preserve">
+    <value>大量資料報表</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
+    <value>船務報表</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.BuCode" xml:space="preserve">
+    <value>BU 代碼</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh" xml:space="preserve">
+    <value>預設交貨倉庫</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.DeliveryToList" xml:space="preserve">
+    <value>交貨對象清單</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.EtaDelDateTable" xml:space="preserve">
+    <value>ETA 交貨日表</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.OrderType" xml:space="preserve">
+    <value>訂單類型</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.PickUpLocation" xml:space="preserve">
+    <value>提貨地點</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.WhCode" xml:space="preserve">
+    <value>倉庫代碼</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
+    <value>系統管理</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.DropDownList" xml:space="preserve">
+    <value>下拉選單維護</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions" xml:space="preserve">
+    <value>權限</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Resources" xml:space="preserve">
+    <value>資源</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleDepIds" xml:space="preserve">
+    <value>部門角色</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleMailGroups" xml:space="preserve">
+    <value>郵件群組角色</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RolePermissions" xml:space="preserve">
+    <value>角色權限</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Roles" xml:space="preserve">
+    <value>角色</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleTelIds" xml:space="preserve">
+    <value>人員角色</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Users" xml:space="preserve">
     <value>使用者</value>
   </data>
   <data name="Permission.Resource.Scan" xml:space="preserve">
@@ -423,6 +537,15 @@
   <data name="Views.Permission.RoleDepIds.View" xml:space="preserve">
     <value>部門角色查詢</value>
   </data>
+  <data name="Views.Permission.RoleMailGroups.Create" xml:space="preserve">
+    <value>郵件群組角色新增</value>
+  </data>
+  <data name="Views.Permission.RoleMailGroups.Delete" xml:space="preserve">
+    <value>郵件群組角色刪除</value>
+  </data>
+  <data name="Views.Permission.RoleMailGroups.View" xml:space="preserve">
+    <value>郵件群組角色查詢</value>
+  </data>
   <data name="Views.Permission.RolePermissions.Create" xml:space="preserve">
     <value>角色權限新增</value>
   </data>
@@ -480,6 +603,42 @@
   <data name="RoleDepIds.Title" xml:space="preserve">
     <value>部門角色</value>
   </data>
+  <data name="RoleMailGroups.BatchDeleteConfirm" xml:space="preserve">
+    <value>確定要刪除所選的郵件群組角色對應嗎？</value>
+  </data>
+  <data name="RoleMailGroups.CreateDrawerTitle" xml:space="preserve">
+    <value>建立郵件群組角色</value>
+  </data>
+  <data name="RoleMailGroups.Title" xml:space="preserve">
+    <value>郵件群組角色</value>
+  </data>
+  <data name="RoleMailGroups.Col.Uid" xml:space="preserve">
+    <value>UID</value>
+  </data>
+  <data name="RoleMailGroups.Col.Name" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="RoleMailGroups.Col.Address" xml:space="preserve">
+    <value>位址</value>
+  </data>
+  <data name="RoleMailGroups.Col.RoleCode" xml:space="preserve">
+    <value>角色代碼</value>
+  </data>
+  <data name="RoleMailGroups.Col.RoleName" xml:space="preserve">
+    <value>角色名稱</value>
+  </data>
+  <data name="RoleMailGroups.Col.CreateTime" xml:space="preserve">
+    <value>建立時間</value>
+  </data>
+  <data name="RoleMailGroups.Col.CreateUser" xml:space="preserve">
+    <value>建立者</value>
+  </data>
+  <data name="RoleMailGroups.Col.UpdateTime" xml:space="preserve">
+    <value>更新時間</value>
+  </data>
+  <data name="RoleMailGroups.Col.UpdateUser" xml:space="preserve">
+    <value>更新者</value>
+  </data>
   <data name="RolePermissions.BatchDeleteConfirm" xml:space="preserve">
     <value>確定要刪除所選的角色權限嗎？</value>
   </data>
@@ -519,8 +678,29 @@
   <data name="Users.Title" xml:space="preserve">
     <value>使用者</value>
   </data>
+  <data name="Users.Permissions" xml:space="preserve">
+    <value>權限</value>
+  </data>
+  <data name="Users.PermissionsModalTitle" xml:space="preserve">
+    <value>使用者權限</value>
+  </data>
+  <data name="Users.PermissionsLoadFailed" xml:space="preserve">
+    <value>無法載入使用者權限，請稍後再試。</value>
+  </data>
+  <data name="Users.CopyPermissionsJson" xml:space="preserve">
+    <value>複製 JSON 到剪貼簿</value>
+  </data>
+  <data name="Users.CopyPermissionsJsonSuccess" xml:space="preserve">
+    <value>已複製到剪貼簿</value>
+  </data>
+  <data name="Users.CopyPermissionsJsonFailed" xml:space="preserve">
+    <value>複製失敗，請稍後再試。</value>
+  </data>
   <data name="Validation.SelectAtLeastOneDepartment" xml:space="preserve">
     <value>請至少選擇一筆部門</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneMailGroup" xml:space="preserve">
+    <value>請至少選擇一筆 MailGroup</value>
   </data>
   <data name="Validation.SelectAtLeastOneRecord" xml:space="preserve">
     <value>請至少選擇一筆資料</value>
@@ -546,6 +726,9 @@
   <data name="Wizard.PickDepartmentsHint" xml:space="preserve">
     <value>勾選要指派的部門（以 DepID 為準）。可換頁篩選，已選項目會保留。</value>
   </data>
+  <data name="Wizard.PickMailGroupsHint" xml:space="preserve">
+    <value>勾選要指派的 MailGroup（以 Address 為準）。可換頁篩選，已選項目會保留。</value>
+  </data>
   <data name="Wizard.PickResourcesHint" xml:space="preserve">
     <value>勾選要指派的資源。可換頁篩選，已選項目會保留。</value>
   </data>
@@ -560,6 +743,9 @@
   </data>
   <data name="Wizard.SelectedDepartments" xml:space="preserve">
     <value>已選部門</value>
+  </data>
+  <data name="Wizard.SelectedMailGroups" xml:space="preserve">
+    <value>已選 MailGroup</value>
   </data>
   <data name="Wizard.SelectedResources" xml:space="preserve">
     <value>已選資源</value>
@@ -576,6 +762,9 @@
   <data name="Wizard.Step2Departments" xml:space="preserve">
     <value>2 選擇部門</value>
   </data>
+  <data name="Wizard.Step2MailGroups" xml:space="preserve">
+    <value>2 選擇 MailGroup</value>
+  </data>
   <data name="Wizard.Step2Resources" xml:space="preserve">
     <value>2 選擇資源</value>
   </data>
@@ -591,8 +780,14 @@
   <data name="Message.SelectRoleAndDepartment" xml:space="preserve">
     <value>請至少選擇一筆角色與一筆部門</value>
   </data>
+  <data name="Message.SelectRoleAndMailGroup" xml:space="preserve">
+    <value>請至少選擇一筆角色與一筆 MailGroup</value>
+  </data>
   <data name="Message.ValidRoleDepartmentNotFound" xml:space="preserve">
     <value>找不到有效的角色或部門</value>
+  </data>
+  <data name="Message.ValidRoleMailGroupNotFound" xml:space="preserve">
+    <value>找不到有效的角色或 MailGroup</value>
   </data>
   <data name="Message.SelectRoleAndUser" xml:space="preserve">
     <value>請至少選擇一筆角色與一筆使用者</value>

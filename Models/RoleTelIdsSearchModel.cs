@@ -15,8 +15,4 @@ public class RoleTelIdsSearchModel
     public List<string> CreateTimes { get; set; } = [];
 
     public List<string> CreateUsers { get; set; } = [];
-
-    public List<string> UpdateTimes { get; set; } = [];
-
-    public List<string> UpdateUsers { get; set; } = [];
 }

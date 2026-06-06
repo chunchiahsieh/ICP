@@ -1,9 +1,12 @@
 using ICP.Data;
 using ICP.Infrastructure;
 using ICP.Models;
+using ICP.Services;
 using ICP.Models.Ilc;
+using ICP.Models.Icp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace ICP.Controllers;
 
@@ -26,10 +29,17 @@ public class UsersController : Controller
     };
 
     private readonly IlcDbContext _ilcDb;
+    private readonly ApplicationDbContext _icpDb;
+    private readonly UserResourcePermissionService _userResourcePermissionService;
 
-    public UsersController(IlcDbContext ilcDb)
+    public UsersController(
+        IlcDbContext ilcDb,
+        ApplicationDbContext icpDb,
+        UserResourcePermissionService userResourcePermissionService)
     {
         _ilcDb = ilcDb;
+        _icpDb = icpDb;
+        _userResourcePermissionService = userResourcePermissionService;
     }
 
     public IActionResult Index()
@@ -58,6 +68,28 @@ public class UsersController : Controller
         var options = await GetDistinctColumnValuesAsync(column, search, cancellationToken);
         return Json(options);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetPermissions(int keyId, CancellationToken cancellationToken = default)
+    {
+        var user = await _ilcDb.UserInfoAd
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.KeyId == keyId, cancellationToken);
+
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        var response = await _userResourcePermissionService.BuildPermissionsResponseAsync(user, cancellationToken);
+
+        return new JsonResult(response, UserPermissionsJsonOptions);
+    }
+
+    private static readonly JsonSerializerOptions UserPermissionsJsonOptions = new()
+    {
+        PropertyNamingPolicy = null
+    };
 
     private async Task<List<string>> GetDistinctColumnValuesAsync(
         string column,

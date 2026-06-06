@@ -48,6 +48,9 @@ public class Role
     /// <summary>部門角色對應</summary>
     public ICollection<RoleDepId> RoleDepIds { get; set; } = [];
 
+    /// <summary>郵件群組角色對應</summary>
+    public ICollection<RoleMailGroup> RoleMailGroups { get; set; } = [];
+
     /// <summary>角色權限對應</summary>
     public ICollection<RolePermission> RolePermissions { get; set; } = [];
 }

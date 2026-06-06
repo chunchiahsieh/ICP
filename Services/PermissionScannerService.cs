@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using ICP;
+using ICP.Helpers;
 using Microsoft.Extensions.Localization;
 
 namespace ICP.Services;
@@ -30,7 +31,6 @@ public partial class PermissionScannerService
         foreach (var file in Directory.EnumerateFiles(viewsPath, "*.cshtml", SearchOption.AllDirectories))
         {
             var relativePath = Path.GetRelativePath(viewsPath, file).Replace('\\', '/');
-            var route = DeriveRoute(relativePath);
             var content = File.ReadAllText(file);
 
             foreach (var match in PermissionTagRegex().Matches(content).Cast<Match>())
@@ -43,10 +43,12 @@ public partial class PermissionScannerService
                 }
 
                 var fullOpeningTag = match.Value;
+                var tagContent = match.Groups["tagContent"].Value;
                 var i18nKey = ExtractAttributeValue(fullOpeningTag, "data-i18n-key")
                     ?? ExtractAttributeValue(fullOpeningTag, "data-permission-key");
                 var permissionName = ResolveResourceName(i18nKey, fullOpeningTag, content, match, tag, resourceCode);
                 var innerText = ExtractInnerText(content, match.Index + match.Length, tag);
+                var route = DeriveRoute(relativePath) ?? ExtractRouteFromTag(tagContent);
 
                 if (string.IsNullOrWhiteSpace(permissionName) && !string.IsNullOrWhiteSpace(innerText))
                 {
@@ -62,7 +64,7 @@ public partial class PermissionScannerService
                 {
                     ResourceCode = resourceCode,
                     ResourceName = permissionName,
-                    ResourceType = MapResourceType(tag),
+                    ResourceType = PermissionResourceTypes.Resolve(tag, resourceCode),
                     Route = route,
                     Description = $"Auto-scanned from Views/{relativePath}",
                     SourceFile = relativePath
@@ -180,16 +182,22 @@ public partial class PermissionScannerService
         return WhitespaceRegex().Replace(value, " ").Trim();
     }
 
-    private static string MapResourceType(string tag)
+    private static string? ExtractRouteFromTag(string tagContent)
     {
-        return tag.ToLowerInvariant() switch
+        var controller = ExtractAttributeValue(tagContent, "asp-controller");
+        if (string.IsNullOrWhiteSpace(controller))
         {
-            "button" => "Button",
-            "a" => "Menu",
-            "input" or "select" or "textarea" => "Field",
-            "form" => "Page",
-            _ => "Page"
-        };
+            return null;
+        }
+
+        var action = ExtractAttributeValue(tagContent, "asp-action");
+        if (string.IsNullOrWhiteSpace(action) ||
+            action.Equals("Index", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"/{controller}";
+        }
+
+        return $"/{controller}/{action}";
     }
 
     private static string? DeriveRoute(string relativeViewPath)

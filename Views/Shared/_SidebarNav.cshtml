@@ -1,49 +1,158 @@
-<div class="sb-sidenav-menu-heading">@Localizer["Nav.Function"]</div>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.ShipInfo"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.AddDiSa"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.MassUpdateNonNcpi"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.MassUpdateNcpi"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.Export"]</a>
+@inject UserResourcePermissionService UserResourcePerm
+@{
+    bool ShowMenuCategory(string categoryCode) => UserResourcePerm.HasMenuCategoryPermission(categoryCode);
+    bool HasMenu(string resourceCode) => UserResourcePerm.HasMenuPermission(resourceCode);
+}
 
-<div class="sb-sidenav-menu-heading">@Localizer["Nav.Setting"]</div>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.EtaDelDateTable"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.BuCode"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.OrderType"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.WhCode"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.DeliveryToList"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.PickUpLocation"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.DefaultDeliveryWh"]</a>
+@if (ShowMenuCategory("Views.Shared._SidebarNav.Function"))
+{
+    <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Function" data-i18n-key="Views.Shared._SidebarNav.Function">@Localizer["Views.Shared._SidebarNav.Function"]</div>
+    @if (HasMenu("Views.Shared._SidebarNav.Function.ShipInfo"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.ShipInfo" data-i18n-key="Views.Shared._SidebarNav.Function.ShipInfo">@Localizer["Views.Shared._SidebarNav.Function.ShipInfo"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Function.AddDiSa"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.AddDiSa" data-i18n-key="Views.Shared._SidebarNav.Function.AddDiSa">@Localizer["Views.Shared._SidebarNav.Function.AddDiSa"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Function.MassUpdateNonNcpi"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi" data-i18n-key="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi">@Localizer["Views.Shared._SidebarNav.Function.MassUpdateNonNcpi"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Function.MassUpdateNcpi"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.MassUpdateNcpi" data-i18n-key="Views.Shared._SidebarNav.Function.MassUpdateNcpi">@Localizer["Views.Shared._SidebarNav.Function.MassUpdateNcpi"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Function.Export"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.Export" data-i18n-key="Views.Shared._SidebarNav.Function.Export">@Localizer["Views.Shared._SidebarNav.Function.Export"]</a>
+    }
+}
 
-<div class="sb-sidenav-menu-heading">@Localizer["Nav.Report"]</div>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.ShippingReport"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.CompareIcpVsArUr"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.MassDataReport"]</a>
+@if (ShowMenuCategory("Views.Shared._SidebarNav.Setting"))
+{
+    <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Setting" data-i18n-key="Views.Shared._SidebarNav.Setting">@Localizer["Views.Shared._SidebarNav.Setting"]</div>
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.EtaDelDateTable"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.EtaDelDateTable" data-i18n-key="Views.Shared._SidebarNav.Setting.EtaDelDateTable">@Localizer["Views.Shared._SidebarNav.Setting.EtaDelDateTable"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.BuCode"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.BuCode" data-i18n-key="Views.Shared._SidebarNav.Setting.BuCode">@Localizer["Views.Shared._SidebarNav.Setting.BuCode"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.OrderType"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.OrderType" data-i18n-key="Views.Shared._SidebarNav.Setting.OrderType">@Localizer["Views.Shared._SidebarNav.Setting.OrderType"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.WhCode"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.WhCode" data-i18n-key="Views.Shared._SidebarNav.Setting.WhCode">@Localizer["Views.Shared._SidebarNav.Setting.WhCode"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.DeliveryToList"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.DeliveryToList" data-i18n-key="Views.Shared._SidebarNav.Setting.DeliveryToList">@Localizer["Views.Shared._SidebarNav.Setting.DeliveryToList"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.PickUpLocation"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.PickUpLocation" data-i18n-key="Views.Shared._SidebarNav.Setting.PickUpLocation">@Localizer["Views.Shared._SidebarNav.Setting.PickUpLocation"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.DefaultDeliveryWh"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh" data-i18n-key="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh">@Localizer["Views.Shared._SidebarNav.Setting.DefaultDeliveryWh"]</a>
+    }
+}
 
-<div class="sb-sidenav-menu-heading">@Localizer["Nav.Forwarder"]</div>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.ForwarderDataUpload"]</a>
+@if (ShowMenuCategory("Views.Shared._SidebarNav.Report"))
+{
+    <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Report" data-i18n-key="Views.Shared._SidebarNav.Report">@Localizer["Views.Shared._SidebarNav.Report"]</div>
+    @if (HasMenu("Views.Shared._SidebarNav.Report.ShippingReport"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.ShippingReport" data-i18n-key="Views.Shared._SidebarNav.Report.ShippingReport">@Localizer["Views.Shared._SidebarNav.Report.ShippingReport"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Report.CompareIcpVsArUr"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.CompareIcpVsArUr" data-i18n-key="Views.Shared._SidebarNav.Report.CompareIcpVsArUr">@Localizer["Views.Shared._SidebarNav.Report.CompareIcpVsArUr"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Report.MassDataReport"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.MassDataReport" data-i18n-key="Views.Shared._SidebarNav.Report.MassDataReport">@Localizer["Views.Shared._SidebarNav.Report.MassDataReport"]</a>
+    }
+}
 
-<div class="sb-sidenav-menu-heading">@Localizer["Nav.Broker"]</div>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.CustomsDataDownload"]</a>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.TariffData"]</a>
+@if (ShowMenuCategory("Views.Shared._SidebarNav.Forwarder"))
+{
+    <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Forwarder" data-i18n-key="Views.Shared._SidebarNav.Forwarder">@Localizer["Views.Shared._SidebarNav.Forwarder"]</div>
+    @if (HasMenu("Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload" data-i18n-key="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload">@Localizer["Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload"]</a>
+    }
+}
 
-<div class="sb-sidenav-menu-heading">@Localizer["Nav.Admin"]</div>
-<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePermission" aria-expanded="false" aria-controls="collapsePermission">
-    @Localizer["Nav.Permissions"]
-    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-</a>
-<div class="collapse" id="collapsePermission" aria-labelledby="headingPermission" data-bs-parent="#sidenavAccordion">
-    <nav class="sb-sidenav-menu-nested nav">
-        <a class="nav-link" asp-controller="Users" asp-action="Index">@Localizer["Nav.Users"]</a>
-        <a class="nav-link" asp-controller="Resources" asp-action="Index">@Localizer["Nav.Resources"]</a>
-        <a class="nav-link" asp-controller="Roles" asp-action="Index">@Localizer["Nav.Roles"]</a>
-        <a class="nav-link" asp-controller="RolePermissions" asp-action="Index">@Localizer["Nav.RolePermissions"]</a>
-        <a class="nav-link" asp-controller="RoleTelIds" asp-action="Index">@Localizer["Nav.RoleTelIds"]</a>
-        <a class="nav-link" asp-controller="RoleDepIds" asp-action="Index">@Localizer["Nav.RoleDepIds"]</a>
-    </nav>
-</div>
-<a class="nav-link" asp-controller="ErrorPage" asp-action="Index">@Localizer["Nav.DropDownList"]</a>
+@if (ShowMenuCategory("Views.Shared._SidebarNav.Broker"))
+{
+    <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Broker" data-i18n-key="Views.Shared._SidebarNav.Broker">@Localizer["Views.Shared._SidebarNav.Broker"]</div>
+    @if (HasMenu("Views.Shared._SidebarNav.Broker.CustomsDataDownload"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Broker.CustomsDataDownload" data-i18n-key="Views.Shared._SidebarNav.Broker.CustomsDataDownload">@Localizer["Views.Shared._SidebarNav.Broker.CustomsDataDownload"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Broker.TariffData"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Broker.TariffData" data-i18n-key="Views.Shared._SidebarNav.Broker.TariffData">@Localizer["Views.Shared._SidebarNav.Broker.TariffData"]</a>
+    }
+}
 
-<a class="nav-link" asp-controller="Login" asp-action="Logout">
-    <div class="sb-nav-link-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
-    @Localizer["Common.Logout"]
-</a>
+@if (ShowMenuCategory("Views.Shared._SidebarNav.Systems"))
+{
+    <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Systems" data-i18n-key="Views.Shared._SidebarNav.Systems">@Localizer["Views.Shared._SidebarNav.Systems"]</div>
+    @if (HasMenu("Views.Shared._SidebarNav.Systems.Permissions"))
+    {
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePermission" aria-expanded="false" aria-controls="collapsePermission" data-permissions="Views.Shared._SidebarNav.Systems.Permissions" data-i18n-key="Views.Shared._SidebarNav.Systems.Permissions">
+            @Localizer["Views.Shared._SidebarNav.Systems.Permissions"]
+            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="collapsePermission" aria-labelledby="headingPermission" data-bs-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav">
+                @if (HasMenu("Views.Shared._SidebarNav.Systems.Permissions.Users"))
+                {
+                    <a class="nav-link" asp-controller="Users" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.Permissions.Users" data-i18n-key="Views.Shared._SidebarNav.Systems.Permissions.Users">@Localizer["Views.Shared._SidebarNav.Systems.Permissions.Users"]</a>
+                }
+                @if (HasMenu("Views.Shared._SidebarNav.Systems.Permissions.Resources"))
+                {
+                    <a class="nav-link" asp-controller="Resources" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.Permissions.Resources" data-i18n-key="Views.Shared._SidebarNav.Systems.Permissions.Resources">@Localizer["Views.Shared._SidebarNav.Systems.Permissions.Resources"]</a>
+                }
+                @if (HasMenu("Views.Shared._SidebarNav.Systems.Permissions.Roles"))
+                {
+                    <a class="nav-link" asp-controller="Roles" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.Permissions.Roles" data-i18n-key="Views.Shared._SidebarNav.Systems.Permissions.Roles">@Localizer["Views.Shared._SidebarNav.Systems.Permissions.Roles"]</a>
+                }
+                @if (HasMenu("Views.Shared._SidebarNav.Systems.Permissions.RolePermissions"))
+                {
+                    <a class="nav-link" asp-controller="RolePermissions" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.Permissions.RolePermissions" data-i18n-key="Views.Shared._SidebarNav.Systems.Permissions.RolePermissions">@Localizer["Views.Shared._SidebarNav.Systems.Permissions.RolePermissions"]</a>
+                }
+                @if (HasMenu("Views.Shared._SidebarNav.Systems.Permissions.RoleTelIds"))
+                {
+                    <a class="nav-link" asp-controller="RoleTelIds" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.Permissions.RoleTelIds" data-i18n-key="Views.Shared._SidebarNav.Systems.Permissions.RoleTelIds">@Localizer["Views.Shared._SidebarNav.Systems.Permissions.RoleTelIds"]</a>
+                }
+                @if (HasMenu("Views.Shared._SidebarNav.Systems.Permissions.RoleDepIds"))
+                {
+                    <a class="nav-link" asp-controller="RoleDepIds" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.Permissions.RoleDepIds" data-i18n-key="Views.Shared._SidebarNav.Systems.Permissions.RoleDepIds">@Localizer["Views.Shared._SidebarNav.Systems.Permissions.RoleDepIds"]</a>
+                }
+                @if (HasMenu("Views.Shared._SidebarNav.Systems.Permissions.RoleMailGroups"))
+                {
+                    <a class="nav-link" asp-controller="RoleMailGroups" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.Permissions.RoleMailGroups" data-i18n-key="Views.Shared._SidebarNav.Systems.Permissions.RoleMailGroups">@Localizer["Views.Shared._SidebarNav.Systems.Permissions.RoleMailGroups"]</a>
+                }
+            </nav>
+        </div>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Systems.DropDownList"))
+    {
+        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.DropDownList" data-i18n-key="Views.Shared._SidebarNav.Systems.DropDownList">@Localizer["Views.Shared._SidebarNav.Systems.DropDownList"]</a>
+    }
+}
+
+@if (HasMenu("Views.Shared._SidebarNav.Logout"))
+{
+    <a class="nav-link" asp-controller="Login" asp-action="Logout" data-permissions="Views.Shared._SidebarNav.Logout" data-i18n-key="Views.Shared._SidebarNav.Logout">
+        <div class="sb-nav-link-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+        @Localizer["Views.Shared._SidebarNav.Logout"]
+    </a>
+}

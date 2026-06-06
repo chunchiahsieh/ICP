@@ -1,0 +1,23 @@
+<div class="modal fade" id="userPermissionsModal" tabindex="-1" aria-labelledby="userPermissionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title flex-grow-1" id="userPermissionsModalLabel">@Localizer["Users.PermissionsModalTitle"]</h5>
+                <button type="button"
+                        class="btn btn-link btn-sm text-secondary p-1 me-1"
+                        id="btnCopyUserPermissionsJson"
+                        title="@Localizer["Users.CopyPermissionsJson"]"
+                        aria-label="@Localizer["Users.CopyPermissionsJson"]">
+                    <i class="fa-solid fa-copy" id="btnCopyUserPermissionsJsonIcon"></i>
+                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <pre id="userPermissionsJson" class="mb-0 p-3 small bg-light border-0" style="max-height: 70vh; overflow: auto; white-space: pre-wrap; word-break: break-word;"></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">@Localizer["Common.Cancel"]</button>
+            </div>
+        </div>
+    </div>
+</div>

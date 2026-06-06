@@ -42,6 +42,11 @@ public static class CrudAuditHelper
             return localizer["Error.RoleDepIdExists"];
         }
 
+        if (message.Contains("IX_RolesMailGroup_Address_RoleId", StringComparison.OrdinalIgnoreCase))
+        {
+            return localizer["Error.RoleMailGroupExists"];
+        }
+
         if (message.Contains("IX_RolePermissions", StringComparison.OrdinalIgnoreCase))
         {
             return localizer["Error.RolePermissionExists"];

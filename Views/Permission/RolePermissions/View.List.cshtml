@@ -6,6 +6,7 @@
         ("filter-result-RoleName", "RoleName"),
         ("filter-result-ResourceCode", "ResourceCode"),
         ("filter-result-ResourceName", "ResourceName"),
+        ("filter-result-ResourceType", "ResourceType"),
         ("filter-result-ActionCode", "ActionCode")
     };
 }
@@ -20,6 +21,7 @@
             <th>RoleName</th>
             <th>ResourceCode</th>
             <th>ResourceName</th>
+            <th>ResourceType</th>
             <th>ActionCode</th>
         </tr>
         <tr class="users-filter-row">
@@ -41,6 +43,7 @@
                 <td>@item.Role.RoleName</td>
                 <td>@item.Resource.ResourceCode</td>
                 <td>@item.Resource.ResourceName</td>
+                <td>@item.Resource.ResourceType</td>
                 <td>@item.ActionCode</td>
             </tr>
         }

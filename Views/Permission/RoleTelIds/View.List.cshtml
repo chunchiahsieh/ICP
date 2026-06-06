@@ -7,9 +7,7 @@
         ("filter-RoleName", "RoleName"),
         ("filter-Description", "Description"),
         ("filter-CreateTime", "CreateTime"),
-        ("filter-CreateUser", "CreateUser"),
-        ("filter-UpdateTime", "UpdateTime"),
-        ("filter-UpdateUser", "UpdateUser")
+        ("filter-CreateUser", "CreateUser")
     };
 }
 
@@ -25,8 +23,6 @@
             <th>Description</th>
             <th>CreateTime</th>
             <th>CreateUser</th>
-            <th>UpdateTime</th>
-            <th>UpdateUser</th>
         </tr>
         <tr class="users-filter-row">
             <th class="sorting_disabled"></th>
@@ -49,8 +45,6 @@
                 <td>@item.Description</td>
                 <td>@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                 <td>@item.CreateUser</td>
-                <td>@(item.UpdateTime?.ToString("yyyy-MM-dd HH:mm:ss"))</td>
-                <td>@item.UpdateUser</td>
             </tr>
         }
     </tbody>

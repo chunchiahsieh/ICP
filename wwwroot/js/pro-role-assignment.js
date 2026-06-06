@@ -210,10 +210,11 @@
 
       var $roleList = $('#previewRoleList').empty();
       selectedRoles.forEach(function (item) {
+        var line = item.name
+          ? escapeHtml(item.code) + ' - ' + escapeHtml(item.name)
+          : escapeHtml(item.code);
         $roleList.append(
-          '<li class="list-group-item py-1">' +
-          escapeHtml(item.code) + ' - ' + escapeHtml(item.name) +
-          '</li>'
+          '<li class="list-group-item py-1">' + line + '</li>'
         );
       });
       if (roleCount === 0) {
@@ -222,10 +223,11 @@
 
       var $userList = $('#previewUserList').empty();
       selectedUsers.forEach(function (item) {
+        var line = item.name
+          ? escapeHtml(item.code) + ' - ' + escapeHtml(item.name)
+          : escapeHtml(item.code);
         $userList.append(
-          '<li class="list-group-item py-1">' +
-          escapeHtml(item.code) + ' - ' + escapeHtml(item.name) +
-          '</li>'
+          '<li class="list-group-item py-1">' + line + '</li>'
         );
       });
       if (userCount === 0) {
@@ -398,7 +400,7 @@
       var userKeys = Array.from(selectedUsers.keys());
 
       if (roleIds.length === 0 || userKeys.length === 0) {
-        showWizardAlert(icpMsg('selectAtLeastOneRoleAndUser'));
+        showWizardAlert(config.batchCreateRequiredMessage || icpMsg('selectAtLeastOneRoleAndUser'));
         return;
       }
 
@@ -518,4 +520,6 @@
   global.ProRoleTelIds.init = initRoleAssignment;
   global.ProRoleDepIds = global.ProRoleDepIds || {};
   global.ProRoleDepIds.init = initRoleAssignment;
+  global.ProRoleMailGroups = global.ProRoleMailGroups || {};
+  global.ProRoleMailGroups.init = initRoleAssignment;
 })(window, window.jQuery);
