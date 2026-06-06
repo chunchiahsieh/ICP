@@ -32,7 +32,9 @@ public static class IcpScriptI18nBuilder
             ["edit"] = localizer["Common.Edit"],
             ["disableConfirm"] = localizer["Message.DisableConfirm"],
             ["deleteConfirm"] = localizer["Message.DeleteConfirm"],
-            ["permissionAccessDenied"] = localizer["Permission.AccessDenied"]
+            ["permissionAccessDenied"] = localizer["Permission.AccessDenied"],
+            ["refreshSessionPermissionsSuccess"] = localizer["Auth.RefreshSessionPermissionsSuccess"],
+            ["refreshSessionPermissionsFailed"] = localizer["Auth.RefreshSessionPermissionsFailed"]
         };
 
     public static object BuildDataTablesLengthMenu(IStringLocalizer<SharedResource> localizer)

@@ -75,6 +75,11 @@
                         <li><span class="dropdown-item-text text-muted small">@telIdLabel</span></li>
                     }
                     <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <button type="button" class="dropdown-item" data-icp-refresh-permissions="true">
+                            @Localizer["Auth.RefreshSessionPermissions"]
+                        </button>
+                    </li>
                     <li><a class="dropdown-item" asp-controller="Login" asp-action="Logout">@Localizer["Common.Logout"]</a></li>
                 </ul>
             </li>
@@ -106,7 +111,11 @@
     </div>
 
     <partial name="_IcpScriptI18n" />
+    <script>
+        window.IcpRefreshPermissionsUrl = '@Url.Action("RefreshMySessionPermissions", "Users")';
+    </script>
     <script src="~/js/icp-permissions.js" asp-append-version="true"></script>
+    <script src="~/js/icp-refresh-permissions.js" asp-append-version="true"></script>
     <script src="~/js/icp-i18n.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

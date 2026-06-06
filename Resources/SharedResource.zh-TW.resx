@@ -18,6 +18,15 @@
   <data name="Auth.PleaseLoginFirst" xml:space="preserve">
     <value>請先登入系統。</value>
   </data>
+  <data name="Auth.RefreshSessionPermissions" xml:space="preserve">
+    <value>重新載入權限</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissionsSuccess" xml:space="preserve">
+    <value>權限已重新載入，頁面即將更新。</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissionsFailed" xml:space="preserve">
+    <value>重新載入權限失敗，請稍後再試。</value>
+  </data>
   <data name="Common.Add" xml:space="preserve">
     <value>新增</value>
   </data>

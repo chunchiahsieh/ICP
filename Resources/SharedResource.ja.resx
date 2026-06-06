@@ -18,6 +18,15 @@
   <data name="Auth.PleaseLoginFirst" xml:space="preserve">
     <value>先にログインしてください。</value>
   </data>
+  <data name="Auth.RefreshSessionPermissions" xml:space="preserve">
+    <value>権限を再読み込み</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissionsSuccess" xml:space="preserve">
+    <value>権限を再読み込みしました。ページを更新します。</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissionsFailed" xml:space="preserve">
+    <value>権限の再読み込みに失敗しました。しばらくしてから再度お試しください。</value>
+  </data>
   <data name="Common.Add" xml:space="preserve">
     <value>追加</value>
   </data>

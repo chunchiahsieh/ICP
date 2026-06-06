@@ -18,6 +18,15 @@
   <data name="Auth.PleaseLoginFirst" xml:space="preserve">
     <value>Please sign in first.</value>
   </data>
+  <data name="Auth.RefreshSessionPermissions" xml:space="preserve">
+    <value>Reload permissions</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissionsSuccess" xml:space="preserve">
+    <value>Permissions reloaded. The page will refresh.</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissionsFailed" xml:space="preserve">
+    <value>Failed to reload permissions. Please try again later.</value>
+  </data>
   <data name="Common.Add" xml:space="preserve">
     <value>Add</value>
   </data>

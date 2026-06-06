@@ -30,15 +30,18 @@ public class UsersController : Controller
 
     private readonly IlcDbContext _ilcDb;
     private readonly ApplicationDbContext _icpDb;
+    private readonly UserAuthService _userAuthService;
     private readonly UserResourcePermissionService _userResourcePermissionService;
 
     public UsersController(
         IlcDbContext ilcDb,
         ApplicationDbContext icpDb,
+        UserAuthService userAuthService,
         UserResourcePermissionService userResourcePermissionService)
     {
         _ilcDb = ilcDb;
         _icpDb = icpDb;
+        _userAuthService = userAuthService;
         _userResourcePermissionService = userResourcePermissionService;
     }
 
@@ -84,6 +87,30 @@ public class UsersController : Controller
         var response = await _userResourcePermissionService.BuildPermissionsResponseAsync(user, cancellationToken);
 
         return new JsonResult(response, UserPermissionsJsonOptions);
+    }
+
+    [HttpPost]
+    [IgnoreAntiforgeryToken]
+    public async Task<IActionResult> RefreshMySessionPermissions(CancellationToken cancellationToken = default)
+    {
+        var user = _userAuthService.GetSessionUserInfo();
+        if (user is null || string.IsNullOrWhiteSpace(user.TelId))
+        {
+            return new JsonResult(new { success = false, message = "Unauthorized" })
+            {
+                StatusCode = StatusCodes.Status401Unauthorized
+            };
+        }
+
+        if (_userResourcePermissionService.IsSuperUserEnabled)
+        {
+            return Json(new { success = true, superUser = true, resourceCount = 0 });
+        }
+
+        await _userResourcePermissionService.RefreshSessionResourcesAsync(user, cancellationToken);
+        var resourceCount = _userResourcePermissionService.GetSessionResources().Count;
+
+        return Json(new { success = true, resourceCount });
     }
 
     private static readonly JsonSerializerOptions UserPermissionsJsonOptions = new()
