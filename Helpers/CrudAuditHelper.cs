@@ -52,6 +52,11 @@ public static class CrudAuditHelper
             return localizer["Error.RolePermissionExists"];
         }
 
+        if (message.Contains("UX_SystemConfigs", StringComparison.OrdinalIgnoreCase))
+        {
+            return localizer["Error.SystemConfigDuplicate"];
+        }
+
         return null;
     }
 }

@@ -7,4 +7,12 @@ public class MailGroupPickItem
     public string? Name { get; set; }
 
     public string? Address { get; set; }
+
+    public string? EmpId { get; set; }
+
+    public string? TelId { get; set; }
+
+    public string? DisplayName { get; set; }
+
+    public string? EmailAddress { get; set; }
 }

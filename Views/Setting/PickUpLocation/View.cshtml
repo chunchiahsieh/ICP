@@ -1,0 +1,87 @@
+﻿@using System.Text.Json
+@{
+    ViewData["Title"] = Localizer["Setting.PickUpLocation.Title"];
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+<div data-permissions="Views.Shared._SidebarNav.Setting.PickUpLocation" data-i18n-key="Views.Shared._SidebarNav.Setting.PickUpLocation">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["Setting.PickUpLocation.Title"]</h4>
+        <div class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    id="btnBatchDelete"
+                    data-permissions="Views.Setting.PickUpLocation.Delete"
+                    data-i18n-key="Views.Setting.PickUpLocation.Delete">
+                @Localizer["Common.BatchDelete"]
+            </button>
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="btnCreate"
+                    data-permissions="Views.Setting.PickUpLocation.Create"
+                    data-i18n-key="Views.Setting.PickUpLocation.Create">
+                @Localizer["Common.Add"]
+            </button>
+        </div>
+    </div>
+    <div id="pageMessage" class="alert alert-success py-2 d-none mb-3" role="alert"></div>
+    <div id="DataDiv"></div>
+</div>
+
+<div class="d-none" aria-hidden="true">
+    <span data-permissions="Views.Setting.PickUpLocation.View" data-i18n-key="Views.Setting.PickUpLocation.View">@Localizer["Setting.PickUpLocation.Title"]</span>
+    <button type="button" data-permissions="Views.Setting.PickUpLocation.Edit" data-i18n-key="Views.Setting.PickUpLocation.Edit">@Localizer["Common.Edit"]</button>
+    <button type="button" data-permissions="Views.Setting.PickUpLocation.Delete" data-i18n-key="Views.Setting.PickUpLocation.Delete">@Localizer["Common.Delete"]</button>
+</div>
+
+@await Html.PartialAsync("~/Views/Setting/Shared/View.EditModal.cshtml")
+@await Html.PartialAsync("_CrudConfirmModal")
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-system-config.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var filterFieldMap = {
+                'filter-Category': 'Categories',
+                'filter-Key1': 'Key1s',
+                'filter-Value1': 'Value1s'
+            };
+
+            var tableInstance;
+            if (window.ProDataTables && ProDataTables.initUsers) {
+                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+                    filterFieldMap: filterFieldMap,
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "PickUpLocation")',
+                    queryUrl: '@Url.Action("Query", "PickUpLocation")',
+                    initialSort: [[3, 'asc']]
+                }));
+            }
+
+            if (window.ProSystemConfig) {
+                ProSystemConfig.init({
+                    category: 'PickUpLocation',
+                    getUrl: '@Url.Action("Get", "PickUpLocation")',
+                    saveUrl: '@Url.Action("Save", "PickUpLocation")',
+                    deleteUrl: '@Url.Action("Delete", "PickUpLocation")',
+                    batchDeleteUrl: '@Url.Action("BatchDelete", "PickUpLocation")',
+                    batchDeleteConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Setting.SystemConfig.BatchDeleteConfirm"].Value)),
+                    createTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Setting.SystemConfig.CreateTitle"].Value)),
+                    editTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Setting.SystemConfig.EditTitle"].Value)),
+                    deleteConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Setting.SystemConfig.DeleteConfirm"].Value)),
+                    onSuccess: function () {
+                        if (tableInstance && tableInstance.reload) {
+                            tableInstance.reload();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

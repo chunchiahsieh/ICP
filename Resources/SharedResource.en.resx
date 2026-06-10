@@ -22,7 +22,7 @@
     <value>Reload permissions</value>
   </data>
   <data name="Auth.RefreshSessionPermissionsSuccess" xml:space="preserve">
-    <value>Permissions reloaded. The page will refresh.</value>
+    <value>Permissions reloaded. The page will refresh shortly.</value>
   </data>
   <data name="Auth.RefreshSessionPermissionsFailed" xml:space="preserve">
     <value>Failed to reload permissions. Please try again later.</value>
@@ -459,6 +459,18 @@
   <data name="Views.Shared._SidebarNav.Setting.WhCode" xml:space="preserve">
     <value>W/H Code</value>
   </data>
+  <data name="Views.Shared._SidebarNav.Setting.AirSea" xml:space="preserve">
+    <value>Air/Sea</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.InvoiceType" xml:space="preserve">
+    <value>Invoice Type</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.OrderPriority" xml:space="preserve">
+    <value>Order Priority</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
     <value>Administration</value>
   </data>
@@ -630,6 +642,18 @@
   <data name="RoleMailGroups.Col.Address" xml:space="preserve">
     <value>Address</value>
   </data>
+  <data name="RoleMailGroups.Col.EmpId" xml:space="preserve">
+    <value>EmpID</value>
+  </data>
+  <data name="RoleMailGroups.Col.TelId" xml:space="preserve">
+    <value>TELID</value>
+  </data>
+  <data name="RoleMailGroups.Col.DisplayName" xml:space="preserve">
+    <value>DisplayName</value>
+  </data>
+  <data name="RoleMailGroups.Col.EmailAddress" xml:space="preserve">
+    <value>EmailAddress</value>
+  </data>
   <data name="RoleMailGroups.Col.RoleCode" xml:space="preserve">
     <value>Role code</value>
   </data>
@@ -736,7 +760,7 @@
     <value>Select departments by DepID. Selections persist across pages.</value>
   </data>
   <data name="Wizard.PickMailGroupsHint" xml:space="preserve">
-    <value>Select mail groups to assign (by Address). Selections persist across pages.</value>
+    <value>Select mail groups to assign (by Address). Only mail groups whose EmpID matches an ILC TELID are shown. Selections persist across pages.</value>
   </data>
   <data name="Wizard.PickResourcesHint" xml:space="preserve">
     <value>Select resources to assign. Selections persist across pages.</value>

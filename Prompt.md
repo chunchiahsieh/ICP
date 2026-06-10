@@ -57,6 +57,17 @@ Views 中所有需控管項目加 `data-permissions` 與 `data-i18n-key`（**兩
 - ModuleCode：SidebarNav 取第 4 段（如 Setting、Systems）；Permission 頁取第 3 段（如 RoleDepIds）
 - 掃描 API：`POST /Admin/PermissionScan` → PermissionScannerService + PermissionResourceSyncService Upsert
 
+### ResourceName（寫入 Resources 表，供後台操作者閱讀）
+
+- **固定繁中即可**，不走 UI 四語系；與畫面上 `@Localizer["Common.Add"]` 等按鈕文字無關。
+- 掃描時**禁止**從 View 元素 inner text / `@Localizer[...]` 推導 ResourceName（避免出現 `["Common.Add"]`、`Common.Edit` 等錯誤值）。
+- 命名來源（依序）：
+  1. `Resources/SharedResource.resx` 中以 **ResourceCode 相同 key** 定義的繁中名稱（例：`Views.Setting.BuCode.Create` →「BU 代碼新增」）
+  2. `PermissionResourceNameResolver` 依 ResourceCode 推導（Setting 用側欄選單名 + 動作；Permission 用同模組 View 名稱去掉動作後 + 動作）
+  3. 仍無法推導時才 fallback 為 ResourceCode 本身
+- 新增 `Views.Setting.*` / `Views.Permission.*` 權限時，請同步在 **SharedResource.resx** 補上與 ResourceCode 同名的 key（只需 fallback 一份繁中，不必寫 en/ja 給 ResourceName 用）。
+- 實作：`Services/PermissionResourceNameResolver.cs`、`Services/PermissionScannerService.cs`
+
 ---
 
 ## 4. ActionCode 規則（RolePermissions 批次建立）
@@ -235,7 +246,7 @@ Views 中所有需控管項目加 `data-permissions` 與 `data-i18n-key`（**兩
 | 用途 | 路徑 |
 |------|------|
 | DbContext / Entity | Data/ApplicationDbContext.cs、Models/Icp/* |
-| 掃描 | Services/PermissionScannerService.cs、Services/PermissionResourceSyncService.cs |
+| 掃描 | Services/PermissionScannerService.cs、Services/PermissionResourceSyncService.cs、Services/PermissionResourceNameResolver.cs |
 | ActionCode | Helpers/RolePermissionActionCodes.cs |
 | ResourceType | Helpers/PermissionResourceTypes.cs |
 | 使用者權限 | Services/UserResourcePermissionService.cs、Models/UserPermissionsResponse.cs |

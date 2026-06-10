@@ -2,7 +2,7 @@ using System.Xml.Linq;
 
 namespace ICP.Services;
 
-/// <summary>從 SharedResource.resx 解析顯示名稱（供 PermissionScan 使用）。</summary>
+/// <summary>從 SharedResource.resx（固定 fallback）解析 ResourceName，供 PermissionScan 寫入 DB；非 UI 多語系。</summary>
 public static class SharedResourceNameResolver
 {
     public static string? TryResolve(IWebHostEnvironment environment, string? resourceKey)

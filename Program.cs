@@ -119,6 +119,7 @@ builder.Services
     .AddRazorOptions(options =>
     {
         options.ViewLocationExpanders.Add(new PermissionViewLocationExpander());
+        options.ViewLocationExpanders.Add(new SettingViewLocationExpander());
     });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

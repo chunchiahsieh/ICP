@@ -40,10 +40,14 @@ public class PermissionResourceSyncService
             StringComparer.OrdinalIgnoreCase);
 
     private readonly ApplicationDbContext _dbContext;
+    private readonly IWebHostEnvironment _environment;
 
-    public PermissionResourceSyncService(ApplicationDbContext dbContext)
+    public PermissionResourceSyncService(
+        ApplicationDbContext dbContext,
+        IWebHostEnvironment environment)
     {
         _dbContext = dbContext;
+        _environment = environment;
     }
 
     public async Task<PermissionScanResult> UpsertAsync(
@@ -64,6 +68,7 @@ public class PermissionResourceSyncService
         foreach (var item in distinctItems)
         {
             resourceCodes.Add(item.ResourceCode);
+            var resourceName = PermissionResourceNameResolver.Resolve(_environment, item.ResourceCode);
 
             var existing = await _dbContext.Resources
                 .FirstOrDefaultAsync(r => r.ResourceCode == item.ResourceCode, cancellationToken);
@@ -78,7 +83,7 @@ public class PermissionResourceSyncService
                     ResourceCode = item.ResourceCode,
                     SystemCode = segments.Length > 0 ? segments[0] : string.Empty,
                     ModuleCode = ResolveModuleCode(item.ResourceCode),
-                    ResourceName = item.ResourceName,
+                    ResourceName = resourceName,
                     ResourceType = item.ResourceType,
                     Route = item.Route,
                     Description = item.Description,
@@ -92,7 +97,7 @@ public class PermissionResourceSyncService
                 continue;
             }
 
-            existing.ResourceName = item.ResourceName;
+            existing.ResourceName = resourceName;
             existing.ResourceType = item.ResourceType;
             existing.Route = item.Route;
             existing.Description = item.Description;
@@ -104,7 +109,7 @@ public class PermissionResourceSyncService
             await DisableLegacyCodeIfAnyAsync(item.ResourceCode, actor, cancellationToken);
         }
 
-        await RepairCorruptedResourceNamesAsync(distinctItems, actor, cancellationToken);
+        await RepairCorruptedResourceNamesAsync(actor, cancellationToken);
 
         var (disabledLegacyCount, migratedRolePermissionCount) =
             await MigrateAndDisableAllLegacyResourcesAsync(actor, cancellationToken);
@@ -156,6 +161,13 @@ public class PermissionResourceSyncService
         if (segments.Length >= 3 &&
             segments[0].Equals("Views", StringComparison.OrdinalIgnoreCase) &&
             segments[1].Equals("Permission", StringComparison.OrdinalIgnoreCase))
+        {
+            return segments[2];
+        }
+
+        if (segments.Length >= 3 &&
+            segments[0].Equals("Views", StringComparison.OrdinalIgnoreCase) &&
+            segments[1].Equals("Setting", StringComparison.OrdinalIgnoreCase))
         {
             return segments[2];
         }
@@ -262,47 +274,19 @@ public class PermissionResourceSyncService
     }
 
     private async Task RepairCorruptedResourceNamesAsync(
-        IReadOnlyList<ScannedPermission> scannedItems,
         string actor,
         CancellationToken cancellationToken)
     {
-        var nameByCode = scannedItems.ToDictionary(
-            x => x.ResourceCode,
-            x => x.ResourceName,
-            StringComparer.OrdinalIgnoreCase);
+        var resources = await _dbContext.Resources.ToListAsync(cancellationToken);
 
-        var corrupted = await _dbContext.Resources
-            .Where(r => r.ResourceName.StartsWith("@Localizer[") || r.ResourceName == "@Localizer[")
-            .ToListAsync(cancellationToken);
-
-        foreach (var resource in corrupted)
+        foreach (var resource in resources)
         {
-            if (nameByCode.TryGetValue(resource.ResourceCode, out var scannedName) &&
-                !string.IsNullOrWhiteSpace(scannedName))
+            if (!PermissionResourceNameResolver.IsCorruptedName(resource.ResourceName))
             {
-                resource.ResourceName = scannedName;
-            }
-            else
-            {
-                var viewsCode = ToViewsPermissionResourceCode(resource.ResourceCode);
-                if (!string.IsNullOrWhiteSpace(viewsCode) &&
-                    nameByCode.TryGetValue(viewsCode, out scannedName) &&
-                    !string.IsNullOrWhiteSpace(scannedName))
-                {
-                    resource.ResourceName = scannedName;
-                }
-                else
-                {
-                    var permissionCode = ToPermissionResourceCode(resource.ResourceCode);
-                    if (!string.IsNullOrWhiteSpace(permissionCode) &&
-                        nameByCode.TryGetValue(permissionCode, out scannedName) &&
-                        !string.IsNullOrWhiteSpace(scannedName))
-                    {
-                        resource.ResourceName = scannedName;
-                    }
-                }
+                continue;
             }
 
+            resource.ResourceName = PermissionResourceNameResolver.Resolve(_environment, resource.ResourceCode);
             resource.UpdateTime = DateTime.Now;
             resource.UpdateUser = actor;
         }

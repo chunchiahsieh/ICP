@@ -1,21 +1,15 @@
 using System.Text.RegularExpressions;
-using ICP;
 using ICP.Helpers;
-using Microsoft.Extensions.Localization;
 
 namespace ICP.Services;
 
 public partial class PermissionScannerService
 {
     private readonly IWebHostEnvironment _environment;
-    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public PermissionScannerService(
-        IWebHostEnvironment environment,
-        IStringLocalizer<SharedResource> localizer)
+    public PermissionScannerService(IWebHostEnvironment environment)
     {
         _environment = environment;
-        _localizer = localizer;
     }
 
     public IReadOnlyList<ScannedPermission> Scan()
@@ -42,23 +36,9 @@ public partial class PermissionScannerService
                     continue;
                 }
 
-                var fullOpeningTag = match.Value;
                 var tagContent = match.Groups["tagContent"].Value;
-                var i18nKey = ExtractAttributeValue(fullOpeningTag, "data-i18n-key")
-                    ?? ExtractAttributeValue(fullOpeningTag, "data-permission-key");
-                var permissionName = ResolveResourceName(i18nKey, fullOpeningTag, content, match, tag, resourceCode);
-                var innerText = ExtractInnerText(content, match.Index + match.Length, tag);
+                var permissionName = PermissionResourceNameResolver.Resolve(_environment, resourceCode);
                 var route = DeriveRoute(relativePath) ?? ExtractRouteFromTag(tagContent);
-
-                if (string.IsNullOrWhiteSpace(permissionName) && !string.IsNullOrWhiteSpace(innerText))
-                {
-                    permissionName = innerText.Trim();
-                }
-
-                if (string.IsNullOrWhiteSpace(permissionName) || IsBrokenLocalizerName(permissionName))
-                {
-                    permissionName = resourceCode;
-                }
 
                 results.Add(new ScannedPermission
                 {
@@ -73,75 +53,6 @@ public partial class PermissionScannerService
         }
 
         return results;
-    }
-
-    private string ResolveResourceName(
-        string? i18nKey,
-        string fullOpeningTag,
-        string content,
-        Match match,
-        string tag,
-        string resourceCode)
-    {
-        var fromKey = ResolveLocalizedName(i18nKey);
-        if (!string.IsNullOrWhiteSpace(fromKey))
-        {
-            return fromKey;
-        }
-
-        var legacyName = ExtractAttributeValue(fullOpeningTag, "data-permission-name");
-        if (!string.IsNullOrWhiteSpace(legacyName) && !IsBrokenLocalizerName(legacyName))
-        {
-            return legacyName.Trim();
-        }
-
-        var localizerKey = ExtractLocalizerKey(legacyName) ?? ExtractLocalizerKey(fullOpeningTag);
-        fromKey = ResolveLocalizedName(localizerKey);
-        if (!string.IsNullOrWhiteSpace(fromKey))
-        {
-            return fromKey;
-        }
-
-        var innerText = ExtractInnerText(content, match.Index + match.Length, tag);
-        var trimmedInner = innerText?.Trim();
-        if (!string.IsNullOrWhiteSpace(trimmedInner) && !IsBrokenLocalizerName(trimmedInner))
-        {
-            return trimmedInner;
-        }
-
-        return resourceCode;
-    }
-
-    private string? ResolveLocalizedName(string? resourceKey)
-    {
-        if (string.IsNullOrWhiteSpace(resourceKey))
-        {
-            return null;
-        }
-
-        var localized = _localizer[resourceKey.Trim()];
-        if (!localized.ResourceNotFound && !string.IsNullOrWhiteSpace(localized.Value))
-        {
-            return localized.Value.Trim();
-        }
-
-        return SharedResourceNameResolver.TryResolve(_environment, resourceKey);
-    }
-
-    private static bool IsBrokenLocalizerName(string value)
-    {
-        return value.StartsWith("@Localizer[", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static string? ExtractLocalizerKey(string? raw)
-    {
-        if (string.IsNullOrWhiteSpace(raw))
-        {
-            return null;
-        }
-
-        var match = LocalizerKeyRegex().Match(raw);
-        return match.Success ? match.Groups["key"].Value.Trim() : null;
     }
 
     private static string? ExtractAttributeValue(string tagContent, string attributeName)
@@ -160,26 +71,6 @@ public partial class PermissionScannerService
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         match = singleQuoted.Match(tagContent);
         return match.Success ? match.Groups["value"].Value : null;
-    }
-
-    private static string? ExtractInnerText(string content, int startIndex, string tagName)
-    {
-        var closeTag = $"</{tagName}>";
-        var closeIndex = content.IndexOf(closeTag, startIndex, StringComparison.OrdinalIgnoreCase);
-        if (closeIndex < 0)
-        {
-            return null;
-        }
-
-        var inner = content[startIndex..closeIndex];
-        inner = HtmlTagRegex().Replace(inner, " ");
-        inner = RazorExpressionRegex().Replace(inner, " ");
-        return string.IsNullOrWhiteSpace(inner) ? null : CollapseWhitespace(inner);
-    }
-
-    private static string CollapseWhitespace(string value)
-    {
-        return WhitespaceRegex().Replace(value, " ").Trim();
     }
 
     private static string? ExtractRouteFromTag(string tagContent)
@@ -218,6 +109,12 @@ public partial class PermissionScannerService
             parts = parts[1..];
         }
 
+        if (parts.Length >= 2 &&
+            parts[0].Equals("Setting", StringComparison.OrdinalIgnoreCase))
+        {
+            parts = parts[1..];
+        }
+
         if (parts.Length > 0 &&
             parts[0].Equals("RoleResources", StringComparison.OrdinalIgnoreCase))
         {
@@ -245,16 +142,4 @@ public partial class PermissionScannerService
 
     [GeneratedRegex(@"<(?<tag>[a-zA-Z][\w-]*)(?<tagContent>[^>]*)\bdata-permissions\s*=\s*[""'](?<perm>[^""']+)[""'][^>]*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex PermissionTagRegex();
-
-    [GeneratedRegex(@"@Localizer\[""(?<key>[^""]+)""\]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-    private static partial Regex LocalizerKeyRegex();
-
-    [GeneratedRegex(@"<[^>]+>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-    private static partial Regex HtmlTagRegex();
-
-    [GeneratedRegex(@"@\{[\s\S]*?\}|@[\w.]+(?:\([^)]*\))?", RegexOptions.CultureInvariant)]
-    private static partial Regex RazorExpressionRegex();
-
-    [GeneratedRegex(@"\s+", RegexOptions.CultureInvariant)]
-    private static partial Regex WhitespaceRegex();
 }

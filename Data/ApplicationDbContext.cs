@@ -22,8 +22,35 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
 
+    public DbSet<SystemConfig> SystemConfigs => Set<SystemConfig>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<SystemConfig>(entity =>
+        {
+            entity.ToTable("SystemConfigs");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Category).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.FunctionCode).HasMaxLength(50);
+            entity.Property(e => e.Key1).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Key2).HasMaxLength(100).HasDefaultValue(string.Empty);
+            entity.Property(e => e.Value1).HasMaxLength(1000);
+            entity.Property(e => e.Value2).HasMaxLength(1000);
+            entity.Property(e => e.Value3).HasMaxLength(1000);
+            entity.Property(e => e.Value4).HasMaxLength(1000);
+            entity.Property(e => e.Value5).HasMaxLength(1000);
+            entity.Property(e => e.Value6).HasMaxLength(1000);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("sysdatetime()");
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
+
+            entity.HasIndex(e => new { e.Category, e.FunctionCode, e.Key1, e.Key2 })
+                .IsUnique()
+                .HasDatabaseName("UX_SystemConfigs")
+                .HasFilter("[IsDeleted] = 0");
+        });
+
         modelBuilder.Entity<Resource>(entity =>
         {
             entity.ToTable("Resources");

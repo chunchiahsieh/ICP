@@ -85,7 +85,7 @@ dotnet ef database update
 
 1. 發佈前執行 `dotnet build`，確認編譯成功
 2. 若 Views 有新增或變更 `data-permissions`，上線後執行 **`POST /Admin/PermissionScan`** 同步 Resources 表
-3. 調整角色、RolePermissions 或角色指派後，點選 **「重新載入權限」**（右上角使用者選單或權限管理頁工具列），或重新登入以更新 Session
+3. 調整角色、RolePermissions 或角色指派後，**使用者需重新登入** Session 才會更新
 4. 上線驗收：以受限角色登入，確認側欄、頁面、直接 URL、POST API 皆受權限控管
 
 ### 禁止事項
@@ -120,5 +120,6 @@ dotnet ef database update
 1. 開啟 [`Prompt.md`](Prompt.md)，複製全文貼到 AI 對話。
 2. 實作時以本 repo 的 `Views/Permission/`、`Services/` 為 UI 與邏輯參考範本。
 3. Views 新增或變更 `data-permissions` 後，需執行 `POST /Admin/PermissionScan` 同步 Resources 至 DB。
-4. 正式環境 `App.SuperUser` 必須為 `"Off"`（詳見上方「部署注意事項」）；角色或權限變更後，請點 **「重新載入權限」** 或重新登入以更新 Session 權限。
+4. **ResourceName** 為後台操作者閱讀用，固定繁中寫入 DB；掃描器不讀按鈕 `@Localizer` 文字。新增 ResourceCode 時請在 `SharedResource.resx` 補同名 key。詳見 [`Prompt.md`](Prompt.md) 第 3 節。
+4. 正式環境 `App.SuperUser` 必須為 `"Off"`（詳見上方「部署注意事項」）；角色或權限變更後，使用者需**重新登入**以更新 Session 權限。
 5. 多國語言 key 命名請遵循 `.cursor/rules/views-localization.mdc`。

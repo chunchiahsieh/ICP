@@ -459,6 +459,18 @@
   <data name="Views.Shared._SidebarNav.Setting.WhCode" xml:space="preserve">
     <value>倉庫代碼</value>
   </data>
+  <data name="Views.Shared._SidebarNav.Setting.AirSea" xml:space="preserve">
+    <value>空運/海運</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.Broker" xml:space="preserve">
+    <value>報關行</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.InvoiceType" xml:space="preserve">
+    <value>發票類型</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.OrderPriority" xml:space="preserve">
+    <value>訂單優先順序</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
     <value>系統管理</value>
   </data>
@@ -630,6 +642,18 @@
   <data name="RoleMailGroups.Col.Address" xml:space="preserve">
     <value>位址</value>
   </data>
+  <data name="RoleMailGroups.Col.EmpId" xml:space="preserve">
+    <value>EmpID</value>
+  </data>
+  <data name="RoleMailGroups.Col.TelId" xml:space="preserve">
+    <value>TELID</value>
+  </data>
+  <data name="RoleMailGroups.Col.DisplayName" xml:space="preserve">
+    <value>DisplayName</value>
+  </data>
+  <data name="RoleMailGroups.Col.EmailAddress" xml:space="preserve">
+    <value>EmailAddress</value>
+  </data>
   <data name="RoleMailGroups.Col.RoleCode" xml:space="preserve">
     <value>角色代碼</value>
   </data>
@@ -736,7 +760,7 @@
     <value>勾選要指派的部門（以 DepID 為準）。可換頁篩選，已選項目會保留。</value>
   </data>
   <data name="Wizard.PickMailGroupsHint" xml:space="preserve">
-    <value>勾選要指派的 MailGroup（以 Address 為準）。可換頁篩選，已選項目會保留。</value>
+    <value>勾選要指派的 MailGroup（以 Address 為準）。僅顯示 MailGroup.EmpID 與 ILC TELID 可對應的項目。可換頁篩選，已選項目會保留。</value>
   </data>
   <data name="Wizard.PickResourcesHint" xml:space="preserve">
     <value>勾選要指派的資源。可換頁篩選，已選項目會保留。</value>
@@ -800,5 +824,200 @@
   </data>
   <data name="Message.SelectRoleAndUser" xml:space="preserve">
     <value>請至少選擇一筆角色與一筆使用者</value>
+  </data>
+  <data name="Views.Setting.AirSea.View" xml:space="preserve">
+    <value>Air/Sea 查詢</value>
+  </data>
+  <data name="Views.Setting.AirSea.Create" xml:space="preserve">
+    <value>Air/Sea 新增</value>
+  </data>
+  <data name="Views.Setting.AirSea.Edit" xml:space="preserve">
+    <value>Air/Sea 編輯</value>
+  </data>
+  <data name="Views.Setting.AirSea.Delete" xml:space="preserve">
+    <value>Air/Sea 刪除</value>
+  </data>
+  <data name="Views.Setting.Broker.View" xml:space="preserve">
+    <value>Broker 查詢</value>
+  </data>
+  <data name="Views.Setting.Broker.Create" xml:space="preserve">
+    <value>Broker 新增</value>
+  </data>
+  <data name="Views.Setting.Broker.Edit" xml:space="preserve">
+    <value>Broker 編輯</value>
+  </data>
+  <data name="Views.Setting.Broker.Delete" xml:space="preserve">
+    <value>Broker 刪除</value>
+  </data>
+  <data name="Views.Setting.BuCode.View" xml:space="preserve">
+    <value>BU 代碼查詢</value>
+  </data>
+  <data name="Views.Setting.BuCode.Create" xml:space="preserve">
+    <value>BU 代碼新增</value>
+  </data>
+  <data name="Views.Setting.BuCode.Edit" xml:space="preserve">
+    <value>BU 代碼編輯</value>
+  </data>
+  <data name="Views.Setting.BuCode.Delete" xml:space="preserve">
+    <value>BU 代碼刪除</value>
+  </data>
+  <data name="Views.Setting.DefaultDeliveryWh.View" xml:space="preserve">
+    <value>預設交貨倉庫查詢</value>
+  </data>
+  <data name="Views.Setting.DefaultDeliveryWh.Create" xml:space="preserve">
+    <value>預設交貨倉庫新增</value>
+  </data>
+  <data name="Views.Setting.DefaultDeliveryWh.Edit" xml:space="preserve">
+    <value>預設交貨倉庫編輯</value>
+  </data>
+  <data name="Views.Setting.DefaultDeliveryWh.Delete" xml:space="preserve">
+    <value>預設交貨倉庫刪除</value>
+  </data>
+  <data name="Views.Setting.DeliveryToList.View" xml:space="preserve">
+    <value>交貨對象清單查詢</value>
+  </data>
+  <data name="Views.Setting.DeliveryToList.Create" xml:space="preserve">
+    <value>交貨對象清單新增</value>
+  </data>
+  <data name="Views.Setting.DeliveryToList.Edit" xml:space="preserve">
+    <value>交貨對象清單編輯</value>
+  </data>
+  <data name="Views.Setting.DeliveryToList.Delete" xml:space="preserve">
+    <value>交貨對象清單刪除</value>
+  </data>
+  <data name="Views.Setting.EtaDelDateTable.View" xml:space="preserve">
+    <value>ETA 交貨日表查詢</value>
+  </data>
+  <data name="Views.Setting.EtaDelDateTable.Create" xml:space="preserve">
+    <value>ETA 交貨日表新增</value>
+  </data>
+  <data name="Views.Setting.EtaDelDateTable.Edit" xml:space="preserve">
+    <value>ETA 交貨日表編輯</value>
+  </data>
+  <data name="Views.Setting.EtaDelDateTable.Delete" xml:space="preserve">
+    <value>ETA 交貨日表刪除</value>
+  </data>
+  <data name="Views.Setting.InvoiceType.View" xml:space="preserve">
+    <value>Invoice Type 查詢</value>
+  </data>
+  <data name="Views.Setting.InvoiceType.Create" xml:space="preserve">
+    <value>Invoice Type 新增</value>
+  </data>
+  <data name="Views.Setting.InvoiceType.Edit" xml:space="preserve">
+    <value>Invoice Type 編輯</value>
+  </data>
+  <data name="Views.Setting.InvoiceType.Delete" xml:space="preserve">
+    <value>Invoice Type 刪除</value>
+  </data>
+  <data name="Views.Setting.OrderPriority.View" xml:space="preserve">
+    <value>Order Priority 查詢</value>
+  </data>
+  <data name="Views.Setting.OrderPriority.Create" xml:space="preserve">
+    <value>Order Priority 新增</value>
+  </data>
+  <data name="Views.Setting.OrderPriority.Edit" xml:space="preserve">
+    <value>Order Priority 編輯</value>
+  </data>
+  <data name="Views.Setting.OrderPriority.Delete" xml:space="preserve">
+    <value>Order Priority 刪除</value>
+  </data>
+  <data name="Views.Setting.OrderType.View" xml:space="preserve">
+    <value>訂單類型查詢</value>
+  </data>
+  <data name="Views.Setting.OrderType.Create" xml:space="preserve">
+    <value>訂單類型新增</value>
+  </data>
+  <data name="Views.Setting.OrderType.Edit" xml:space="preserve">
+    <value>訂單類型編輯</value>
+  </data>
+  <data name="Views.Setting.OrderType.Delete" xml:space="preserve">
+    <value>訂單類型刪除</value>
+  </data>
+  <data name="Views.Setting.PickUpLocation.View" xml:space="preserve">
+    <value>提貨地點查詢</value>
+  </data>
+  <data name="Views.Setting.PickUpLocation.Create" xml:space="preserve">
+    <value>提貨地點新增</value>
+  </data>
+  <data name="Views.Setting.PickUpLocation.Edit" xml:space="preserve">
+    <value>提貨地點編輯</value>
+  </data>
+  <data name="Views.Setting.PickUpLocation.Delete" xml:space="preserve">
+    <value>提貨地點刪除</value>
+  </data>
+  <data name="Views.Setting.WhCode.View" xml:space="preserve">
+    <value>倉庫代碼查詢</value>
+  </data>
+  <data name="Views.Setting.WhCode.Create" xml:space="preserve">
+    <value>倉庫代碼新增</value>
+  </data>
+  <data name="Views.Setting.WhCode.Edit" xml:space="preserve">
+    <value>倉庫代碼編輯</value>
+  </data>
+  <data name="Views.Setting.WhCode.Delete" xml:space="preserve">
+    <value>倉庫代碼刪除</value>
+  </data>
+  <data name="Common.Actions" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="SystemConfig.Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="SystemConfig.Key" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="SystemConfig.Value" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="Setting.SystemConfig.KeyRequired" xml:space="preserve">
+    <value>Key 為必填</value>
+  </data>
+  <data name="Setting.SystemConfig.CreateTitle" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="Setting.SystemConfig.EditTitle" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="Setting.SystemConfig.BatchDeleteConfirm" xml:space="preserve">
+    <value>確定要刪除所選資料嗎？</value>
+  </data>
+  <data name="Setting.SystemConfig.DeleteConfirm" xml:space="preserve">
+    <value>確定要刪除此筆資料嗎？</value>
+  </data>
+  <data name="Error.SystemConfigDuplicate" xml:space="preserve">
+    <value>資料已存在（Category / Key 重複）</value>
+  </data>
+  <data name="Setting.BuCode.Title" xml:space="preserve">
+    <value>BU 代碼</value>
+  </data>
+  <data name="Setting.WhCode.Title" xml:space="preserve">
+    <value>倉庫代碼</value>
+  </data>
+  <data name="Setting.DeliveryToList.Title" xml:space="preserve">
+    <value>交貨對象清單</value>
+  </data>
+  <data name="Setting.PickUpLocation.Title" xml:space="preserve">
+    <value>提貨地點</value>
+  </data>
+  <data name="Setting.EtaDelDateTable.Title" xml:space="preserve">
+    <value>ETA 交貨日表</value>
+  </data>
+  <data name="Setting.DefaultDeliveryWh.Title" xml:space="preserve">
+    <value>預設交貨倉庫</value>
+  </data>
+  <data name="Setting.Broker.Title" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="Setting.AirSea.Title" xml:space="preserve">
+    <value>Air/Sea</value>
+  </data>
+  <data name="Setting.InvoiceType.Title" xml:space="preserve">
+    <value>Invoice Type</value>
+  </data>
+  <data name="Setting.OrderType.Title" xml:space="preserve">
+    <value>訂單類型</value>
+  </data>
+  <data name="Setting.OrderPriority.Title" xml:space="preserve">
+    <value>Order Priority</value>
   </data>
 </root>

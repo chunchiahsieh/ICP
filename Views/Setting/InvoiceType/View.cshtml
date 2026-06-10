@@ -1,0 +1,84 @@
+﻿@using System.Text.Json
+@{
+    ViewData["Title"] = Localizer["Setting.InvoiceType.Title"];
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+}
+
+<div data-permissions="Views.Shared._SidebarNav.Setting.InvoiceType" data-i18n-key="Views.Shared._SidebarNav.Setting.InvoiceType">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["Setting.InvoiceType.Title"]</h4>
+        <div class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    id="btnBatchDelete"
+                    data-permissions="Views.Setting.InvoiceType.Delete"
+                    data-i18n-key="Views.Setting.InvoiceType.Delete">
+                @Localizer["Common.BatchDelete"]
+            </button>
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="btnCreate"
+                    data-permissions="Views.Setting.InvoiceType.Create"
+                    data-i18n-key="Views.Setting.InvoiceType.Create">
+                @Localizer["Common.Add"]
+            </button>
+        </div>
+    </div>
+    <div id="pageMessage" class="alert alert-success py-2 d-none mb-3" role="alert"></div>
+    <div id="DataDiv"></div>
+</div>
+
+<div class="d-none" aria-hidden="true">
+    <span data-permissions="Views.Setting.InvoiceType.View" data-i18n-key="Views.Setting.InvoiceType.View">@Localizer["Setting.InvoiceType.Title"]</span>
+    <button type="button" data-permissions="Views.Setting.InvoiceType.Edit" data-i18n-key="Views.Setting.InvoiceType.Edit">@Localizer["Common.Edit"]</button>
+</div>
+
+@await Html.PartialAsync("~/Views/Setting/Shared/View.EditModal.cshtml")
+@await Html.PartialAsync("_CrudConfirmModal")
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-system-config.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var filterFieldMap = {
+                'filter-Category': 'Categories',
+                'filter-Key1': 'Key1s',
+                'filter-Value1': 'Value1s'
+            };
+
+            var tableInstance;
+            if (window.ProDataTables && ProDataTables.initUsers) {
+                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+                    filterFieldMap: filterFieldMap,
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "InvoiceType")',
+                    queryUrl: '@Url.Action("Query", "InvoiceType")',
+                    initialSort: [[3, 'asc']]
+                }));
+            }
+
+            if (window.ProSystemConfig) {
+                ProSystemConfig.init({
+                    category: 'InvoiceType',
+                    getUrl: '@Url.Action("Get", "InvoiceType")',
+                    saveUrl: '@Url.Action("Save", "InvoiceType")',
+                    batchDeleteUrl: '@Url.Action("BatchDelete", "InvoiceType")',
+                    batchDeleteConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Setting.SystemConfig.BatchDeleteConfirm"].Value)),
+                    createTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Setting.SystemConfig.CreateTitle"].Value)),
+                    editTitle: @Html.Raw(JsonSerializer.Serialize(Localizer["Setting.SystemConfig.EditTitle"].Value)),
+                    onSuccess: function () {
+                        if (tableInstance && tableInstance.reload) {
+                            tableInstance.reload();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

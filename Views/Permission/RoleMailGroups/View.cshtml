@@ -1,4 +1,4 @@
-@using System.Text.Json
+﻿@using System.Text.Json
 @{
     ViewData["Title"] = Localizer["RoleMailGroups.Title"];
 }
@@ -57,9 +57,11 @@
                 usersPickDivSelector: '#MailGroupsPickDiv',
                 usersTableSelector: '#mailGroupsPickTable',
                 usersFilterFieldMap: {
-                    'filter-mailgrouppick-Uid': 'Uids',
                     'filter-mailgrouppick-Name': 'Names',
-                    'filter-mailgrouppick-Address': 'Addresses'
+                    'filter-mailgrouppick-Address': 'Addresses',
+                    'filter-mailgrouppick-TelId': 'TelIds',
+                    'filter-mailgrouppick-DisplayName': 'DisplayNames',
+                    'filter-mailgrouppick-EmailAddress': 'EmailAddresses'
                 },
                 usersQueryUrl: '@Url.Action("QueryMailGroups", "RoleMailGroups")',
                 usersFilterOptionsUrl: '@Url.Action("GetFilterOptionsMailGroups", "RoleMailGroups")',

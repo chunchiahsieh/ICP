@@ -459,6 +459,18 @@
   <data name="Views.Shared._SidebarNav.Setting.WhCode" xml:space="preserve">
     <value>倉庫コード</value>
   </data>
+  <data name="Views.Shared._SidebarNav.Setting.AirSea" xml:space="preserve">
+    <value>航空/船舶</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.Broker" xml:space="preserve">
+    <value>ブローカー</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.InvoiceType" xml:space="preserve">
+    <value>インボイス種別</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.OrderPriority" xml:space="preserve">
+    <value>オーダー優先度</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
     <value>システム管理</value>
   </data>
@@ -630,6 +642,18 @@
   <data name="RoleMailGroups.Col.Address" xml:space="preserve">
     <value>アドレス</value>
   </data>
+  <data name="RoleMailGroups.Col.EmpId" xml:space="preserve">
+    <value>EmpID</value>
+  </data>
+  <data name="RoleMailGroups.Col.TelId" xml:space="preserve">
+    <value>TELID</value>
+  </data>
+  <data name="RoleMailGroups.Col.DisplayName" xml:space="preserve">
+    <value>DisplayName</value>
+  </data>
+  <data name="RoleMailGroups.Col.EmailAddress" xml:space="preserve">
+    <value>EmailAddress</value>
+  </data>
   <data name="RoleMailGroups.Col.RoleCode" xml:space="preserve">
     <value>ロールコード</value>
   </data>
@@ -736,7 +760,7 @@
     <value>DepID で部門を選択してください。</value>
   </data>
   <data name="Wizard.PickMailGroupsHint" xml:space="preserve">
-    <value>Address でメールグループを選択してください。ページをまたいで選択は保持されます。</value>
+    <value>Address でメールグループを選択してください。MailGroup.EmpID と ILC TELID が一致する項目のみ表示されます。ページをまたいで選択は保持されます。</value>
   </data>
   <data name="Wizard.PickResourcesHint" xml:space="preserve">
     <value>割り当てるリソースを選択してください。</value>

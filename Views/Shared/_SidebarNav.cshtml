@@ -1,4 +1,4 @@
-@inject UserResourcePermissionService UserResourcePerm
+﻿@inject UserResourcePermissionService UserResourcePerm
 @{
     bool ShowMenuCategory(string categoryCode) => UserResourcePerm.HasMenuCategoryPermission(categoryCode);
     bool HasMenu(string resourceCode) => UserResourcePerm.HasMenuPermission(resourceCode);
@@ -32,33 +32,50 @@
 @if (ShowMenuCategory("Views.Shared._SidebarNav.Setting"))
 {
     <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Setting" data-i18n-key="Views.Shared._SidebarNav.Setting">@Localizer["Views.Shared._SidebarNav.Setting"]</div>
-    @if (HasMenu("Views.Shared._SidebarNav.Setting.EtaDelDateTable"))
-    {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.EtaDelDateTable" data-i18n-key="Views.Shared._SidebarNav.Setting.EtaDelDateTable">@Localizer["Views.Shared._SidebarNav.Setting.EtaDelDateTable"]</a>
-    }
+   
     @if (HasMenu("Views.Shared._SidebarNav.Setting.BuCode"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.BuCode" data-i18n-key="Views.Shared._SidebarNav.Setting.BuCode">@Localizer["Views.Shared._SidebarNav.Setting.BuCode"]</a>
-    }
-    @if (HasMenu("Views.Shared._SidebarNav.Setting.OrderType"))
-    {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.OrderType" data-i18n-key="Views.Shared._SidebarNav.Setting.OrderType">@Localizer["Views.Shared._SidebarNav.Setting.OrderType"]</a>
+        <a class="nav-link" asp-controller="BuCode" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.BuCode" data-i18n-key="Views.Shared._SidebarNav.Setting.BuCode">@Localizer["Views.Shared._SidebarNav.Setting.BuCode"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Setting.WhCode"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.WhCode" data-i18n-key="Views.Shared._SidebarNav.Setting.WhCode">@Localizer["Views.Shared._SidebarNav.Setting.WhCode"]</a>
+        <a class="nav-link" asp-controller="WhCode" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.WhCode" data-i18n-key="Views.Shared._SidebarNav.Setting.WhCode">@Localizer["Views.Shared._SidebarNav.Setting.WhCode"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Setting.DeliveryToList"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.DeliveryToList" data-i18n-key="Views.Shared._SidebarNav.Setting.DeliveryToList">@Localizer["Views.Shared._SidebarNav.Setting.DeliveryToList"]</a>
+        <a class="nav-link" asp-controller="DeliveryToList" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.DeliveryToList" data-i18n-key="Views.Shared._SidebarNav.Setting.DeliveryToList">@Localizer["Views.Shared._SidebarNav.Setting.DeliveryToList"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Setting.PickUpLocation"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.PickUpLocation" data-i18n-key="Views.Shared._SidebarNav.Setting.PickUpLocation">@Localizer["Views.Shared._SidebarNav.Setting.PickUpLocation"]</a>
+        <a class="nav-link" asp-controller="PickUpLocation" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.PickUpLocation" data-i18n-key="Views.Shared._SidebarNav.Setting.PickUpLocation">@Localizer["Views.Shared._SidebarNav.Setting.PickUpLocation"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.EtaDelDateTable"))
+    {
+        <a class="nav-link" asp-controller="EtaDelDateTable" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.EtaDelDateTable" data-i18n-key="Views.Shared._SidebarNav.Setting.EtaDelDateTable">@Localizer["Views.Shared._SidebarNav.Setting.EtaDelDateTable"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Setting.DefaultDeliveryWh"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh" data-i18n-key="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh">@Localizer["Views.Shared._SidebarNav.Setting.DefaultDeliveryWh"]</a>
+        <a class="nav-link" asp-controller="DefaultDeliveryWh" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh" data-i18n-key="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh">@Localizer["Views.Shared._SidebarNav.Setting.DefaultDeliveryWh"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.OrderType"))
+    {
+        <a class="nav-link" asp-controller="OrderType" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.OrderType" data-i18n-key="Views.Shared._SidebarNav.Setting.OrderType">@Localizer["Views.Shared._SidebarNav.Setting.OrderType"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.AirSea"))
+    {
+        <a class="nav-link" asp-controller="AirSea" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.AirSea" data-i18n-key="Views.Shared._SidebarNav.Setting.AirSea">@Localizer["Views.Shared._SidebarNav.Setting.AirSea"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.Broker"))
+    {
+        <a class="nav-link" asp-controller="Broker" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.Broker" data-i18n-key="Views.Shared._SidebarNav.Setting.Broker">@Localizer["Views.Shared._SidebarNav.Setting.Broker"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.InvoiceType"))
+    {
+        <a class="nav-link" asp-controller="InvoiceType" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.InvoiceType" data-i18n-key="Views.Shared._SidebarNav.Setting.InvoiceType">@Localizer["Views.Shared._SidebarNav.Setting.InvoiceType"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.OrderPriority"))
+    {
+        <a class="nav-link" asp-controller="OrderPriority" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.OrderPriority" data-i18n-key="Views.Shared._SidebarNav.Setting.OrderPriority">@Localizer["Views.Shared._SidebarNav.Setting.OrderPriority"]</a>
     }
 }
 

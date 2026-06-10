@@ -459,6 +459,18 @@
   <data name="Views.Shared._SidebarNav.Setting.WhCode" xml:space="preserve">
     <value>倉庫代碼</value>
   </data>
+  <data name="Views.Shared._SidebarNav.Setting.AirSea" xml:space="preserve">
+    <value>空運/海運</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.Broker" xml:space="preserve">
+    <value>報關行</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.InvoiceType" xml:space="preserve">
+    <value>發票類型</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.OrderPriority" xml:space="preserve">
+    <value>訂單優先順序</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
     <value>系統管理</value>
   </data>
@@ -630,6 +642,18 @@
   <data name="RoleMailGroups.Col.Address" xml:space="preserve">
     <value>位址</value>
   </data>
+  <data name="RoleMailGroups.Col.EmpId" xml:space="preserve">
+    <value>EmpID</value>
+  </data>
+  <data name="RoleMailGroups.Col.TelId" xml:space="preserve">
+    <value>TELID</value>
+  </data>
+  <data name="RoleMailGroups.Col.DisplayName" xml:space="preserve">
+    <value>DisplayName</value>
+  </data>
+  <data name="RoleMailGroups.Col.EmailAddress" xml:space="preserve">
+    <value>EmailAddress</value>
+  </data>
   <data name="RoleMailGroups.Col.RoleCode" xml:space="preserve">
     <value>角色代碼</value>
   </data>
@@ -736,7 +760,7 @@
     <value>勾選要指派的部門（以 DepID 為準）。可換頁篩選，已選項目會保留。</value>
   </data>
   <data name="Wizard.PickMailGroupsHint" xml:space="preserve">
-    <value>勾選要指派的 MailGroup（以 Address 為準）。可換頁篩選，已選項目會保留。</value>
+    <value>勾選要指派的 MailGroup（以 Address 為準）。僅顯示 MailGroup.EmpID 與 ILC TELID 可對應的項目。可換頁篩選，已選項目會保留。</value>
   </data>
   <data name="Wizard.PickResourcesHint" xml:space="preserve">
     <value>勾選要指派的資源。可換頁篩選，已選項目會保留。</value>

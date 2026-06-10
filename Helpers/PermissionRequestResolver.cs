@@ -34,6 +34,11 @@ public static class PermissionRequestResolver
         if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
             && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
         {
+            if (SettingCategories.IsKnown(controller))
+            {
+                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Setting.{controller}");
+            }
+
             var route = PermissionRouteNormalizer.ControllerToRoute(controller);
             return registry.FindPageResourceCodeByRoute(route);
         }
@@ -42,6 +47,11 @@ public static class PermissionRequestResolver
         if (suffix is null)
         {
             return null;
+        }
+
+        if (SettingCategories.IsKnown(controller))
+        {
+            return ResolveIfRegistered(registry, $"Views.Setting.{controller}.{suffix}");
         }
 
         var module = ResolveModuleName(controller);

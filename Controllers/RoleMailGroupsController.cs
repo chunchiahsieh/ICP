@@ -2,6 +2,7 @@ using ICP.Data;
 using ICP.Helpers;
 using ICP.Infrastructure;
 using ICP.Models;
+using ICP.Models.Ilc;
 using ICP.Models.Icp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,22 +31,27 @@ public class RoleMailGroupsController : Controller
 
     private static readonly HashSet<string> AllowedMailGroupPickFilterColumns = new(StringComparer.OrdinalIgnoreCase)
     {
-        "Uid",
         "Name",
-        "Address"
+        "Address",
+        "TelId",
+        "DisplayName",
+        "EmailAddress"
     };
 
     private readonly ApplicationDbContext _icpDb;
     private readonly FiestaDbContext _fiestaDb;
+    private readonly IlcDbContext _ilcDb;
     private readonly IStringLocalizer<SharedResource> _localizer;
 
     public RoleMailGroupsController(
         ApplicationDbContext icpDb,
         FiestaDbContext fiestaDb,
+        IlcDbContext ilcDb,
         IStringLocalizer<SharedResource> localizer)
     {
         _icpDb = icpDb;
         _fiestaDb = fiestaDb;
+        _ilcDb = ilcDb;
         _localizer = localizer;
     }
 
@@ -226,16 +232,24 @@ public class RoleMailGroupsController : Controller
             return BadRequest();
         }
 
-        var query = _fiestaDb.MailGroup.AsNoTracking();
+        var matchedTelIds = await GetMatchedMailGroupTelIdsAsync(cancellationToken);
+        if (matchedTelIds.Count == 0)
+        {
+            return Json(Array.Empty<string>());
+        }
+
+        var mailQuery = _fiestaDb.MailGroup.AsNoTracking()
+            .Where(m => m.EmpId != null && matchedTelIds.Contains(m.EmpId));
+        var userQuery = _ilcDb.UserInfoAd.AsNoTracking()
+            .Where(u => u.TelId != null && matchedTelIds.Contains(u.TelId));
 
         var options = column switch
         {
-            "Uid" => await SearchFilterHelper.DistinctNonEmptyAsync(
-                query.Select(m => m.Uid.ToString()),
-                search,
-                cancellationToken),
-            "Name" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(m => m.Name), search, cancellationToken),
-            "Address" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(m => m.Address), search, cancellationToken),
+            "Name" => await SearchFilterHelper.DistinctNonEmptyAsync(mailQuery.Select(m => m.Name), search, cancellationToken),
+            "Address" => await SearchFilterHelper.DistinctNonEmptyAsync(mailQuery.Select(m => m.Address), search, cancellationToken),
+            "TelId" => await SearchFilterHelper.DistinctNonEmptyAsync(userQuery.Select(u => u.TelId), search, cancellationToken),
+            "DisplayName" => await SearchFilterHelper.DistinctNonEmptyAsync(userQuery.Select(u => u.DisplayName), search, cancellationToken),
+            "EmailAddress" => await SearchFilterHelper.DistinctNonEmptyAsync(userQuery.Select(u => u.EmailAddress), search, cancellationToken),
             _ => []
         };
 
@@ -324,11 +338,64 @@ public class RoleMailGroupsController : Controller
             .ToListAsync(cancellationToken);
     }
 
+    private async Task<HashSet<string>> GetMatchedMailGroupTelIdsAsync(CancellationToken cancellationToken)
+    {
+        var telIds = await _ilcDb.UserInfoAd.AsNoTracking()
+            .Where(u => u.TelId != null && u.TelId != "")
+            .Select(u => u.TelId!)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+
+        if (telIds.Count == 0)
+        {
+            return [];
+        }
+
+        var empIds = await _fiestaDb.MailGroup.AsNoTracking()
+            .Where(m => m.EmpId != null && m.EmpId != "" && telIds.Contains(m.EmpId))
+            .Select(m => m.EmpId!)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+
+        return empIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
     private async Task<List<MailGroupPickItem>> QueryMailGroupsPickAsync(
         MailGroupsSearchModel criteria,
         CancellationToken cancellationToken)
     {
-        var query = _fiestaDb.MailGroup.AsNoTracking();
+        var userQuery = _ilcDb.UserInfoAd.AsNoTracking()
+            .Where(u => u.TelId != null && u.TelId != "");
+
+        if (criteria.TelIds.Count > 0)
+        {
+            userQuery = userQuery.Where(u => criteria.TelIds.Contains(u.TelId!));
+        }
+
+        if (criteria.DisplayNames.Count > 0)
+        {
+            userQuery = userQuery.Where(u => u.DisplayName != null && criteria.DisplayNames.Contains(u.DisplayName));
+        }
+
+        if (criteria.EmailAddresses.Count > 0)
+        {
+            userQuery = userQuery.Where(u => u.EmailAddress != null && criteria.EmailAddresses.Contains(u.EmailAddress));
+        }
+
+        var users = await userQuery.ToListAsync(cancellationToken);
+        if (users.Count == 0)
+        {
+            return [];
+        }
+
+        var userByTelId = users
+            .Where(u => !string.IsNullOrWhiteSpace(u.TelId))
+            .GroupBy(u => u.TelId!.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+        var telIds = userByTelId.Keys.ToList();
+        var mailQuery = _fiestaDb.MailGroup.AsNoTracking()
+            .Where(m => m.EmpId != null && m.EmpId != "" && telIds.Contains(m.EmpId));
 
         if (criteria.Uids.Count > 0)
         {
@@ -339,30 +406,53 @@ public class RoleMailGroupsController : Controller
 
             if (uids.Count > 0)
             {
-                query = query.Where(m => uids.Contains(m.Uid));
+                mailQuery = mailQuery.Where(m => uids.Contains(m.Uid));
             }
         }
 
         if (criteria.Names.Count > 0)
         {
-            query = query.Where(m => m.Name != null && criteria.Names.Contains(m.Name));
+            mailQuery = mailQuery.Where(m => m.Name != null && criteria.Names.Contains(m.Name));
         }
 
         if (criteria.Addresses.Count > 0)
         {
-            query = query.Where(m => m.Address != null && criteria.Addresses.Contains(m.Address));
+            mailQuery = mailQuery.Where(m => m.Address != null && criteria.Addresses.Contains(m.Address));
         }
 
-        var mailGroups = await query
+        if (criteria.EmpIds.Count > 0)
+        {
+            mailQuery = mailQuery.Where(m => m.EmpId != null && criteria.EmpIds.Contains(m.EmpId));
+        }
+
+        var mailGroups = await mailQuery
             .OrderBy(m => m.Uid)
             .ToListAsync(cancellationToken);
 
-        return mailGroups.Select(m => new MailGroupPickItem
-        {
-            Uid = m.Uid,
-            Name = m.Name,
-            Address = m.Address
-        }).ToList();
+        return mailGroups
+            .Where(m => !string.IsNullOrWhiteSpace(m.EmpId))
+            .Select(m =>
+            {
+                var empId = m.EmpId!.Trim();
+                if (!userByTelId.TryGetValue(empId, out var user))
+                {
+                    return null;
+                }
+
+                return new MailGroupPickItem
+                {
+                    Uid = m.Uid,
+                    Name = m.Name,
+                    Address = m.Address,
+                    EmpId = m.EmpId,
+                    TelId = user.TelId,
+                    DisplayName = user.DisplayName,
+                    EmailAddress = user.EmailAddress
+                };
+            })
+            .Where(item => item != null)
+            .Select(item => item!)
+            .ToList();
     }
 
     private async Task<List<RoleMailGroupListItem>> QueryRoleMailGroupsAsync(
