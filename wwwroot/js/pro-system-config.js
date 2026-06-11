@@ -41,10 +41,26 @@
 
   function bindModel($form, model, category) {
     model = model || {};
-    $form.find('[name="Id"]').val(model.id || model.Id || '');
-    $form.find('[name="Category"]').val(model.category || model.Category || category || '');
-    $form.find('[name="Key1"]').val(model.key1 || model.Key1 || '');
-    $form.find('[name="Value1"]').val(model.value1 || model.Value1 || '');
+    var values = {
+      Id: model.id || model.Id || '',
+      Category: model.category || model.Category || category || '',
+      FunctionCode: model.functionCode || model.FunctionCode || '',
+      Key1: model.key1 || model.Key1 || '',
+      Key2: model.key2 || model.Key2 || '',
+      Value1: model.value1 || model.Value1 || '',
+      Value2: model.value2 || model.Value2 || '',
+      Value3: model.value3 || model.Value3 || '',
+      Value4: model.value4 || model.Value4 || '',
+      Value5: model.value5 || model.Value5 || '',
+      Value6: model.value6 || model.Value6 || ''
+    };
+
+    Object.keys(values).forEach(function (name) {
+      var $input = $form.find('[name="' + name + '"]');
+      if ($input.length) {
+        $input.val(values[name]);
+      }
+    });
   }
 
   global.ProSystemConfig.init = function (config) {
@@ -89,12 +105,24 @@
 
     function openCreate() {
       bindModel($form, {}, config.category);
+      if (config.manageCategoryField) {
+        $form.find('[name="Category"]').prop('readonly', false);
+      }
+      if (typeof config.onFormBound === 'function') {
+        config.onFormBound($form);
+      }
       openEditModal(config.createTitle || icpMsg('create'));
     }
 
     function openEdit(id) {
       $.get(config.getUrl, { id: id }, function (model) {
         bindModel($form, model, config.category);
+        if (config.manageCategoryField) {
+          $form.find('[name="Category"]').prop('readonly', true);
+        }
+        if (typeof config.onFormBound === 'function') {
+          config.onFormBound($form);
+        }
         openEditModal(config.editTitle || icpMsg('edit'));
       }).fail(function () {
         alert(icpMsg('loadFailed'));

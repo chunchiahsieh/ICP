@@ -4,6 +4,8 @@ public class SystemConfigSearchModel
 {
     public List<string> Categories { get; set; } = [];
 
+    public List<string> FunctionCodes { get; set; } = [];
+
     public List<string> Key1s { get; set; } = [];
 
     public List<string> Key2s { get; set; } = [];

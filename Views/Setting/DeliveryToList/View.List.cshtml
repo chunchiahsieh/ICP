@@ -1,2 +1,56 @@
 @model ICP.Models.SystemConfigSearchListViewModel
-@await Html.PartialAsync("~/Views/Setting/Shared/_ListTable.cshtml", Model)
+@{
+    var filterColumns = new[]
+    {
+        ("filter-Key1", "Key1"),
+        ("filter-Value1", "Value1"),
+        ("filter-Value2", "Value2"),
+        ("filter-Value3", "Value3")
+    };
+    var editPermission = $"{Model.PermissionPrefix}.Edit";
+}
+
+<table id="datatable" class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th class="sorting_disabled">
+                <input type="checkbox" class="list-select-all" title="@Localizer["Common.SelectAllPage"]" />
+            </th>
+            <th class="sorting_disabled">@Localizer["Common.Actions"]</th>
+            <th>SLOC</th>
+            <th>提貨地點</th>
+            <th>Contact Person</th>
+            <th>Phone No.</th>
+        </tr>
+        <tr class="users-filter-row">
+            <th class="sorting_disabled"></th>
+            <th class="sorting_disabled"></th>
+            @foreach (var (filterId, column) in filterColumns)
+            {
+                <th class="sorting_disabled">
+                    @await Html.PartialAsync("_ProDataTablesFilter", (filterId, column))
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListData)
+        {
+            <tr data-id="@item.Id">
+                <td><input type="checkbox" class="row-list-cb" data-id="@item.Id" /></td>
+                <td>
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm btn-crud-edit"
+                            data-permissions="@editPermission"
+                            data-i18n-key="@editPermission">
+                        @Localizer["Common.Edit"]
+                    </button>
+                </td>
+                <td>@item.Key1</td>
+                <td>@item.Value1</td>
+                <td>@item.Value2</td>
+                <td>@item.Value3</td>
+            </tr>
+        }
+    </tbody>
+</table>

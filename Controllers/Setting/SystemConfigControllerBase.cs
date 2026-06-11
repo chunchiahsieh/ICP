@@ -16,6 +16,7 @@ public abstract class SystemConfigControllerBase : Controller
     private static readonly HashSet<string> AllowedFilterColumns = new(StringComparer.OrdinalIgnoreCase)
     {
         "Category",
+        "FunctionCode",
         "Key1",
         "Key2",
         "Value1",
@@ -31,14 +32,14 @@ public abstract class SystemConfigControllerBase : Controller
     };
 
     private readonly ApplicationDbContext _icpDb;
-    private readonly IStringLocalizer<SharedResource> _localizer;
+    protected readonly IStringLocalizer<SharedResource> Localizer;
 
     protected SystemConfigControllerBase(
         ApplicationDbContext icpDb,
         IStringLocalizer<SharedResource> localizer)
     {
         _icpDb = icpDb;
-        _localizer = localizer;
+        Localizer = localizer;
     }
 
     protected abstract string Category { get; }
@@ -57,9 +58,8 @@ public abstract class SystemConfigControllerBase : Controller
     [HttpGet]
     public async Task<IActionResult> Get(int id, CancellationToken cancellationToken = default)
     {
-        var entity = await _icpDb.SystemConfigs
-            .AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id == id && e.Category == Category && !e.IsDeleted, cancellationToken);
+        var entity = await ScopeQuery(_icpDb.SystemConfigs.AsNoTracking())
+            .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
         if (entity is null)
         {
@@ -73,10 +73,7 @@ public abstract class SystemConfigControllerBase : Controller
     [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Save([FromBody] SystemConfigEditModel model, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(model.Key1))
-        {
-            ModelState.AddModelError(nameof(SystemConfigEditModel.Key1), _localizer["Setting.SystemConfig.KeyRequired"]);
-        }
+        ValidateSaveModel(model);
 
         if (!ModelState.IsValid)
         {
@@ -87,12 +84,12 @@ public abstract class SystemConfigControllerBase : Controller
         {
             if (model.Id > 0)
             {
-                var entity = await _icpDb.SystemConfigs
-                    .FirstOrDefaultAsync(e => e.Id == model.Id && e.Category == Category && !e.IsDeleted, cancellationToken);
+                var entity = await ScopeQuery(_icpDb.SystemConfigs)
+                    .FirstOrDefaultAsync(e => e.Id == model.Id, cancellationToken);
 
                 if (entity is null)
                 {
-                    return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
+                    return CrudJsonHelper.Failure(Localizer["Message.RecordsNotFound"]);
                 }
 
                 ApplyEditModel(entity, model);
@@ -102,10 +99,10 @@ public abstract class SystemConfigControllerBase : Controller
             {
                 var entity = new SystemConfig
                 {
-                    Category = Category,
                     Key2 = string.Empty,
                     IsDeleted = false
                 };
+                ApplyCreateCategory(entity, model);
                 ApplyEditModel(entity, model);
                 CrudAuditHelper.ApplyCreateAudit(entity, User.Identity?.Name);
                 _icpDb.SystemConfigs.Add(entity);
@@ -116,7 +113,7 @@ public abstract class SystemConfigControllerBase : Controller
         }
         catch (DbUpdateException ex)
         {
-            var message = CrudAuditHelper.MapDbUpdateException(ex, _localizer) ?? _localizer["Message.SaveFailed"];
+            var message = CrudAuditHelper.MapDbUpdateException(ex, Localizer) ?? Localizer["Message.SaveFailed"];
             return CrudJsonHelper.Failure(message);
         }
     }
@@ -125,12 +122,12 @@ public abstract class SystemConfigControllerBase : Controller
     [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
     {
-        var entity = await _icpDb.SystemConfigs
-            .FirstOrDefaultAsync(e => e.Id == id && e.Category == Category && !e.IsDeleted, cancellationToken);
+        var entity = await ScopeQuery(_icpDb.SystemConfigs)
+            .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
         if (entity is null)
         {
-            return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
+            return CrudJsonHelper.Failure(Localizer["Message.RecordsNotFound"]);
         }
 
         entity.IsDeleted = true;
@@ -147,17 +144,17 @@ public abstract class SystemConfigControllerBase : Controller
     {
         if (model.Ids.Count == 0)
         {
-            return CrudJsonHelper.Failure(_localizer["Message.SelectRecords"]);
+            return CrudJsonHelper.Failure(Localizer["Message.SelectRecords"]);
         }
 
         var ids = model.Ids.Distinct().ToList();
-        var entities = await _icpDb.SystemConfigs
-            .Where(e => ids.Contains(e.Id) && e.Category == Category && !e.IsDeleted)
+        var entities = await ScopeQuery(_icpDb.SystemConfigs)
+            .Where(e => ids.Contains(e.Id))
             .ToListAsync(cancellationToken);
 
         if (entities.Count == 0)
         {
-            return CrudJsonHelper.Failure(_localizer["Message.RecordsNotFound"]);
+            return CrudJsonHelper.Failure(Localizer["Message.RecordsNotFound"]);
         }
 
         foreach (var entity in entities)
@@ -179,7 +176,15 @@ public abstract class SystemConfigControllerBase : Controller
     public async Task<IActionResult> Query([FromForm] SystemConfigSearchModel criteria, CancellationToken cancellationToken = default)
     {
         var list = await QueryConfigsAsync(criteria, cancellationToken);
-        return PartialView(SettingListPartialPath, new SystemConfigSearchListViewModel
+        var viewModel = await BuildSearchListViewModelAsync(list, cancellationToken);
+        return PartialView(SettingListPartialPath, viewModel);
+    }
+
+    protected virtual Task<SystemConfigSearchListViewModel> BuildSearchListViewModelAsync(
+        IList<SystemConfig> list,
+        CancellationToken cancellationToken)
+    {
+        return Task.FromResult(new SystemConfigSearchListViewModel
         {
             ListData = list,
             PermissionPrefix = PermissionPrefix
@@ -218,11 +223,27 @@ public abstract class SystemConfigControllerBase : Controller
         };
     }
 
+    protected virtual void ValidateSaveModel(SystemConfigEditModel model)
+    {
+        if (string.IsNullOrWhiteSpace(model.Key1))
+        {
+            ModelState.AddModelError(nameof(SystemConfigEditModel.Key1), Localizer["Setting.SystemConfig.KeyRequired"]);
+        }
+    }
+
+    protected virtual void ApplyCreateCategory(SystemConfig entity, SystemConfigEditModel model)
+    {
+        entity.Category = Category;
+    }
+
+    protected virtual IQueryable<SystemConfig> ScopeQuery(IQueryable<SystemConfig> query)
+    {
+        return query.Where(e => e.Category == Category && !e.IsDeleted);
+    }
+
     private IQueryable<SystemConfig> BaseQuery()
     {
-        return _icpDb.SystemConfigs
-            .AsNoTracking()
-            .Where(e => e.Category == Category && !e.IsDeleted);
+        return ScopeQuery(_icpDb.SystemConfigs.AsNoTracking());
     }
 
     private async Task<List<string>> GetDistinctColumnValuesAsync(
@@ -235,6 +256,7 @@ public abstract class SystemConfigControllerBase : Controller
         return column switch
         {
             "Category" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Category), search, cancellationToken),
+            "FunctionCode" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.FunctionCode), search, cancellationToken),
             "Key1" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Key1), search, cancellationToken),
             "Key2" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Key2), search, cancellationToken),
             "Value1" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Value1), search, cancellationToken),
@@ -251,7 +273,7 @@ public abstract class SystemConfigControllerBase : Controller
         };
     }
 
-    private async Task<List<SystemConfig>> QueryConfigsAsync(
+    protected async Task<List<SystemConfig>> QueryConfigsAsync(
         SystemConfigSearchModel criteria,
         CancellationToken cancellationToken)
     {
@@ -260,6 +282,11 @@ public abstract class SystemConfigControllerBase : Controller
         if (criteria.Categories.Count > 0)
         {
             query = query.Where(e => criteria.Categories.Contains(e.Category));
+        }
+
+        if (criteria.FunctionCodes.Count > 0)
+        {
+            query = query.Where(e => e.FunctionCode != null && criteria.FunctionCodes.Contains(e.FunctionCode));
         }
 
         if (criteria.Key1s.Count > 0)
@@ -341,7 +368,7 @@ public abstract class SystemConfigControllerBase : Controller
         }
 
         return await query
-            .OrderBy(e => e.Key1)
+            .OrderBy(e => e.Id)
             .ThenBy(e => e.Key2)
             .ToListAsync(cancellationToken);
     }

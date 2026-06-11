@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -471,6 +471,9 @@
   <data name="Views.Shared._SidebarNav.Setting.OrderPriority" xml:space="preserve">
     <value>訂單優先順序</value>
   </data>
+  <data name="Views.Shared._SidebarNav.Setting.Customized" xml:space="preserve">
+    <value>自訂設定</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
     <value>系統管理</value>
   </data>
@@ -824,5 +827,26 @@
   </data>
   <data name="Message.SelectRoleAndUser" xml:space="preserve">
     <value>請至少選擇一筆角色與一筆使用者</value>
+  </data>
+  <data name="Views.Setting.Customized.View" xml:space="preserve">
+    <value>自訂設定查詢</value>
+  </data>
+  <data name="Views.Setting.Customized.Create" xml:space="preserve">
+    <value>自訂設定新增</value>
+  </data>
+  <data name="Views.Setting.Customized.Edit" xml:space="preserve">
+    <value>自訂設定編輯</value>
+  </data>
+  <data name="Views.Setting.Customized.Delete" xml:space="preserve">
+    <value>自訂設定刪除</value>
+  </data>
+  <data name="Setting.SystemConfig.CategoryRequired" xml:space="preserve">
+    <value>Category 為必填</value>
+  </data>
+  <data name="Setting.SystemConfig.CustomizedCategoryNotAllowed" xml:space="preserve">
+    <value>Category 不可為 PickUpLocation 或 InvoiceType</value>
+  </data>
+  <data name="Setting.Customized.Title" xml:space="preserve">
+    <value>自訂設定</value>
   </data>
 </root>

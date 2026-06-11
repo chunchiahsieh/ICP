@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -471,6 +471,9 @@
   <data name="Views.Shared._SidebarNav.Setting.OrderPriority" xml:space="preserve">
     <value>Order Priority</value>
   </data>
+  <data name="Views.Shared._SidebarNav.Setting.Customized" xml:space="preserve">
+    <value>Customized</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
     <value>Administration</value>
   </data>
@@ -824,5 +827,26 @@
   </data>
   <data name="Message.SelectRoleAndUser" xml:space="preserve">
     <value>Select at least one role and one user.</value>
+  </data>
+  <data name="Views.Setting.Customized.View" xml:space="preserve">
+    <value>Customized View</value>
+  </data>
+  <data name="Views.Setting.Customized.Create" xml:space="preserve">
+    <value>Customized Create</value>
+  </data>
+  <data name="Views.Setting.Customized.Edit" xml:space="preserve">
+    <value>Customized Edit</value>
+  </data>
+  <data name="Views.Setting.Customized.Delete" xml:space="preserve">
+    <value>Customized Delete</value>
+  </data>
+  <data name="Setting.SystemConfig.CategoryRequired" xml:space="preserve">
+    <value>Category is required.</value>
+  </data>
+  <data name="Setting.SystemConfig.CustomizedCategoryNotAllowed" xml:space="preserve">
+    <value>Category cannot be PickUpLocation or InvoiceType.</value>
+  </data>
+  <data name="Setting.Customized.Title" xml:space="preserve">
+    <value>Customized</value>
   </data>
 </root>

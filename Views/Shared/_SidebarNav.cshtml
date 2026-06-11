@@ -1,4 +1,4 @@
-﻿@inject UserResourcePermissionService UserResourcePerm
+@inject UserResourcePermissionService UserResourcePerm
 @{
     bool ShowMenuCategory(string categoryCode) => UserResourcePerm.HasMenuCategoryPermission(categoryCode);
     bool HasMenu(string resourceCode) => UserResourcePerm.HasMenuPermission(resourceCode);
@@ -76,6 +76,10 @@
     @if (HasMenu("Views.Shared._SidebarNav.Setting.OrderPriority"))
     {
         <a class="nav-link" asp-controller="OrderPriority" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.OrderPriority" data-i18n-key="Views.Shared._SidebarNav.Setting.OrderPriority">@Localizer["Views.Shared._SidebarNav.Setting.OrderPriority"]</a>
+    }
+    @if (HasMenu("Views.Shared._SidebarNav.Setting.Customized"))
+    {
+        <a class="nav-link" asp-controller="Customized" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Setting.Customized" data-i18n-key="Views.Shared._SidebarNav.Setting.Customized">@Localizer["Views.Shared._SidebarNav.Setting.Customized"]</a>
     }
 }
 
