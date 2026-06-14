@@ -411,6 +411,30 @@
   <data name="Forwarder.ForwarderDataUpload.UploaderButton" xml:space="preserve">
     <value>Upload File</value>
   </data>
+  <data name="Forwarder.ForwarderDataUpload.MaxSizeHint" xml:space="preserve">
+    <value>Maximum file size: {0} MB</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.ImportResultTitle" xml:space="preserve">
+    <value>Import Result</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.LengthMenuAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DownloadTemplate" xml:space="preserve">
+    <value>Download Sample</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PreviewMessage" xml:space="preserve">
+    <value>Parsed {0} row(s). Please review and click Save.</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.SaveSuccessMessage" xml:space="preserve">
+    <value>Successfully saved {0} row(s)</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.AlreadySaved" xml:space="preserve">
+    <value>This file has already been saved</value>
+  </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>Forwarder Data Upload View</value>
   </data>

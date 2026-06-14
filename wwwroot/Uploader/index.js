@@ -27,10 +27,12 @@ window.createUploader = function (selector, options) {
     const defaultOptions = {
         title: '檔案上傳',
         buttonText: '開啟上傳',
+        buttonClass: 'px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm inline-flex justify-center items-center gap-2',
         uploadUrl: '',
         fileTypes: '*/*',
         multiple: true,
         maxSize: 10,
+        maxSizeHint: '',
         fieldName: 'file',
         onSuccess: null,
         onError: null
@@ -42,7 +44,7 @@ window.createUploader = function (selector, options) {
     // Render the initial button
     const buttonId = `open-modal-${Math.random().toString(36).substring(2, 9)}`;
     $container.html(`
-    <button id="${buttonId}" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm inline-flex justify-center items-center gap-2">
+    <button type="button" id="${buttonId}" class="${config.buttonClass}">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
       ${escapeHtml(config.buttonText)}
     </button>
@@ -57,11 +59,11 @@ window.createUploader = function (selector, options) {
     const fileCountId = `file-count-${modalId}`;
 
     const modalHtml = `
-    <div id="${modalId}" class="fixed inset-0 z-50 hidden">
-      <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity opacity-0 modal-backdrop"></div>
-      <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div id="${modalId}" class="uploader-modal-root fixed inset-0 hidden">
+      <div class="uploader-backdrop fixed inset-0 bg-slate-900/50 transition-opacity opacity-0"></div>
+      <div class="uploader-modal-body fixed inset-0 w-screen overflow-y-auto pointer-events-none">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95 modal-panel">
+          <div class="uploader-panel relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95 pointer-events-auto">
             
             <!-- Header -->
             <div class="bg-white px-5 py-4 border-b border-slate-100 flex items-center justify-between">
@@ -84,6 +86,7 @@ window.createUploader = function (selector, options) {
                     <div class="space-y-1">
                       <h3 class="text-base font-medium text-slate-800">點擊或拖曳檔案至此</h3>
                       <p class="text-xs text-slate-500">${config.multiple ? '支援多個檔案' : '僅支援單一檔案'}${config.fileTypes !== '*/*' ? ` (${escapeHtml(config.fileTypes)})` : ''}</p>
+                      <p class="text-xs text-slate-500">${escapeHtml(config.maxSizeHint || ('單檔上限 ' + config.maxSize + 'MB'))}</p>
                     </div>
                   </div>
                 </div>
@@ -115,8 +118,8 @@ window.createUploader = function (selector, options) {
     $('body').append(modalHtml);
 
     const $modal = $(`#${modalId}`);
-    const $backdrop = $modal.find('.modal-backdrop');
-    const $panel = $modal.find('.modal-panel');
+    const $backdrop = $modal.find('.uploader-backdrop');
+    const $panel = $modal.find('.uploader-panel');
     const $dropzone = $(`#${dropzoneId}`);
     const $fileInput = $(`#${fileInputId}`);
     const $fileListContainer = $(`#${fileListContainerId}`);
@@ -333,6 +336,7 @@ window.createUploader = function (selector, options) {
             url: config.uploadUrl,
             type: 'POST',
             data: formData,
+            dataType: 'json',
             processData: false,
             contentType: false,
             xhr: function () {

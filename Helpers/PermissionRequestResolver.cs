@@ -31,11 +31,25 @@ public static class PermissionRequestResolver
             return ResolveIfRegistered(registry, "Views.Permission.Users.View");
         }
 
-        if (controller.Equals("ForwarderDataUpload", StringComparison.OrdinalIgnoreCase)
-            && action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
-            && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+        if (controller.Equals("ForwarderDataUpload", StringComparison.OrdinalIgnoreCase))
         {
-            return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.Upload");
+            if ((action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("Save", StringComparison.OrdinalIgnoreCase))
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.Upload");
+            }
+
+            if (action.Equals("DownloadTemplate", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.Upload");
+            }
+
+            if (IsReadAction(action))
+            {
+                return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.View");
+            }
         }
 
         if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)

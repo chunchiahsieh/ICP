@@ -1,0 +1,59 @@
+@model ICP.Models.ForwarderDataUploadListViewModel
+
+<table id="datatable" class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Invoice No.</th>
+            <th>Customer Reference</th>
+            <th>Material Code</th>
+            <th>Order Material Name</th>
+            <th>Quantity</th>
+            <th>Port of Loading</th>
+            <th>Ship to Name</th>
+            <th>Ship to Address</th>
+            <th>Ship to Party Country Code</th>
+            <th>Ship to Port Code</th>
+            <th>Freight charge</th>
+            <th>Confirmed Custom Date</th>
+            <th>HAWB</th>
+            <th>MAWB</th>
+            <th>ETD</th>
+            <th>ETA</th>
+            <th>FLIGHT 1#</th>
+            <th>FLIGHT 2#</th>
+            <th>C/B</th>
+            <th>Action</th>
+            <th>MDP</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListData)
+        {
+            <tr>
+                <td>@item.Type</td>
+                <td>@item.InvoiceNo</td>
+                <td>@item.CustomerReference</td>
+                <td>@item.MaterialCode</td>
+                <td>@item.OrderMaterialName</td>
+                <td>@(item.Quantity?.ToString("0.####") ?? string.Empty)</td>
+                <td>@item.PortOfLoading</td>
+                <td>@item.ShipToName</td>
+                <td>@item.ShipToAddress</td>
+                <td>@item.ShipToPartyCountryCode</td>
+                <td>@item.ShipToPortCode</td>
+                <td>@item.FreightCharge</td>
+                <td>@(item.ConfirmedCustomDate?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
+                <td>@item.Hawb</td>
+                <td>@item.Mawb</td>
+                <td>@(item.Etd?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
+                <td>@(item.Eta?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
+                <td>@item.Flight1</td>
+                <td>@item.Flight2</td>
+                <td>@item.Cb</td>
+                <td>@item.Action</td>
+                <td>@item.Mdp</td>
+            </tr>
+        }
+    </tbody>
+</table>

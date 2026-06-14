@@ -9,6 +9,7 @@ using ICP.Filters;
 using ICP.Infrastructure;
 
 using ICP.Models.Auth;
+using ICP.Models;
 
 using ICP.Services;
 
@@ -61,6 +62,9 @@ builder.Host.UseSerilog((context, _, loggerConfiguration) =>
 builder.Services.Configure<AppAuthOptions>(
     builder.Configuration.GetSection(AppAuthOptions.SectionName));
 
+builder.Services.Configure<ForwarderDataUploadOptions>(
+    builder.Configuration.GetSection(ForwarderDataUploadOptions.SectionName));
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var supportedCultures = new[] { "zh-TW", "en", "ja" };
@@ -104,6 +108,7 @@ builder.Services.AddScoped<PermissionResourceSyncService>();
 builder.Services.AddSingleton<ResourceRouteRegistryService>();
 builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<UserResourcePermissionService>();
+builder.Services.AddScoped<ForwarderDataImportService>();
 builder.Services.AddScoped<RequireLoginFilter>();
 builder.Services.AddScoped<RequireResourcePermissionFilter>();
 

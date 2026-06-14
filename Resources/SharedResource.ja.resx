@@ -411,6 +411,30 @@
   <data name="Forwarder.ForwarderDataUpload.UploaderButton" xml:space="preserve">
     <value>ファイルをアップロード</value>
   </data>
+  <data name="Forwarder.ForwarderDataUpload.MaxSizeHint" xml:space="preserve">
+    <value>1ファイルの上限：{0} MB</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.ImportResultTitle" xml:space="preserve">
+    <value>取込結果</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.LengthMenuAll" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.SaveButton" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DownloadTemplate" xml:space="preserve">
+    <value>サンプルをダウンロード</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PreviewMessage" xml:space="preserve">
+    <value>{0} 件を解析しました。確認後、保存を押してください</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.SaveSuccessMessage" xml:space="preserve">
+    <value>{0} 件を保存しました</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.AlreadySaved" xml:space="preserve">
+    <value>このファイルは既に保存されています</value>
+  </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>フォワーダーデータアップロード照会</value>
   </data>

@@ -1,54 +1,472 @@
+using ICP.Data;
+
+using ICP.Helpers;
+
+using ICP.Models;
+
+using ICP.Models.Icp;
+
+using ICP.Services;
+
 using Microsoft.AspNetCore.Mvc;
+
+using Microsoft.EntityFrameworkCore;
+
+using Microsoft.Extensions.Localization;
+
+using Microsoft.Extensions.Options;
+
+
 
 namespace ICP.Controllers;
 
+
+
 public class ForwarderDataUploadController : Controller
+
 {
+
+    public const string PendingFilePathSessionKey = "ForwarderPendingFilePath";
+
+    private const string TemplateFileName = "ForwarderDataUploadTemplate.xlsx";
+
+    private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+
+    {
+
+        ".xlsx",
+
+        ".xls",
+
+        ".csv"
+
+    };
+
+
+
+    private readonly ApplicationDbContext _db;
+
     private readonly IWebHostEnvironment _environment;
+
+    private readonly ForwarderDataUploadOptions _options;
+
+    private readonly ForwarderDataImportService _importService;
+
+    private readonly IStringLocalizer<SharedResource> _localizer;
+
     private readonly ILogger<ForwarderDataUploadController> _logger;
 
+
+
     public ForwarderDataUploadController(
+
+        ApplicationDbContext db,
+
         IWebHostEnvironment environment,
+
+        IOptions<ForwarderDataUploadOptions> options,
+
+        ForwarderDataImportService importService,
+
+        IStringLocalizer<SharedResource> localizer,
+
         ILogger<ForwarderDataUploadController> logger)
+
     {
+
+        _db = db;
+
         _environment = environment;
+
+        _options = options.Value;
+
+        _importService = importService;
+
+        _localizer = localizer;
+
         _logger = logger;
+
+    }
+
+
+
+    [HttpGet]
+
+    public IActionResult Index()
+
+    {
+
+        ViewData["MaxSizeMb"] = _options.MaxSizeMb;
+
+        return View("~/Views/FORWARDER/ForwarderDataUpload/View.cshtml");
+
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult DownloadTemplate()
     {
-        return View("~/Views/FORWARDER/ForwarderDataUpload/View.cshtml");
+        var templatePath = Path.Combine(_environment.ContentRootPath, "Files", TemplateFileName);
+        if (!System.IO.File.Exists(templatePath))
+        {
+            return NotFound();
+        }
+
+        return PhysicalFile(
+            templatePath,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            TemplateFileName);
     }
 
     [HttpPost]
-    [RequestSizeLimit(52_428_800)]
-    public async Task<IActionResult> Upload(IFormFile? file, CancellationToken cancellationToken = default)
+
+    public async Task<IActionResult> Query(
+
+        [FromForm] string? filePath,
+
+        [FromForm] bool preview = true,
+
+        CancellationToken cancellationToken = default)
+
     {
-        if (file is null || file.Length == 0)
+
+        if (string.IsNullOrWhiteSpace(filePath))
+
         {
-            return Json(new { success = false, message = "未選擇檔案" });
+
+            return PartialView("~/Views/FORWARDER/ForwarderDataUpload/View.List.cshtml", new ForwarderDataUploadListViewModel());
+
         }
 
-        var uploadDirectory = Path.Combine(_environment.WebRootPath, "uploads", "forwarder");
-        Directory.CreateDirectory(uploadDirectory);
+
+
+        var normalizedPath = ForwarderDataImportService.ValidateAndNormalizeStoredFilePath(
+
+            filePath,
+
+            _environment,
+
+            _options);
+
+
+
+        if (preview)
+
+        {
+
+            var createUser = CrudAuditHelper.ResolveUserName(User.Identity?.Name);
+
+            var rows = await _importService.ParseAsync(normalizedPath, createUser, cancellationToken);
+
+            return PartialView("~/Views/FORWARDER/ForwarderDataUpload/View.List.cshtml", new ForwarderDataUploadListViewModel
+
+            {
+
+                ListData = rows
+
+            });
+
+        }
+
+
+
+        var list = await _db.ForwarderDataUploads
+
+            .AsNoTracking()
+
+            .Where(x => x.FilePath == normalizedPath)
+
+            .OrderBy(x => x.Id)
+
+            .ToListAsync(cancellationToken);
+
+
+
+        return PartialView("~/Views/FORWARDER/ForwarderDataUpload/View.List.cshtml", new ForwarderDataUploadListViewModel
+
+        {
+
+            ListData = list
+
+        });
+
+    }
+
+
+
+    [HttpPost]
+
+    [RequestSizeLimit(52_428_800)]
+
+    public async Task<IActionResult> Upload(IFormFile? file, CancellationToken cancellationToken = default)
+
+    {
+
+        if (file is null || file.Length == 0)
+
+        {
+
+            return Json(new { success = false, message = "未選擇檔案" });
+
+        }
+
+
+
+        if (file.Length > _options.MaxSizeBytes)
+
+        {
+
+            return Json(new { success = false, message = $"檔案超過 {_options.MaxSizeMb}MB" });
+
+        }
+
+
+
+        var extension = Path.GetExtension(file.FileName);
+
+        if (string.IsNullOrWhiteSpace(extension) || !AllowedExtensions.Contains(extension))
+
+        {
+
+            return Json(new { success = false, message = "僅支援 .xlsx、.xls、.csv 格式" });
+
+        }
+
+
 
         var safeFileName = Path.GetFileName(file.FileName);
+
         if (string.IsNullOrWhiteSpace(safeFileName))
+
         {
+
             return Json(new { success = false, message = "檔案名稱無效" });
+
         }
+
+
+
+        var uploadDirectory = ForwarderDataImportService.ResolveStorageDirectory(_environment, _options);
+
+        Directory.CreateDirectory(uploadDirectory);
+
+
 
         var storedFileName = $"{DateTime.Now:yyyyMMddHHmmssfff}_{safeFileName}";
-        var storedPath = Path.Combine(uploadDirectory, storedFileName);
 
-        await using (var stream = System.IO.File.Create(storedPath))
+        var storedPath = Path.GetFullPath(Path.Combine(uploadDirectory, storedFileName));
+
+
+
+        try
+
         {
-            await file.CopyToAsync(stream, cancellationToken);
+
+            await using (var stream = System.IO.File.Create(storedPath))
+
+            {
+
+                await file.CopyToAsync(stream, cancellationToken);
+
+            }
+
+
+
+            var createUser = CrudAuditHelper.ResolveUserName(User.Identity?.Name);
+
+            var rows = await _importService.ParseAsync(storedPath, createUser, cancellationToken);
+
+            HttpContext.Session.SetString(PendingFilePathSessionKey, storedPath);
+
+
+
+            _logger.LogInformation(
+
+                "Forwarder data parsed for preview: {FileName} -> {StoredPath}, Count={Count}",
+
+                safeFileName,
+
+                storedPath,
+
+                rows.Count);
+
+
+
+            var message = string.Format(
+
+                _localizer["Forwarder.ForwarderDataUpload.PreviewMessage"].Value,
+
+                rows.Count);
+
+
+
+            return Json(new
+
+            {
+
+                success = true,
+
+                message,
+
+                previewCount = rows.Count,
+
+                filePath = storedPath
+
+            });
+
         }
 
-        _logger.LogInformation("Forwarder data uploaded: {FileName} -> {StoredPath}", safeFileName, storedPath);
+        catch (Exception ex)
 
-        return Json(new { success = true, message = "上傳成功" });
+        {
+
+            _logger.LogError(ex, "Forwarder data preview parse failed: {FileName}", safeFileName);
+
+
+
+            if (System.IO.File.Exists(storedPath))
+
+            {
+
+                System.IO.File.Delete(storedPath);
+
+            }
+
+
+
+            HttpContext.Session.Remove(PendingFilePathSessionKey);
+
+            return Json(new { success = false, message = ex.Message });
+
+        }
+
     }
+
+
+
+    [HttpPost]
+
+    public async Task<IActionResult> Save([FromForm] string? filePath, CancellationToken cancellationToken = default)
+
+    {
+
+        if (string.IsNullOrWhiteSpace(filePath))
+
+        {
+
+            return Json(new { success = false, message = "未指定檔案" });
+
+        }
+
+
+
+        try
+
+        {
+
+            var normalizedPath = ForwarderDataImportService.ValidateAndNormalizeStoredFilePath(
+
+                filePath,
+
+                _environment,
+
+                _options);
+
+
+
+            var pendingPath = HttpContext.Session.GetString(PendingFilePathSessionKey);
+
+            if (string.IsNullOrWhiteSpace(pendingPath)
+
+                || !string.Equals(
+
+                    Path.GetFullPath(pendingPath.Trim()),
+
+                    normalizedPath,
+
+                    StringComparison.OrdinalIgnoreCase))
+
+            {
+
+                return Json(new { success = false, message = "請先上傳檔案後再儲存" });
+
+            }
+
+
+
+            if (await _db.ForwarderDataUploads.AnyAsync(x => x.FilePath == normalizedPath, cancellationToken))
+
+            {
+
+                return Json(new
+
+                {
+
+                    success = false,
+
+                    message = _localizer["Forwarder.ForwarderDataUpload.AlreadySaved"].Value
+
+                });
+
+            }
+
+
+
+            var createUser = CrudAuditHelper.ResolveUserName(User.Identity?.Name);
+
+            var result = await _importService.SaveAsync(normalizedPath, createUser, cancellationToken);
+
+
+
+            HttpContext.Session.Remove(PendingFilePathSessionKey);
+
+
+
+            _logger.LogInformation(
+
+                "Forwarder data saved: {StoredPath}, Count={Count}",
+
+                normalizedPath,
+
+                result.ImportedCount);
+
+
+
+            var message = string.Format(
+
+                _localizer["Forwarder.ForwarderDataUpload.SaveSuccessMessage"].Value,
+
+                result.ImportedCount);
+
+
+
+            return Json(new
+
+            {
+
+                success = result.Success,
+
+                message,
+
+                importedCount = result.ImportedCount,
+
+                filePath = result.FilePath
+
+            });
+
+        }
+
+        catch (Exception ex)
+
+        {
+
+            _logger.LogError(ex, "Forwarder data save failed: {FilePath}", filePath);
+
+            return Json(new { success = false, message = ex.Message });
+
+        }
+
+    }
+
 }
+
+

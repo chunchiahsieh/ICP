@@ -20,7 +20,9 @@
 
     searchDebounceMs: 300,
 
-    initialSort: [[0, 'desc']]
+    initialSort: [[0, 'desc']],
+
+    autoLoad: true
 
   };
 
@@ -175,6 +177,22 @@
         });
 
       });
+
+      if (config.extraQueryParams) {
+
+        var extra = typeof config.extraQueryParams === 'function'
+
+          ? config.extraQueryParams()
+
+          : config.extraQueryParams;
+
+        if (extra) {
+
+          $.extend(payload, extra);
+
+        }
+
+      }
 
       return payload;
 
@@ -644,7 +662,11 @@
 
 
 
-    Query();
+    if (config.autoLoad !== false) {
+
+      Query();
+
+    }
 
 
 

@@ -411,6 +411,30 @@
   <data name="Forwarder.ForwarderDataUpload.UploaderButton" xml:space="preserve">
     <value>上傳檔案</value>
   </data>
+  <data name="Forwarder.ForwarderDataUpload.MaxSizeHint" xml:space="preserve">
+    <value>單檔大小上限：{0} MB</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.ImportResultTitle" xml:space="preserve">
+    <value>匯入結果</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.LengthMenuAll" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.SaveButton" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DownloadTemplate" xml:space="preserve">
+    <value>下載範例</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PreviewMessage" xml:space="preserve">
+    <value>已解析 {0} 筆，請確認後按儲存</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.SaveSuccessMessage" xml:space="preserve">
+    <value>成功儲存 {0} 筆</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.AlreadySaved" xml:space="preserve">
+    <value>此檔案已儲存過</value>
+  </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>貨代資料上傳查詢</value>
   </data>

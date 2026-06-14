@@ -24,6 +24,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<SystemConfig> SystemConfigs => Set<SystemConfig>();
 
+    public DbSet<ForwarderDataUpload> ForwarderDataUploads => Set<ForwarderDataUpload>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemConfig>(entity =>
@@ -49,6 +51,36 @@ public class ApplicationDbContext : DbContext
                 .IsUnique()
                 .HasDatabaseName("UX_SystemConfigs")
                 .HasFilter("[IsDeleted] = 0");
+        });
+
+        modelBuilder.Entity<ForwarderDataUpload>(entity =>
+        {
+            entity.ToTable("ForwarderDataUpload");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Type).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.InvoiceNo).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.CustomerReference).HasMaxLength(100);
+            entity.Property(e => e.MaterialCode).HasMaxLength(100);
+            entity.Property(e => e.OrderMaterialName).HasMaxLength(500);
+            entity.Property(e => e.Quantity).HasPrecision(18, 4);
+            entity.Property(e => e.PortOfLoading).HasMaxLength(100);
+            entity.Property(e => e.ShipToName).HasMaxLength(300);
+            entity.Property(e => e.ShipToAddress).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.ShipToPartyCountryCode).HasMaxLength(100);
+            entity.Property(e => e.ShipToPortCode).HasMaxLength(50);
+            entity.Property(e => e.FreightCharge).HasMaxLength(100);
+            entity.Property(e => e.Hawb).HasMaxLength(50);
+            entity.Property(e => e.Mawb).HasMaxLength(50);
+            entity.Property(e => e.Flight1).HasMaxLength(50);
+            entity.Property(e => e.Flight2).HasMaxLength(50);
+            entity.Property(e => e.Cb).HasMaxLength(50);
+            entity.Property(e => e.Action).HasMaxLength(100);
+            entity.Property(e => e.Mdp).HasMaxLength(50);
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("getdate()");
+            entity.Property(e => e.CreateUser).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.UpdateUser).HasMaxLength(50);
+            entity.Property(e => e.FilePath).HasMaxLength(500).IsRequired();
         });
 
         modelBuilder.Entity<Resource>(entity =>

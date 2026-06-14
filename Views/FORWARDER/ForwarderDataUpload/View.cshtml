@@ -1,46 +1,371 @@
+@using System.Text.Json
+
 @{
+
     ViewData["Title"] = Localizer["Forwarder.ForwarderDataUpload.Title"];
+
+    var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
+
+    var maxSizeHint = string.Format(Localizer["Forwarder.ForwarderDataUpload.MaxSizeHint"].Value, maxSizeMb);
+
+    var lengthMenuAll = Localizer["Forwarder.ForwarderDataUpload.LengthMenuAll"].Value;
+
+    var saveButtonText = Localizer["Forwarder.ForwarderDataUpload.SaveButton"].Value;
+
+    var importResultTitle = Localizer["Forwarder.ForwarderDataUpload.ImportResultTitle"].Value;
+
+    var uploaderButtonText = Localizer["Forwarder.ForwarderDataUpload.UploaderButton"].Value;
+
 }
+
+
 
 @section Styles {
+
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
+
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+
+        tailwind.config = {
+
+            corePlugins: {
+
+                preflight: false
+
+            }
+
+        };
+
+    </script>
+
 }
 
+
+
 <div data-permissions="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload"
+
      data-i18n-key="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload">
+
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+
         <h4 class="mb-0">@Localizer["Forwarder.ForwarderDataUpload.Title"]</h4>
+
     </div>
-    <div class="d-none" aria-hidden="true">
-        <span data-permissions="Views.Forwarder.ForwarderDataUpload.View"
-              data-i18n-key="Views.Forwarder.ForwarderDataUpload.View">@Localizer["Forwarder.ForwarderDataUpload.Title"]</span>
+
+    <p class="text-muted small mb-3">@maxSizeHint</p>
+
+    <div class="d-flex align-items-start gap-2 flex-wrap mb-3">
+
+        <div id="forwarderUploader"></div>
+
+        <a asp-action="DownloadTemplate"
+           asp-controller="ForwarderDataUpload"
+           class="btn btn-outline-secondary align-self-center"
+           data-permissions="Views.Forwarder.ForwarderDataUpload.Upload"
+           data-i18n-key="Forwarder.ForwarderDataUpload.DownloadTemplate">
+            @Localizer["Forwarder.ForwarderDataUpload.DownloadTemplate"]
+        </a>
+
         <button type="button"
+
+                id="btnSaveImport"
+
+                class="btn btn-primary align-self-center"
+
+                disabled
+
                 data-permissions="Views.Forwarder.ForwarderDataUpload.Upload"
+
                 data-i18n-key="Views.Forwarder.ForwarderDataUpload.Upload">
-            Upload
+
+            @saveButtonText
+
         </button>
+
+    </div>
+
+
+
+    <div id="importResultSection" class="d-none mt-4">
+
+        <div class="d-flex align-items-center justify-content-between mb-2">
+
+            <h5 class="mb-0" id="importResultTitle">@Localizer["Forwarder.ForwarderDataUpload.ImportResultTitle"]</h5>
+
+        </div>
+
+        <div id="pageMessage" class="alert alert-info py-2 mb-3" role="alert"></div>
+
+        <div id="DataDiv"></div>
+
     </div>
 
 </div>
 
 
+
+<div class="d-none" aria-hidden="true">
+
+    <span data-permissions="Views.Forwarder.ForwarderDataUpload.View"
+
+          data-i18n-key="Views.Forwarder.ForwarderDataUpload.View">@Localizer["Forwarder.ForwarderDataUpload.Title"]</span>
+
+    <button type="button"
+
+            data-permissions="Views.Forwarder.ForwarderDataUpload.Upload"
+
+            data-i18n-key="Views.Forwarder.ForwarderDataUpload.Upload">Upload</button>
+
+</div>
+
+
+
 @section Scripts {
+
     <script src="~/Uploader/index.js" asp-append-version="true"></script>
+
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+
     <script>
+
         $(function () {
-            if (typeof window.createUploader !== 'function') {
-                return;
+
+            var maxSizeMb = @maxSizeMb;
+
+            var lastFilePath = '';
+
+            var isPreviewMode = true;
+
+            var tableInstance = null;
+
+            var lengthMenuAll = @Html.Raw(JsonSerializer.Serialize(lengthMenuAll));
+
+            var alreadySavedMessage = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.AlreadySaved"].Value));
+            var importResultTitleText = @Html.Raw(JsonSerializer.Serialize(importResultTitle));
+
+
+
+            function resolveFilePath(response) {
+
+                return response.filePath || response.FilePath || '';
+
             }
 
-            window.createUploader('#forwarderUploader', {
-                title: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.UploaderTitle"].Value)),
-                buttonText: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.UploaderButton"].Value)),
-                uploadUrl: '@Url.Action("Upload", "ForwarderDataUpload")',
-                fileTypes: '.xlsx,.xls,.csv',
-                multiple: true,
-                maxSize: 50,
-                fieldName: 'file'
+
+
+            function buildTableConfig() {
+
+                return ProDataTables.buildConfig({
+
+                    filterFieldMap: {},
+
+                    queryUrl: '@Url.Action("Query", "ForwarderDataUpload")',
+
+                    autoLoad: true,
+
+                    pageLength: -1,
+
+                    lengthMenu: [[-1], [lengthMenuAll]],
+
+                    initialSort: [[0, 'asc']],
+
+                    extraQueryParams: function () {
+
+                        return {
+
+                            filePath: lastFilePath,
+
+                            preview: isPreviewMode
+
+                        };
+
+                    }
+
+                });
+
+            }
+
+
+
+            function reloadPreviewTable() {
+
+                if (!tableInstance && window.ProDataTables && ProDataTables.initUsers) {
+
+                    tableInstance = ProDataTables.initUsers(buildTableConfig());
+
+                } else if (tableInstance && tableInstance.reload) {
+
+                    tableInstance.reload();
+
+                }
+
+            }
+
+
+
+            function showImportResult(response) {
+
+                if (!response || !response.success) {
+
+                    return;
+
+                }
+
+
+
+                var filePath = resolveFilePath(response);
+
+                if (!filePath) {
+
+                    return;
+
+                }
+
+
+
+                lastFilePath = filePath;
+
+                isPreviewMode = true;
+
+                $('#importResultTitle')
+                    .removeClass('text-success')
+                    .text(importResultTitleText);
+
+                $('#pageMessage')
+                    .removeClass('alert-success d-none')
+                    .addClass('alert-info')
+                    .text(response.message || '');
+
+                $('#importResultSection').removeClass('d-none');
+
+                $('#btnSaveImport').prop('disabled', false);
+
+                reloadPreviewTable();
+
+                document.getElementById('importResultSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            }
+
+
+
+            function showSaveSuccess(response) {
+
+                $('#importResultTitle')
+                    .addClass('text-success')
+                    .text(response.message || '');
+
+                $('#pageMessage').addClass('d-none');
+
+                $('#btnSaveImport').prop('disabled', true);
+
+            }
+
+
+
+            $('#btnSaveImport').on('click', function () {
+
+                if (!lastFilePath || $(this).prop('disabled')) {
+
+                    return;
+
+                }
+
+
+
+                var $btn = $(this);
+
+                $btn.prop('disabled', true);
+
+
+
+                $.ajax({
+
+                    url: '@Url.Action("Save", "ForwarderDataUpload")',
+
+                    type: 'POST',
+
+                    data: { filePath: lastFilePath },
+
+                    dataType: 'json',
+
+                    success: function (response) {
+
+                        if (response && response.success) {
+
+                            showSaveSuccess(response);
+
+                        } else {
+
+                            $btn.prop('disabled', false);
+
+                            alert(response && response.message ? response.message : alreadySavedMessage);
+
+                        }
+
+                    },
+
+                    error: function (xhr) {
+
+                        $btn.prop('disabled', false);
+
+                        var message = xhr.responseJSON && xhr.responseJSON.message
+
+                            ? xhr.responseJSON.message
+
+                            : '儲存失敗';
+
+                        alert(message);
+
+                    }
+
+                });
+
             });
+
+
+
+            if (typeof window.createUploader === 'function') {
+
+                window.createUploader('#forwarderUploader', {
+
+                    title: @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.UploaderTitle"].Value)),
+
+                    buttonText: @Html.Raw(JsonSerializer.Serialize(uploaderButtonText)),
+
+                    buttonClass: 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2',
+
+                    uploadUrl: '@Url.Action("Upload", "ForwarderDataUpload")',
+
+                    fileTypes: '.xlsx',
+
+                    multiple: false,
+
+                    maxSize: maxSizeMb,
+
+                    maxSizeHint: @Html.Raw(JsonSerializer.Serialize(maxSizeHint)),
+
+                    fieldName: 'file',
+
+                    onSuccess: showImportResult
+
+                });
+
+            }
+
         });
+
     </script>
+
 }
+
+
