@@ -115,6 +115,12 @@ public partial class PermissionScannerService
             parts = parts[1..];
         }
 
+        if (parts.Length >= 2 &&
+            parts[0].Equals("FORWARDER", StringComparison.OrdinalIgnoreCase))
+        {
+            parts = parts[1..];
+        }
+
         if (parts.Length > 0 &&
             parts[0].Equals("RoleResources", StringComparison.OrdinalIgnoreCase))
         {

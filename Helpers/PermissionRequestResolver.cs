@@ -31,6 +31,13 @@ public static class PermissionRequestResolver
             return ResolveIfRegistered(registry, "Views.Permission.Users.View");
         }
 
+        if (controller.Equals("ForwarderDataUpload", StringComparison.OrdinalIgnoreCase)
+            && action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+            && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+        {
+            return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.Upload");
+        }
+
         if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
             && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
         {

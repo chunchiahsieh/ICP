@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = Localizer["Forwarder.ForwarderDataUpload.Title"];
+}
+
+@section Styles {
+    <script src="https://cdn.tailwindcss.com"></script>
+}
+
+<div data-permissions="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload"
+     data-i18n-key="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["Forwarder.ForwarderDataUpload.Title"]</h4>
+    </div>
+    <div class="d-none" aria-hidden="true">
+        <span data-permissions="Views.Forwarder.ForwarderDataUpload.View"
+              data-i18n-key="Views.Forwarder.ForwarderDataUpload.View">@Localizer["Forwarder.ForwarderDataUpload.Title"]</span>
+        <button type="button"
+                data-permissions="Views.Forwarder.ForwarderDataUpload.Upload"
+                data-i18n-key="Views.Forwarder.ForwarderDataUpload.Upload">
+            Upload
+        </button>
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script src="~/Uploader/index.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            if (typeof window.createUploader !== 'function') {
+                return;
+            }
+
+            window.createUploader('#forwarderUploader', {
+                title: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.UploaderTitle"].Value)),
+                buttonText: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.UploaderButton"].Value)),
+                uploadUrl: '@Url.Action("Upload", "ForwarderDataUpload")',
+                fileTypes: '.xlsx,.xls,.csv',
+                multiple: true,
+                maxSize: 50,
+                fieldName: 'file'
+            });
+        });
+    </script>
+}

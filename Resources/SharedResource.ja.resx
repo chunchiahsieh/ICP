@@ -402,6 +402,21 @@
   <data name="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload" xml:space="preserve">
     <value>フォワーダーデータアップロード</value>
   </data>
+  <data name="Forwarder.ForwarderDataUpload.Title" xml:space="preserve">
+    <value>フォワーダーデータアップロード</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.UploaderTitle" xml:space="preserve">
+    <value>フォワーダーデータアップロード</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.UploaderButton" xml:space="preserve">
+    <value>ファイルをアップロード</value>
+  </data>
+  <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
+    <value>フォワーダーデータアップロード照会</value>
+  </data>
+  <data name="Views.Forwarder.ForwarderDataUpload.Upload" xml:space="preserve">
+    <value>フォワーダーデータアップロード</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Function" xml:space="preserve">
     <value>機能</value>
   </data>

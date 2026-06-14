@@ -402,6 +402,21 @@
   <data name="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload" xml:space="preserve">
     <value>貨代資料上傳</value>
   </data>
+  <data name="Forwarder.ForwarderDataUpload.Title" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.UploaderTitle" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.UploaderButton" xml:space="preserve">
+    <value>上傳檔案</value>
+  </data>
+  <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
+    <value>貨代資料上傳查詢</value>
+  </data>
+  <data name="Views.Forwarder.ForwarderDataUpload.Upload" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Function" xml:space="preserve">
     <value>功能</value>
   </data>

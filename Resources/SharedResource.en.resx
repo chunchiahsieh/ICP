@@ -402,6 +402,21 @@
   <data name="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload" xml:space="preserve">
     <value>Forwarder Data Upload</value>
   </data>
+  <data name="Forwarder.ForwarderDataUpload.Title" xml:space="preserve">
+    <value>Forwarder Data Upload</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.UploaderTitle" xml:space="preserve">
+    <value>Forwarder Data Upload</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.UploaderButton" xml:space="preserve">
+    <value>Upload File</value>
+  </data>
+  <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
+    <value>Forwarder Data Upload View</value>
+  </data>
+  <data name="Views.Forwarder.ForwarderDataUpload.Upload" xml:space="preserve">
+    <value>Forwarder Data Upload</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Function" xml:space="preserve">
     <value>Functions</value>
   </data>

@@ -15,7 +15,8 @@ public static partial class PermissionResourceNameResolver
         ["Delete"] = "刪除",
         ["Disable"] = "停用",
         ["Scan"] = "掃描同步",
-        ["Allow"] = "允許"
+        ["Allow"] = "允許",
+        ["Upload"] = "上傳"
     };
 
     public static string Resolve(IWebHostEnvironment environment, string resourceCode)
@@ -114,6 +115,12 @@ public static partial class PermissionResourceNameResolver
                 environment,
                 $"Views.Permission.{module}.View");
             moduleTitle = StripTrailingActionLabel(viewName) ?? module;
+        }
+        else if (segments[1].Equals("Forwarder", StringComparison.OrdinalIgnoreCase))
+        {
+            moduleTitle = SharedResourceNameResolver.TryResolve(
+                environment,
+                $"Views.Shared._SidebarNav.Forwarder.{module}");
         }
 
         moduleTitle ??= module;
