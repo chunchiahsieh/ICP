@@ -13,6 +13,12 @@
   visibility: visible;
 }
 
+/* Uploader 頁面載入 Tailwind CDN 時，.collapse 會與 Bootstrap 側欄手風琴衝突 */
+#sidenavAccordion .collapse,
+#sidenavAccordion .collapsing {
+  visibility: visible !important;
+}
+
 .batch-create-wizard-drawer.offcanvas-end {
   width: 100%;
   max-width: 100%;

@@ -186,6 +186,66 @@
   <data name="Home.SidebarPlaceholder" xml:space="preserve">
     <value>サイドメニューとユーザー情報はプレースホルダーです。</value>
   </data>
+  <data name="Function.Placeholder" xml:space="preserve">
+    <value>機能は開発中です。</value>
+  </data>
+  <data name="Function.AddDiSa.Title" xml:space="preserve">
+    <value>DI/SA 追加</value>
+  </data>
+  <data name="Function.AddDiSa.UploaderTitle" xml:space="preserve">
+    <value>DI/SA データアップロード</value>
+  </data>
+  <data name="Function.AddDiSa.UploaderButton" xml:space="preserve">
+    <value>ファイルをアップロード</value>
+  </data>
+  <data name="Function.AddDiSa.MaxSizeHint" xml:space="preserve">
+    <value>1 ファイル上限：{0} MB</value>
+  </data>
+  <data name="Function.AddDiSa.SaveButton" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Function.AddDiSa.DownloadTemplate" xml:space="preserve">
+    <value>サンプルをダウンロード</value>
+  </data>
+  <data name="Function.AddDiSa.NoFileSelected" xml:space="preserve">
+    <value>ファイルが選択されていません</value>
+  </data>
+  <data name="Function.AddDiSa.MaxSizeExceeded" xml:space="preserve">
+    <value>ファイルが {0}MB を超えています</value>
+  </data>
+  <data name="Function.AddDiSa.InvalidFileType" xml:space="preserve">
+    <value>.xlsx、.xls、.csv のみ対応</value>
+  </data>
+  <data name="Views.Function.AddDiSa.View" xml:space="preserve">
+    <value>DI/SA 追加照会</value>
+  </data>
+  <data name="Views.Function.AddDiSa.Upload" xml:space="preserve">
+    <value>DI/SA 追加アップロード</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.UploaderTitle" xml:space="preserve">
+    <value>NCPI 一括更新ファイルをアップロード</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.UploaderButton" xml:space="preserve">
+    <value>ファイルをアップロード</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.MaxSizeHint" xml:space="preserve">
+    <value>1ファイルあたり最大 {0} MB。.xlsx、.xls、.csv に対応</value>
+  </data>
+  <data name="Views.Function.MassUpdateNcpi.Upload" xml:space="preserve">
+    <value>NCPI 一括更新アップロード</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.UploaderTitle" xml:space="preserve">
+    <value>非 NCPI 一括更新ファイルをアップロード</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.UploaderButton" xml:space="preserve">
+    <value>ファイルをアップロード</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.MaxSizeHint" xml:space="preserve">
+    <value>1ファイルあたり最大 {0} MB。.xlsx、.xls、.csv に対応</value>
+  </data>
+  <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
+    <value>非 NCPI 一括更新アップロード</value>
+  </data>
   <data name="Home.Subtitle" xml:space="preserve">
     <value>ASP.NET Core MVC (.NET 9)</value>
   </data>
@@ -396,6 +456,111 @@
   <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
     <value>関税データ</value>
   </data>
+  <data name="Broker.TariffData.Title" xml:space="preserve">
+    <value>関税データ</value>
+  </data>
+  <data name="Broker.TariffData.MaxSizeHint" xml:space="preserve">
+    <value>ファイルサイズ上限：{0} MB</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataTitle" xml:space="preserve">
+    <value>通関データをアップロード</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataButton" xml:space="preserve">
+    <value>通関データをアップロード</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfTitle" xml:space="preserve">
+    <value>申告 PDF をアップロード</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfButton" xml:space="preserve">
+    <value>申告 PDF をアップロード</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostTitle" xml:space="preserve">
+    <value>Cost をアップロード</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostButton" xml:space="preserve">
+    <value>Cost をアップロード</value>
+  </data>
+  <data name="Broker.TariffData.NoFileSelected" xml:space="preserve">
+    <value>ファイルが選択されていません</value>
+  </data>
+  <data name="Broker.TariffData.MaxSizeExceeded" xml:space="preserve">
+    <value>ファイルが {0} MB を超えています</value>
+  </data>
+  <data name="Broker.TariffData.InvalidFileType" xml:space="preserve">
+    <value>サポートされていないファイル形式です</value>
+  </data>
+  <data name="Broker.TariffData.InvalidFileName" xml:space="preserve">
+    <value>無効なファイル名です</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataSuccess" xml:space="preserve">
+    <value>通関データ {0} のアップロードに成功しました。{1} 件を取り込みました</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfSuccess" xml:space="preserve">
+    <value>申告 PDF {0} のアップロードに成功しました</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
+    <value>Cost ファイル {0} のアップロードに成功しました</value>
+  </data>
+  <data name="Views.Broker.TariffData.View" xml:space="preserve">
+    <value>関税データ照会</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadCustomsData" xml:space="preserve">
+    <value>通関データをアップロード</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadDeclarationPdf" xml:space="preserve">
+    <value>申告 PDF をアップロード</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadCost" xml:space="preserve">
+    <value>Cost をアップロード</value>
+  </data>
+  <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="Broker.TariffData.Column.HAWB" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="Broker.TariffData.Column.ImportDate" xml:space="preserve">
+    <value>輸入日</value>
+  </data>
+  <data name="Broker.TariffData.Column.DeclarationDate" xml:space="preserve">
+    <value>通関日</value>
+  </data>
+  <data name="Broker.TariffData.Column.ReleaseDate" xml:space="preserve">
+    <value>放行日</value>
+  </data>
+  <data name="Broker.TariffData.Column.InvoiceNumber" xml:space="preserve">
+    <value>Invoice No.</value>
+  </data>
+  <data name="Broker.TariffData.Column.DescriptionOfGoods" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Broker.TariffData.Column.HTSNumber" xml:space="preserve">
+    <value>HTS Code</value>
+  </data>
+  <data name="Broker.TariffData.Column.EntryNumber" xml:space="preserve">
+    <value>申告番号</value>
+  </data>
+  <data name="Broker.TariffData.Column.Mode" xml:space="preserve">
+    <value>輸送方式</value>
+  </data>
+  <data name="Broker.TariffData.Column.PortOfDeparture" xml:space="preserve">
+    <value>出港地/コード</value>
+  </data>
+  <data name="Broker.TariffData.Column.FlightNo" xml:space="preserve">
+    <value>便名/便番</value>
+  </data>
+  <data name="Broker.TariffData.Column.Shipper" xml:space="preserve">
+    <value>輸出者</value>
+  </data>
+  <data name="Broker.TariffData.Column.Broker" xml:space="preserve">
+    <value>通関業者</value>
+  </data>
+  <data name="Broker.TariffData.Column.AirSea" xml:space="preserve">
+    <value>Air/Sea</value>
+  </data>
+  <data name="Broker.TariffData.Column.CreateDate" xml:space="preserve">
+    <value>アップロード日</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Forwarder" xml:space="preserve">
     <value>フォワーダー</value>
   </data>
@@ -434,6 +599,15 @@
   </data>
   <data name="Forwarder.ForwarderDataUpload.AlreadySaved" xml:space="preserve">
     <value>このファイルは既に保存されています</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PendingFilesLabel" xml:space="preserve">
+    <value>保存待ちファイル：</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PendingFilesRemaining" xml:space="preserve">
+    <value>保存待ちのファイルが {0} 件あります。</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.RemovePendingFile" xml:space="preserve">
+    <value>削除</value>
   </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>フォワーダーデータアップロード照会</value>

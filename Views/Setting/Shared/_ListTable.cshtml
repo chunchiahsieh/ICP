@@ -6,7 +6,6 @@
         ("filter-Key1", "Key1"),
         ("filter-Value1", "Value1")
     };
-    var editPermission = $"{Model.PermissionPrefix}.Edit";
 }
 
 <table id="datatable" class="table table-striped">
@@ -37,12 +36,7 @@
             <tr data-id="@item.Id">
                 <td><input type="checkbox" class="row-list-cb" data-id="@item.Id" /></td>
                 <td>
-                    <button type="button"
-                            class="btn btn-outline-primary btn-sm btn-crud-edit"
-                            data-permissions="@editPermission"
-                            data-i18n-key="@editPermission">
-                        @Localizer["Common.Edit"]
-                    </button>
+                    @await Html.PartialAsync("~/Views/Setting/Shared/_SystemConfigEditButton.cshtml", Model.PermissionPrefix)
                 </td>
                 <td>@item.Category</td>
                 <td>@item.Key1</td>

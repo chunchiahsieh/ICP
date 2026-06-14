@@ -1,0 +1,95 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = Localizer["Function.AddDiSa.Title"];
+    var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
+    var maxSizeHint = string.Format(Localizer["Function.AddDiSa.MaxSizeHint"].Value, maxSizeMb);
+    var saveButtonText = Localizer["Function.AddDiSa.SaveButton"].Value;
+    var uploaderButtonText = Localizer["Function.AddDiSa.UploaderButton"].Value;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+                collapse: false
+            }
+        };
+    </script>
+}
+
+<div data-permissions="Views.Shared._SidebarNav.Function.AddDiSa"
+     data-i18n-key="Views.Shared._SidebarNav.Function.AddDiSa">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["Function.AddDiSa.Title"]</h4>
+    </div>
+    <p class="text-muted small mb-3">@maxSizeHint</p>
+
+    <div class="d-flex align-items-start gap-2 flex-wrap mb-3">
+        <div data-permissions="Views.Function.AddDiSa.Upload"
+             data-i18n-key="Views.Function.AddDiSa.Upload">
+            <div id="addDiSaUploader"></div>
+        </div>
+        <a asp-action="DownloadTemplate"
+           asp-controller="AddDiSa"
+           class="btn btn-outline-secondary align-self-center"
+           data-permissions="Views.Function.AddDiSa.Upload"
+           data-i18n-key="Function.AddDiSa.DownloadTemplate">
+            @Localizer["Function.AddDiSa.DownloadTemplate"]
+        </a>
+        <button type="button"
+                id="btnSaveImport"
+                class="btn btn-primary align-self-center"
+                disabled
+                data-permissions="Views.Function.AddDiSa.Upload"
+                data-i18n-key="Views.Function.AddDiSa.Upload">
+            @saveButtonText
+        </button>
+    </div>
+</div>
+
+<div class="d-none" aria-hidden="true">
+    <button type="button"
+            data-permissions="Views.Function.AddDiSa.Upload"
+            data-i18n-key="Views.Function.AddDiSa.Upload">Upload</button>
+</div>
+
+@section Scripts {
+    <script src="~/Uploader/index.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var maxSizeMb = @maxSizeMb;
+            var maxSizeHint = @Html.Raw(JsonSerializer.Serialize(maxSizeHint));
+            var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
+
+            function hasPermission(code) {
+                var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
+                if (config.superUser) {
+                    return true;
+                }
+
+                var normalized = (code || '').toLowerCase();
+                return (config.allowedCodes || []).some(function (allowed) {
+                    return (allowed || '').toLowerCase() === normalized;
+                });
+            }
+
+            if (hasPermission('Views.Function.AddDiSa.Upload')
+                && typeof window.createUploader === 'function') {
+                window.createUploader('#addDiSaUploader', {
+                    title: @Html.Raw(JsonSerializer.Serialize(Localizer["Function.AddDiSa.UploaderTitle"].Value)),
+                    buttonText: @Html.Raw(JsonSerializer.Serialize(uploaderButtonText)),
+                    buttonClass: uploaderButtonClass,
+                    uploadUrl: '@Url.Action("Upload", "AddDiSa")',
+                    fileTypes: '.xlsx,.xls,.csv',
+                    multiple: true,
+                    maxSize: maxSizeMb,
+                    maxSizeHint: maxSizeHint,
+                    fieldName: 'file'
+                });
+            }
+        });
+    </script>
+}

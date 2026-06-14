@@ -1,0 +1,79 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = Localizer["Views.Shared._SidebarNav.Function.MassUpdateNcpi"];
+    var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
+    var maxSizeHint = string.Format(Localizer["Function.MassUpdateNcpi.MaxSizeHint"].Value, maxSizeMb);
+    var uploaderButtonText = Localizer["Function.MassUpdateNcpi.UploaderButton"].Value;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+                collapse: false
+            }
+        };
+    </script>
+}
+
+<div data-permissions="Views.Shared._SidebarNav.Function.MassUpdateNcpi"
+     data-i18n-key="Views.Shared._SidebarNav.Function.MassUpdateNcpi">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["Views.Shared._SidebarNav.Function.MassUpdateNcpi"]</h4>
+    </div>
+    <p class="text-muted small mb-3">@maxSizeHint</p>
+
+    <div class="d-flex align-items-start gap-2 flex-wrap mb-3">
+        <div data-permissions="Views.Function.MassUpdateNcpi.Upload"
+             data-i18n-key="Views.Function.MassUpdateNcpi.Upload">
+            <div id="massUpdateNcpiUploader"></div>
+        </div>
+    </div>
+</div>
+
+<div class="d-none" aria-hidden="true">
+    <button type="button"
+            data-permissions="Views.Function.MassUpdateNcpi.Upload"
+            data-i18n-key="Views.Function.MassUpdateNcpi.Upload">Upload</button>
+</div>
+
+@section Scripts {
+    <script src="~/Uploader/index.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var maxSizeMb = @maxSizeMb;
+            var maxSizeHint = @Html.Raw(JsonSerializer.Serialize(maxSizeHint));
+            var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
+
+            function hasPermission(code) {
+                var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
+                if (config.superUser) {
+                    return true;
+                }
+
+                var normalized = (code || '').toLowerCase();
+                return (config.allowedCodes || []).some(function (allowed) {
+                    return (allowed || '').toLowerCase() === normalized;
+                });
+            }
+
+            if (hasPermission('Views.Function.MassUpdateNcpi.Upload')
+                && typeof window.createUploader === 'function') {
+                window.createUploader('#massUpdateNcpiUploader', {
+                    title: @Html.Raw(JsonSerializer.Serialize(Localizer["Function.MassUpdateNcpi.UploaderTitle"].Value)),
+                    buttonText: @Html.Raw(JsonSerializer.Serialize(uploaderButtonText)),
+                    buttonClass: uploaderButtonClass,
+                    uploadUrl: '@Url.Action("Upload", "MassUpdateNcpi")',
+                    fileTypes: '.xlsx,.xls,.csv',
+                    multiple: true,
+                    maxSize: maxSizeMb,
+                    maxSizeHint: maxSizeHint,
+                    fieldName: 'file'
+                });
+            }
+        });
+    </script>
+}

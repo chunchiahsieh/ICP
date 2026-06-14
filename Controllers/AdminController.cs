@@ -24,6 +24,7 @@ public class AdminController : Controller
     public async Task<IActionResult> PermissionScan(CancellationToken cancellationToken)
     {
         var scanned = _scannerService.Scan();
+        // UpsertAsync 會先清空 RolePermissions 與 Resources，再寫入掃描結果
         var result = await _syncService.UpsertAsync(
             scanned,
             User.Identity?.Name,

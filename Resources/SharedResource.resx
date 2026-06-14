@@ -186,6 +186,66 @@
   <data name="Home.SidebarPlaceholder" xml:space="preserve">
     <value>左側選單與使用者資訊為版型佔位；完整功能選單將於登入與權限模組就緒後啟用。</value>
   </data>
+  <data name="Function.Placeholder" xml:space="preserve">
+    <value>功能開發中，敬請期待。</value>
+  </data>
+  <data name="Function.AddDiSa.Title" xml:space="preserve">
+    <value>新增 DI/SA</value>
+  </data>
+  <data name="Function.AddDiSa.UploaderTitle" xml:space="preserve">
+    <value>上傳 DI/SA 資料</value>
+  </data>
+  <data name="Function.AddDiSa.UploaderButton" xml:space="preserve">
+    <value>上傳檔案</value>
+  </data>
+  <data name="Function.AddDiSa.MaxSizeHint" xml:space="preserve">
+    <value>單檔大小上限：{0} MB</value>
+  </data>
+  <data name="Function.AddDiSa.SaveButton" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="Function.AddDiSa.DownloadTemplate" xml:space="preserve">
+    <value>下載範例</value>
+  </data>
+  <data name="Function.AddDiSa.NoFileSelected" xml:space="preserve">
+    <value>未選擇檔案</value>
+  </data>
+  <data name="Function.AddDiSa.MaxSizeExceeded" xml:space="preserve">
+    <value>檔案超過 {0}MB</value>
+  </data>
+  <data name="Function.AddDiSa.InvalidFileType" xml:space="preserve">
+    <value>僅支援 .xlsx、.xls、.csv 格式</value>
+  </data>
+  <data name="Views.Function.AddDiSa.View" xml:space="preserve">
+    <value>新增 DI/SA 查詢</value>
+  </data>
+  <data name="Views.Function.AddDiSa.Upload" xml:space="preserve">
+    <value>新增 DI/SA 上傳</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.UploaderTitle" xml:space="preserve">
+    <value>上傳 NCPI 批次更新檔案</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.UploaderButton" xml:space="preserve">
+    <value>上傳檔案</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.MaxSizeHint" xml:space="preserve">
+    <value>單檔上限 {0} MB，支援 .xlsx、.xls、.csv</value>
+  </data>
+  <data name="Views.Function.MassUpdateNcpi.Upload" xml:space="preserve">
+    <value>NCPI 批次更新上傳</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.UploaderTitle" xml:space="preserve">
+    <value>上傳非 NCPI 批次更新檔案</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.UploaderButton" xml:space="preserve">
+    <value>上傳檔案</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.MaxSizeHint" xml:space="preserve">
+    <value>單檔上限 {0} MB，支援 .xlsx、.xls、.csv</value>
+  </data>
+  <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
+    <value>非 NCPI 批次更新上傳</value>
+  </data>
   <data name="Home.Subtitle" xml:space="preserve">
     <value>ASP.NET Core MVC (.NET 9)</value>
   </data>
@@ -396,6 +456,111 @@
   <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
     <value>關稅資料</value>
   </data>
+  <data name="Broker.TariffData.Title" xml:space="preserve">
+    <value>關稅資料</value>
+  </data>
+  <data name="Broker.TariffData.MaxSizeHint" xml:space="preserve">
+    <value>單檔大小上限：{0} MB</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataTitle" xml:space="preserve">
+    <value>上傳報關資料</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataButton" xml:space="preserve">
+    <value>上傳報關資料</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfTitle" xml:space="preserve">
+    <value>上傳報單 PDF</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfButton" xml:space="preserve">
+    <value>上傳報單 PDF</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostTitle" xml:space="preserve">
+    <value>上傳 Cost</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostButton" xml:space="preserve">
+    <value>上傳 Cost</value>
+  </data>
+  <data name="Broker.TariffData.NoFileSelected" xml:space="preserve">
+    <value>未選擇檔案</value>
+  </data>
+  <data name="Broker.TariffData.MaxSizeExceeded" xml:space="preserve">
+    <value>檔案超過 {0} MB</value>
+  </data>
+  <data name="Broker.TariffData.InvalidFileType" xml:space="preserve">
+    <value>不支援的檔案格式</value>
+  </data>
+  <data name="Broker.TariffData.InvalidFileName" xml:space="preserve">
+    <value>檔案名稱無效</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataSuccess" xml:space="preserve">
+    <value>報關資料 {0} 上傳成功，已匯入 {1} 筆</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfSuccess" xml:space="preserve">
+    <value>報單 PDF {0} 上傳成功</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
+    <value>Cost 檔案 {0} 上傳成功</value>
+  </data>
+  <data name="Views.Broker.TariffData.View" xml:space="preserve">
+    <value>關稅資料查詢</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadCustomsData" xml:space="preserve">
+    <value>上傳報關資料</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadDeclarationPdf" xml:space="preserve">
+    <value>上傳報單 PDF</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadCost" xml:space="preserve">
+    <value>上傳 Cost</value>
+  </data>
+  <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="Broker.TariffData.Column.HAWB" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="Broker.TariffData.Column.ImportDate" xml:space="preserve">
+    <value>進口日期</value>
+  </data>
+  <data name="Broker.TariffData.Column.DeclarationDate" xml:space="preserve">
+    <value>報關日期</value>
+  </data>
+  <data name="Broker.TariffData.Column.ReleaseDate" xml:space="preserve">
+    <value>放行日期</value>
+  </data>
+  <data name="Broker.TariffData.Column.InvoiceNumber" xml:space="preserve">
+    <value>Invoice No.</value>
+  </data>
+  <data name="Broker.TariffData.Column.DescriptionOfGoods" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Broker.TariffData.Column.HTSNumber" xml:space="preserve">
+    <value>HTS Code</value>
+  </data>
+  <data name="Broker.TariffData.Column.EntryNumber" xml:space="preserve">
+    <value>報單號碼</value>
+  </data>
+  <data name="Broker.TariffData.Column.Mode" xml:space="preserve">
+    <value>運送方式</value>
+  </data>
+  <data name="Broker.TariffData.Column.PortOfDeparture" xml:space="preserve">
+    <value>出口港/代碼</value>
+  </data>
+  <data name="Broker.TariffData.Column.FlightNo" xml:space="preserve">
+    <value>船名航次/航機班次</value>
+  </data>
+  <data name="Broker.TariffData.Column.Shipper" xml:space="preserve">
+    <value>出口方</value>
+  </data>
+  <data name="Broker.TariffData.Column.Broker" xml:space="preserve">
+    <value>報關行</value>
+  </data>
+  <data name="Broker.TariffData.Column.AirSea" xml:space="preserve">
+    <value>Air/Sea</value>
+  </data>
+  <data name="Broker.TariffData.Column.CreateDate" xml:space="preserve">
+    <value>上傳檔案日期</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Forwarder" xml:space="preserve">
     <value>貨代</value>
   </data>
@@ -434,6 +599,15 @@
   </data>
   <data name="Forwarder.ForwarderDataUpload.AlreadySaved" xml:space="preserve">
     <value>此檔案已儲存過</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PendingFilesLabel" xml:space="preserve">
+    <value>待儲存檔案：</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PendingFilesRemaining" xml:space="preserve">
+    <value>尚有 {0} 個檔案待儲存。</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.RemovePendingFile" xml:space="preserve">
+    <value>移除</value>
   </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>貨代資料上傳查詢</value>

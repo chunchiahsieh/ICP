@@ -7,7 +7,6 @@
         ("filter-Value2", "Value2"),
         ("filter-Value3", "Value3")
     };
-    var editPermission = $"{Model.PermissionPrefix}.Edit";
 }
 
 <table id="datatable" class="table table-striped table-sm">
@@ -41,8 +40,8 @@
                 <td>
                     <button type="button"
                             class="btn btn-outline-primary btn-sm btn-crud-edit"
-                            data-permissions="@editPermission"
-                            data-i18n-key="@editPermission">
+                            data-permissions="Views.Setting.PickUpLocation.Edit"
+                            data-i18n-key="Views.Setting.PickUpLocation.Edit">
                         @Localizer["Common.Edit"]
                     </button>
                 </td>

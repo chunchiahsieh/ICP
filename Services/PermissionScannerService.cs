@@ -36,6 +36,11 @@ public partial class PermissionScannerService
                     continue;
                 }
 
+                if (resourceCode.StartsWith('@'))
+                {
+                    continue;
+                }
+
                 var tagContent = match.Groups["tagContent"].Value;
                 var permissionName = PermissionResourceNameResolver.Resolve(_environment, resourceCode);
                 var route = DeriveRoute(relativePath) ?? ExtractRouteFromTag(tagContent);
@@ -117,6 +122,24 @@ public partial class PermissionScannerService
 
         if (parts.Length >= 2 &&
             parts[0].Equals("FORWARDER", StringComparison.OrdinalIgnoreCase))
+        {
+            parts = parts[1..];
+        }
+
+        if (parts.Length >= 2 &&
+            parts[0].Equals("BROKER", StringComparison.OrdinalIgnoreCase))
+        {
+            parts = parts[1..];
+        }
+
+        if (parts.Length >= 2 &&
+            parts[0].Equals("FUNCTION", StringComparison.OrdinalIgnoreCase))
+        {
+            parts = parts[1..];
+        }
+
+        if (parts.Length >= 2 &&
+            parts[0].Equals("REPORT", StringComparison.OrdinalIgnoreCase))
         {
             parts = parts[1..];
         }

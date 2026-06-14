@@ -72,6 +72,29 @@ public class UserAuthService
         return UserInfo;
     }
 
+    /// <summary>SuperUser 關閉時，僅允許與主機 Windows 身分在 ILC 中對應的 TELID 登入。</summary>
+    public async Task<bool> CanLoginAsync(string telId = "", CancellationToken cancellationToken = default)
+    {
+        var userInfo = await GetUserInfo(telId, cancellationToken);
+        if (string.IsNullOrEmpty(userInfo.TelId))
+        {
+            return false;
+        }
+
+        if (_authOptions.IsSuperUserEnabled)
+        {
+            return true;
+        }
+
+        var hostUserInfo = await GetUserInfo(cancellationToken: cancellationToken);
+        if (string.IsNullOrEmpty(hostUserInfo.TelId))
+        {
+            return false;
+        }
+
+        return string.Equals(userInfo.TelId, hostUserInfo.TelId, StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>等效舊版 BaseController.TempDataSet（僅 Windows 登入核心，不含 FuncGroup）。</summary>
     public async Task<bool> TempDataSet(
         Controller controller,
@@ -94,6 +117,11 @@ public class UserAuthService
             }
             else
             {
+                if (!await CanLoginAsync(login, cancellationToken))
+                {
+                    return false;
+                }
+
                 userInfo = await GetUserInfo(login, cancellationToken);
             }
         }

@@ -31,6 +31,38 @@ public static class PermissionRequestResolver
             return ResolveIfRegistered(registry, "Views.Permission.Users.View");
         }
 
+        if (controller.Equals("TariffData", StringComparison.OrdinalIgnoreCase))
+        {
+            if (action.Equals("UploadCustomsData", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.UploadCustomsData");
+            }
+
+            if (action.Equals("UploadDeclarationPdf", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.UploadDeclarationPdf");
+            }
+
+            if (action.Equals("UploadCost", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.UploadCost");
+            }
+
+            if (IsReadAction(action))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.View");
+            }
+
+            if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.View");
+            }
+        }
+
         if (controller.Equals("ForwarderDataUpload", StringComparison.OrdinalIgnoreCase))
         {
             if ((action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
@@ -52,12 +84,84 @@ public static class PermissionRequestResolver
             }
         }
 
+        if (controller.Equals("AddDiSa", StringComparison.OrdinalIgnoreCase))
+        {
+            if (action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Function.AddDiSa.Upload");
+            }
+
+            if (action.Equals("DownloadTemplate", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Function.AddDiSa.Upload");
+            }
+
+            if (IsReadAction(action))
+            {
+                return ResolveIfRegistered(registry, "Views.Function.AddDiSa.View")
+                    ?? ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.AddDiSa");
+            }
+
+            if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.AddDiSa");
+            }
+        }
+
+        if (controller.Equals("MassUpdateNcpi", StringComparison.OrdinalIgnoreCase))
+        {
+            if (action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Function.MassUpdateNcpi.Upload");
+            }
+
+            if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.MassUpdateNcpi");
+            }
+        }
+
+        if (controller.Equals("MassUpdateNonNcpi", StringComparison.OrdinalIgnoreCase))
+        {
+            if (action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Function.MassUpdateNonNcpi.Upload");
+            }
+
+            if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.MassUpdateNonNcpi");
+            }
+        }
+
         if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
             && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
         {
             if (SettingCategories.IsKnown(controller))
             {
                 return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Setting.{controller}");
+            }
+
+            if (FunctionCategories.IsKnown(controller))
+            {
+                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Function.{controller}");
+            }
+
+            if (ReportCategories.IsKnown(controller))
+            {
+                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Report.{controller}");
+            }
+
+            if (BrokerCategories.IsKnown(controller))
+            {
+                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Broker.{controller}");
             }
 
             var route = PermissionRouteNormalizer.ControllerToRoute(controller);

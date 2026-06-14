@@ -45,6 +45,8 @@
 
 Views 中所有需控管項目加 `data-permissions` 與 `data-i18n-key`（**兩者值相同**）。掃描 `Views/**/*.cshtml` 寫入 Resources 表。
 
+- **`data-permissions` / `data-i18n-key` 一律寫死字面 ResourceCode 字串**，不可使用 Razor 變數（例如 `data-permissions="@uploadPermission"`、`data-permissions="@menuPermission"`）。`PermissionScannerService` 以正則掃描 cshtml **原始文字**，無法解析 Razor；變數會被掃成 `@uploadPermission` 等無效 ResourceCode。執行時 Razor 雖可正確渲染，但 Permission Scan 與 DB 註冊會錯誤。正確範例：`data-permissions="Views.Function.AddDiSa.Upload"`。
+
 | 位置 | ResourceCode 範例 | HTML | ResourceType |
 |------|-------------------|------|--------------|
 | 側欄區塊標題 | `Views.Shared._SidebarNav.Setting` | `<div class="sb-sidenav-menu-heading">` | Menu Category |
@@ -227,7 +229,7 @@ Views 中所有需控管項目加 `data-permissions` 與 `data-i18n-key`（**兩
 
 ## 10. 驗收清單
 
-- [ ] PermissionScan 後 DB Resources 與 Views 的 data-permissions 一致
+- [ ] PermissionScan 後 DB Resources 與 Views 的 data-permissions 一致（`data-permissions` 須為字面 ResourceCode，不可含 `@` 變數名）
 - [ ] RolePermissions 批次建立 ActionCode 正確（Menu→Allow，Page.View→View）
 - [ ] 角色指派後 GetPermissions JSON 正確；Resources 合併順序正確
 - [ ] 重新登入後 Session 更新；側欄僅顯示有 Allow 的 Menu Category / Menu

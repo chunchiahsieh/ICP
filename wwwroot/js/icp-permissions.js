@@ -34,33 +34,38 @@
         return false;
     }
 
-    function resolveType(tagName, resourceCode) {
-        var tag = (tagName || '').toLowerCase();
+    function isInHiddenScanContainer(element) {
+        return !!(element.closest('.d-none, [aria-hidden="true"]'));
+    }
 
-        if (tag === 'div') {
-            var segments = (resourceCode || '').split('.');
-            if (segments.length === 4
-                && segments[0].toLowerCase() === 'views'
-                && segments[1].toLowerCase() === 'shared'
-                && segments[2].toLowerCase() === '_sidebarnav') {
-                return 'Menu Category';
-            }
+    function triggersPageDeniedBanner(element, resourceCode) {
+        if (isInHiddenScanContainer(element)) {
+            return false;
         }
 
-        switch (tag) {
-            case 'button':
-                return 'Button';
-            case 'a':
-                return 'Menu';
-            case 'input':
-            case 'select':
-            case 'textarea':
-                return 'Field';
-            case 'form':
-                return 'Page';
-            default:
-                return 'Page';
+        if (element.getAttribute('data-permission-scope') === 'page') {
+            return true;
         }
+
+        if (element.tagName.toLowerCase() !== 'div') {
+            return false;
+        }
+
+        var segments = (resourceCode || '').split('.');
+        if (segments.length >= 5
+            && segments[0].toLowerCase() === 'views'
+            && segments[1].toLowerCase() === 'shared'
+            && segments[2].toLowerCase() === '_sidebarnav') {
+            return true;
+        }
+
+        if (segments.length === 4
+            && segments[0].toLowerCase() === 'views'
+            && segments[segments.length - 1].toLowerCase() === 'view') {
+            return true;
+        }
+
+        return false;
     }
 
     function showPageDeniedBanner() {
@@ -87,14 +92,9 @@
                 return;
             }
 
-            var resourceType = resolveType(element.tagName, code);
             element.hidden = true;
 
-            if (resourceType === 'Menu Category' || resourceType === 'Menu' || resourceType === 'Button' || resourceType === 'Field') {
-                return;
-            }
-
-            if (resourceType === 'Page' && !pageDeniedShown) {
+            if (triggersPageDeniedBanner(element, code) && !pageDeniedShown) {
                 showPageDeniedBanner();
                 pageDeniedShown = true;
             }

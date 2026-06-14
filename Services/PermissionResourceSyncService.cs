@@ -65,6 +65,9 @@ public class PermissionResourceSyncService
         var updated = 0;
         var resourceCodes = new List<string>();
 
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+        await TruncateResourcesTableAsync(cancellationToken);
+
         foreach (var item in distinctItems)
         {
             resourceCodes.Add(item.ResourceCode);
@@ -118,6 +121,7 @@ public class PermissionResourceSyncService
             await MigrateAndDisableIcpPermissionResourcesAsync(actor, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return new PermissionScanResult
         {
@@ -441,5 +445,14 @@ public class PermissionResourceSyncService
         }
 
         return (legacyResources.Count, migratedCount);
+    }
+
+    private async Task TruncateResourcesTableAsync(CancellationToken cancellationToken)
+    {
+        await _dbContext.RolePermissions.ExecuteDeleteAsync(cancellationToken);
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            "UPDATE [Resources] SET [ParentId] = NULL WHERE [ParentId] IS NOT NULL",
+            cancellationToken);
+        await _dbContext.Resources.ExecuteDeleteAsync(cancellationToken);
     }
 }

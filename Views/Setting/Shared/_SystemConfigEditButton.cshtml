@@ -1,0 +1,76 @@
+@model string
+@switch (Model)
+{
+    case "Views.Setting.AirSea":
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="Views.Setting.AirSea.Edit"
+                data-i18n-key="Views.Setting.AirSea.Edit">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+    case "Views.Setting.Broker":
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="Views.Setting.Broker.Edit"
+                data-i18n-key="Views.Setting.Broker.Edit">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+    case "Views.Setting.BuCode":
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="Views.Setting.BuCode.Edit"
+                data-i18n-key="Views.Setting.BuCode.Edit">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+    case "Views.Setting.DefaultDeliveryWh":
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="Views.Setting.DefaultDeliveryWh.Edit"
+                data-i18n-key="Views.Setting.DefaultDeliveryWh.Edit">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+    case "Views.Setting.InvoiceType":
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="Views.Setting.InvoiceType.Edit"
+                data-i18n-key="Views.Setting.InvoiceType.Edit">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+    case "Views.Setting.OrderPriority":
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="Views.Setting.OrderPriority.Edit"
+                data-i18n-key="Views.Setting.OrderPriority.Edit">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+    case "Views.Setting.OrderType":
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="Views.Setting.OrderType.Edit"
+                data-i18n-key="Views.Setting.OrderType.Edit">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+    case "Views.Setting.WhCode":
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="Views.Setting.WhCode.Edit"
+                data-i18n-key="Views.Setting.WhCode.Edit">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+    default:
+        <button type="button"
+                class="btn btn-outline-primary btn-sm btn-crud-edit"
+                data-permissions="@($"{Model}.Edit")"
+                data-i18n-key="@($"{Model}.Edit")">
+            @Localizer["Common.Edit"]
+        </button>
+        break;
+}

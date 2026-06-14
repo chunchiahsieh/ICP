@@ -26,6 +26,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<ForwarderDataUpload> ForwarderDataUploads => Set<ForwarderDataUpload>();
 
+    public DbSet<TariffData> TariffDataRecords => Set<TariffData>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemConfig>(entity =>
@@ -81,6 +83,61 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.CreateUser).HasMaxLength(50).IsRequired();
             entity.Property(e => e.UpdateUser).HasMaxLength(50);
             entity.Property(e => e.FilePath).HasMaxLength(500).IsRequired();
+        });
+
+        modelBuilder.Entity<TariffData>(entity =>
+        {
+            entity.ToTable("TariffData");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.MAWB).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.HAWB).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.LineNo).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PartNumber).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.InvoiceNumber).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.PONumber).HasMaxLength(100);
+            entity.Property(e => e.DescriptionOfGoods).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Quantity).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.UOM).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.NetWeightKg).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.UnitValue).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.HTSNumber).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.COO).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.DutyRate).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.DutyTreatment).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.PermitNo1).HasMaxLength(100);
+            entity.Property(e => e.PermitItem1).HasMaxLength(100);
+            entity.Property(e => e.PermitNo2).HasMaxLength(100);
+            entity.Property(e => e.PermitItem2).HasMaxLength(100);
+            entity.Property(e => e.PermitNo3).HasMaxLength(100);
+            entity.Property(e => e.PermitItem3).HasMaxLength(100);
+            entity.Property(e => e.EntryNumber).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Type).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Mode).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PortOfDeparture).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.FlightNo).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Shipper).HasMaxLength(200);
+            entity.Property(e => e.TermsOfTrade).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Currency).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ExchangeRate).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.CIFValue).HasMaxLength(50);
+            entity.Property(e => e.FreightCharge).HasMaxLength(50);
+            entity.Property(e => e.TotalPieces).HasMaxLength(50);
+            entity.Property(e => e.GrossWeightKg).HasMaxLength(50);
+            entity.Property(e => e.Broker).HasMaxLength(200);
+            entity.Property(e => e.AirSea).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.TotalAmountForeignCurrency).HasPrecision(18, 4);
+            entity.Property(e => e.TotalAmountTWD).HasPrecision(18, 4);
+            entity.Property(e => e.DeclarationAmountTWD).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.DeclarationFile).HasMaxLength(500);
+            entity.Property(e => e.Cost).HasMaxLength(50);
+            entity.Property(e => e.ImportFileName).HasMaxLength(255);
+            entity.Property(e => e.CreateUser).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.UpdateUser).HasMaxLength(50);
+
+            entity.HasIndex(e => e.InvoiceNumber)
+                .IsUnique()
+                .HasDatabaseName("UQ_TariffData_InvoiceNumber");
         });
 
         modelBuilder.Entity<Resource>(entity =>

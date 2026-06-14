@@ -10,7 +10,6 @@
         ("filter-Value5", "Value5"),
         ("filter-Value6", "Value6")
     };
-    var editPermission = $"{Model.PermissionPrefix}.Edit";
 }
 
 <div class="table-responsive">
@@ -48,8 +47,8 @@
                     <td>
                         <button type="button"
                                 class="btn btn-outline-primary btn-sm btn-crud-edit"
-                                data-permissions="@editPermission"
-                                data-i18n-key="@editPermission">
+                                data-permissions="Views.Setting.DeliveryToList.Edit"
+                                data-i18n-key="Views.Setting.DeliveryToList.Edit">
                             @Localizer["Common.Edit"]
                         </button>
                     </td>

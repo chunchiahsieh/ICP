@@ -186,6 +186,66 @@
   <data name="Home.SidebarPlaceholder" xml:space="preserve">
     <value>Sidebar and user info are placeholders until login and permissions are fully enabled.</value>
   </data>
+  <data name="Function.Placeholder" xml:space="preserve">
+    <value>This feature is under development.</value>
+  </data>
+  <data name="Function.AddDiSa.Title" xml:space="preserve">
+    <value>Add DI/SA</value>
+  </data>
+  <data name="Function.AddDiSa.UploaderTitle" xml:space="preserve">
+    <value>Upload DI/SA Data</value>
+  </data>
+  <data name="Function.AddDiSa.UploaderButton" xml:space="preserve">
+    <value>Upload File</value>
+  </data>
+  <data name="Function.AddDiSa.MaxSizeHint" xml:space="preserve">
+    <value>Max file size: {0} MB</value>
+  </data>
+  <data name="Function.AddDiSa.SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Function.AddDiSa.DownloadTemplate" xml:space="preserve">
+    <value>Download Sample</value>
+  </data>
+  <data name="Function.AddDiSa.NoFileSelected" xml:space="preserve">
+    <value>No file selected</value>
+  </data>
+  <data name="Function.AddDiSa.MaxSizeExceeded" xml:space="preserve">
+    <value>File exceeds {0} MB</value>
+  </data>
+  <data name="Function.AddDiSa.InvalidFileType" xml:space="preserve">
+    <value>Only .xlsx, .xls, and .csv are supported</value>
+  </data>
+  <data name="Views.Function.AddDiSa.View" xml:space="preserve">
+    <value>Add DI/SA View</value>
+  </data>
+  <data name="Views.Function.AddDiSa.Upload" xml:space="preserve">
+    <value>Add DI/SA Upload</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.UploaderTitle" xml:space="preserve">
+    <value>Upload NCPI mass update file</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.UploaderButton" xml:space="preserve">
+    <value>Upload file</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.MaxSizeHint" xml:space="preserve">
+    <value>Max {0} MB per file. Supported: .xlsx, .xls, .csv</value>
+  </data>
+  <data name="Views.Function.MassUpdateNcpi.Upload" xml:space="preserve">
+    <value>NCPI mass update upload</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.UploaderTitle" xml:space="preserve">
+    <value>Upload non-NCPI mass update file</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.UploaderButton" xml:space="preserve">
+    <value>Upload file</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.MaxSizeHint" xml:space="preserve">
+    <value>Max {0} MB per file. Supported: .xlsx, .xls, .csv</value>
+  </data>
+  <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
+    <value>Non-NCPI mass update upload</value>
+  </data>
   <data name="Home.Subtitle" xml:space="preserve">
     <value>ASP.NET Core MVC (.NET 9)</value>
   </data>
@@ -396,6 +456,111 @@
   <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
     <value>Tariff Data</value>
   </data>
+  <data name="Broker.TariffData.Title" xml:space="preserve">
+    <value>Tariff Data</value>
+  </data>
+  <data name="Broker.TariffData.MaxSizeHint" xml:space="preserve">
+    <value>Max file size: {0} MB</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataTitle" xml:space="preserve">
+    <value>Upload Customs Data</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataButton" xml:space="preserve">
+    <value>Upload Customs Data</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfTitle" xml:space="preserve">
+    <value>Upload Declaration PDF</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfButton" xml:space="preserve">
+    <value>Upload Declaration PDF</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostTitle" xml:space="preserve">
+    <value>Upload Cost</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostButton" xml:space="preserve">
+    <value>Upload Cost</value>
+  </data>
+  <data name="Broker.TariffData.NoFileSelected" xml:space="preserve">
+    <value>No file selected</value>
+  </data>
+  <data name="Broker.TariffData.MaxSizeExceeded" xml:space="preserve">
+    <value>File exceeds {0} MB</value>
+  </data>
+  <data name="Broker.TariffData.InvalidFileType" xml:space="preserve">
+    <value>Unsupported file format</value>
+  </data>
+  <data name="Broker.TariffData.InvalidFileName" xml:space="preserve">
+    <value>Invalid file name</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataSuccess" xml:space="preserve">
+    <value>Customs data {0} uploaded successfully. {1} record(s) imported.</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfSuccess" xml:space="preserve">
+    <value>Declaration PDF {0} uploaded successfully</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
+    <value>Cost file {0} uploaded successfully</value>
+  </data>
+  <data name="Views.Broker.TariffData.View" xml:space="preserve">
+    <value>Tariff Data View</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadCustomsData" xml:space="preserve">
+    <value>Upload Customs Data</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadDeclarationPdf" xml:space="preserve">
+    <value>Upload Declaration PDF</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadCost" xml:space="preserve">
+    <value>Upload Cost</value>
+  </data>
+  <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="Broker.TariffData.Column.HAWB" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="Broker.TariffData.Column.ImportDate" xml:space="preserve">
+    <value>Import Date</value>
+  </data>
+  <data name="Broker.TariffData.Column.DeclarationDate" xml:space="preserve">
+    <value>Declaration Date</value>
+  </data>
+  <data name="Broker.TariffData.Column.ReleaseDate" xml:space="preserve">
+    <value>Release Date</value>
+  </data>
+  <data name="Broker.TariffData.Column.InvoiceNumber" xml:space="preserve">
+    <value>Invoice No.</value>
+  </data>
+  <data name="Broker.TariffData.Column.DescriptionOfGoods" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Broker.TariffData.Column.HTSNumber" xml:space="preserve">
+    <value>HTS Code</value>
+  </data>
+  <data name="Broker.TariffData.Column.EntryNumber" xml:space="preserve">
+    <value>Entry Number</value>
+  </data>
+  <data name="Broker.TariffData.Column.Mode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="Broker.TariffData.Column.PortOfDeparture" xml:space="preserve">
+    <value>Port of Departure</value>
+  </data>
+  <data name="Broker.TariffData.Column.FlightNo" xml:space="preserve">
+    <value>Flight No.</value>
+  </data>
+  <data name="Broker.TariffData.Column.Shipper" xml:space="preserve">
+    <value>Shipper</value>
+  </data>
+  <data name="Broker.TariffData.Column.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="Broker.TariffData.Column.AirSea" xml:space="preserve">
+    <value>Air/Sea</value>
+  </data>
+  <data name="Broker.TariffData.Column.CreateDate" xml:space="preserve">
+    <value>Upload Date</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Forwarder" xml:space="preserve">
     <value>Forwarder</value>
   </data>
@@ -434,6 +599,15 @@
   </data>
   <data name="Forwarder.ForwarderDataUpload.AlreadySaved" xml:space="preserve">
     <value>This file has already been saved</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PendingFilesLabel" xml:space="preserve">
+    <value>Pending files:</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PendingFilesRemaining" xml:space="preserve">
+    <value>{0} file(s) remaining to save.</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.RemovePendingFile" xml:space="preserve">
+    <value>Remove</value>
   </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>Forwarder Data Upload View</value>

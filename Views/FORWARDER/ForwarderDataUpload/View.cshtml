@@ -36,7 +36,9 @@
 
             corePlugins: {
 
-                preflight: false
+                preflight: false,
+
+                collapse: false
 
             }
 
@@ -62,7 +64,10 @@
 
     <div class="d-flex align-items-start gap-2 flex-wrap mb-3">
 
-        <div id="forwarderUploader"></div>
+        <div data-permissions="Views.Forwarder.ForwarderDataUpload.Upload"
+             data-i18n-key="Views.Forwarder.ForwarderDataUpload.Upload">
+            <div id="forwarderUploader"></div>
+        </div>
 
         <a asp-action="DownloadTemplate"
            asp-controller="ForwarderDataUpload"
@@ -97,6 +102,14 @@
         <div class="d-flex align-items-center justify-content-between mb-2">
 
             <h5 class="mb-0" id="importResultTitle">@Localizer["Forwarder.ForwarderDataUpload.ImportResultTitle"]</h5>
+
+        </div>
+
+        <div id="pendingFileSection" class="d-none mb-2">
+
+            <span class="text-muted small me-2">@Localizer["Forwarder.ForwarderDataUpload.PendingFilesLabel"]</span>
+
+            <div id="pendingFileList" class="d-inline-flex flex-wrap gap-1"></div>
 
         </div>
 
@@ -144,6 +157,10 @@
 
             var lastFilePath = '';
 
+            var activeFilePath = '';
+
+            var pendingFiles = [];
+
             var isPreviewMode = true;
 
             var tableInstance = null;
@@ -152,12 +169,333 @@
 
             var alreadySavedMessage = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.AlreadySaved"].Value));
             var importResultTitleText = @Html.Raw(JsonSerializer.Serialize(importResultTitle));
+            var pendingFilesRemainingText = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.PendingFilesRemaining"].Value));
+            var previewMessageTemplate = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.PreviewMessage"].Value));
+            var removePendingFileTitle = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.RemovePendingFile"].Value));
+
+            function hasPermission(code) {
+                var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
+                if (config.superUser) {
+                    return true;
+                }
+
+                var normalized = (code || '').toLowerCase();
+                return (config.allowedCodes || []).some(function (allowed) {
+                    return (allowed || '').toLowerCase() === normalized;
+                });
+            }
+
+
+
+            function getTotalPreviewCount() {
+
+                return pendingFiles.reduce(function (sum, item) {
+
+                    return sum + (Number(item.previewCount) || 0);
+
+                }, 0);
+
+            }
+
+
+
+            function buildSummaryMessage() {
+
+                return previewMessageTemplate.replace('{0}', getTotalPreviewCount());
+
+            }
+
+
+
+            function updatePageMessage() {
+
+                $('#pageMessage')
+
+                    .removeClass('alert-success d-none')
+
+                    .addClass('alert-info')
+
+                    .text(buildSummaryMessage());
+
+            }
 
 
 
             function resolveFilePath(response) {
 
                 return response.filePath || response.FilePath || '';
+
+            }
+
+
+
+            function resolveFileName(response, filePath) {
+
+                if (response && (response.fileName || response.FileName)) {
+
+                    return response.fileName || response.FileName;
+
+                }
+
+                if (!filePath) {
+
+                    return '';
+
+                }
+
+                var parts = filePath.replace(/\\/g, '/').split('/');
+
+                return parts[parts.length - 1] || filePath;
+
+            }
+
+
+
+            function renderPendingFileList() {
+
+                var $list = $('#pendingFileList');
+
+                $list.empty();
+
+                if (pendingFiles.length === 0) {
+
+                    $('#pendingFileSection').addClass('d-none');
+
+                    return;
+
+                }
+
+
+
+                $('#pendingFileSection').removeClass('d-none');
+
+                pendingFiles.forEach(function (item) {
+
+                    var isActive = item.filePath === activeFilePath;
+
+                    var btnClass = isActive ? 'btn-primary' : 'btn-outline-secondary';
+
+                    var $group = $('<span class="btn-group btn-group-sm" role="group"></span>');
+
+                    var $selectBtn = $('<button type="button" class="btn btn-sm"></button>');
+
+                    $selectBtn.addClass(btnClass);
+
+                    $selectBtn.text(item.fileName || resolveFileName(null, item.filePath));
+
+                    if (item.message) {
+
+                        $selectBtn.attr('title', item.message);
+
+                    }
+
+                    $selectBtn.on('click', function () {
+
+                        selectPendingFile(item.filePath);
+
+                    });
+
+
+
+                    var $removeBtn = $('<button type="button" class="btn btn-sm px-2"></button>');
+
+                    $removeBtn.addClass(btnClass);
+
+                    $removeBtn.attr('title', removePendingFileTitle);
+
+                    $removeBtn.attr('aria-label', removePendingFileTitle);
+
+                    $removeBtn.html('&times;');
+
+                    $removeBtn.on('click', function (e) {
+
+                        e.preventDefault();
+
+                        e.stopPropagation();
+
+                        removePendingFile(item.filePath);
+
+                    });
+
+
+
+                    $group.append($selectBtn, $removeBtn);
+
+                    $list.append($group);
+
+                });
+
+            }
+
+
+
+            function resetImportSection() {
+
+                pendingFiles = [];
+
+                activeFilePath = '';
+
+                lastFilePath = '';
+
+                isPreviewMode = true;
+
+                $('#importResultSection').addClass('d-none');
+
+                $('#btnSaveImport').prop('disabled', true);
+
+                $('#pendingFileSection').addClass('d-none');
+
+                $('#pendingFileList').empty();
+
+                $('#pageMessage').addClass('d-none').text('');
+
+                $('#importResultTitle')
+
+                    .removeClass('text-success')
+
+                    .text(importResultTitleText);
+
+                hidePreviewTable();
+
+            }
+
+
+
+            function finalizeRemovePendingFile(filePath) {
+
+                var wasActive = activeFilePath === filePath;
+
+                pendingFiles = pendingFiles.filter(function (item) {
+
+                    return item.filePath !== filePath;
+
+                });
+
+
+
+                if (pendingFiles.length === 0) {
+
+                    resetImportSection();
+
+                    return;
+
+                }
+
+
+
+                if (wasActive) {
+
+                    selectPendingFile(pendingFiles[0].filePath);
+
+                } else {
+
+                    updatePageMessage();
+
+                    renderPendingFileList();
+
+                }
+
+            }
+
+
+
+            function removePendingFile(filePath) {
+
+                if (!filePath) {
+
+                    return;
+
+                }
+
+
+
+                $.ajax({
+
+                    url: '@Url.Action("CancelPending", "ForwarderDataUpload")',
+
+                    type: 'POST',
+
+                    data: { filePath: filePath },
+
+                    dataType: 'json',
+
+                    success: function (response) {
+
+                        if (response && response.success) {
+
+                            finalizeRemovePendingFile(filePath);
+
+                            return;
+
+                        }
+
+
+
+                        alert(response && response.message ? response.message : removePendingFileTitle);
+
+                    },
+
+                    error: function (xhr) {
+
+                        var message = xhr.responseJSON && xhr.responseJSON.message
+
+                            ? xhr.responseJSON.message
+
+                            : removePendingFileTitle;
+
+                        alert(message);
+
+                    }
+
+                });
+
+            }
+
+
+
+            function selectPendingFile(filePath) {
+
+                if (!filePath || pendingFiles.length === 0) {
+
+                    resetImportSection();
+
+                    return;
+
+                }
+
+
+
+                activeFilePath = filePath;
+
+                lastFilePath = filePath;
+
+                isPreviewMode = true;
+
+                var selected = pendingFiles.find(function (item) {
+
+                    return item.filePath === filePath;
+
+                });
+
+
+
+                $('#importResultTitle')
+
+                    .removeClass('text-success')
+
+                    .text(importResultTitleText);
+
+
+
+                updatePageMessage();
+
+
+
+                $('#btnSaveImport').prop('disabled', false);
+
+                renderPendingFileList();
+
+                reloadPreviewTable();
 
             }
 
@@ -198,6 +536,16 @@
 
 
             function reloadPreviewTable() {
+
+                if (!lastFilePath || pendingFiles.length === 0) {
+
+                    hidePreviewTable();
+
+                    return;
+
+                }
+
+
 
                 if (!tableInstance && window.ProDataTables && ProDataTables.initUsers) {
 
@@ -251,6 +599,44 @@
 
 
 
+                var fileName = resolveFileName(response, filePath);
+
+                var existing = pendingFiles.find(function (item) {
+
+                    return item.filePath === filePath;
+
+                });
+
+
+
+                if (existing) {
+
+                    existing.message = response.message || existing.message;
+
+                    existing.previewCount = response.previewCount || response.PreviewCount || existing.previewCount;
+
+                    existing.fileName = fileName || existing.fileName;
+
+                } else {
+
+                    pendingFiles.push({
+
+                        filePath: filePath,
+
+                        fileName: fileName,
+
+                        message: response.message || '',
+
+                        previewCount: response.previewCount || response.PreviewCount || 0
+
+                    });
+
+                }
+
+
+
+                activeFilePath = filePath;
+
                 lastFilePath = filePath;
 
                 isPreviewMode = true;
@@ -259,16 +645,15 @@
                     .removeClass('text-success')
                     .text(importResultTitleText);
 
-                $('#pageMessage')
-                    .removeClass('alert-success d-none')
-                    .addClass('alert-info')
-                    .text(response.message || '');
+                updatePageMessage();
 
                 $('#importResultSection').removeClass('d-none');
 
                 $('#btnSaveImport').prop('disabled', false);
 
                 $('#DataDiv').removeClass('d-none');
+
+                renderPendingFileList();
 
                 reloadPreviewTable();
 
@@ -278,19 +663,52 @@
 
 
 
-            function showSaveSuccess(response) {
+            function showSaveSuccess(response, savedFilePath) {
 
-                $('#importResultTitle')
+                pendingFiles = pendingFiles.filter(function (item) {
+
+                    return item.filePath !== savedFilePath;
+
+                });
+
+
+
+                if (pendingFiles.length === 0) {
+
+                    $('#importResultTitle')
                     .addClass('text-success')
                     .text(response.message || '');
 
-                $('#pageMessage').addClass('d-none');
+                    $('#pageMessage').addClass('d-none');
 
-                $('#btnSaveImport').prop('disabled', true);
+                    $('#btnSaveImport').prop('disabled', true);
 
-                hidePreviewTable();
+                    $('#pendingFileSection').addClass('d-none');
 
-                lastFilePath = '';
+                    hidePreviewTable();
+
+                    lastFilePath = '';
+
+                    activeFilePath = '';
+
+                    return;
+
+                }
+
+
+
+                var remainingMessage = pendingFilesRemainingText.replace('{0}', pendingFiles.length);
+
+                $('#importResultTitle')
+                    .removeClass('text-success')
+                    .text(importResultTitleText);
+
+                $('#pageMessage')
+                    .removeClass('alert-success d-none')
+                    .addClass('alert-info')
+                    .text(buildSummaryMessage() + ' ' + remainingMessage);
+
+                selectPendingFile(pendingFiles[0].filePath);
 
             }
 
@@ -298,13 +716,15 @@
 
             $('#btnSaveImport').on('click', function () {
 
-                if (!lastFilePath || $(this).prop('disabled')) {
+                if (!activeFilePath || $(this).prop('disabled')) {
 
                     return;
 
                 }
 
 
+
+                var savingFilePath = activeFilePath;
 
                 var $btn = $(this);
 
@@ -318,7 +738,7 @@
 
                     type: 'POST',
 
-                    data: { filePath: lastFilePath },
+                    data: { filePath: savingFilePath },
 
                     dataType: 'json',
 
@@ -326,7 +746,7 @@
 
                         if (response && response.success) {
 
-                            showSaveSuccess(response);
+                            showSaveSuccess(response, savingFilePath);
 
                         } else {
 
@@ -358,7 +778,8 @@
 
 
 
-            if (typeof window.createUploader === 'function') {
+            if (hasPermission('Views.Forwarder.ForwarderDataUpload.Upload')
+                && typeof window.createUploader === 'function') {
 
                 window.createUploader('#forwarderUploader', {
 
@@ -370,9 +791,9 @@
 
                     uploadUrl: '@Url.Action("Upload", "ForwarderDataUpload")',
 
-                    fileTypes: '.xlsx',
+                    fileTypes: '.xlsx,.xls,.csv',
 
-                    multiple: false,
+                    multiple: true,
 
                     maxSize: maxSizeMb,
 

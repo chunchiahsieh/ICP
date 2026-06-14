@@ -1,0 +1,76 @@
+@model ICP.Models.TariffDataSearchListViewModel
+@{
+    var filterColumns = new[]
+    {
+        ("filter-MAWB", "MAWB"),
+        ("filter-HAWB", "HAWB"),
+        ("filter-ImportDate", "ImportDate"),
+        ("filter-DeclarationDate", "DeclarationDate"),
+        ("filter-ReleaseDate", "ReleaseDate"),
+        ("filter-InvoiceNumber", "InvoiceNumber"),
+        ("filter-DescriptionOfGoods", "DescriptionOfGoods"),
+        ("filter-HTSNumber", "HTSNumber"),
+        ("filter-EntryNumber", "EntryNumber"),
+        ("filter-Mode", "Mode"),
+        ("filter-PortOfDeparture", "PortOfDeparture"),
+        ("filter-FlightNo", "FlightNo"),
+        ("filter-Shipper", "Shipper"),
+        ("filter-Broker", "Broker"),
+        ("filter-AirSea", "AirSea"),
+        ("filter-CreateDate", "CreateDate")
+    };
+}
+
+<table id="datatable" class="table table-striped table-sm">
+    <thead>
+        <tr>
+            <th>@Localizer["Broker.TariffData.Column.MAWB"]</th>
+            <th>@Localizer["Broker.TariffData.Column.HAWB"]</th>
+            <th>@Localizer["Broker.TariffData.Column.ImportDate"]</th>
+            <th>@Localizer["Broker.TariffData.Column.DeclarationDate"]</th>
+            <th>@Localizer["Broker.TariffData.Column.ReleaseDate"]</th>
+            <th>@Localizer["Broker.TariffData.Column.InvoiceNumber"]</th>
+            <th>@Localizer["Broker.TariffData.Column.DescriptionOfGoods"]</th>
+            <th>@Localizer["Broker.TariffData.Column.HTSNumber"]</th>
+            <th>@Localizer["Broker.TariffData.Column.EntryNumber"]</th>
+            <th>@Localizer["Broker.TariffData.Column.Mode"]</th>
+            <th>@Localizer["Broker.TariffData.Column.PortOfDeparture"]</th>
+            <th>@Localizer["Broker.TariffData.Column.FlightNo"]</th>
+            <th>@Localizer["Broker.TariffData.Column.Shipper"]</th>
+            <th>@Localizer["Broker.TariffData.Column.Broker"]</th>
+            <th>@Localizer["Broker.TariffData.Column.AirSea"]</th>
+            <th>@Localizer["Broker.TariffData.Column.CreateDate"]</th>
+        </tr>
+        <tr class="users-filter-row">
+            @foreach (var (filterId, column) in filterColumns)
+            {
+                <th class="sorting_disabled">
+                    @await Html.PartialAsync("_ProDataTablesFilter", (filterId, column))
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListData)
+        {
+            <tr>
+                <td>@item.MAWB</td>
+                <td>@item.HAWB</td>
+                <td>@item.ImportDate.ToString("yyyy/MM/dd")</td>
+                <td>@item.DeclarationDate.ToString("yyyy/MM/dd")</td>
+                <td>@item.ReleaseDate.ToString("yyyy/MM/dd")</td>
+                <td>@item.InvoiceNumber</td>
+                <td>@item.DescriptionOfGoods</td>
+                <td>@item.HTSNumber</td>
+                <td>@item.EntryNumber</td>
+                <td>@item.Mode</td>
+                <td>@item.PortOfDeparture</td>
+                <td>@item.FlightNo</td>
+                <td>@item.Shipper</td>
+                <td>@item.Broker</td>
+                <td>@item.AirSea</td>
+                <td>@item.CreateDate.ToString("yyyy/MM/dd")</td>
+            </tr>
+        }
+    </tbody>
+</table>

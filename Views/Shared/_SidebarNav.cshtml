@@ -9,23 +9,23 @@
     <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Function" data-i18n-key="Views.Shared._SidebarNav.Function">@Localizer["Views.Shared._SidebarNav.Function"]</div>
     @if (HasMenu("Views.Shared._SidebarNav.Function.ShipInfo"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.ShipInfo" data-i18n-key="Views.Shared._SidebarNav.Function.ShipInfo">@Localizer["Views.Shared._SidebarNav.Function.ShipInfo"]</a>
+        <a class="nav-link" asp-controller="ShipInfo" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.ShipInfo" data-i18n-key="Views.Shared._SidebarNav.Function.ShipInfo">@Localizer["Views.Shared._SidebarNav.Function.ShipInfo"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Function.AddDiSa"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.AddDiSa" data-i18n-key="Views.Shared._SidebarNav.Function.AddDiSa">@Localizer["Views.Shared._SidebarNav.Function.AddDiSa"]</a>
+        <a class="nav-link" asp-controller="AddDiSa" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.AddDiSa" data-i18n-key="Views.Shared._SidebarNav.Function.AddDiSa">@Localizer["Views.Shared._SidebarNav.Function.AddDiSa"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Function.MassUpdateNonNcpi"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi" data-i18n-key="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi">@Localizer["Views.Shared._SidebarNav.Function.MassUpdateNonNcpi"]</a>
+        <a class="nav-link" asp-controller="MassUpdateNonNcpi" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi" data-i18n-key="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi">@Localizer["Views.Shared._SidebarNav.Function.MassUpdateNonNcpi"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Function.MassUpdateNcpi"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.MassUpdateNcpi" data-i18n-key="Views.Shared._SidebarNav.Function.MassUpdateNcpi">@Localizer["Views.Shared._SidebarNav.Function.MassUpdateNcpi"]</a>
+        <a class="nav-link" asp-controller="MassUpdateNcpi" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.MassUpdateNcpi" data-i18n-key="Views.Shared._SidebarNav.Function.MassUpdateNcpi">@Localizer["Views.Shared._SidebarNav.Function.MassUpdateNcpi"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Function.Export"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.Export" data-i18n-key="Views.Shared._SidebarNav.Function.Export">@Localizer["Views.Shared._SidebarNav.Function.Export"]</a>
+        <a class="nav-link" asp-controller="Export" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Function.Export" data-i18n-key="Views.Shared._SidebarNav.Function.Export">@Localizer["Views.Shared._SidebarNav.Function.Export"]</a>
     }
 }
 
@@ -88,15 +88,15 @@
     <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Report" data-i18n-key="Views.Shared._SidebarNav.Report">@Localizer["Views.Shared._SidebarNav.Report"]</div>
     @if (HasMenu("Views.Shared._SidebarNav.Report.ShippingReport"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.ShippingReport" data-i18n-key="Views.Shared._SidebarNav.Report.ShippingReport">@Localizer["Views.Shared._SidebarNav.Report.ShippingReport"]</a>
+        <a class="nav-link" asp-controller="ShippingReport" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.ShippingReport" data-i18n-key="Views.Shared._SidebarNav.Report.ShippingReport">@Localizer["Views.Shared._SidebarNav.Report.ShippingReport"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Report.CompareIcpVsArUr"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.CompareIcpVsArUr" data-i18n-key="Views.Shared._SidebarNav.Report.CompareIcpVsArUr">@Localizer["Views.Shared._SidebarNav.Report.CompareIcpVsArUr"]</a>
+        <a class="nav-link" asp-controller="CompareIcpVsArUr" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.CompareIcpVsArUr" data-i18n-key="Views.Shared._SidebarNav.Report.CompareIcpVsArUr">@Localizer["Views.Shared._SidebarNav.Report.CompareIcpVsArUr"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Report.MassDataReport"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.MassDataReport" data-i18n-key="Views.Shared._SidebarNav.Report.MassDataReport">@Localizer["Views.Shared._SidebarNav.Report.MassDataReport"]</a>
+        <a class="nav-link" asp-controller="MassDataReport" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Report.MassDataReport" data-i18n-key="Views.Shared._SidebarNav.Report.MassDataReport">@Localizer["Views.Shared._SidebarNav.Report.MassDataReport"]</a>
     }
 }
 
@@ -114,11 +114,11 @@
     <div class="sb-sidenav-menu-heading" data-permissions="Views.Shared._SidebarNav.Broker" data-i18n-key="Views.Shared._SidebarNav.Broker">@Localizer["Views.Shared._SidebarNav.Broker"]</div>
     @if (HasMenu("Views.Shared._SidebarNav.Broker.CustomsDataDownload"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Broker.CustomsDataDownload" data-i18n-key="Views.Shared._SidebarNav.Broker.CustomsDataDownload">@Localizer["Views.Shared._SidebarNav.Broker.CustomsDataDownload"]</a>
+        <a class="nav-link" asp-controller="CustomsDataDownload" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Broker.CustomsDataDownload" data-i18n-key="Views.Shared._SidebarNav.Broker.CustomsDataDownload">@Localizer["Views.Shared._SidebarNav.Broker.CustomsDataDownload"]</a>
     }
     @if (HasMenu("Views.Shared._SidebarNav.Broker.TariffData"))
     {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Broker.TariffData" data-i18n-key="Views.Shared._SidebarNav.Broker.TariffData">@Localizer["Views.Shared._SidebarNav.Broker.TariffData"]</a>
+        <a class="nav-link" asp-controller="TariffData" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Broker.TariffData" data-i18n-key="Views.Shared._SidebarNav.Broker.TariffData">@Localizer["Views.Shared._SidebarNav.Broker.TariffData"]</a>
     }
 }
 

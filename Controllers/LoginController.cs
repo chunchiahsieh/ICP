@@ -24,9 +24,8 @@ public class LoginController : Controller
     [HttpGet]
     public async Task<IActionResult> Login(string TELID = "", CancellationToken cancellationToken = default)
     {
-        var userInfo = await _userAuthService.GetUserInfo(TELID, cancellationToken);
-        var result = string.IsNullOrEmpty(userInfo.TelId) ? "E" : "Y";
-        return Json(result);
+        var ok = await _userAuthService.CanLoginAsync(TELID, cancellationToken);
+        return Json(ok ? "Y" : "E");
     }
 
     [HttpGet]

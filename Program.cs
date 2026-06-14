@@ -65,6 +65,9 @@ builder.Services.Configure<AppAuthOptions>(
 builder.Services.Configure<ForwarderDataUploadOptions>(
     builder.Configuration.GetSection(ForwarderDataUploadOptions.SectionName));
 
+builder.Services.Configure<TariffDataOptions>(
+    builder.Configuration.GetSection(TariffDataOptions.SectionName));
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var supportedCultures = new[] { "zh-TW", "en", "ja" };
@@ -109,6 +112,7 @@ builder.Services.AddSingleton<ResourceRouteRegistryService>();
 builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<UserResourcePermissionService>();
 builder.Services.AddScoped<ForwarderDataImportService>();
+builder.Services.AddScoped<TariffDataImportService>();
 builder.Services.AddScoped<RequireLoginFilter>();
 builder.Services.AddScoped<RequireResourcePermissionFilter>();
 

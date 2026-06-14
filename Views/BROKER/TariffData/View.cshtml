@@ -1,0 +1,162 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = Localizer["Broker.TariffData.Title"];
+    var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
+    var maxSizeHint = string.Format(Localizer["Broker.TariffData.MaxSizeHint"].Value, maxSizeMb);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+                collapse: false
+            }
+        };
+    </script>
+}
+
+<div data-permissions="Views.Broker.TariffData.View"
+     data-i18n-key="Views.Broker.TariffData.View">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["Broker.TariffData.Title"]</h4>
+    </div>
+    <p class="text-muted small mb-3">@maxSizeHint</p>
+
+    <div class="d-flex align-items-start gap-3 flex-wrap mb-3">
+        <div data-permissions="Views.Broker.TariffData.UploadCustomsData"
+             data-i18n-key="Views.Broker.TariffData.UploadCustomsData">
+            <div id="customsDataUploader"></div>
+        </div>
+        <div data-permissions="Views.Broker.TariffData.UploadDeclarationPdf"
+             data-i18n-key="Views.Broker.TariffData.UploadDeclarationPdf">
+            <div id="declarationPdfUploader"></div>
+        </div>
+        <div data-permissions="Views.Broker.TariffData.UploadCost"
+             data-i18n-key="Views.Broker.TariffData.UploadCost">
+            <div id="costUploader"></div>
+        </div>
+    </div>
+
+    <div id="DataDiv"></div>
+</div>
+
+<div class="d-none" aria-hidden="true">
+    <button type="button"
+            data-permissions="Views.Broker.TariffData.UploadCustomsData"
+            data-i18n-key="Views.Broker.TariffData.UploadCustomsData">Upload</button>
+    <button type="button"
+            data-permissions="Views.Broker.TariffData.UploadDeclarationPdf"
+            data-i18n-key="Views.Broker.TariffData.UploadDeclarationPdf">Upload</button>
+    <button type="button"
+            data-permissions="Views.Broker.TariffData.UploadCost"
+            data-i18n-key="Views.Broker.TariffData.UploadCost">Upload</button>
+</div>
+
+@section Scripts {
+    <script src="~/Uploader/index.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var maxSizeMb = @maxSizeMb;
+            var maxSizeHint = @Html.Raw(JsonSerializer.Serialize(maxSizeHint));
+            var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
+
+            function hasPermission(code) {
+                var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
+                if (config.superUser) {
+                    return true;
+                }
+
+                var normalized = (code || '').toLowerCase();
+                return (config.allowedCodes || []).some(function (allowed) {
+                    return (allowed || '').toLowerCase() === normalized;
+                });
+            }
+
+            var filterFieldMap = {
+                'filter-MAWB': 'MAWBs',
+                'filter-HAWB': 'HAWBs',
+                'filter-ImportDate': 'ImportDates',
+                'filter-DeclarationDate': 'DeclarationDates',
+                'filter-ReleaseDate': 'ReleaseDates',
+                'filter-InvoiceNumber': 'InvoiceNumbers',
+                'filter-DescriptionOfGoods': 'DescriptionOfGoodsList',
+                'filter-HTSNumber': 'HTSNumbers',
+                'filter-EntryNumber': 'EntryNumbers',
+                'filter-Mode': 'Modes',
+                'filter-PortOfDeparture': 'PortOfDepartures',
+                'filter-FlightNo': 'FlightNos',
+                'filter-Shipper': 'Shippers',
+                'filter-Broker': 'Brokers',
+                'filter-AirSea': 'AirSeas',
+                'filter-CreateDate': 'CreateDates'
+            };
+
+            var tableInstance = null;
+
+            if (window.ProDataTables && ProDataTables.initUsers && hasPermission('Views.Broker.TariffData.View')) {
+                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+                    filterFieldMap: filterFieldMap,
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "TariffData")',
+                    queryUrl: '@Url.Action("Query", "TariffData")',
+                    initialSort: [[15, 'desc']]
+                }));
+            }
+
+            function reloadTable() {
+                if (tableInstance && tableInstance.reload) {
+                    tableInstance.reload();
+                }
+            }
+
+            function createTariffUploader(selector, config) {
+                if (typeof window.createUploader !== 'function') {
+                    return;
+                }
+
+                window.createUploader(selector, $.extend({
+                    multiple: true,
+                    maxSize: maxSizeMb,
+                    maxSizeHint: maxSizeHint,
+                    fieldName: 'file',
+                    buttonClass: uploaderButtonClass,
+                    onSuccess: reloadTable
+                }, config));
+            }
+
+            if (hasPermission('Views.Broker.TariffData.UploadCustomsData')) {
+                createTariffUploader('#customsDataUploader', {
+                    title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataTitle"].Value)),
+                    buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataButton"].Value)),
+                    uploadUrl: '@Url.Action("UploadCustomsData", "TariffData")',
+                    fileTypes: '.xlsx,.xls'
+                });
+            }
+
+            if (hasPermission('Views.Broker.TariffData.UploadDeclarationPdf')) {
+                createTariffUploader('#declarationPdfUploader', {
+                    title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadDeclarationPdfTitle"].Value)),
+                    buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadDeclarationPdfButton"].Value)),
+                    uploadUrl: '@Url.Action("UploadDeclarationPdf", "TariffData")',
+                    fileTypes: '.pdf'
+                });
+            }
+
+            if (hasPermission('Views.Broker.TariffData.UploadCost')) {
+                createTariffUploader('#costUploader', {
+                    title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCostTitle"].Value)),
+                    buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCostButton"].Value)),
+                    uploadUrl: '@Url.Action("UploadCost", "TariffData")',
+                    fileTypes: '.xlsx,.xls'
+                });
+            }
+        });
+    </script>
+}
