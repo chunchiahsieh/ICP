@@ -213,6 +213,24 @@
 
 
 
+            function hidePreviewTable() {
+
+                var $table = $('#DataDiv').find('#datatable');
+
+                if ($table.length && $.fn.dataTable.isDataTable($table[0])) {
+
+                    $table.DataTable().destroy();
+
+                }
+
+                $('#DataDiv').addClass('d-none').empty();
+
+                tableInstance = null;
+
+            }
+
+
+
             function showImportResult(response) {
 
                 if (!response || !response.success) {
@@ -250,6 +268,8 @@
 
                 $('#btnSaveImport').prop('disabled', false);
 
+                $('#DataDiv').removeClass('d-none');
+
                 reloadPreviewTable();
 
                 document.getElementById('importResultSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -267,6 +287,10 @@
                 $('#pageMessage').addClass('d-none');
 
                 $('#btnSaveImport').prop('disabled', true);
+
+                hidePreviewTable();
+
+                lastFilePath = '';
 
             }
 
