@@ -164,10 +164,6 @@
             </nav>
         </div>
     }
-    @if (HasMenu("Views.Shared._SidebarNav.Systems.DropDownList"))
-    {
-        <a class="nav-link" asp-controller="ErrorPage" asp-action="Index" data-permissions="Views.Shared._SidebarNav.Systems.DropDownList" data-i18n-key="Views.Shared._SidebarNav.Systems.DropDownList">@Localizer["Views.Shared._SidebarNav.Systems.DropDownList"]</a>
-    }
 }
 
 @if (HasMenu("Views.Shared._SidebarNav.Logout"))

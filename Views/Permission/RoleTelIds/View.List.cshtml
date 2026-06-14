@@ -17,10 +17,9 @@
             <th class="sorting_disabled">
                 <input type="checkbox" class="list-select-all" title="全選本頁" />
             </th>
-            <th>TELID</th>
             <th>RoleCode</th>
             <th>RoleName</th>
-            <th>Description</th>
+            <th>TELID</th>
             <th>CreateTime</th>
             <th>CreateUser</th>
         </tr>
@@ -39,10 +38,9 @@
         {
             <tr data-id="@item.Id">
                 <td><input type="checkbox" class="row-list-cb" data-id="@item.Id" /></td>
-                <td>@item.TelId</td>
                 <td>@item.Role.RoleCode</td>
                 <td>@item.Role.RoleName</td>
-                <td>@item.Description</td>
+                <td>@item.TelId</td>
                 <td>@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                 <td>@item.CreateUser</td>
             </tr>

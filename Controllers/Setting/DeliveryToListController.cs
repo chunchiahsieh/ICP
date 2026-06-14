@@ -23,6 +23,9 @@ public class DeliveryToListController : SystemConfigControllerBase
         entity.Value1 = model.Value1?.Trim();
         entity.Value2 = model.Value2?.Trim();
         entity.Value3 = model.Value3?.Trim();
+        entity.Value4 = model.Value4?.Trim();
+        entity.Value5 = model.Value5?.Trim();
+        entity.Value6 = model.Value6?.Trim();
     }
 
     protected override SystemConfigEditModel MapToEditModel(SystemConfig entity)
@@ -34,7 +37,10 @@ public class DeliveryToListController : SystemConfigControllerBase
             Key1 = entity.Key1,
             Value1 = entity.Value1,
             Value2 = entity.Value2,
-            Value3 = entity.Value3
+            Value3 = entity.Value3,
+            Value4 = entity.Value4,
+            Value5 = entity.Value5,
+            Value6 = entity.Value6
         };
     }
 }

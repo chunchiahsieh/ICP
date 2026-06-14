@@ -17,10 +17,10 @@
             <th class="sorting_disabled">
                 <input type="checkbox" class="list-select-all" title="@Localizer["Common.SelectAllPage"]" />
             </th>
-            <th>@Localizer["RoleMailGroups.Col.Name"]</th>
-            <th>@Localizer["RoleMailGroups.Col.Address"]</th>
             <th>@Localizer["RoleMailGroups.Col.RoleCode"]</th>
             <th>@Localizer["RoleMailGroups.Col.RoleName"]</th>
+            <th>@Localizer["RoleMailGroups.Col.Name"]</th>
+            <th>@Localizer["RoleMailGroups.Col.Address"]</th>
             <th>@Localizer["RoleMailGroups.Col.CreateTime"]</th>
             <th>@Localizer["RoleMailGroups.Col.CreateUser"]</th>
         </tr>
@@ -39,10 +39,10 @@
         {
             <tr data-id="@item.Id">
                 <td><input type="checkbox" class="row-list-cb" data-id="@item.Id" /></td>
-                <td>@item.MailGroupName</td>
-                <td>@item.MailGroupAddress</td>
                 <td>@item.RoleCode</td>
                 <td>@item.RoleName</td>
+                <td>@item.MailGroupName</td>
+                <td>@item.MailGroupAddress</td>
                 <td>@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                 <td>@item.CreateUser</td>
             </tr>

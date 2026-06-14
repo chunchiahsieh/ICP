@@ -72,6 +72,8 @@
 
     var tableSortState = config.initialSort || [[0, 'desc']];
 
+    var tablePageLengthState = config.pageLength;
+
     var filterSearchDebounceTimers = {};
 
     var instanceNs = 'ProDT' + (config.dataDivSelector || '#DataDiv').replace(/[^a-zA-Z0-9]/g, '_');
@@ -110,7 +112,7 @@
 
 
 
-    function saveTableSortState() {
+    function saveTableState() {
 
       var $table = getTableInScope();
 
@@ -120,7 +122,11 @@
 
       if (!$.fn.dataTable.isDataTable(tableEl)) return;
 
-      tableSortState = $table.DataTable().order();
+      var dt = $table.DataTable();
+
+      tableSortState = dt.order();
+
+      tablePageLengthState = dt.page.len();
 
     }
 
@@ -404,7 +410,7 @@
 
         lengthChange: true,
 
-        pageLength: config.pageLength,
+        pageLength: tablePageLengthState,
 
         lengthMenu: global.ProDataTables.resolveLengthMenu(config)
 
@@ -428,7 +434,7 @@
 
     function Query() {
 
-      saveTableSortState();
+      saveTableState();
 
       var saved = getFilterValues();
 
