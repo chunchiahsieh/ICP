@@ -77,8 +77,8 @@ window.createUploader = function (selector, options) {
             <div class="bg-white px-5 pb-5 pt-6">
               <div class="w-full space-y-6">
                 <!-- Dropzone -->
-                <div id="${dropzoneId}" class="relative overflow-hidden border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400 group">
-                  <input type="file" id="${fileInputId}" class="hidden" ${config.multiple ? 'multiple' : ''} accept="${escapeHtml(config.fileTypes)}" />
+                <label id="${dropzoneId}" class="relative block overflow-hidden border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400 group">
+                  <input type="file" id="${fileInputId}" class="uploader-file-input" ${config.multiple ? 'multiple' : ''} accept="${escapeHtml(config.fileTypes)}" />
                   <div class="flex flex-col items-center justify-center space-y-3 pointer-events-none">
                     <div class="dropzone-icon p-3 rounded-full transition-colors bg-white text-slate-500 shadow-sm group-hover:text-blue-500 group-hover:scale-110">
                       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
@@ -89,7 +89,7 @@ window.createUploader = function (selector, options) {
                       <p class="text-xs text-slate-500">${escapeHtml(config.maxSizeHint || ('單檔上限 ' + config.maxSize + 'MB'))}</p>
                     </div>
                   </div>
-                </div>
+                </label>
 
                 <!-- File List -->
                 <div id="${fileListContainerId}" class="space-y-3 mt-6 hidden">
@@ -153,10 +153,7 @@ window.createUploader = function (selector, options) {
     $modal.find('.close-modal').on('click', closeModal);
     $backdrop.on('click', closeModal);
 
-    // Dropzone Events
-    $dropzone.on('click', function () {
-        $fileInput.trigger('click');
-    });
+    // Dropzone Events（label 內嵌 file input，點擊拖曳區會原生開啟檔案選擇視窗）
 
     $dropzone.on('dragenter dragover dragleave drop', function (e) {
         e.preventDefault();
