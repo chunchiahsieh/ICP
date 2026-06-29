@@ -185,6 +185,25 @@
                 });
             }
 
+            function normalizeFilePath(path) {
+                if (!path) {
+                    return '';
+                }
+
+                return String(path).replace(/\\/g, '/').trim().toLowerCase();
+            }
+
+            function pathEquals(pathA, pathB) {
+                return normalizeFilePath(pathA) === normalizeFilePath(pathB);
+            }
+
+            function findPendingFile(filePath) {
+                var key = normalizeFilePath(filePath);
+                return pendingFiles.find(function (item) {
+                    return normalizeFilePath(item.filePath) === key;
+                });
+            }
+
 
 
             function getTotalPreviewCount() {
@@ -271,7 +290,7 @@
 
                 pendingFiles.forEach(function (item) {
 
-                    var isActive = item.filePath === activeFilePath;
+                    var isActive = pathEquals(item.filePath, activeFilePath);
 
                     var btnClass = isActive ? 'btn-primary' : 'btn-outline-secondary';
 
@@ -363,11 +382,11 @@
 
             function finalizeRemovePendingFile(filePath) {
 
-                var wasActive = activeFilePath === filePath;
+                var wasActive = pathEquals(activeFilePath, filePath);
 
                 pendingFiles = pendingFiles.filter(function (item) {
 
-                    return item.filePath !== filePath;
+                    return !pathEquals(item.filePath, filePath);
 
                 });
 
@@ -463,19 +482,23 @@
 
                 }
 
+                var selected = findPendingFile(filePath);
+
+                if (!selected) {
+
+                    console.warn('Pending file not found:', filePath);
+
+                    return;
+
+                }
 
 
-                activeFilePath = filePath;
 
-                lastFilePath = filePath;
+                activeFilePath = selected.filePath;
+
+                lastFilePath = selected.filePath;
 
                 isPreviewMode = true;
-
-                var selected = pendingFiles.find(function (item) {
-
-                    return item.filePath === filePath;
-
-                });
 
 
 
@@ -601,11 +624,7 @@
 
                 var fileName = resolveFileName(response, filePath);
 
-                var existing = pendingFiles.find(function (item) {
-
-                    return item.filePath === filePath;
-
-                });
+                var existing = findPendingFile(filePath);
 
 
 
@@ -667,7 +686,7 @@
 
                 pendingFiles = pendingFiles.filter(function (item) {
 
-                    return item.filePath !== savedFilePath;
+                    return !pathEquals(item.filePath, savedFilePath);
 
                 });
 
@@ -724,7 +743,7 @@
 
 
 
-                var savingFilePath = activeFilePath;
+                var savingFilePath = (findPendingFile(activeFilePath) || { filePath: activeFilePath }).filePath;
 
                 var $btn = $(this);
 
@@ -794,6 +813,8 @@
                     fileTypes: '.xlsx,.xls,.csv',
 
                     multiple: true,
+
+                    sequentialUpload: true,
 
                     maxSize: maxSizeMb,
 

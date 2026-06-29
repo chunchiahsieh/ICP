@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 using ICP.Data;
 
 using ICP.Helpers;
@@ -28,8 +26,6 @@ public class ForwarderDataUploadController : Controller
 
 {
 
-    public const string PendingFilePathsSessionKey = "ForwarderPendingFilePaths";
-
     private const string TemplateFileName = "ForwarderDataUploadTemplate.xlsx";
 
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
@@ -54,6 +50,8 @@ public class ForwarderDataUploadController : Controller
 
     private readonly ForwarderDataImportService _importService;
 
+    private readonly ForwarderPendingFileStore _pendingFileStore;
+
     private readonly IStringLocalizer<SharedResource> _localizer;
 
     private readonly ILogger<ForwarderDataUploadController> _logger;
@@ -70,6 +68,8 @@ public class ForwarderDataUploadController : Controller
 
         ForwarderDataImportService importService,
 
+        ForwarderPendingFileStore pendingFileStore,
+
         IStringLocalizer<SharedResource> localizer,
 
         ILogger<ForwarderDataUploadController> logger)
@@ -83,6 +83,8 @@ public class ForwarderDataUploadController : Controller
         _options = options.Value;
 
         _importService = importService;
+
+        _pendingFileStore = pendingFileStore;
 
         _localizer = localizer;
 
@@ -277,7 +279,7 @@ public class ForwarderDataUploadController : Controller
 
             var rows = await _importService.ParseAsync(storedPath, createUser, cancellationToken);
 
-            AddPendingFilePath(HttpContext.Session, storedPath);
+            _pendingFileStore.Add(HttpContext, storedPath);
 
 
 
@@ -337,7 +339,7 @@ public class ForwarderDataUploadController : Controller
 
 
 
-            RemovePendingFilePath(HttpContext.Session, storedPath);
+            _pendingFileStore.Remove(HttpContext, storedPath);
 
             return Json(new { success = false, message = ex.Message });
 
@@ -377,7 +379,7 @@ public class ForwarderDataUploadController : Controller
 
 
 
-            if (!IsPendingFilePath(HttpContext.Session, normalizedPath))
+            if (!_pendingFileStore.Contains(HttpContext, normalizedPath))
 
             {
 
@@ -411,7 +413,7 @@ public class ForwarderDataUploadController : Controller
 
 
 
-            RemovePendingFilePath(HttpContext.Session, normalizedPath);
+            _pendingFileStore.Remove(HttpContext, normalizedPath);
 
 
 
@@ -487,11 +489,11 @@ public class ForwarderDataUploadController : Controller
 
 
 
-            if (IsPendingFilePath(HttpContext.Session, normalizedPath))
+            if (_pendingFileStore.Contains(HttpContext, normalizedPath))
 
             {
 
-                RemovePendingFilePath(HttpContext.Session, normalizedPath);
+                _pendingFileStore.Remove(HttpContext, normalizedPath);
 
             }
 
@@ -501,7 +503,7 @@ public class ForwarderDataUploadController : Controller
 
                 _logger.LogWarning(
 
-                    "Forwarder pending file cancel: not in session {StoredPath}",
+                    "Forwarder pending file cancel: not in pending store {StoredPath}",
 
                     normalizedPath);
 
@@ -567,118 +569,5 @@ public class ForwarderDataUploadController : Controller
 
     }
 
-
-
-    private static List<string> GetPendingFilePaths(ISession session)
-
-    {
-
-        var json = session.GetString(PendingFilePathsSessionKey);
-
-        if (string.IsNullOrWhiteSpace(json))
-
-        {
-
-            return [];
-
-        }
-
-
-
-        try
-
-        {
-
-            return JsonSerializer.Deserialize<List<string>>(json) ?? [];
-
-        }
-
-        catch (JsonException)
-
-        {
-
-            return [];
-
-        }
-
-    }
-
-
-
-    private static void SetPendingFilePaths(ISession session, List<string> paths)
-
-    {
-
-        if (paths.Count == 0)
-
-        {
-
-            session.Remove(PendingFilePathsSessionKey);
-
-            return;
-
-        }
-
-
-
-        session.SetString(PendingFilePathsSessionKey, JsonSerializer.Serialize(paths));
-
-    }
-
-
-
-    private static void AddPendingFilePath(ISession session, string path)
-
-    {
-
-        var normalized = Path.GetFullPath(path.Trim());
-
-        var paths = GetPendingFilePaths(session);
-
-        if (paths.All(p => !string.Equals(Path.GetFullPath(p.Trim()), normalized, StringComparison.OrdinalIgnoreCase)))
-
-        {
-
-            paths.Add(normalized);
-
-        }
-
-
-
-        SetPendingFilePaths(session, paths);
-
-    }
-
-
-
-    private static void RemovePendingFilePath(ISession session, string path)
-
-    {
-
-        var normalized = Path.GetFullPath(path.Trim());
-
-        var paths = GetPendingFilePaths(session);
-
-        paths.RemoveAll(p => string.Equals(Path.GetFullPath(p.Trim()), normalized, StringComparison.OrdinalIgnoreCase));
-
-        SetPendingFilePaths(session, paths);
-
-    }
-
-
-
-    private static bool IsPendingFilePath(ISession session, string path)
-
-    {
-
-        var normalized = Path.GetFullPath(path.Trim());
-
-        return GetPendingFilePaths(session)
-
-            .Any(p => string.Equals(Path.GetFullPath(p.Trim()), normalized, StringComparison.OrdinalIgnoreCase));
-
-    }
-
 }
-
 

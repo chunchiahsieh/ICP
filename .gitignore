@@ -31,6 +31,9 @@ artifacts/
 ## ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
+## Runtime uploads
+uploads/
+
 ## Secrets (keep local overrides out of repo)
 appsettings.json
 appsettings.Development.json

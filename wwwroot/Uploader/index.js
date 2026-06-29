@@ -34,6 +34,7 @@ window.createUploader = function (selector, options) {
         maxSize: 10,
         maxSizeHint: '',
         fieldName: 'file',
+        sequentialUpload: false,
         onSuccess: null,
         onError: null
     };
@@ -187,6 +188,35 @@ window.createUploader = function (selector, options) {
         $(this).val('');
     });
 
+    function resolveClientError(file) {
+        if (file.size > config.maxSize * 1024 * 1024) {
+            return `檔案超過 ${config.maxSize}MB`;
+        }
+
+        if (config.fileTypes && config.fileTypes !== '*/*') {
+            const acceptedTypes = config.fileTypes.split(',').map(s => s.trim().toLowerCase());
+            const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+            let isAccepted = false;
+
+            for (const type of acceptedTypes) {
+                if (type.startsWith('.')) {
+                    if (fileExt === type) isAccepted = true;
+                } else if (type.endsWith('/*')) {
+                    const mimeGroup = type.split('/')[0];
+                    if (file.type.startsWith(mimeGroup + '/')) isAccepted = true;
+                } else {
+                    if (file.type === type) isAccepted = true;
+                }
+            }
+
+            if (!isAccepted) {
+                return '❌ 不支援的檔案格式';
+            }
+        }
+
+        return null;
+    }
+
     function handleFiles(files) {
         if (files.length === 0) return;
 
@@ -205,39 +235,26 @@ window.createUploader = function (selector, options) {
 
         $fileListContainer.removeClass('hidden');
 
-        files.forEach(file => {
-            let clientError = null;
+        const queue = files.map(file => ({
+            file,
+            clientError: resolveClientError(file)
+        }));
 
-            // Size validation
-            if (file.size > config.maxSize * 1024 * 1024) {
-                clientError = `檔案超過 ${config.maxSize}MB`;
-            }
-
-            // Basic client side validation via fileTypes
-            if (!clientError && config.fileTypes && config.fileTypes !== '*/*') {
-                const acceptedTypes = config.fileTypes.split(',').map(s => s.trim().toLowerCase());
-                const fileExt = '.' + file.name.split('.').pop().toLowerCase();
-                let isAccepted = false;
-
-                for (const type of acceptedTypes) {
-                    if (type.startsWith('.')) {
-                        if (fileExt === type) isAccepted = true;
-                    } else if (type.endsWith('/*')) {
-                        const mimeGroup = type.split('/')[0];
-                        if (file.type.startsWith(mimeGroup + '/')) isAccepted = true;
-                    } else {
-                        if (file.type === type) isAccepted = true;
-                    }
+        if (config.sequentialUpload) {
+            (async function () {
+                for (const item of queue) {
+                    fileCount++;
+                    updateFileCount();
+                    await uploadFile(item.file, item.clientError);
                 }
+            })();
+            return;
+        }
 
-                if (!isAccepted) {
-                    clientError = `❌ 不支援的檔案格式`;
-                }
-            }
-
+        queue.forEach(item => {
             fileCount++;
             updateFileCount();
-            uploadFile(file, clientError);
+            uploadFile(item.file, item.clientError);
         });
     }
 
@@ -323,12 +340,13 @@ window.createUploader = function (selector, options) {
             updateFileCount();
             markError(clientError);
             if (config.onError) config.onError(clientError);
-            return;
+            return Promise.resolve();
         }
 
         const formData = new FormData();
         formData.append(config.fieldName, file);
 
+        return new Promise(function (resolve) {
         jqXHR = $.ajax({
             url: config.uploadUrl,
             type: 'POST',
@@ -373,10 +391,12 @@ window.createUploader = function (selector, options) {
                     markError(response.message || '上傳失敗');
                     if (config.onError) config.onError(response.message || '上傳失敗');
                 }
+                resolve();
             },
             error: function (xhr, status, error) {
                 if (status === 'abort') {
-                    return; // User aborted
+                    resolve();
+                    return;
                 }
 
                 $fileItem.attr('data-status', 'error');
@@ -391,7 +411,9 @@ window.createUploader = function (selector, options) {
                 } catch (e) { }
                 markError(errorMessage);
                 if (config.onError) config.onError(errorMessage);
+                resolve();
             }
+        });
         });
 
         function markError(errorMsg) {

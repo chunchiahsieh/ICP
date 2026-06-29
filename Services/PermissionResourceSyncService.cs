@@ -56,17 +56,15 @@ public class PermissionResourceSyncService
         CancellationToken cancellationToken = default)
     {
         var actor = string.IsNullOrWhiteSpace(updateUser) ? "PermissionScanner" : updateUser;
-        var distinctItems = scannedItems
-            .GroupBy(x => x.ResourceCode, StringComparer.OrdinalIgnoreCase)
-            .Select(g => g.First())
-            .ToList();
+        var distinctItems = PermissionScanDeduplicator.DeduplicateByResourceCode(scannedItems);
 
         var inserted = 0;
         var updated = 0;
         var resourceCodes = new List<string>();
 
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-        await TruncateResourcesTableAsync(cancellationToken);
+        var scannedCodes = distinctItems.Select(x => x.ResourceCode).ToList();
+        await RemoveResourcesNotInScanAsync(scannedCodes, cancellationToken);
 
         foreach (var item in distinctItems)
         {
@@ -447,12 +445,38 @@ public class PermissionResourceSyncService
         return (legacyResources.Count, migratedCount);
     }
 
-    private async Task TruncateResourcesTableAsync(CancellationToken cancellationToken)
+    private async Task RemoveResourcesNotInScanAsync(
+        IReadOnlyList<string> scannedResourceCodes,
+        CancellationToken cancellationToken)
     {
-        await _dbContext.RolePermissions.ExecuteDeleteAsync(cancellationToken);
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "UPDATE [Resources] SET [ParentId] = NULL WHERE [ParentId] IS NOT NULL",
-            cancellationToken);
-        await _dbContext.Resources.ExecuteDeleteAsync(cancellationToken);
+        if (scannedResourceCodes.Count == 0)
+        {
+            return;
+        }
+
+        var codeSet = scannedResourceCodes.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var idsToRemove = await _dbContext.Resources
+            .Where(r => !codeSet.Contains(r.ResourceCode))
+            .Select(r => r.Id)
+            .ToListAsync(cancellationToken);
+
+        if (idsToRemove.Count == 0)
+        {
+            return;
+        }
+
+        await _dbContext.Resources
+            .Where(r => r.ParentId != null && idsToRemove.Contains(r.ParentId.Value))
+            .ExecuteUpdateAsync(
+                s => s.SetProperty(r => r.ParentId, (Guid?)null),
+                cancellationToken);
+
+        await _dbContext.RolePermissions
+            .Where(rp => idsToRemove.Contains(rp.ResourceId))
+            .ExecuteDeleteAsync(cancellationToken);
+
+        await _dbContext.Resources
+            .Where(r => idsToRemove.Contains(r.Id))
+            .ExecuteDeleteAsync(cancellationToken);
     }
 }

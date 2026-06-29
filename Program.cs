@@ -112,6 +112,7 @@ builder.Services.AddSingleton<ResourceRouteRegistryService>();
 builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<UserResourcePermissionService>();
 builder.Services.AddScoped<ForwarderDataImportService>();
+builder.Services.AddSingleton<ForwarderPendingFileStore>();
 builder.Services.AddScoped<TariffDataImportService>();
 builder.Services.AddScoped<RequireLoginFilter>();
 builder.Services.AddScoped<RequireResourcePermissionFilter>();

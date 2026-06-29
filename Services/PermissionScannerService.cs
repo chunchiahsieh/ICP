@@ -57,7 +57,7 @@ public partial class PermissionScannerService
             }
         }
 
-        return results;
+        return PermissionScanDeduplicator.DeduplicateByResourceCode(results);
     }
 
     private static string? ExtractAttributeValue(string tagContent, string attributeName)
