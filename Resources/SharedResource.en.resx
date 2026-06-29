@@ -189,6 +189,237 @@
   <data name="Function.Placeholder" xml:space="preserve">
     <value>This feature is under development.</value>
   </data>
+  <data name="ShipInfo.Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ShipInfo.Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="ShipInfo.Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ShipInfo.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ShipInfo.Deposit" xml:space="preserve">
+    <value>Deposit</value>
+  </data>
+  <data name="ShipInfo.ARUR" xml:space="preserve">
+    <value>ARUR</value>
+  </data>
+  <data name="ShipInfo.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ShipInfo.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ShipInfo.HeaderTitle" xml:space="preserve">
+    <value>Ship Header</value>
+  </data>
+  <data name="ShipInfo.DetailTitle" xml:space="preserve">
+    <value>Ship Detail</value>
+  </data>
+  <data name="ShipInfo.SelectHeaderFirst" xml:space="preserve">
+    <value>Please select a Header first</value>
+  </data>
+  <data name="ShipInfo.DepositCompleted" xml:space="preserve">
+    <value>Deposit case already created</value>
+  </data>
+  <data name="ShipInfo.Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="ShipInfo.SaveSuccess" xml:space="preserve">
+    <value>Saved successfully</value>
+  </data>
+  <data name="ShipInfo.SaveFailed" xml:space="preserve">
+    <value>Save failed</value>
+  </data>
+  <data name="ShipInfo.DeleteSuccess" xml:space="preserve">
+    <value>Deleted successfully</value>
+  </data>
+  <data name="ShipInfo.DeleteFailed" xml:space="preserve">
+    <value>Delete failed</value>
+  </data>
+  <data name="ShipInfo.NoData" xml:space="preserve">
+    <value>No data found</value>
+  </data>
+  <data name="ShipInfo.Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="ShipInfo.RequiredMark" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="ShipInfo.ValidationFailed" xml:space="preserve">
+    <value>Validation failed</value>
+  </data>
+  <data name="ShipInfo.DrawerHeader" xml:space="preserve">
+    <value>Edit Header</value>
+  </data>
+  <data name="ShipInfo.DrawerDetail" xml:space="preserve">
+    <value>Edit Detail</value>
+  </data>
+  <data name="ShipInfo.NoDetailData" xml:space="preserve">
+    <value>No detail records</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmTitle" xml:space="preserve">
+    <value>Are you sure you want to delete?</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmMessage" xml:space="preserve">
+    <value>This operation will delete all related details.</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmIrreversible" xml:space="preserve">
+    <value>This action cannot be undone.</value>
+  </data>
+  <data name="ShipInfo.DeleteDetailConfirmTitle" xml:space="preserve">
+    <value>Are you sure you want to delete this detail?</value>
+  </data>
+  <data name="ShipInfo.DeleteDetailConfirmMessage" xml:space="preserve">
+    <value>This action cannot be undone.</value>
+  </data>
+  <data name="ShipInfo.HeaderInformation" xml:space="preserve">
+    <value>Header Information</value>
+  </data>
+  <data name="ShipInfo.DetailInformation" xml:space="preserve">
+    <value>Detail Information</value>
+  </data>
+  <data name="ShipInfo.StatusNotAllowed" xml:space="preserve">
+    <value>This action is not allowed for the current status</value>
+  </data>
+  <data name="ShipInfo.ConcurrencyError" xml:space="preserve">
+    <value>Data has been updated. Please refresh.</value>
+  </data>
+  <data name="ShipInfo.Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="ShipInfo.SearchCompleted" xml:space="preserve">
+    <value>Search completed</value>
+  </data>
+  <data name="ShipInfo.ArurCompleted" xml:space="preserve">
+    <value>ARUR case already created</value>
+  </data>
+  <data name="ShipInfo.PageSize" xml:space="preserve">
+    <value>Page size</value>
+  </data>
+  <data name="ShipInfo.PageLabel" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="ShipInfo.TotalRecords" xml:space="preserve">
+    <value>{0} record(s)</value>
+  </data>
+  <data name="ShipInfo.DrawerTitle" xml:space="preserve">
+    <value>Ship Info Details</value>
+  </data>
+  <data name="ShipInfo.DrawerSummary" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="ShipInfo.DetailCount" xml:space="preserve">
+    <value>Detail count</value>
+  </data>
+  <data name="ShipInfo.TotalQty" xml:space="preserve">
+    <value>Total quantity</value>
+  </data>
+  <data name="ShipInfo.TotalWeight" xml:space="preserve">
+    <value>Total weight</value>
+  </data>
+  <data name="ShipInfo.TotalAmount" xml:space="preserve">
+    <value>Total amount</value>
+  </data>
+  <data name="ShipInfo.QtyLabel" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="ShipInfo.View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="ShipInfo.ViewDrawer" xml:space="preserve">
+    <value>View details</value>
+  </data>
+  <data name="ShipInfo.Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="ShipInfo.HeaderSummary" xml:space="preserve">
+    <value>Header Summary</value>
+  </data>
+  <data name="ShipInfo.ShipNo" xml:space="preserve">
+    <value>Ship No</value>
+  </data>
+  <data name="ShipInfo.Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="ShipInfo.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ShipInfo.CreateDate" xml:space="preserve">
+    <value>Create Date</value>
+  </data>
+  <data name="ShipInfo.EditMode" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ShipInfo.Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ShipInfo.Status.Processing" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="ShipInfo.Status.WarehouseReceived" xml:space="preserve">
+    <value>Warehouse Received</value>
+  </data>
+  <data name="ShipInfo.Status.Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="ShipInfo.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="ShipInfo.SaDate" xml:space="preserve">
+    <value>SA Date</value>
+  </data>
+  <data name="ShipInfo.InvoiceNo" xml:space="preserve">
+    <value>Invoice No</value>
+  </data>
+  <data name="ShipInfo.TotalInvoiceQty" xml:space="preserve">
+    <value>Total Invoice Qty</value>
+  </data>
+  <data name="ShipInfo.TotalCarton" xml:space="preserve">
+    <value>Total Carton</value>
+  </data>
+  <data name="ShipInfo.CaseDrawerDepositTitle" xml:space="preserve">
+    <value>Deposit Case</value>
+  </data>
+  <data name="ShipInfo.CaseDrawerArurTitle" xml:space="preserve">
+    <value>ARUR Case</value>
+  </data>
+  <data name="ShipInfo.DepositConfirmTitle" xml:space="preserve">
+    <value>Confirm deposit case creation?</value>
+  </data>
+  <data name="ShipInfo.DepositConfirmMessage" xml:space="preserve">
+    <value>Please verify header and detail data before submitting.</value>
+  </data>
+  <data name="ShipInfo.ArurConfirmTitle" xml:space="preserve">
+    <value>Confirm ARUR case creation?</value>
+  </data>
+  <data name="ShipInfo.ArurConfirmMessage" xml:space="preserve">
+    <value>Please verify header and detail data before submitting.</value>
+  </data>
+  <data name="ShipInfo.CaseCreateSuccess" xml:space="preserve">
+    <value>Case created successfully</value>
+  </data>
+  <data name="ShipInfo.CaseCreateFailed" xml:space="preserve">
+    <value>Failed to create case</value>
+  </data>
+  <data name="Views.Function.ShipInfo.View" xml:space="preserve">
+    <value>Ship Info View</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Edit" xml:space="preserve">
+    <value>Ship Info Edit</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
+    <value>Ship Info Delete</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">
+    <value>Ship Info Deposit</value>
+  </data>
+  <data name="Views.Function.ShipInfo.ARUR" xml:space="preserve">
+    <value>Ship Info ARUR</value>
+  </data>
   <data name="Function.AddDiSa.Title" xml:space="preserve">
     <value>Add DI/SA</value>
   </data>

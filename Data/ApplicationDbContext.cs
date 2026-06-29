@@ -28,6 +28,12 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<TariffData> TariffDataRecords => Set<TariffData>();
 
+    public DbSet<IcpHeader> IcpHeaders => Set<IcpHeader>();
+
+    public DbSet<IcpDetail> IcpDetails => Set<IcpDetail>();
+
+    public DbSet<ShipInfoAuditLog> ShipInfoAuditLogs => Set<ShipInfoAuditLog>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemConfig>(entity =>
@@ -138,6 +144,127 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => e.InvoiceNumber)
                 .IsUnique()
                 .HasDatabaseName("UQ_TariffData_InvoiceNumber");
+        });
+
+        modelBuilder.Entity<IcpHeader>(entity =>
+        {
+            entity.ToTable("ICP_HEADER");
+            entity.HasKey(e => e.Id);
+            entity.HasAlternateKey(e => new { e.InvoiceNo, e.TetPo });
+            entity.Property(e => e.Id).HasDefaultValueSql("newid()");
+            entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
+            entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired();
+            entity.Property(e => e.CreateDate).HasMaxLength(20);
+            entity.Property(e => e.Status).HasMaxLength(200);
+            entity.Property(e => e.SaDate).HasMaxLength(10);
+            entity.Property(e => e.Forwarder).HasMaxLength(50);
+            entity.Property(e => e.Broker).HasMaxLength(30);
+            entity.Property(e => e.Etd).HasMaxLength(10);
+            entity.Property(e => e.Eta).HasMaxLength(10);
+            entity.Property(e => e.InvoiceDate).HasMaxLength(10);
+            entity.Property(e => e.Mawb).HasMaxLength(20);
+            entity.Property(e => e.Hawb).HasMaxLength(20);
+            entity.Property(e => e.Flt).HasMaxLength(20);
+            entity.Property(e => e.Freight).HasMaxLength(10);
+            entity.Property(e => e.DestinationPort).HasMaxLength(10);
+            entity.Property(e => e.DestinationCountry).HasMaxLength(3);
+            entity.Property(e => e.Warehouse).HasMaxLength(20);
+            entity.Property(e => e.InvoiceType).HasMaxLength(10);
+            entity.Property(e => e.Incoterms).HasMaxLength(20);
+            entity.Property(e => e.OrderType).HasMaxLength(20);
+            entity.Property(e => e.DeliveryDate).HasMaxLength(10);
+            entity.Property(e => e.DeliveryTo).HasMaxLength(20);
+            entity.Property(e => e.Bu).HasMaxLength(40);
+            entity.Property(e => e.MdpFlag).HasMaxLength(5);
+            entity.Property(e => e.NcdrNo).HasMaxLength(60);
+            entity.Property(e => e.NcdrRequestor).HasMaxLength(40);
+            entity.Property(e => e.EndUserCode).HasMaxLength(30);
+            entity.Property(e => e.EndUser).HasMaxLength(100);
+            entity.Property(e => e.RtNo).HasMaxLength(30);
+            entity.Property(e => e.Receiver).HasMaxLength(200);
+            entity.Property(e => e.Owner).HasMaxLength(50);
+            entity.Property(e => e.MachineNo).HasMaxLength(50);
+            entity.Property(e => e.MachineType).HasMaxLength(50);
+            entity.Property(e => e.ShipReason).HasMaxLength(50);
+            entity.Property(e => e.Forklift).HasMaxLength(50);
+            entity.Property(e => e.MovingLabor).HasMaxLength(50);
+            entity.Property(e => e.CarMethod).HasMaxLength(50);
+            entity.Property(e => e.ArriveTime).HasMaxLength(50);
+            entity.Property(e => e.WasteDisposal).HasMaxLength(50);
+            entity.Property(e => e.DriverDetails).HasMaxLength(50);
+            entity.Property(e => e.OrderReason).HasMaxLength(50);
+            entity.Property(e => e.ArrivalNoticeFlag).HasMaxLength(5);
+            entity.Property(e => e.ArrivalNotice).HasMaxLength(100);
+            entity.Property(e => e.ReasonForDeliveryDelay).HasMaxLength(200);
+            entity.Property(e => e.DelayNotificationDate).HasMaxLength(10);
+            entity.Property(e => e.DeliveryNo).HasMaxLength(30);
+            entity.Property(e => e.SoldToPartyCode).HasMaxLength(30);
+            entity.Property(e => e.SoldToParty).HasMaxLength(100);
+            entity.Property(e => e.ShipToPartyCode).HasMaxLength(30);
+            entity.Property(e => e.ShipToParty).HasMaxLength(100);
+            entity.Property(e => e.ShipToPartyAddress).HasMaxLength(200);
+            entity.Property(e => e.EmgFlight).HasMaxLength(5);
+            entity.Property(e => e.WbsElement).HasMaxLength(30);
+            entity.Property(e => e.Deposit).HasMaxLength(10);
+            entity.Property(e => e.SapRemarks).HasMaxLength(1000);
+            entity.Property(e => e.Notes).HasMaxLength(1000);
+            entity.Property(e => e.Cancellation).HasMaxLength(10);
+            entity.Property(e => e.ReasonForCancellation).HasMaxLength(200);
+            entity.Property(e => e.AttachedFile).HasMaxLength(1000);
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("getdate()").IsRequired();
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
+            entity.HasMany(e => e.Details)
+                .WithOne(d => d.Header)
+                .HasForeignKey(d => new { d.InvoiceNo, d.TetPo })
+                .HasPrincipalKey(h => new { h.InvoiceNo, h.TetPo })
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<IcpDetail>(entity =>
+        {
+            entity.ToTable("ICP_DETAIL");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasDefaultValueSql("newid()");
+            entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
+            entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired();
+            entity.Property(e => e.TetPoLine).HasMaxLength(35);
+            entity.Property(e => e.ItemNo).HasMaxLength(47);
+            entity.Property(e => e.Description).HasMaxLength(60);
+            entity.Property(e => e.Qty).HasColumnType("numeric(13, 3)");
+            entity.Property(e => e.Uom).HasMaxLength(10);
+            entity.Property(e => e.Coo).HasMaxLength(50);
+            entity.Property(e => e.Currency).HasMaxLength(3);
+            entity.Property(e => e.Rate).HasColumnType("numeric(18, 4)");
+            entity.Property(e => e.PackingType).HasMaxLength(50);
+            entity.Property(e => e.GrossWeight).HasColumnType("numeric(6, 3)");
+            entity.Property(e => e.Eccn).HasMaxLength(10);
+            entity.Property(e => e.ElFlag).HasMaxLength(5);
+            entity.Property(e => e.SdsFlag).HasMaxLength(5);
+            entity.Property(e => e.Hazmat).HasMaxLength(5);
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("getdate()").IsRequired();
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<ShipInfoAuditLog>(entity =>
+        {
+            entity.ToTable("SHIPINFO_AUDIT_LOG");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.EntityType).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.EntityKey).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.HeaderKey).HasMaxLength(200);
+            entity.Property(e => e.Action).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.FieldName).HasMaxLength(100);
+            entity.Property(e => e.UserName).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.CaseType).HasMaxLength(20);
+            entity.Property(e => e.CaseNo).HasMaxLength(50);
+            entity.Property(e => e.OldStatus).HasMaxLength(50);
+            entity.Property(e => e.NewStatus).HasMaxLength(50);
+            entity.Property(e => e.ActionTime).HasColumnType("datetime2(7)").IsRequired();
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("getdate()").IsRequired();
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Resource>(entity =>
@@ -276,6 +403,30 @@ public class ApplicationDbContext : DbContext
                 .WithMany(e => e.RolePermissions)
                 .HasForeignKey(e => e.ResourceId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SystemConfig>(entity =>
+        {
+            entity.ToTable("SystemConfigs");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Category).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.FunctionCode).HasMaxLength(50);
+            entity.Property(e => e.Key1).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Key2).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Value1).HasMaxLength(1000);
+            entity.Property(e => e.Value2).HasMaxLength(1000);
+            entity.Property(e => e.Value3).HasMaxLength(1000);
+            entity.Property(e => e.Value4).HasMaxLength(1000);
+            entity.Property(e => e.Value5).HasMaxLength(1000);
+            entity.Property(e => e.Value6).HasMaxLength(1000);
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
+
+            entity.HasIndex(e => new { e.Category, e.FunctionCode, e.Key1, e.Key2 })
+                .IsUnique()
+                .HasDatabaseName("UX_SystemConfigs")
+                .HasFilter("[IsDeleted] = 0");
         });
     }
 }

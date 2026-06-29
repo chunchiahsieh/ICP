@@ -189,6 +189,237 @@
   <data name="Function.Placeholder" xml:space="preserve">
     <value>機能は開発中です。</value>
   </data>
+  <data name="ShipInfo.Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="ShipInfo.Reset" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="ShipInfo.Edit" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="ShipInfo.Delete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="ShipInfo.Deposit" xml:space="preserve">
+    <value>デポジット起案</value>
+  </data>
+  <data name="ShipInfo.ARUR" xml:space="preserve">
+    <value>ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="ShipInfo.Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="ShipInfo.HeaderTitle" xml:space="preserve">
+    <value>Ship Header</value>
+  </data>
+  <data name="ShipInfo.DetailTitle" xml:space="preserve">
+    <value>Ship Detail</value>
+  </data>
+  <data name="ShipInfo.SelectHeaderFirst" xml:space="preserve">
+    <value>先に Header を選択してください</value>
+  </data>
+  <data name="ShipInfo.DepositCompleted" xml:space="preserve">
+    <value>デポジット起案は完了済みです</value>
+  </data>
+  <data name="ShipInfo.Loading" xml:space="preserve">
+    <value>処理中...</value>
+  </data>
+  <data name="ShipInfo.SaveSuccess" xml:space="preserve">
+    <value>保存しました</value>
+  </data>
+  <data name="ShipInfo.SaveFailed" xml:space="preserve">
+    <value>保存に失敗しました</value>
+  </data>
+  <data name="ShipInfo.DeleteSuccess" xml:space="preserve">
+    <value>削除しました</value>
+  </data>
+  <data name="ShipInfo.DeleteFailed" xml:space="preserve">
+    <value>削除に失敗しました</value>
+  </data>
+  <data name="ShipInfo.NoData" xml:space="preserve">
+    <value>データがありません</value>
+  </data>
+  <data name="ShipInfo.Action" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="ShipInfo.RequiredMark" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="ShipInfo.ValidationFailed" xml:space="preserve">
+    <value>検証に失敗しました</value>
+  </data>
+  <data name="ShipInfo.DrawerHeader" xml:space="preserve">
+    <value>Header 編集</value>
+  </data>
+  <data name="ShipInfo.DrawerDetail" xml:space="preserve">
+    <value>Detail 編集</value>
+  </data>
+  <data name="ShipInfo.NoDetailData" xml:space="preserve">
+    <value>Detail データがありません</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmTitle" xml:space="preserve">
+    <value>削除してもよろしいですか？</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmMessage" xml:space="preserve">
+    <value>この操作ですべての Detail が削除されます。</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmIrreversible" xml:space="preserve">
+    <value>この操作は元に戻せません。</value>
+  </data>
+  <data name="ShipInfo.DeleteDetailConfirmTitle" xml:space="preserve">
+    <value>Detail を削除してもよろしいですか？</value>
+  </data>
+  <data name="ShipInfo.DeleteDetailConfirmMessage" xml:space="preserve">
+    <value>この操作は元に戻せません。</value>
+  </data>
+  <data name="ShipInfo.HeaderInformation" xml:space="preserve">
+    <value>Header Information</value>
+  </data>
+  <data name="ShipInfo.DetailInformation" xml:space="preserve">
+    <value>Detail Information</value>
+  </data>
+  <data name="ShipInfo.StatusNotAllowed" xml:space="preserve">
+    <value>現在のステータスではこの操作はできません</value>
+  </data>
+  <data name="ShipInfo.ConcurrencyError" xml:space="preserve">
+    <value>データが更新されました。再読み込みしてください。</value>
+  </data>
+  <data name="ShipInfo.Confirm" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="ShipInfo.SearchCompleted" xml:space="preserve">
+    <value>検索が完了しました</value>
+  </data>
+  <data name="ShipInfo.ArurCompleted" xml:space="preserve">
+    <value>ARUR 起案は完了済みです</value>
+  </data>
+  <data name="ShipInfo.PageSize" xml:space="preserve">
+    <value>ページ件数</value>
+  </data>
+  <data name="ShipInfo.PageLabel" xml:space="preserve">
+    <value>ページ</value>
+  </data>
+  <data name="ShipInfo.TotalRecords" xml:space="preserve">
+    <value>全 {0} 件</value>
+  </data>
+  <data name="ShipInfo.DrawerTitle" xml:space="preserve">
+    <value>Ship Info 明細</value>
+  </data>
+  <data name="ShipInfo.DrawerSummary" xml:space="preserve">
+    <value>集計</value>
+  </data>
+  <data name="ShipInfo.DetailCount" xml:space="preserve">
+    <value>Detail 件数</value>
+  </data>
+  <data name="ShipInfo.TotalQty" xml:space="preserve">
+    <value>総数量</value>
+  </data>
+  <data name="ShipInfo.TotalWeight" xml:space="preserve">
+    <value>総重量</value>
+  </data>
+  <data name="ShipInfo.TotalAmount" xml:space="preserve">
+    <value>総金額</value>
+  </data>
+  <data name="ShipInfo.QtyLabel" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="ShipInfo.View" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="ShipInfo.ViewDrawer" xml:space="preserve">
+    <value>明細表示</value>
+  </data>
+  <data name="ShipInfo.Submit" xml:space="preserve">
+    <value>送信</value>
+  </data>
+  <data name="ShipInfo.HeaderSummary" xml:space="preserve">
+    <value>Header サマリー</value>
+  </data>
+  <data name="ShipInfo.ShipNo" xml:space="preserve">
+    <value>Ship No</value>
+  </data>
+  <data name="ShipInfo.Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="ShipInfo.Status" xml:space="preserve">
+    <value>ステータス</value>
+  </data>
+  <data name="ShipInfo.CreateDate" xml:space="preserve">
+    <value>作成日</value>
+  </data>
+  <data name="ShipInfo.EditMode" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="ShipInfo.Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="ShipInfo.Status.Processing" xml:space="preserve">
+    <value>処理中</value>
+  </data>
+  <data name="ShipInfo.Status.WarehouseReceived" xml:space="preserve">
+    <value>倉庫受領済</value>
+  </data>
+  <data name="ShipInfo.Status.Cancelled" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ShipInfo.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="ShipInfo.SaDate" xml:space="preserve">
+    <value>SA Date</value>
+  </data>
+  <data name="ShipInfo.InvoiceNo" xml:space="preserve">
+    <value>Invoice No</value>
+  </data>
+  <data name="ShipInfo.TotalInvoiceQty" xml:space="preserve">
+    <value>Total Invoice Qty</value>
+  </data>
+  <data name="ShipInfo.TotalCarton" xml:space="preserve">
+    <value>Total Carton</value>
+  </data>
+  <data name="ShipInfo.CaseDrawerDepositTitle" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.CaseDrawerArurTitle" xml:space="preserve">
+    <value>ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.DepositConfirmTitle" xml:space="preserve">
+    <value>押金案件を作成しますか？</value>
+  </data>
+  <data name="ShipInfo.DepositConfirmMessage" xml:space="preserve">
+    <value>Header と Detail の内容を確認してから送信してください。</value>
+  </data>
+  <data name="ShipInfo.ArurConfirmTitle" xml:space="preserve">
+    <value>ARUR 案件を作成しますか？</value>
+  </data>
+  <data name="ShipInfo.ArurConfirmMessage" xml:space="preserve">
+    <value>Header と Detail の内容を確認してから送信してください。</value>
+  </data>
+  <data name="ShipInfo.CaseCreateSuccess" xml:space="preserve">
+    <value>起案が完了しました</value>
+  </data>
+  <data name="ShipInfo.CaseCreateFailed" xml:space="preserve">
+    <value>起案に失敗しました</value>
+  </data>
+  <data name="Views.Function.ShipInfo.View" xml:space="preserve">
+    <value>Ship Info 照会</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Edit" xml:space="preserve">
+    <value>Ship Info 編集</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
+    <value>Ship Info 削除</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">
+    <value>Ship Info デポジット起案</value>
+  </data>
+  <data name="Views.Function.ShipInfo.ARUR" xml:space="preserve">
+    <value>Ship Info ARUR 起案</value>
+  </data>
   <data name="Function.AddDiSa.Title" xml:space="preserve">
     <value>DI/SA 追加</value>
   </data>

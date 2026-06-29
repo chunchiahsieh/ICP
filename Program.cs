@@ -1,5 +1,3 @@
-using System.Globalization;
-
 using ICP;
 
 using ICP.Data;
@@ -10,6 +8,8 @@ using ICP.Infrastructure;
 
 using ICP.Models.Auth;
 using ICP.Models;
+
+using ICP.Repositories;
 
 using ICP.Services;
 
@@ -113,6 +113,11 @@ builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<UserResourcePermissionService>();
 builder.Services.AddScoped<ForwarderDataImportService>();
 builder.Services.AddSingleton<ForwarderPendingFileStore>();
+builder.Services.AddScoped<IShipInfoRepository, ShipInfoRepository>();
+builder.Services.AddSingleton<ShipInfoMetadataProvider>();
+builder.Services.AddScoped<ShipInfoLookupService>();
+builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
+builder.Services.AddScoped<ShipInfoApiExceptionFilter>();
 builder.Services.AddScoped<TariffDataImportService>();
 builder.Services.AddScoped<RequireLoginFilter>();
 builder.Services.AddScoped<RequireResourcePermissionFilter>();
@@ -165,6 +170,14 @@ using (var scope = app.Services.CreateScope())
 {
     var routeRegistry = scope.ServiceProvider.GetRequiredService<ResourceRouteRegistryService>();
     await routeRegistry.RefreshAsync();
+
+    var icpConnectionString = app.Configuration.GetConnectionString("ICP_Connection");
+    if (!string.IsNullOrWhiteSpace(icpConnectionString))
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("ShipInfoSchema");
+        await ShipInfoSchemaInitializer.EnsureAuditLogTableAsync(db, logger);
+    }
 }
 
 var authOptions = app.Services.GetRequiredService<IOptions<AppAuthOptions>>().Value;
@@ -239,4 +252,3 @@ static string ResolveAppSettingsProfile(bool isAgaComputer, IWebHostEnvironment 
             ? "appsettings.json, appsettings.Development.json"
             : "appsettings.json"
         : "appsettings.TEL.json";
-

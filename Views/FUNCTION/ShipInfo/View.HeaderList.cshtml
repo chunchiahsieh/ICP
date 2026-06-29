@@ -1,0 +1,120 @@
+@model ICP.Models.ShipInfo.ShipInfoTableListViewModel
+@using ICP.Helpers
+@using ICP.Models.ShipInfo
+@{
+    var isHeader = string.Equals(Model.TableKind, "Header", StringComparison.OrdinalIgnoreCase);
+    var visibleFields = ShipInfoTableViewHelper.GetVisibleFields(Model.Fields);
+    var hasFilterRow = visibleFields.Count > 0;
+    var emptyTableMessage = isHeader
+        ? Localizer["ShipInfo.NoData"].Value
+        : (!string.IsNullOrWhiteSpace(Model.SelectedHeaderKey)
+            ? Localizer["ShipInfo.NoDetailData"].Value
+            : Localizer["ShipInfo.SelectHeaderFirst"].Value);
+
+    string FormatCell(IReadOnlyDictionary<string, object?> item, ShipInfoFieldMetadata field)
+    {
+        var value = ShipInfoTableViewHelper.GetItemValue(item, field.FieldName);
+        if (string.Equals(field.FieldName, "Status", StringComparison.OrdinalIgnoreCase)
+            && !string.IsNullOrWhiteSpace(Convert.ToString(value)))
+        {
+            var normalized = ShipInfoStatusResolver.Normalize(Convert.ToString(value));
+            return Localizer[$"ShipInfo.Status.{normalized}"].Value;
+        }
+
+        return ShipInfoTableViewHelper.FormatCellValue(value, field);
+    }
+}
+
+<div class="table-responsive shipinfo-table-wrap">
+<table id="@Model.TableId"
+       class="table table-striped table-hover table-bordered align-middle mb-0 shipinfo-pro-table w-100"
+       data-empty-table="@emptyTableMessage">
+    <thead class="table-light shipinfo-sticky-header">
+        <tr>
+            @if (isHeader)
+            {
+                <th class="shipinfo-radio-col sorting_disabled">
+                    <span class="visually-hidden">@Localizer["ShipInfo.SelectHeaderFirst"]</span>
+                </th>
+            }
+            <th class="shipinfo-action-col sorting_disabled">@Localizer["ShipInfo.Action"]</th>
+            @foreach (var field in visibleFields)
+            {
+                <th>@ShipInfoTableViewHelper.ResolveLabel(field, Model.Culture)</th>
+            }
+        </tr>
+        @if (hasFilterRow)
+        {
+            <tr class="users-filter-row">
+                @if (isHeader)
+                {
+                    <th class="shipinfo-radio-col sorting_disabled"></th>
+                }
+                <th class="shipinfo-action-col sorting_disabled"></th>
+                @foreach (var field in visibleFields)
+                {
+                    var filterId = $"filter-{Model.TableId}-{field.FieldName}";
+                    <th class="sorting_disabled">
+                        @await Html.PartialAsync("_ProDataTablesFilter", (filterId, field.FieldName))
+                    </th>
+                }
+            </tr>
+        }
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            var entityId = ShipInfoTableViewHelper.GetItemValue(item, "Id");
+            var rowJson = ShipInfoTableViewHelper.SerializeRowData(item);
+            <tr data-entity-id="@entityId"
+                data-row="@rowJson"
+                @(isHeader ? Html.Raw($"data-header-id=\"{entityId}\"") : Html.Raw($"data-detail-id=\"{entityId}\""))>
+                @if (isHeader)
+                {
+                    <td class="shipinfo-radio-col text-center">
+                        <input type="radio"
+                               class="form-check-input shipinfo-header-radio"
+                               name="shipInfoHeaderSelect"
+                               value="@entityId"
+                               aria-label="@Localizer["ShipInfo.SelectHeaderFirst"]" />
+                    </td>
+                    <td class="shipinfo-action-col text-center">
+                        <button type="button"
+                                class="btn btn-sm btn-link shipinfo-header-edit-btn p-0"
+                                data-header-id="@entityId"
+                                title="@Localizer["ShipInfo.Edit"]"
+                                aria-label="@Localizer["ShipInfo.Edit"]">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                    </td>
+                }
+                else
+                {
+                    <td class="shipinfo-action-col text-center">
+                        <button type="button"
+                                class="btn btn-sm btn-link shipinfo-detail-edit-btn p-0"
+                                data-detail-id="@entityId"
+                                title="@Localizer["ShipInfo.Edit"]"
+                                aria-label="@Localizer["ShipInfo.Edit"]">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                    </td>
+                }
+                @foreach (var field in visibleFields)
+                {
+                    var value = ShipInfoTableViewHelper.GetItemValue(item, field.FieldName);
+                    var formatted = FormatCell(item, field);
+                    if (string.Equals(field.FieldName, "InvoiceSeq", StringComparison.OrdinalIgnoreCase) && value is not null)
+                    {
+                        <td data-order="@Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)">@formatted</td>
+                    }
+                    else
+                    {
+                        <td>@formatted</td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
