@@ -56,7 +56,7 @@
                         <th class="@thClass">
                             @if (field.Searchable)
                             {
-                                @await Html.PartialAsync("_ProDataTablesFilter", ($"filter-{field.FieldName}", field.FieldName))
+                                @await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{field.FieldName}", field.FieldName, TariffMetadataHelper.ResolveFilterType(field)))
                             }
                         </th>
                     }

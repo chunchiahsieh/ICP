@@ -24,7 +24,7 @@
     </script>
 }
 
-<div class="container-fluid tariff-data-page"
+<div class="container-fluid tariff-data-page pro-datatables-page"
      data-permissions="Views.Broker.TariffData.View"
      data-i18n-key="Views.Broker.TariffData.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
@@ -79,6 +79,8 @@
     <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
     <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
     <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-table-filters.js" asp-append-version="true"></script>
+    <script src="~/js/tariff-protable.js" asp-append-version="true"></script>
     <script>
         $(function () {
             var maxSizeMb = @maxSizeMb;
@@ -86,6 +88,12 @@
             var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
             var tariffTableConfig = @Html.Raw(tariffTableConfigJson);
             var lengthMenuAll = @Html.Raw(JsonSerializer.Serialize(lengthMenuAll));
+            var tariffFilterFieldMap = window.TariffProTable
+                ? TariffProTable.buildTariffFilterFieldMap(tariffTableConfig.fields || [])
+                : {};
+            var tariffFilterHooks = window.TariffProTable
+                ? TariffProTable.buildTariffFilterHooks(tariffFilterFieldMap)
+                : {};
 
             function hasPermission(code) {
                 var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
@@ -127,8 +135,7 @@
             if (window.ProDataTables && ProDataTables.initUsers && hasPermission('Views.Broker.TariffData.View')) {
                 var sortColumn = tariffTableConfig.initialSortColumn ?? 0;
                 var sortDirection = tariffTableConfig.initialSortDirection || 'desc';
-                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
-                    filterFieldMap: tariffTableConfig.filterFieldMap || {},
+                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig($.extend({
                     filterOptionsUrl: '@Url.Action("GetFilterOptions", "TariffData")',
                     queryUrl: '@Url.Action("Query", "TariffData")',
                     pageLength: -1,
@@ -137,8 +144,17 @@
                     onDraw: function () {
                         syncTariffStickyHeaderOffset();
                         renumberTariffRowNo();
+                    },
+                    onAfterRender: function ($div) {
+                        if (window.ProTableFilters && ProTableFilters.updateAllProTableFilterCounts) {
+                            ProTableFilters.updateAllProTableFilterCounts($div, tariffFilterFieldMap);
+                        }
                     }
-                }));
+                }, tariffFilterHooks)));
+
+                if (window.TariffProTable) {
+                    TariffProTable.bindTariffFilterActions(tableInstance);
+                }
             }
 
             function reloadTable() {

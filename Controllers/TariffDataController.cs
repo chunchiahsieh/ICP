@@ -52,7 +52,13 @@ public class TariffDataController : Controller
         var tableConfig = _tableMetadataProvider.GetPageConfig();
         ViewData["TariffTableConfigJson"] = JsonSerializer.Serialize(new
         {
-            filterFieldMap = tableConfig.FilterFieldMap,
+            fields = tableConfig.Fields.Select(field => new
+            {
+                fieldName = field.FieldName,
+                visible = field.Visible,
+                searchable = field.Searchable,
+                filterType = field.FilterType
+            }),
             initialSortColumn = tableConfig.ResolveInitialSortColumnIndex() ?? 0,
             initialSortDirection = string.IsNullOrWhiteSpace(tableConfig.InitialSort?.Direction)
                 ? "desc"
@@ -80,7 +86,7 @@ public class TariffDataController : Controller
 
     [HttpPost]
     public async Task<IActionResult> Query(
-        [FromForm] TariffDataSearchModel criteria,
+        [FromForm] TariffDataQueryModel criteria,
         CancellationToken cancellationToken = default)
     {
         var list = await QueryTariffDataAsync(criteria, cancellationToken);
@@ -93,7 +99,7 @@ public class TariffDataController : Controller
         string? search = null,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(column) || !_tableMetadataProvider.IsSearchableColumn(column))
+        if (string.IsNullOrWhiteSpace(column) || !_tableMetadataProvider.IsCheckboxFilterColumn(column))
         {
             return BadRequest();
         }
@@ -224,106 +230,11 @@ public class TariffDataController : Controller
     }
 
     private async Task<List<TariffData>> QueryTariffDataAsync(
-        TariffDataSearchModel criteria,
+        TariffDataQueryModel criteria,
         CancellationToken cancellationToken)
     {
-        var query = BaseQuery();
-
-        if (criteria.MAWBs.Count > 0)
-        {
-            query = query.Where(e => criteria.MAWBs.Contains(e.MAWB));
-        }
-
-        if (criteria.HAWBs.Count > 0)
-        {
-            query = query.Where(e => criteria.HAWBs.Contains(e.HAWB));
-        }
-
-        if (criteria.ImportDates.Count > 0)
-        {
-            var dates = SearchFilterHelper.ParseDateOnlyValues(criteria.ImportDates);
-            if (dates.Count > 0)
-            {
-                query = query.Where(e => dates.Contains(e.ImportDate));
-            }
-        }
-
-        if (criteria.DeclarationDates.Count > 0)
-        {
-            var dates = SearchFilterHelper.ParseDateOnlyValues(criteria.DeclarationDates);
-            if (dates.Count > 0)
-            {
-                query = query.Where(e => dates.Contains(e.DeclarationDate));
-            }
-        }
-
-        if (criteria.ReleaseDates.Count > 0)
-        {
-            var dates = SearchFilterHelper.ParseDateOnlyValues(criteria.ReleaseDates);
-            if (dates.Count > 0)
-            {
-                query = query.Where(e => dates.Contains(e.ReleaseDate));
-            }
-        }
-
-        if (criteria.InvoiceNumbers.Count > 0)
-        {
-            query = query.Where(e => criteria.InvoiceNumbers.Contains(e.InvoiceNumber));
-        }
-
-        if (criteria.DescriptionOfGoodsList.Count > 0)
-        {
-            query = query.Where(e => criteria.DescriptionOfGoodsList.Contains(e.DescriptionOfGoods));
-        }
-
-        if (criteria.HTSNumbers.Count > 0)
-        {
-            query = query.Where(e => criteria.HTSNumbers.Contains(e.HTSNumber));
-        }
-
-        if (criteria.EntryNumbers.Count > 0)
-        {
-            query = query.Where(e => criteria.EntryNumbers.Contains(e.EntryNumber));
-        }
-
-        if (criteria.Modes.Count > 0)
-        {
-            query = query.Where(e => criteria.Modes.Contains(e.Mode));
-        }
-
-        if (criteria.PortOfDepartures.Count > 0)
-        {
-            query = query.Where(e => criteria.PortOfDepartures.Contains(e.PortOfDeparture));
-        }
-
-        if (criteria.FlightNos.Count > 0)
-        {
-            query = query.Where(e => criteria.FlightNos.Contains(e.FlightNo));
-        }
-
-        if (criteria.Shippers.Count > 0)
-        {
-            query = query.Where(e => e.Shipper != null && criteria.Shippers.Contains(e.Shipper));
-        }
-
-        if (criteria.Brokers.Count > 0)
-        {
-            query = query.Where(e => e.Broker != null && criteria.Brokers.Contains(e.Broker));
-        }
-
-        if (criteria.AirSeas.Count > 0)
-        {
-            query = query.Where(e => criteria.AirSeas.Contains(e.AirSea));
-        }
-
-        if (criteria.CreateDates.Count > 0)
-        {
-            var dates = SearchFilterHelper.ParseDateOnlyValues(criteria.CreateDates);
-            if (dates.Count > 0)
-            {
-                query = query.Where(e => dates.Contains(e.CreateDate));
-            }
-        }
+        var tableConfig = _tableMetadataProvider.GetPageConfig();
+        var query = TariffQueryFilterApplier.ApplyFilters(BaseQuery(), criteria, tableConfig.Fields);
 
         return await query
             .OrderByDescending(e => e.Id)

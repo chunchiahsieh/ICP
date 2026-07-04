@@ -1,3 +1,5 @@
+using ICP.Helpers;
+using ICP.Models.ShipInfo;
 using ICP.Models.Tariff;
 using Microsoft.Extensions.Options;
 
@@ -27,12 +29,6 @@ public class TariffTableMetadataProvider
             ["CreateDate"] = "Broker.TariffData.Column.CreateDate"
         };
 
-    private static readonly IReadOnlyDictionary<string, string> FilterQueryParamMap =
-        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["DescriptionOfGoods"] = "DescriptionOfGoodsList"
-        };
-
     private readonly IOptionsMonitor<TariffTableFieldsOptions> _tableFieldsOptions;
     private readonly ILogger<TariffTableMetadataProvider> _logger;
 
@@ -59,28 +55,20 @@ public class TariffTableMetadataProvider
             fields = BuildDefaultFields();
         }
 
-        var filterFieldMap = fields
-            .Where(field => field.Searchable)
-            .ToDictionary(
-                field => $"filter-{field.FieldName}",
-                field => ResolveFilterQueryParam(field.FieldName),
-                StringComparer.OrdinalIgnoreCase);
-
         return new TariffTablePageConfig
         {
             Fields = fields,
             TableUi = TariffTableUiOptions.MergeDefaults(options.TableUi),
-            InitialSort = options.InitialSort,
-            FilterFieldMap = filterFieldMap
+            InitialSort = options.InitialSort
         };
     }
 
-    public bool IsSearchableColumn(string column)
+    public bool IsCheckboxFilterColumn(string column)
     {
         var config = GetPageConfig();
-        return config.Fields.Any(field =>
-            field.Searchable
-            && string.Equals(field.FieldName, column, StringComparison.OrdinalIgnoreCase));
+        var field = config.Fields.FirstOrDefault(item =>
+            string.Equals(item.FieldName, column, StringComparison.OrdinalIgnoreCase));
+        return field is not null && field.Searchable && TariffMetadataHelper.IsCheckboxFilter(field);
     }
 
     private static TariffTableFieldMetadata ResolveFieldMetadata(TariffTableFieldEntry entry)
@@ -91,21 +79,11 @@ public class TariffTableMetadataProvider
             FieldName = fieldName,
             Visible = entry.Visible ?? true,
             Searchable = entry.Searchable ?? false,
-            FilterType = string.IsNullOrWhiteSpace(entry.FilterType) ? "Checkbox" : entry.FilterType,
+            FilterType = ShipInfoFilterTypes.Normalize(entry.FilterType),
             HeaderLabelKey = DefaultHeaderLabelKeys.TryGetValue(fieldName, out var key)
                 ? key
                 : $"Broker.TariffData.Column.{fieldName}"
         };
-    }
-
-    public static string ResolveFilterQueryParam(string fieldName)
-    {
-        if (FilterQueryParamMap.TryGetValue(fieldName, out var paramName))
-        {
-            return paramName;
-        }
-
-        return fieldName + "s";
     }
 
     private static List<TariffTableFieldMetadata> BuildDefaultFields() =>

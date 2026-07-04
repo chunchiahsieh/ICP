@@ -87,9 +87,6 @@ public class TariffTablePageConfig
 
     public bool HasFilterRow => Fields.Any(field => field.Searchable);
 
-    public IReadOnlyDictionary<string, string> FilterFieldMap { get; init; }
-        = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
     public int? ResolveInitialSortColumnIndex()
     {
         if (InitialSort is null || string.IsNullOrWhiteSpace(InitialSort.FieldName))

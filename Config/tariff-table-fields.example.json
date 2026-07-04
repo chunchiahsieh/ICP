@@ -4,22 +4,22 @@
   "list": {
     "fields": [
       { "fieldName": "RowNo", "visible": true, "searchable": false },
-      { "fieldName": "MAWB", "visible": true, "searchable": true },
-      { "fieldName": "HAWB", "visible": true, "searchable": true },
-      { "fieldName": "ImportDate", "visible": true, "searchable": true },
-      { "fieldName": "DeclarationDate", "visible": true, "searchable": true },
-      { "fieldName": "ReleaseDate", "visible": true, "searchable": true },
-      { "fieldName": "InvoiceNumber", "visible": true, "searchable": true },
-      { "fieldName": "DescriptionOfGoods", "visible": true, "searchable": true },
-      { "fieldName": "HTSNumber", "visible": true, "searchable": true },
-      { "fieldName": "EntryNumber", "visible": true, "searchable": true },
-      { "fieldName": "Mode", "visible": true, "searchable": true },
-      { "fieldName": "PortOfDeparture", "visible": true, "searchable": true },
-      { "fieldName": "FlightNo", "visible": true, "searchable": true },
-      { "fieldName": "Shipper", "visible": true, "searchable": true },
-      { "fieldName": "Broker", "visible": true, "searchable": true },
-      { "fieldName": "AirSea", "visible": true, "searchable": true },
-      { "fieldName": "CreateDate", "visible": true, "searchable": true }
+      { "fieldName": "MAWB", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "HAWB", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "ImportDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "DeclarationDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "ReleaseDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "InvoiceNumber", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "DescriptionOfGoods", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "HTSNumber", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "EntryNumber", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "Mode", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "PortOfDeparture", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "FlightNo", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "Shipper", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "AirSea", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "CreateDate", "visible": true, "searchable": true, "filterType": "Date" }
     ]
   }
 }
