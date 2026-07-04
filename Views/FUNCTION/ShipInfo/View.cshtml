@@ -1,11 +1,253 @@
+@using System.Text.Json
+
 @{
-    ViewData["Title"] = Localizer["Views.Shared._SidebarNav.Function.ShipInfo"];
+    ViewData["Title"] = Localizer["Views.Function.ShipInfo.View"];
 }
 
-<div data-permissions="Views.Shared._SidebarNav.Function.ShipInfo"
-     data-i18n-key="Views.Shared._SidebarNav.Function.ShipInfo">
-    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
-        <h4 class="mb-0">@Localizer["Views.Shared._SidebarNav.Function.ShipInfo"]</h4>
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shipinfo.css" asp-append-version="true" />
+}
+
+<div class="container-fluid shipinfo-page"
+     data-permissions="Views.Function.ShipInfo.View"
+     data-i18n-key="Views.Function.ShipInfo.View">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3 flex-wrap gap-2">
+        <h4 class="mb-0">@Localizer["Views.Function.ShipInfo.View"]</h4>
     </div>
-    <p class="text-muted">@Localizer["Function.Placeholder"]</p>
+
+    <div class="card mb-3 shipinfo-header-card">
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <span>@Localizer["ShipInfo.HeaderTitle"]</span>
+            <div class="d-flex flex-wrap gap-2 shipinfo-header-toolbar">
+                <button type="button" class="btn btn-sm btn-success" id="btnShipInfoDeposit" data-permissions="Views.Function.ShipInfo.Deposit" disabled>
+                    <i class="bi bi-box-arrow-up me-1"></i>@Localizer["ShipInfo.Deposit"]
+                </button>
+                <button type="button" class="btn btn-sm btn-success" id="btnShipInfoArur" data-permissions="Views.Function.ShipInfo.ARUR" disabled>
+                    <i class="bi bi-plus-circle me-1"></i>@Localizer["ShipInfo.ARUR"]
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-0 position-relative shipinfo-table-card-body">
+            <div id="shipInfoHeaderDataDiv"></div>
+        </div>
+    </div>
+
+    <div class="card mb-3 shipinfo-detail-card">
+        <div class="card-header">@Localizer["ShipInfo.DetailTitle"]</div>
+        <div class="card-body p-0 position-relative shipinfo-table-card-body">
+            <div id="shipInfoDetailDataDiv"></div>
+        </div>
+    </div>
 </div>
+
+<div class="d-none" aria-hidden="true">
+    <button type="button" data-permissions="Views.Function.ShipInfo.Edit" data-i18n-key="Views.Function.ShipInfo.Edit">Edit</button>
+    <button type="button" data-permissions="Views.Function.ShipInfo.Delete" data-i18n-key="Views.Function.ShipInfo.Delete">Delete</button>
+</div>
+
+<div class="modal fade" id="shipInfoViewModal" tabindex="-1" aria-labelledby="shipInfoViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header shipinfo-view-modal-header">
+                <h5 class="modal-title" id="shipInfoViewModalLabel">@Localizer["ShipInfo.View"]</h5>
+                <div class="shipinfo-view-modal-actions ms-auto d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnShipInfoViewEdit" data-permissions="Views.Function.ShipInfo.Edit">
+                        <i class="bi bi-pencil-square me-1"></i>@Localizer["ShipInfo.Edit"]
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" id="btnShipInfoViewDelete" data-permissions="Views.Function.ShipInfo.Delete">
+                        <i class="bi bi-trash me-1"></i>@Localizer["ShipInfo.Delete"]
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary d-none" id="btnShipInfoViewSave" data-permissions="Views.Function.ShipInfo.Edit">
+                        <i class="bi bi-save me-1"></i>@Localizer["ShipInfo.Save"]
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary d-none" id="btnShipInfoViewCancelEdit">
+                        @Localizer["ShipInfo.Cancel"]
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["ShipInfo.Close"]"></button>
+                </div>
+            </div>
+            <div class="modal-body position-relative">
+                <div class="shipinfo-modal-mask d-none" id="shipInfoViewModalMask" aria-hidden="true">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">@Localizer["ShipInfo.Loading"]</span>
+                    </div>
+                </div>
+                <form id="shipInfoViewForm" class="row g-3" novalidate></form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="shipInfoDeleteConfirmModal" tabindex="-1" aria-labelledby="shipInfoDeleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shipInfoDeleteConfirmModalLabel">@Localizer["ShipInfo.DeleteConfirmTitle"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["ShipInfo.Cancel"]"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">@Localizer["ShipInfo.DeleteConfirmMessage"]</p>
+                <p class="mb-0 text-danger">@Localizer["ShipInfo.DeleteConfirmIrreversible"]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Localizer["ShipInfo.Cancel"]</button>
+                <button type="button" class="btn btn-danger" id="btnShipInfoConfirmDelete">
+                    <i class="bi bi-trash me-1"></i>@Localizer["ShipInfo.Confirm"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="shipInfoDeleteDetailConfirmModal" tabindex="-1" aria-labelledby="shipInfoDeleteDetailConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shipInfoDeleteDetailConfirmModalLabel">@Localizer["ShipInfo.DeleteDetailConfirmTitle"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["ShipInfo.Cancel"]"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">@Localizer["ShipInfo.DeleteDetailConfirmMessage"]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Localizer["ShipInfo.Cancel"]</button>
+                <button type="button" class="btn btn-danger" id="btnShipInfoConfirmDeleteDetail">
+                    <i class="bi bi-trash me-1"></i>@Localizer["ShipInfo.Confirm"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="shipInfoToastContainer"></div>
+
+<div class="offcanvas offcanvas-end shipinfo-case-drawer" tabindex="-1" id="shipInfoCaseDrawer" aria-labelledby="shipInfoCaseDrawerLabel" data-bs-backdrop="static">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="shipInfoCaseDrawerLabel">@Localizer["ShipInfo.CaseDrawerDepositTitle"]</h5>
+        <button type="button" class="btn-close" id="btnShipInfoCaseDrawerClose" data-bs-dismiss="offcanvas" aria-label="@Localizer["ShipInfo.Cancel"]"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column p-0 position-relative">
+        <div class="shipinfo-drawer-mask d-none" id="shipInfoCaseDrawerMask" aria-hidden="true">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">@Localizer["ShipInfo.Loading"]</span>
+            </div>
+        </div>
+        <div class="shipinfo-case-drawer-scroll flex-grow-1 overflow-auto shipinfo-case-drawer-report">
+            <div class="p-3 border-bottom" id="shipInfoCaseHeaderAccordionWrap"></div>
+            <div class="p-3" id="shipInfoCaseDetailAccordionWrap"></div>
+        </div>
+        <div class="shipinfo-case-drawer-footer border-top p-3 d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary flex-grow-1" id="btnShipInfoCaseCancel" data-bs-dismiss="offcanvas">@Localizer["ShipInfo.Cancel"]</button>
+            <button type="button" class="btn btn-primary flex-grow-1" id="btnShipInfoCaseSubmit">
+                <i class="bi bi-check2-circle me-1"></i>@Localizer["ShipInfo.Submit"]
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="shipInfoCaseSubmitConfirmModal" tabindex="-1" aria-labelledby="shipInfoCaseSubmitConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shipInfoCaseSubmitConfirmModalLabel">@Localizer["ShipInfo.DepositConfirmTitle"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["ShipInfo.Cancel"]"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0" id="shipInfoCaseSubmitConfirmMessage">@Localizer["ShipInfo.DepositConfirmMessage"]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Localizer["ShipInfo.Cancel"]</button>
+                <button type="button" class="btn btn-primary" id="btnShipInfoConfirmCaseSubmit">
+                    <i class="bi bi-check2-circle me-1"></i>@Localizer["ShipInfo.Confirm"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        window.ShipInfoPage = {
+            urls: {
+                pageConfig: '@Url.Action("GetPageConfig", "ShipInfo")',
+                lookupOptions: '@Url.Action("GetLookupOptions", "ShipInfo")',
+                searchHeaders: '@Url.Action("SearchHeaders", "ShipInfo")',
+                queryHeader: '@Url.Action("QueryHeader", "ShipInfo")',
+                queryDetail: '@Url.Action("QueryDetail", "ShipInfo")',
+                headerFilterOptions: '@Url.Action("GetHeaderFilterOptions", "ShipInfo")',
+                detailFilterOptions: '@Url.Action("GetDetailFilterOptions", "ShipInfo")',
+                getHeader: '@Url.Action("GetHeader", "ShipInfo")',
+                getDetail: '@Url.Action("GetDetail", "ShipInfo")',
+                getDetails: '@Url.Action("GetDetails", "ShipInfo")',
+                deleteHeader: '@Url.Action("DeleteHeader", "ShipInfo")',
+                deleteDetail: '@Url.Action("DeleteDetail", "ShipInfo")',
+                saveHeader: '@Url.Action("SaveHeader", "ShipInfo")',
+                saveDetail: '@Url.Action("SaveDetail", "ShipInfo")',
+                validateHeader: '@Url.Action("ValidateHeader", "ShipInfo")',
+                validateDetail: '@Url.Action("ValidateDetail", "ShipInfo")',
+                getCaseDrawerData: '@Url.Action("GetCaseDrawerData", "ShipInfo")',
+                createDeposit: '@Url.Action("CreateDeposit", "ShipInfo")',
+                createArur: '@Url.Action("CreateArur", "ShipInfo")'
+            },
+            messages: @Html.Raw(JsonSerializer.Serialize(new
+            {
+                loading = Localizer["ShipInfo.Loading"].Value,
+                noData = Localizer["ShipInfo.NoData"].Value,
+                noDetailData = Localizer["ShipInfo.NoDetailData"].Value,
+                selectHeaderFirst = Localizer["ShipInfo.SelectHeaderFirst"].Value,
+                saveSuccess = Localizer["ShipInfo.SaveSuccess"].Value,
+                saveFailed = Localizer["ShipInfo.SaveFailed"].Value,
+                deleteSuccess = Localizer["ShipInfo.DeleteSuccess"].Value,
+                deleteFailed = Localizer["ShipInfo.DeleteFailed"].Value,
+                validationFailed = Localizer["ShipInfo.ValidationFailed"].Value,
+                requiredMark = Localizer["ShipInfo.RequiredMark"].Value,
+                edit = Localizer["ShipInfo.Edit"].Value,
+                delete = Localizer["ShipInfo.Delete"].Value,
+                deposit = Localizer["ShipInfo.Deposit"].Value,
+                arur = Localizer["ShipInfo.ARUR"].Value,
+                view = Localizer["ShipInfo.View"].Value,
+                editMode = Localizer["ShipInfo.EditMode"].Value,
+                close = Localizer["ShipInfo.Close"].Value,
+                cancel = Localizer["ShipInfo.Cancel"].Value,
+                save = Localizer["ShipInfo.Save"].Value,
+                headerInformation = Localizer["ShipInfo.HeaderInformation"].Value,
+                detailInformation = Localizer["ShipInfo.DetailInformation"].Value,
+                drawerHeader = Localizer["ShipInfo.DrawerHeader"].Value,
+                drawerDetail = Localizer["ShipInfo.DrawerDetail"].Value,
+                drawerTitle = Localizer["ShipInfo.DrawerTitle"].Value,
+                qtyLabel = Localizer["ShipInfo.QtyLabel"].Value,
+                depositCompleted = Localizer["ShipInfo.DepositCompleted"].Value,
+                arurCompleted = Localizer["ShipInfo.ArurCompleted"].Value,
+                statusNotAllowed = Localizer["ShipInfo.StatusNotAllowed"].Value,
+                confirm = Localizer["ShipInfo.Confirm"].Value,
+                submit = Localizer["ShipInfo.Submit"].Value,
+                status = Localizer["ShipInfo.Status"].Value,
+                createDate = Localizer["ShipInfo.CreateDate"].Value,
+                statusProcessing = Localizer["ShipInfo.Status.Processing"].Value,
+                statusWarehouseReceived = Localizer["ShipInfo.Status.WarehouseReceived"].Value,
+                statusCancelled = Localizer["ShipInfo.Status.Cancelled"].Value,
+                caseDrawerDepositTitle = Localizer["ShipInfo.CaseDrawerDepositTitle"].Value,
+                caseDrawerArurTitle = Localizer["ShipInfo.CaseDrawerArurTitle"].Value,
+                depositConfirmTitle = Localizer["ShipInfo.DepositConfirmTitle"].Value,
+                depositConfirmMessage = Localizer["ShipInfo.DepositConfirmMessage"].Value,
+                arurConfirmTitle = Localizer["ShipInfo.ArurConfirmTitle"].Value,
+                arurConfirmMessage = Localizer["ShipInfo.ArurConfirmMessage"].Value,
+                caseCreateSuccess = Localizer["ShipInfo.CaseCreateSuccess"].Value,
+                caseCreateFailed = Localizer["ShipInfo.CaseCreateFailed"].Value
+            }))
+        };
+    </script>
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-metadata-render.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-core.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-protable.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-browse.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-crud.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-case-drawer.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo.js" asp-append-version="true"></script>
+}

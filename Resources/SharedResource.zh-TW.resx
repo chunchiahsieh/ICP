@@ -189,6 +189,237 @@
   <data name="Function.Placeholder" xml:space="preserve">
     <value>功能開發中，敬請期待。</value>
   </data>
+  <data name="ShipInfo.Search" xml:space="preserve">
+    <value>查詢</value>
+  </data>
+  <data name="ShipInfo.Reset" xml:space="preserve">
+    <value>重設</value>
+  </data>
+  <data name="ShipInfo.Edit" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="ShipInfo.Delete" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="ShipInfo.Deposit" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.ARUR" xml:space="preserve">
+    <value>ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.Save" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="ShipInfo.Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ShipInfo.HeaderTitle" xml:space="preserve">
+    <value>船務表頭</value>
+  </data>
+  <data name="ShipInfo.DetailTitle" xml:space="preserve">
+    <value>船務明細</value>
+  </data>
+  <data name="ShipInfo.SelectHeaderFirst" xml:space="preserve">
+    <value>請先選擇 Header</value>
+  </data>
+  <data name="ShipInfo.DepositCompleted" xml:space="preserve">
+    <value>已完成押金起案</value>
+  </data>
+  <data name="ShipInfo.Loading" xml:space="preserve">
+    <value>處理中...</value>
+  </data>
+  <data name="ShipInfo.SaveSuccess" xml:space="preserve">
+    <value>儲存成功</value>
+  </data>
+  <data name="ShipInfo.SaveFailed" xml:space="preserve">
+    <value>儲存失敗</value>
+  </data>
+  <data name="ShipInfo.DeleteSuccess" xml:space="preserve">
+    <value>刪除成功</value>
+  </data>
+  <data name="ShipInfo.DeleteFailed" xml:space="preserve">
+    <value>刪除失敗</value>
+  </data>
+  <data name="ShipInfo.NoData" xml:space="preserve">
+    <value>查無資料</value>
+  </data>
+  <data name="ShipInfo.Action" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="ShipInfo.RequiredMark" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="ShipInfo.ValidationFailed" xml:space="preserve">
+    <value>驗證失敗</value>
+  </data>
+  <data name="ShipInfo.DrawerHeader" xml:space="preserve">
+    <value>Header 編輯</value>
+  </data>
+  <data name="ShipInfo.DrawerDetail" xml:space="preserve">
+    <value>Detail 編輯</value>
+  </data>
+  <data name="ShipInfo.NoDetailData" xml:space="preserve">
+    <value>尚無 Detail 資料</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmTitle" xml:space="preserve">
+    <value>是否確定刪除？</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmMessage" xml:space="preserve">
+    <value>此操作將一併刪除所有 Detail。</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmIrreversible" xml:space="preserve">
+    <value>此動作不可復原。</value>
+  </data>
+  <data name="ShipInfo.DeleteDetailConfirmTitle" xml:space="preserve">
+    <value>是否確定刪除 Detail？</value>
+  </data>
+  <data name="ShipInfo.DeleteDetailConfirmMessage" xml:space="preserve">
+    <value>刪除後無法復原。</value>
+  </data>
+  <data name="ShipInfo.HeaderInformation" xml:space="preserve">
+    <value>表頭資訊</value>
+  </data>
+  <data name="ShipInfo.DetailInformation" xml:space="preserve">
+    <value>明細資訊</value>
+  </data>
+  <data name="ShipInfo.StatusNotAllowed" xml:space="preserve">
+    <value>目前狀態不允許此操作</value>
+  </data>
+  <data name="ShipInfo.ConcurrencyError" xml:space="preserve">
+    <value>資料已更新，請重新整理</value>
+  </data>
+  <data name="ShipInfo.Confirm" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="ShipInfo.SearchCompleted" xml:space="preserve">
+    <value>查詢完成</value>
+  </data>
+  <data name="ShipInfo.ArurCompleted" xml:space="preserve">
+    <value>已完成 ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.PageSize" xml:space="preserve">
+    <value>每頁筆數</value>
+  </data>
+  <data name="ShipInfo.PageLabel" xml:space="preserve">
+    <value>頁次</value>
+  </data>
+  <data name="ShipInfo.TotalRecords" xml:space="preserve">
+    <value>共 {0} 筆</value>
+  </data>
+  <data name="ShipInfo.DrawerTitle" xml:space="preserve">
+    <value>Ship Info 明細</value>
+  </data>
+  <data name="ShipInfo.DrawerSummary" xml:space="preserve">
+    <value>彙總</value>
+  </data>
+  <data name="ShipInfo.DetailCount" xml:space="preserve">
+    <value>Detail 筆數</value>
+  </data>
+  <data name="ShipInfo.TotalQty" xml:space="preserve">
+    <value>總數量</value>
+  </data>
+  <data name="ShipInfo.TotalWeight" xml:space="preserve">
+    <value>總重量</value>
+  </data>
+  <data name="ShipInfo.TotalAmount" xml:space="preserve">
+    <value>總金額</value>
+  </data>
+  <data name="ShipInfo.QtyLabel" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="ShipInfo.View" xml:space="preserve">
+    <value>檢視</value>
+  </data>
+  <data name="ShipInfo.ViewDrawer" xml:space="preserve">
+    <value>明細檢視</value>
+  </data>
+  <data name="ShipInfo.Submit" xml:space="preserve">
+    <value>送出</value>
+  </data>
+  <data name="ShipInfo.HeaderSummary" xml:space="preserve">
+    <value>Header 摘要</value>
+  </data>
+  <data name="ShipInfo.ShipNo" xml:space="preserve">
+    <value>Ship No</value>
+  </data>
+  <data name="ShipInfo.Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="ShipInfo.Status" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="ShipInfo.CreateDate" xml:space="preserve">
+    <value>建立日期</value>
+  </data>
+  <data name="ShipInfo.EditMode" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="ShipInfo.Close" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="ShipInfo.Status.Processing" xml:space="preserve">
+    <value>處理中</value>
+  </data>
+  <data name="ShipInfo.Status.WarehouseReceived" xml:space="preserve">
+    <value>庫房已接收</value>
+  </data>
+  <data name="ShipInfo.Status.Cancelled" xml:space="preserve">
+    <value>作廢</value>
+  </data>
+  <data name="ShipInfo.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="ShipInfo.SaDate" xml:space="preserve">
+    <value>SA Date</value>
+  </data>
+  <data name="ShipInfo.InvoiceNo" xml:space="preserve">
+    <value>Invoice No</value>
+  </data>
+  <data name="ShipInfo.TotalInvoiceQty" xml:space="preserve">
+    <value>Total Invoice Qty</value>
+  </data>
+  <data name="ShipInfo.TotalCarton" xml:space="preserve">
+    <value>Total Carton</value>
+  </data>
+  <data name="ShipInfo.CaseDrawerDepositTitle" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.CaseDrawerArurTitle" xml:space="preserve">
+    <value>ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.DepositConfirmTitle" xml:space="preserve">
+    <value>是否確認建立押金案件？</value>
+  </data>
+  <data name="ShipInfo.DepositConfirmMessage" xml:space="preserve">
+    <value>請確認 Header 與 Detail 資料無誤後再送出。</value>
+  </data>
+  <data name="ShipInfo.ArurConfirmTitle" xml:space="preserve">
+    <value>是否確認建立 ARUR 案件？</value>
+  </data>
+  <data name="ShipInfo.ArurConfirmMessage" xml:space="preserve">
+    <value>請確認 Header 與 Detail 資料無誤後再送出。</value>
+  </data>
+  <data name="ShipInfo.CaseCreateSuccess" xml:space="preserve">
+    <value>起案成功</value>
+  </data>
+  <data name="ShipInfo.CaseCreateFailed" xml:space="preserve">
+    <value>起案失敗</value>
+  </data>
+  <data name="Views.Function.ShipInfo.View" xml:space="preserve">
+    <value>Ship Info 查詢</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Edit" xml:space="preserve">
+    <value>Ship Info 編輯</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
+    <value>Ship Info 刪除</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">
+    <value>Ship Info 押金起案</value>
+  </data>
+  <data name="Views.Function.ShipInfo.ARUR" xml:space="preserve">
+    <value>Ship Info ARUR 起案</value>
+  </data>
   <data name="Function.AddDiSa.Title" xml:space="preserve">
     <value>新增 DI/SA</value>
   </data>

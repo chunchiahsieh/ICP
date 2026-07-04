@@ -1,0 +1,308 @@
+.shipinfo-page .shipinfo-header-card {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+}
+
+.shipinfo-page .shipinfo-detail-card {
+    position: relative;
+    z-index: 2;
+}
+
+.shipinfo-page .shipinfo-table-card-body {
+    overflow: hidden;
+}
+
+.shipinfo-page .shipinfo-table-wrap {
+    max-height: 420px;
+    overflow: auto;
+    position: relative;
+    isolation: isolate;
+}
+
+.shipinfo-page .shipinfo-sticky-header tr:first-child th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: var(--bs-table-bg, #f8f9fa);
+    box-shadow: 0 1px 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page .shipinfo-sticky-header tr.users-filter-row th {
+    position: sticky;
+    top: var(--shipinfo-header-row-height, 2.5rem);
+    z-index: 3;
+    vertical-align: top;
+    background-color: var(--bs-table-bg, #f8f9fa);
+    font-weight: normal;
+    padding: 0.35rem;
+    box-shadow: 0 1px 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled {
+    cursor: default;
+    pointer-events: auto;
+}
+
+.shipinfo-page .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled::before,
+.shipinfo-page .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled::after {
+    display: none !important;
+}
+
+.shipinfo-page #shipInfoHeaderTable tbody tr {
+    cursor: pointer;
+}
+
+.shipinfo-page #shipInfoDetailTable tbody tr {
+    cursor: pointer;
+}
+
+.shipinfo-page #shipInfoHeaderTable tbody tr.table-primary td {
+    box-shadow: inset 0 0 0 1px rgba(13, 110, 253, 0.35);
+}
+
+.shipinfo-page .users-filter-menu {
+    z-index: 1080;
+}
+
+.shipinfo-page .column-filter-dropdown .dropdown-menu {
+    z-index: 1080;
+}
+
+.shipinfo-page .form-control.is-invalid,
+.shipinfo-page .form-select.is-invalid {
+    border-color: var(--bs-danger);
+}
+
+.shipinfo-page .shipinfo-table-mask,
+.shipinfo-page .shipinfo-modal-mask {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.72);
+}
+
+.shipinfo-page .shipinfo-modal-mask {
+    border-radius: var(--bs-border-radius);
+}
+
+.shipinfo-page.shipinfo-busy .shipinfo-view-modal-actions .btn:not(:disabled) {
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+.shipinfo-page .shipinfo-page-size-select {
+    width: auto;
+    min-width: 4.5rem;
+}
+
+.shipinfo-page .shipinfo-pagination-bar .pagination {
+    flex-wrap: wrap;
+}
+
+#shipInfoViewModal .shipinfo-view-modal-header {
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#shipInfoViewModal .shipinfo-view-modal-actions {
+    align-items: center;
+}
+
+#shipInfoViewModal .shipinfo-view-modal-actions .btn-close {
+    margin: 0;
+}
+
+@media (max-width: 575.98px) {
+    #shipInfoViewModal .shipinfo-view-modal-header {
+        flex-wrap: wrap;
+    }
+
+    #shipInfoViewModal .shipinfo-view-modal-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .shipinfo-page .shipinfo-pagination-bar {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .shipinfo-page .shipinfo-pagination-bar nav,
+    .shipinfo-page .shipinfo-pagination-bar .d-flex {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .shipinfo-page .shipinfo-page-size-select {
+        flex: 1;
+    }
+}
+
+.shipinfo-page .shipinfo-radio-col {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    max-width: 2.5rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.shipinfo-page .shipinfo-action-col {
+    width: 3rem;
+    min-width: 3rem;
+    max-width: 3rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.shipinfo-page .shipinfo-pro-table .shipinfo-radio-col,
+.shipinfo-page .shipinfo-pro-table .shipinfo-action-col {
+    position: sticky;
+    z-index: 2;
+    background-color: var(--bs-body-bg, #fff);
+    background-clip: padding-box;
+    box-shadow: none;
+}
+
+.shipinfo-page .shipinfo-pro-table thead .shipinfo-radio-col,
+.shipinfo-page .shipinfo-pro-table thead .shipinfo-action-col {
+    z-index: 6;
+    background-color: #f8f9fa;
+    box-shadow: none;
+}
+
+.shipinfo-page .shipinfo-pro-table.table-striped > tbody > tr:nth-of-type(odd) > .shipinfo-radio-col,
+.shipinfo-page .shipinfo-pro-table.table-striped > tbody > tr:nth-of-type(odd) > .shipinfo-action-col {
+    background-color: #f2f2f2;
+    box-shadow: none;
+}
+
+.shipinfo-page .shipinfo-pro-table.table-hover > tbody > tr:hover > .shipinfo-radio-col,
+.shipinfo-page .shipinfo-pro-table.table-hover > tbody > tr:hover > .shipinfo-action-col {
+    background-color: #e9ecef;
+    box-shadow: none;
+}
+
+.shipinfo-page #shipInfoHeaderTable tbody tr.table-primary > .shipinfo-radio-col,
+.shipinfo-page #shipInfoHeaderTable tbody tr.table-primary > .shipinfo-action-col {
+    background-color: #cfe2ff;
+    box-shadow: none;
+}
+
+.shipinfo-page #shipInfoHeaderTable .shipinfo-radio-col {
+    left: 0;
+}
+
+.shipinfo-page #shipInfoHeaderTable .shipinfo-action-col {
+    left: 2.5rem;
+    box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page #shipInfoDetailTable .shipinfo-action-col {
+    left: 0;
+    box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page #shipInfoHeaderTable tbody tr.table-primary > .shipinfo-action-col {
+    box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page .shipinfo-pro-table.table-hover > tbody > tr:hover > .shipinfo-action-col,
+.shipinfo-page .shipinfo-pro-table.table-striped > tbody > tr:nth-of-type(odd) > .shipinfo-action-col {
+    box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page #shipInfoDetailTable tbody tr:hover > .shipinfo-action-col {
+    box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page .shipinfo-header-edit-btn,
+.shipinfo-page .shipinfo-detail-edit-btn {
+    color: var(--bs-primary);
+    text-decoration: none;
+}
+
+.shipinfo-page .shipinfo-header-edit-btn:hover,
+.shipinfo-page .shipinfo-header-edit-btn:focus,
+.shipinfo-page .shipinfo-detail-edit-btn:hover,
+.shipinfo-page .shipinfo-detail-edit-btn:focus {
+    color: var(--bs-primary);
+    text-decoration: none;
+}
+
+.shipinfo-page .shipinfo-header-toolbar .btn {
+    white-space: nowrap;
+}
+
+.shipinfo-case-drawer {
+    --bs-offcanvas-width: 80vw;
+    width: 80vw;
+    max-width: 100vw;
+}
+
+.shipinfo-case-drawer .shipinfo-drawer-mask {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.72);
+}
+
+.shipinfo-drawer-summary dt {
+    font-weight: 500;
+    color: var(--bs-secondary-color);
+}
+
+.shipinfo-case-drawer-footer {
+    background-color: var(--bs-body-bg);
+}
+
+.shipinfo-drawer-report-table {
+    font-size: 0.875rem;
+    table-layout: auto;
+}
+
+.shipinfo-drawer-header-report .shipinfo-drawer-report-label {
+    width: 12%;
+    background-color: #f8f9fa;
+    white-space: nowrap;
+    font-weight: 500;
+    color: var(--bs-secondary-color);
+    vertical-align: middle;
+}
+
+.shipinfo-drawer-header-report .shipinfo-drawer-report-value {
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+.shipinfo-drawer-header-report .shipinfo-drawer-report-empty {
+    background-color: var(--bs-body-bg, #fff);
+}
+
+.shipinfo-drawer-detail-table-wrap {
+    overflow-x: auto;
+}
+
+.shipinfo-drawer-detail-report thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #f8f9fa;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.shipinfo-drawer-detail-report td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.shipinfo-case-drawer .accordion-button {
+    font-weight: 600;
+}
