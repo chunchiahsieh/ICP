@@ -1026,6 +1026,12 @@
   <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
     <value>Cost file {0} uploaded successfully</value>
   </data>
+  <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Broker.TariffData.DownloadTemplate" xml:space="preserve">
+    <value>Download Template</value>
+  </data>
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
     <value>Tariff Data View</value>
   </data>
@@ -1037,6 +1043,9 @@
   </data>
   <data name="Views.Broker.TariffData.UploadCost" xml:space="preserve">
     <value>Upload Cost</value>
+  </data>
+  <data name="Broker.TariffData.Column.RowNo" xml:space="preserve">
+    <value>No.</value>
   </data>
   <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
     <value>MAWB</value>

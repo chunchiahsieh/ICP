@@ -2,7 +2,9 @@ using ICP.Data;
 using ICP.Helpers;
 using ICP.Models;
 using ICP.Models.Icp;
+using ICP.Models.Tariff;
 using ICP.Services;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -12,33 +14,16 @@ namespace ICP.Controllers;
 
 public class TariffDataController : Controller
 {
+    private const string TemplateFileName = "KWE_TariffCustomsDataTemplate.xls";
+
     private static readonly HashSet<string> ExcelExtensions = new(StringComparer.OrdinalIgnoreCase) { ".xlsx", ".xls" };
     private static readonly HashSet<string> PdfExtensions = new(StringComparer.OrdinalIgnoreCase) { ".pdf" };
-
-    private static readonly HashSet<string> AllowedFilterColumns = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "MAWB",
-        "HAWB",
-        "ImportDate",
-        "DeclarationDate",
-        "ReleaseDate",
-        "InvoiceNumber",
-        "DescriptionOfGoods",
-        "HTSNumber",
-        "EntryNumber",
-        "Mode",
-        "PortOfDeparture",
-        "FlightNo",
-        "Shipper",
-        "Broker",
-        "AirSea",
-        "CreateDate"
-    };
 
     private readonly ApplicationDbContext _db;
     private readonly IWebHostEnvironment _environment;
     private readonly TariffDataOptions _options;
     private readonly TariffDataImportService _importService;
+    private readonly TariffTableMetadataProvider _tableMetadataProvider;
     private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly ILogger<TariffDataController> _logger;
 
@@ -47,6 +32,7 @@ public class TariffDataController : Controller
         IWebHostEnvironment environment,
         IOptions<TariffDataOptions> options,
         TariffDataImportService importService,
+        TariffTableMetadataProvider tableMetadataProvider,
         IStringLocalizer<SharedResource> localizer,
         ILogger<TariffDataController> logger)
     {
@@ -54,6 +40,7 @@ public class TariffDataController : Controller
         _environment = environment;
         _options = options.Value;
         _importService = importService;
+        _tableMetadataProvider = tableMetadataProvider;
         _localizer = localizer;
         _logger = logger;
     }
@@ -62,7 +49,33 @@ public class TariffDataController : Controller
     public IActionResult Index()
     {
         ViewData["MaxSizeMb"] = _options.MaxSizeMb;
+        var tableConfig = _tableMetadataProvider.GetPageConfig();
+        ViewData["TariffTableConfigJson"] = JsonSerializer.Serialize(new
+        {
+            filterFieldMap = tableConfig.FilterFieldMap,
+            initialSortColumn = tableConfig.ResolveInitialSortColumnIndex() ?? 0,
+            initialSortDirection = string.IsNullOrWhiteSpace(tableConfig.InitialSort?.Direction)
+                ? "desc"
+                : tableConfig.InitialSort!.Direction,
+            stickyHeader = tableConfig.TableUi.StickyHeader == true,
+            stickyLeftColumns = tableConfig.TableUi.StickyLeftColumns == true
+        });
         return View("~/Views/BROKER/TariffData/View.cshtml");
+    }
+
+    [HttpGet]
+    public IActionResult DownloadTemplate()
+    {
+        var templatePath = Path.Combine(_environment.ContentRootPath, "Files", TemplateFileName);
+        if (!System.IO.File.Exists(templatePath))
+        {
+            return NotFound();
+        }
+
+        return PhysicalFile(
+            templatePath,
+            "application/vnd.ms-excel",
+            TemplateFileName);
     }
 
     [HttpPost]
@@ -71,10 +84,7 @@ public class TariffDataController : Controller
         CancellationToken cancellationToken = default)
     {
         var list = await QueryTariffDataAsync(criteria, cancellationToken);
-        return PartialView("~/Views/BROKER/TariffData/View.List.cshtml", new TariffDataSearchListViewModel
-        {
-            ListData = list
-        });
+        return PartialView("~/Views/BROKER/TariffData/View.List.cshtml", CreateListViewModel(list));
     }
 
     [HttpGet]
@@ -83,7 +93,7 @@ public class TariffDataController : Controller
         string? search = null,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(column) || !AllowedFilterColumns.Contains(column))
+        if (string.IsNullOrWhiteSpace(column) || !_tableMetadataProvider.IsSearchableColumn(column))
         {
             return BadRequest();
         }
@@ -195,6 +205,18 @@ public class TariffDataController : Controller
             "cost",
             _localizer["Broker.TariffData.UploadCostSuccess"].Value,
             cancellationToken);
+
+    private TariffDataSearchListViewModel CreateListViewModel(IReadOnlyList<TariffData> listData)
+    {
+        var tableConfig = _tableMetadataProvider.GetPageConfig();
+        return new TariffDataSearchListViewModel
+        {
+            ListData = listData,
+            Fields = tableConfig.Fields,
+            TableUi = tableConfig.TableUi,
+            HasFilterRow = tableConfig.HasFilterRow
+        };
+    }
 
     private IQueryable<TariffData> BaseQuery()
     {

@@ -1,14 +1,18 @@
-@using System.Text.Json
+﻿@using System.Text.Json
 @{
     ViewData["Title"] = Localizer["Broker.TariffData.Title"];
     var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
     var maxSizeHint = string.Format(Localizer["Broker.TariffData.MaxSizeHint"].Value, maxSizeMb);
+    var tariffTableConfigJson = ViewData["TariffTableConfigJson"] as string ?? "{}";
+    var lengthMenuAll = Localizer["Broker.TariffData.LengthMenuAll"].Value;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pro-table-filters.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tariff-data.css" asp-append-version="true" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -20,18 +24,26 @@
     </script>
 }
 
-<div data-permissions="Views.Broker.TariffData.View"
+<div class="container-fluid tariff-data-page"
+     data-permissions="Views.Broker.TariffData.View"
      data-i18n-key="Views.Broker.TariffData.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
         <h4 class="mb-0">@Localizer["Broker.TariffData.Title"]</h4>
     </div>
     <p class="text-muted small mb-3">@maxSizeHint</p>
 
-    <div class="d-flex align-items-start gap-3 flex-wrap mb-3">
+    <div class="d-flex align-items-start gap-2 flex-wrap mb-3">
         <div data-permissions="Views.Broker.TariffData.UploadCustomsData"
              data-i18n-key="Views.Broker.TariffData.UploadCustomsData">
             <div id="customsDataUploader"></div>
         </div>
+        <a asp-action="DownloadTemplate"
+           asp-controller="TariffData"
+           class="btn btn-outline-secondary align-self-center"
+           data-permissions="Views.Broker.TariffData.UploadCustomsData"
+           data-i18n-key="Broker.TariffData.DownloadTemplate">
+            @Localizer["Broker.TariffData.DownloadTemplate"]
+        </a>
         <div data-permissions="Views.Broker.TariffData.UploadDeclarationPdf"
              data-i18n-key="Views.Broker.TariffData.UploadDeclarationPdf">
             <div id="declarationPdfUploader"></div>
@@ -42,7 +54,12 @@
         </div>
     </div>
 
-    <div id="DataDiv"></div>
+    <div class="card mb-3 tariff-table-card">
+        <div class="card-header">@Localizer["Broker.TariffData.Title"]</div>
+        <div class="card-body p-0 position-relative tariff-table-card-body">
+            <div id="DataDiv"></div>
+        </div>
+    </div>
 </div>
 
 <div class="d-none" aria-hidden="true">
@@ -67,6 +84,8 @@
             var maxSizeMb = @maxSizeMb;
             var maxSizeHint = @Html.Raw(JsonSerializer.Serialize(maxSizeHint));
             var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
+            var tariffTableConfig = @Html.Raw(tariffTableConfigJson);
+            var lengthMenuAll = @Html.Raw(JsonSerializer.Serialize(lengthMenuAll));
 
             function hasPermission(code) {
                 var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
@@ -80,33 +99,45 @@
                 });
             }
 
-            var filterFieldMap = {
-                'filter-MAWB': 'MAWBs',
-                'filter-HAWB': 'HAWBs',
-                'filter-ImportDate': 'ImportDates',
-                'filter-DeclarationDate': 'DeclarationDates',
-                'filter-ReleaseDate': 'ReleaseDates',
-                'filter-InvoiceNumber': 'InvoiceNumbers',
-                'filter-DescriptionOfGoods': 'DescriptionOfGoodsList',
-                'filter-HTSNumber': 'HTSNumbers',
-                'filter-EntryNumber': 'EntryNumbers',
-                'filter-Mode': 'Modes',
-                'filter-PortOfDeparture': 'PortOfDepartures',
-                'filter-FlightNo': 'FlightNos',
-                'filter-Shipper': 'Shippers',
-                'filter-Broker': 'Brokers',
-                'filter-AirSea': 'AirSeas',
-                'filter-CreateDate': 'CreateDates'
-            };
+            function syncTariffStickyHeaderOffset() {
+                if (!tariffTableConfig.stickyHeader) {
+                    return;
+                }
+
+                $('#DataDiv .tariff-pro-table').each(function () {
+                    var table = this;
+                    var $titleRow = $(table).find('thead.tariff-sticky-header > tr').first();
+                    if (!$titleRow.length) {
+                        return;
+                    }
+
+                    var titleHeight = Math.ceil($titleRow[0].getBoundingClientRect().height);
+                    table.style.setProperty('--tariff-header-row-height', titleHeight + 'px');
+                });
+            }
+
+            function renumberTariffRowNo() {
+                $('#DataDiv .tariff-pro-table tbody .tariff-rowno-col').each(function (index) {
+                    $(this).text(index + 1);
+                });
+            }
 
             var tableInstance = null;
 
             if (window.ProDataTables && ProDataTables.initUsers && hasPermission('Views.Broker.TariffData.View')) {
+                var sortColumn = tariffTableConfig.initialSortColumn ?? 0;
+                var sortDirection = tariffTableConfig.initialSortDirection || 'desc';
                 tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
-                    filterFieldMap: filterFieldMap,
+                    filterFieldMap: tariffTableConfig.filterFieldMap || {},
                     filterOptionsUrl: '@Url.Action("GetFilterOptions", "TariffData")',
                     queryUrl: '@Url.Action("Query", "TariffData")',
-                    initialSort: [[15, 'desc']]
+                    pageLength: -1,
+                    lengthMenu: [[-1], [lengthMenuAll]],
+                    initialSort: [[sortColumn, sortDirection]],
+                    onDraw: function () {
+                        syncTariffStickyHeaderOffset();
+                        renumberTariffRowNo();
+                    }
                 }));
             }
 
@@ -133,6 +164,7 @@
 
             if (hasPermission('Views.Broker.TariffData.UploadCustomsData')) {
                 createTariffUploader('#customsDataUploader', {
+                    multiple: false,
                     title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataTitle"].Value)),
                     buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataButton"].Value)),
                     uploadUrl: '@Url.Action("UploadCustomsData", "TariffData")',

@@ -1,76 +1,92 @@
 @model ICP.Models.TariffDataSearchListViewModel
+@using ICP.Helpers
+@using ICP.Models.Tariff
 @{
-    var filterColumns = new[]
+    var wrapStyle = string.IsNullOrWhiteSpace(Model.TableUi.MaxHeight)
+        ? null
+        : $"max-height: {Model.TableUi.MaxHeight};";
+    var wrapClasses = "table-responsive tariff-table-wrap";
+    if (Model.TableUi.StickyHeader == true)
     {
-        ("filter-MAWB", "MAWB"),
-        ("filter-HAWB", "HAWB"),
-        ("filter-ImportDate", "ImportDate"),
-        ("filter-DeclarationDate", "DeclarationDate"),
-        ("filter-ReleaseDate", "ReleaseDate"),
-        ("filter-InvoiceNumber", "InvoiceNumber"),
-        ("filter-DescriptionOfGoods", "DescriptionOfGoods"),
-        ("filter-HTSNumber", "HTSNumber"),
-        ("filter-EntryNumber", "EntryNumber"),
-        ("filter-Mode", "Mode"),
-        ("filter-PortOfDeparture", "PortOfDeparture"),
-        ("filter-FlightNo", "FlightNo"),
-        ("filter-Shipper", "Shipper"),
-        ("filter-Broker", "Broker"),
-        ("filter-AirSea", "AirSea"),
-        ("filter-CreateDate", "CreateDate")
-    };
+        wrapClasses += " tariff-sticky-enabled";
+    }
+
+    if (Model.TableUi.StickyLeftColumns == true)
+    {
+        wrapClasses += " tariff-sticky-left-enabled";
+    }
+
+    var theadClasses = "table-light";
+    if (Model.TableUi.StickyHeader == true)
+    {
+        theadClasses += " tariff-sticky-header";
+    }
+
+    string ResolveHeaderCellClass(TariffTableFieldMetadata field)
+    {
+        if (Model.TableUi.StickyLeftColumns == true
+            && string.Equals(field.FieldName, "RowNo", StringComparison.OrdinalIgnoreCase))
+        {
+            return "tariff-rowno-col";
+        }
+
+        return string.Empty;
+    }
 }
 
-<table id="datatable" class="table table-striped table-sm">
-    <thead>
-        <tr>
-            <th>@Localizer["Broker.TariffData.Column.MAWB"]</th>
-            <th>@Localizer["Broker.TariffData.Column.HAWB"]</th>
-            <th>@Localizer["Broker.TariffData.Column.ImportDate"]</th>
-            <th>@Localizer["Broker.TariffData.Column.DeclarationDate"]</th>
-            <th>@Localizer["Broker.TariffData.Column.ReleaseDate"]</th>
-            <th>@Localizer["Broker.TariffData.Column.InvoiceNumber"]</th>
-            <th>@Localizer["Broker.TariffData.Column.DescriptionOfGoods"]</th>
-            <th>@Localizer["Broker.TariffData.Column.HTSNumber"]</th>
-            <th>@Localizer["Broker.TariffData.Column.EntryNumber"]</th>
-            <th>@Localizer["Broker.TariffData.Column.Mode"]</th>
-            <th>@Localizer["Broker.TariffData.Column.PortOfDeparture"]</th>
-            <th>@Localizer["Broker.TariffData.Column.FlightNo"]</th>
-            <th>@Localizer["Broker.TariffData.Column.Shipper"]</th>
-            <th>@Localizer["Broker.TariffData.Column.Broker"]</th>
-            <th>@Localizer["Broker.TariffData.Column.AirSea"]</th>
-            <th>@Localizer["Broker.TariffData.Column.CreateDate"]</th>
-        </tr>
-        <tr class="users-filter-row">
-            @foreach (var (filterId, column) in filterColumns)
-            {
-                <th class="sorting_disabled">
-                    @await Html.PartialAsync("_ProDataTablesFilter", (filterId, column))
-                </th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.ListData)
-        {
+<div class="@wrapClasses" @(wrapStyle is not null ? Html.Raw($"style=\"{wrapStyle}\"") : null)>
+    <table id="datatable" class="table table-striped table-hover table-bordered align-middle mb-0 tariff-pro-table w-100">
+        <thead class="@theadClasses">
             <tr>
-                <td>@item.MAWB</td>
-                <td>@item.HAWB</td>
-                <td>@item.ImportDate.ToString("yyyy/MM/dd")</td>
-                <td>@item.DeclarationDate.ToString("yyyy/MM/dd")</td>
-                <td>@item.ReleaseDate.ToString("yyyy/MM/dd")</td>
-                <td>@item.InvoiceNumber</td>
-                <td>@item.DescriptionOfGoods</td>
-                <td>@item.HTSNumber</td>
-                <td>@item.EntryNumber</td>
-                <td>@item.Mode</td>
-                <td>@item.PortOfDeparture</td>
-                <td>@item.FlightNo</td>
-                <td>@item.Shipper</td>
-                <td>@item.Broker</td>
-                <td>@item.AirSea</td>
-                <td>@item.CreateDate.ToString("yyyy/MM/dd")</td>
+                @foreach (var field in Model.Fields)
+                {
+                    var headerClass = ResolveHeaderCellClass(field);
+                    <th class="@headerClass">@TariffTableViewHelper.ResolveHeaderLabel(field, key => Localizer[key].Value)</th>
+                }
             </tr>
-        }
-    </tbody>
-</table>
+            @if (Model.HasFilterRow)
+            {
+                <tr class="users-filter-row">
+                    @foreach (var field in Model.Fields)
+                    {
+                        var filterClass = ResolveHeaderCellClass(field);
+                        var thClass = string.IsNullOrWhiteSpace(filterClass)
+                            ? "sorting_disabled"
+                            : $"{filterClass} sorting_disabled";
+                        <th class="@thClass">
+                            @if (field.Searchable)
+                            {
+                                @await Html.PartialAsync("_ProDataTablesFilter", ($"filter-{field.FieldName}", field.FieldName))
+                            }
+                        </th>
+                    }
+                </tr>
+            }
+        </thead>
+        <tbody>
+            @{
+                var rowIndex = 0;
+            }
+            @foreach (var item in Model.ListData)
+            {
+                rowIndex++;
+                <tr>
+                    @foreach (var field in Model.Fields)
+                    {
+                        @if (string.Equals(field.FieldName, "RowNo", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var rowNoClass = Model.TableUi.StickyLeftColumns == true
+                                ? "tariff-rowno-col text-center"
+                                : "text-center";
+                            <td class="@rowNoClass">@rowIndex</td>
+                        }
+                        else
+                        {
+                            <td>@TariffTableViewHelper.FormatCellValue(item, field.FieldName)</td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

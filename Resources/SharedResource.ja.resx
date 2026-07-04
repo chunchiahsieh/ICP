@@ -1026,6 +1026,12 @@
   <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
     <value>Cost ファイル {0} のアップロードに成功しました</value>
   </data>
+  <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="Broker.TariffData.DownloadTemplate" xml:space="preserve">
+    <value>テンプレートをダウンロード</value>
+  </data>
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
     <value>関税データ照会</value>
   </data>
@@ -1037,6 +1043,9 @@
   </data>
   <data name="Views.Broker.TariffData.UploadCost" xml:space="preserve">
     <value>Cost をアップロード</value>
+  </data>
+  <data name="Broker.TariffData.Column.RowNo" xml:space="preserve">
+    <value>番号</value>
   </data>
   <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
     <value>MAWB</value>

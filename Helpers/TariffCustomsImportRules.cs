@@ -124,6 +124,11 @@ public static class TariffCustomsImportRules
             return "YUANFAN";
         }
 
+        if (upper.Contains("TARIFFCUSTOMSDATATEMPLATE", StringComparison.Ordinal))
+        {
+            return "KWE";
+        }
+
         throw new InvalidOperationException($"無法依檔名判斷報關行（Broker）：{fileName}");
     }
 
@@ -348,15 +353,19 @@ public static class TariffCustomsImportRules
             return dateTime.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
         }
 
-        if (value is double number && number is > 0 and < 100000)
+        if (value is double doubleValue)
         {
-            try
-            {
-                return DateTime.FromOADate(number).ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-            }
-            catch (ArgumentException)
-            {
-            }
+            return doubleValue.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (value is float floatValue)
+        {
+            return floatValue.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (value is decimal decimalValue)
+        {
+            return decimalValue.ToString(CultureInfo.InvariantCulture);
         }
 
         return NormalizeCellText(value.ToString());

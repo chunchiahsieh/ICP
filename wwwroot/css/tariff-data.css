@@ -1,0 +1,94 @@
+.tariff-data-page .tariff-table-card {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+}
+
+.tariff-data-page .tariff-table-card-body {
+    overflow: hidden;
+}
+
+.tariff-data-page .tariff-table-wrap {
+    overflow: auto;
+    position: relative;
+    isolation: isolate;
+}
+
+.tariff-data-page .tariff-pro-table {
+    white-space: nowrap;
+}
+
+.tariff-data-page .tariff-rowno-col {
+    width: 3rem;
+    min-width: 3rem;
+    max-width: 3rem;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.tariff-data-page .tariff-sticky-enabled .tariff-sticky-header tr:first-child th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: var(--bs-table-bg, #f8f9fa);
+    box-shadow: 0 1px 0 var(--bs-border-color, #dee2e6);
+    white-space: nowrap;
+}
+
+.tariff-data-page .tariff-sticky-enabled .tariff-sticky-header tr.users-filter-row th {
+    position: sticky;
+    top: var(--tariff-header-row-height, 2.5rem);
+    z-index: 3;
+    vertical-align: top;
+    background-color: var(--bs-table-bg, #f8f9fa);
+    font-weight: normal;
+    padding: 0.35rem;
+    box-shadow: 0 1px 0 var(--bs-border-color, #dee2e6);
+}
+
+.tariff-data-page .tariff-pro-table thead.tariff-sticky-header tr:first-child th.tariff-rowno-col,
+.tariff-data-page .tariff-pro-table thead.tariff-sticky-header tr.users-filter-row th.tariff-rowno-col {
+    z-index: 7;
+}
+
+.tariff-data-page .tariff-sticky-enabled .tariff-sticky-header tr.users-filter-row th.sorting_disabled {
+    cursor: default;
+    pointer-events: auto;
+}
+
+.tariff-data-page .tariff-sticky-enabled .tariff-sticky-header tr.users-filter-row th.sorting_disabled::before,
+.tariff-data-page .tariff-sticky-enabled .tariff-sticky-header tr.users-filter-row th.sorting_disabled::after {
+    display: none !important;
+}
+
+.tariff-data-page .tariff-sticky-left-enabled .tariff-pro-table .tariff-rowno-col {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background-color: var(--bs-body-bg, #fff);
+    background-clip: padding-box;
+    box-shadow: none;
+}
+
+.tariff-data-page .tariff-sticky-left-enabled .tariff-pro-table thead .tariff-rowno-col {
+    z-index: 6;
+    background-color: #f8f9fa;
+    box-shadow: none;
+}
+
+.tariff-data-page .tariff-pro-table.table-striped > tbody > tr:nth-of-type(odd) > .tariff-rowno-col {
+    background-color: #f2f2f2;
+}
+
+.tariff-data-page .tariff-pro-table.table-hover > tbody > tr:hover > .tariff-rowno-col {
+    background-color: #e9ecef;
+}
+
+.tariff-data-page .users-filter-menu {
+    z-index: 1080;
+}
+
+.tariff-data-page .column-filter-dropdown .dropdown-menu {
+    z-index: 1080;
+}

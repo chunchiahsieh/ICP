@@ -1026,6 +1026,12 @@
   <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
     <value>Cost 檔案 {0} 上傳成功</value>
   </data>
+  <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Broker.TariffData.DownloadTemplate" xml:space="preserve">
+    <value>Download Template</value>
+  </data>
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
     <value>關稅資料查詢</value>
   </data>
@@ -1037,6 +1043,9 @@
   </data>
   <data name="Views.Broker.TariffData.UploadCost" xml:space="preserve">
     <value>上傳 Cost</value>
+  </data>
+  <data name="Broker.TariffData.Column.RowNo" xml:space="preserve">
+    <value>No.</value>
   </data>
   <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
     <value>MAWB</value>
