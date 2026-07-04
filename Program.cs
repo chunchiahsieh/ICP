@@ -13,6 +13,9 @@ using ICP.Repositories;
 
 using ICP.Services;
 
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Server.IISIntegration;
 
@@ -238,6 +241,23 @@ try
         Environment.MachineName,
         appSettingsProfile,
         logFilePath);
+
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        var addresses = app.Services.GetRequiredService<IServer>()
+            .Features.Get<IServerAddressesFeature>()?.Addresses;
+
+        if (addresses is null || addresses.Count == 0)
+        {
+            Log.Warning("ICP 已啟動，但無法取得監聽位址");
+            return;
+        }
+
+        foreach (var address in addresses)
+        {
+            Log.Information("ICP 監聽於 {ListenUrl}", address);
+        }
+    });
 
     app.Run();
 }
