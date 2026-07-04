@@ -1,18 +1,32 @@
 {
-  "_comment": "欄位順序由 fields 陣列順序決定（不需 displayOrder）。完整欄位順序請參考 Models/ShipInfo/ShipInfoTableFieldCatalog.cs。",
+  "_comment": "欄位順序由 fields 陣列順序決定。filterType: Checkbox(預設) | Text | DateRange | Date。tableUi 控制表頭/操作欄固定。",
   "header": {
+    "tableUi": {
+      "stickyHeader": true,
+      "stickyLeftColumns": true,
+      "maxHeight": "420px"
+    },
     "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
     "fields": [
-      { "fieldName": "Id", "visible": true },
-      { "fieldName": "CreateDate", "visible": true },
-      { "fieldName": "Status", "visible": true }
+      { "fieldName": "Id", "visible": false },
+      { "fieldName": "CreateDate", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "Status", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "SaDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "Eta", "visible": true, "searchable": true, "filterType": "Date" },
+      { "fieldName": "Broker", "visible": true, "searchable": true }
     ]
   },
   "detail": {
+    "tableUi": {
+      "stickyHeader": true,
+      "stickyLeftColumns": true,
+      "maxHeight": "420px"
+    },
     "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
     "fields": [
-      { "fieldName": "InvoiceSeq", "visible": true },
-      { "fieldName": "ItemNo", "visible": true }
+      { "fieldName": "InvoiceSeq", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "ItemNo", "visible": true, "searchable": true, "filterType": "Text" }
     ]
   }
 }

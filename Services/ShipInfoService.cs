@@ -56,13 +56,14 @@ public class ShipInfoService : IShipInfoService
         EnsurePermission(ShipInfoPermissionCodes.View);
         LogOperation("QueryHeader");
         var config = _metadataProvider.GetPageConfig(CultureInfo.CurrentUICulture.Name);
-        var items = await _repository.QueryHeadersAsync(criteria, cancellationToken);
+        var items = await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken);
         return new ShipInfoTableListViewModel
         {
             TableId = "shipInfoHeaderTable",
             TableKind = "Header",
             Culture = config.Culture,
             Fields = config.HeaderFields,
+            TableUi = config.HeaderTableUi,
             Items = items
         };
     }
@@ -73,7 +74,10 @@ public class ShipInfoService : IShipInfoService
         CancellationToken cancellationToken = default)
     {
         EnsurePermission(ShipInfoPermissionCodes.View);
-        if (!ShipInfoTableFilterColumns.IsHeaderAllowed(column))
+        var config = _metadataProvider.GetPageConfig(CultureInfo.CurrentUICulture.Name);
+        var field = config.HeaderFields.FirstOrDefault(x =>
+            string.Equals(x.FieldName, column, StringComparison.OrdinalIgnoreCase));
+        if (field is null || !field.Searchable || !ShipInfoMetadataHelper.IsCheckboxFilter(field))
         {
             throw new ShipInfoBusinessException("Filter column is invalid.");
         }
@@ -98,6 +102,14 @@ public class ShipInfoService : IShipInfoService
             throw new ShipInfoBusinessException("Filter column is invalid.");
         }
 
+        var config = _metadataProvider.GetPageConfig(CultureInfo.CurrentUICulture.Name);
+        var field = config.DetailFields.FirstOrDefault(x =>
+            string.Equals(x.FieldName, column, StringComparison.OrdinalIgnoreCase));
+        if (field is null || !field.Searchable || !ShipInfoMetadataHelper.IsCheckboxFilter(field))
+        {
+            throw new ShipInfoBusinessException("Filter column is invalid.");
+        }
+
         return _repository.GetDistinctDetailValuesAsync(column, headerKey, search, cancellationToken);
     }
 
@@ -114,6 +126,7 @@ public class ShipInfoService : IShipInfoService
                 TableKind = "Detail",
                 Culture = CultureInfo.CurrentUICulture.Name,
                 Fields = _metadataProvider.GetPageConfig().DetailFields,
+                TableUi = _metadataProvider.GetPageConfig().DetailTableUi,
                 Items = []
             };
         }
@@ -121,13 +134,14 @@ public class ShipInfoService : IShipInfoService
         await RequireHeaderByInvoiceAsync(criteria.HeaderKey, cancellationToken);
         LogOperation("QueryDetail", headerKey: criteria.HeaderKey);
         var config = _metadataProvider.GetPageConfig(CultureInfo.CurrentUICulture.Name);
-        var result = await _repository.QueryDetailsAsync(criteria, cancellationToken);
+        var result = await _repository.QueryDetailsAsync(criteria, config.DetailFields, cancellationToken);
         return new ShipInfoTableListViewModel
         {
             TableId = "shipInfoDetailTable",
             TableKind = "Detail",
             Culture = config.Culture,
             Fields = config.DetailFields,
+            TableUi = config.DetailTableUi,
             Items = result,
             SelectedHeaderKey = criteria.HeaderKey,
         };

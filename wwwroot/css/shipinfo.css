@@ -14,13 +14,12 @@
 }
 
 .shipinfo-page .shipinfo-table-wrap {
-    max-height: 420px;
     overflow: auto;
     position: relative;
     isolation: isolate;
 }
 
-.shipinfo-page .shipinfo-sticky-header tr:first-child th {
+.shipinfo-page .shipinfo-sticky-enabled .shipinfo-sticky-header tr:first-child th {
     position: sticky;
     top: 0;
     z-index: 3;
@@ -29,7 +28,7 @@
     white-space: nowrap;
 }
 
-.shipinfo-page .shipinfo-sticky-header tr.users-filter-row th {
+.shipinfo-page .shipinfo-sticky-enabled .shipinfo-sticky-header tr.users-filter-row th {
     position: sticky;
     top: var(--shipinfo-header-row-height, 2.5rem);
     z-index: 3;
@@ -47,13 +46,13 @@
     z-index: 7;
 }
 
-.shipinfo-page .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled {
+.shipinfo-page .shipinfo-sticky-enabled .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled {
     cursor: default;
     pointer-events: auto;
 }
 
-.shipinfo-page .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled::before,
-.shipinfo-page .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled::after {
+.shipinfo-page .shipinfo-sticky-enabled .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled::before,
+.shipinfo-page .shipinfo-sticky-enabled .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled::after {
     display: none !important;
 }
 
@@ -166,8 +165,8 @@
     vertical-align: middle;
 }
 
-.shipinfo-page .shipinfo-pro-table .shipinfo-radio-col,
-.shipinfo-page .shipinfo-pro-table .shipinfo-action-col {
+.shipinfo-page .shipinfo-sticky-left-enabled .shipinfo-pro-table .shipinfo-radio-col,
+.shipinfo-page .shipinfo-sticky-left-enabled .shipinfo-pro-table .shipinfo-action-col {
     position: sticky;
     z-index: 2;
     background-color: var(--bs-body-bg, #fff);
@@ -175,8 +174,8 @@
     box-shadow: none;
 }
 
-.shipinfo-page .shipinfo-pro-table thead .shipinfo-radio-col,
-.shipinfo-page .shipinfo-pro-table thead .shipinfo-action-col {
+.shipinfo-page .shipinfo-sticky-left-enabled .shipinfo-pro-table thead .shipinfo-radio-col,
+.shipinfo-page .shipinfo-sticky-left-enabled .shipinfo-pro-table thead .shipinfo-action-col {
     z-index: 6;
     background-color: #f8f9fa;
     box-shadow: none;
@@ -205,18 +204,33 @@
     box-shadow: none;
 }
 
-.shipinfo-page #shipInfoHeaderTable .shipinfo-radio-col {
+.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable .shipinfo-radio-col {
     left: 0;
 }
 
-.shipinfo-page #shipInfoHeaderTable .shipinfo-action-col {
+.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable .shipinfo-action-col {
     left: 2.5rem;
     box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
 }
 
-.shipinfo-page #shipInfoDetailTable .shipinfo-action-col {
+.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoDetailTable .shipinfo-action-col {
     left: 0;
     box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page .shipinfo-filter-cell {
+    min-width: 8rem;
+    vertical-align: top;
+}
+
+.shipinfo-page .shipinfo-filter-text,
+.shipinfo-page .shipinfo-filter-date,
+.shipinfo-page .shipinfo-filter-date-range {
+    min-width: 8rem;
+}
+
+.shipinfo-page .shipinfo-filter-actions .btn {
+    white-space: nowrap;
 }
 
 .shipinfo-page #shipInfoHeaderTable tbody tr.table-primary > .shipinfo-action-col {

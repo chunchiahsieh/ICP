@@ -11,10 +11,12 @@ public interface IShipInfoRepository
 
     Task<IReadOnlyList<Dictionary<string, object?>>> QueryHeadersAsync(
         ShipInfoHeaderQueryModel criteria,
+        IReadOnlyList<ShipInfoFieldMetadata> fields,
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<Dictionary<string, object?>>> QueryDetailsAsync(
         ShipInfoDetailQueryModel criteria,
+        IReadOnlyList<ShipInfoFieldMetadata> fields,
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<string>> GetDistinctDetailValuesAsync(

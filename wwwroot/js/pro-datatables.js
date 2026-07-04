@@ -72,6 +72,10 @@
     }
 
     function getFilterValues() {
+      if (typeof config.customGetFilterValues === 'function') {
+        return config.customGetFilterValues($(config.dataDivSelector), config.filterFieldMap);
+      }
+
       var values = {};
       getFiltersInScope().each(function () {
         values[this.id] = getFilterValuesForDropdown($(this));
@@ -80,6 +84,10 @@
     }
 
     function buildQueryPayload(saved) {
+      if (typeof config.customBuildQueryPayload === 'function') {
+        return config.customBuildQueryPayload(saved, config.filterFieldMap);
+      }
+
       var payload = {};
       $.each(config.filterFieldMap, function (dropdownId, paramName) {
         var selected = (saved && saved[dropdownId]) ? saved[dropdownId] : [];
@@ -162,7 +170,7 @@
     }
 
     function loadFilterOptions(done) {
-      var $filters = getFiltersInScope();
+      var $filters = getFiltersInScope().filter('.column-filter-dropdown');
       if ($filters.length === 0) {
         if (done) done();
         return;
@@ -180,6 +188,11 @@
 
     function restoreFilterValues(saved) {
       if (!saved) return;
+      if (typeof config.customRestoreFilterValues === 'function') {
+        config.customRestoreFilterValues(saved, $(config.dataDivSelector), config.filterFieldMap);
+        return;
+      }
+
       $.each(saved, function (dropdownId, values) {
         var $dropdown = findFilterDropdown(dropdownId);
         if ($dropdown.length) {

@@ -1,4 +1,4 @@
-using ICP.Data;
+﻿using ICP.Data;
 using ICP.Helpers;
 using ICP.Models.Icp;
 using ICP.Models.ShipInfo;
@@ -43,10 +43,11 @@ public class ShipInfoRepository : IShipInfoRepository
 
     public async Task<IReadOnlyList<Dictionary<string, object?>>> QueryHeadersAsync(
         ShipInfoHeaderQueryModel criteria,
+        IReadOnlyList<ShipInfoFieldMetadata> fields,
         CancellationToken cancellationToken = default)
     {
         var query = _db.IcpHeaders.AsNoTracking();
-        query = ApplyHeaderQueryFilters(query, criteria);
+        query = ShipInfoQueryFilterApplier.ApplyHeaderFilters(query, criteria, fields);
 
         var headers = await query
             .OrderByDescending(x => x.SaDate)
@@ -58,6 +59,7 @@ public class ShipInfoRepository : IShipInfoRepository
 
     public async Task<IReadOnlyList<Dictionary<string, object?>>> QueryDetailsAsync(
         ShipInfoDetailQueryModel criteria,
+        IReadOnlyList<ShipInfoFieldMetadata> fields,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(criteria.HeaderKey))
@@ -67,7 +69,7 @@ public class ShipInfoRepository : IShipInfoRepository
 
         var invoiceNo = ShipInfoKeyHelper.ParseInvoiceNo(criteria.HeaderKey);
         var query = _db.IcpDetails.AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
-        query = ApplyDetailQueryFilters(query, criteria);
+        query = ShipInfoQueryFilterApplier.ApplyDetailFilters(query, criteria, fields);
 
         var details = await query
             .OrderBy(x => x.InvoiceSeq)
@@ -337,244 +339,6 @@ public class ShipInfoRepository : IShipInfoRepository
             .ToListAsync(cancellationToken);
     }
 
-    private static IQueryable<IcpHeader> ApplyHeaderQueryFilters(
-        IQueryable<IcpHeader> query,
-        ShipInfoHeaderQueryModel criteria)
-    {
-        if (criteria.Status.Count > 0)
-        {
-            var normalizedStatuses = criteria.Status
-                .Select(ShipInfoStatusResolver.Normalize)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            query = query.Where(x =>
-                (x.Status != null && x.Status != "" && normalizedStatuses.Contains(x.Status))
-                || ((x.Status == null || x.Status == "")
-                    && normalizedStatuses.Contains(ShipInfoStatuses.Cancelled)
-                    && x.Cancellation != null && x.Cancellation != "")
-                || ((x.Status == null || x.Status == "")
-                    && normalizedStatuses.Contains(ShipInfoStatuses.Processing)
-                    && (x.Cancellation == null || x.Cancellation == "")));
-        }
-
-        if (criteria.CreateDate.Count > 0)
-        {
-            query = query.Where(x => x.CreateDate != null && criteria.CreateDate.Contains(x.CreateDate));
-        }
-
-        if (criteria.InvoiceNo.Count > 0)
-        {
-            query = query.Where(x => criteria.InvoiceNo.Contains(x.InvoiceNo));
-        }
-
-        if (criteria.TetPo.Count > 0)
-        {
-            query = query.Where(x => criteria.TetPo.Contains(x.TetPo));
-        }
-
-        if (criteria.Broker.Count > 0)
-        {
-            query = query.Where(x => x.Broker != null && criteria.Broker.Contains(x.Broker));
-        }
-
-        if (criteria.Eta.Count > 0)
-        {
-            query = query.Where(x => x.Eta != null && criteria.Eta.Contains(x.Eta));
-        }
-
-        if (criteria.SaDate.Count > 0)
-        {
-            query = query.Where(x => x.SaDate != null && criteria.SaDate.Contains(x.SaDate));
-        }
-
-        if (criteria.Forwarder.Count > 0)
-        {
-            query = query.Where(x => x.Forwarder != null && criteria.Forwarder.Contains(x.Forwarder));
-        }
-
-        if (criteria.Etd.Count > 0)
-        {
-            query = query.Where(x => x.Etd != null && criteria.Etd.Contains(x.Etd));
-        }
-
-        if (criteria.InvoiceDate.Count > 0)
-        {
-            query = query.Where(x => x.InvoiceDate != null && criteria.InvoiceDate.Contains(x.InvoiceDate));
-        }
-
-        if (criteria.Mawb.Count > 0)
-        {
-            query = query.Where(x => x.Mawb != null && criteria.Mawb.Contains(x.Mawb));
-        }
-
-        if (criteria.Hawb.Count > 0)
-        {
-            query = query.Where(x => x.Hawb != null && criteria.Hawb.Contains(x.Hawb));
-        }
-
-        if (criteria.Flt.Count > 0)
-        {
-            query = query.Where(x => x.Flt != null && criteria.Flt.Contains(x.Flt));
-        }
-
-        if (criteria.DeliveryTo.Count > 0)
-        {
-            query = query.Where(x => x.DeliveryTo != null && criteria.DeliveryTo.Contains(x.DeliveryTo));
-        }
-
-        if (criteria.Warehouse.Count > 0)
-        {
-            query = query.Where(x => x.Warehouse != null && criteria.Warehouse.Contains(x.Warehouse));
-        }
-
-        if (criteria.OrderType.Count > 0)
-        {
-            query = query.Where(x => x.OrderType != null && criteria.OrderType.Contains(x.OrderType));
-        }
-
-        if (criteria.Deposit.Count > 0)
-        {
-            query = query.Where(x => x.Deposit != null && criteria.Deposit.Contains(x.Deposit));
-        }
-
-        if (criteria.RtNo.Count > 0)
-        {
-            query = query.Where(x => x.RtNo != null && criteria.RtNo.Contains(x.RtNo));
-        }
-
-        if (criteria.Notes.Count > 0)
-        {
-            query = query.Where(x => x.Notes != null && criteria.Notes.Contains(x.Notes));
-        }
-
-        if (criteria.SapRemarks.Count > 0)
-        {
-            query = query.Where(x => x.SapRemarks != null && criteria.SapRemarks.Contains(x.SapRemarks));
-        }
-
-        return query;
-    }
-
-    private static IQueryable<IcpDetail> ApplyDetailQueryFilters(
-        IQueryable<IcpDetail> query,
-        ShipInfoDetailQueryModel criteria)
-    {
-        if (criteria.InvoiceSeq.Count > 0)
-        {
-            var values = ParseDoubleValues(criteria.InvoiceSeq);
-            if (values.Count > 0)
-            {
-                query = query.Where(x => x.InvoiceSeq != null && values.Contains(x.InvoiceSeq.Value));
-            }
-        }
-
-        if (criteria.TetPoLine.Count > 0)
-        {
-            query = query.Where(x => x.TetPoLine != null && criteria.TetPoLine.Contains(x.TetPoLine));
-        }
-
-        if (criteria.ItemNo.Count > 0)
-        {
-            query = query.Where(x => x.ItemNo != null && criteria.ItemNo.Contains(x.ItemNo));
-        }
-
-        if (criteria.Description.Count > 0)
-        {
-            query = query.Where(x => x.Description != null && criteria.Description.Contains(x.Description));
-        }
-
-        if (criteria.Qty.Count > 0)
-        {
-            var values = ParseDecimalValues(criteria.Qty);
-            if (values.Count > 0)
-            {
-                query = query.Where(x => x.Qty != null && values.Contains(x.Qty.Value));
-            }
-        }
-
-        if (criteria.Uom.Count > 0)
-        {
-            query = query.Where(x => x.Uom != null && criteria.Uom.Contains(x.Uom));
-        }
-
-        if (criteria.Coo.Count > 0)
-        {
-            query = query.Where(x => x.Coo != null && criteria.Coo.Contains(x.Coo));
-        }
-
-        if (criteria.Price.Count > 0)
-        {
-            var values = ParseDoubleValues(criteria.Price);
-            if (values.Count > 0)
-            {
-                query = query.Where(x => x.Price != null && values.Contains(x.Price.Value));
-            }
-        }
-
-        if (criteria.Amount.Count > 0)
-        {
-            var values = ParseDoubleValues(criteria.Amount);
-            if (values.Count > 0)
-            {
-                query = query.Where(x => x.Amount != null && values.Contains(x.Amount.Value));
-            }
-        }
-
-        if (criteria.Currency.Count > 0)
-        {
-            query = query.Where(x => x.Currency != null && criteria.Currency.Contains(x.Currency));
-        }
-
-        if (criteria.CartonNo.Count > 0)
-        {
-            var values = ParseDoubleValues(criteria.CartonNo);
-            if (values.Count > 0)
-            {
-                query = query.Where(x => x.CartonNo != null && values.Contains(x.CartonNo.Value));
-            }
-        }
-
-        if (criteria.GrossWeight.Count > 0)
-        {
-            var values = ParseDecimalValues(criteria.GrossWeight);
-            if (values.Count > 0)
-            {
-                query = query.Where(x => x.GrossWeight != null && values.Contains(x.GrossWeight.Value));
-            }
-        }
-
-        return query;
-    }
-
-    private static List<double> ParseDoubleValues(IEnumerable<string> values)
-    {
-        var result = new List<double>();
-        foreach (var value in values)
-        {
-            if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed))
-            {
-                result.Add(parsed);
-            }
-        }
-
-        return result;
-    }
-
-    private static List<decimal> ParseDecimalValues(IEnumerable<string> values)
-    {
-        var result = new List<decimal>();
-        foreach (var value in values)
-        {
-            if (decimal.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed))
-            {
-                result.Add(parsed);
-            }
-        }
-
-        return result;
-    }
-
     private static async Task<IReadOnlyList<string>> DistinctDoubleColumnAsync(
         IQueryable<double?> source,
         string? search,
@@ -636,7 +400,10 @@ public class ShipInfoRepository : IShipInfoRepository
 
         if (filters.TryGetValue("Status", out var status) && !string.IsNullOrWhiteSpace(status))
         {
-            query = ApplyHeaderQueryFilters(query, new ShipInfoHeaderQueryModel { Status = [status] });
+            query = ShipInfoQueryFilterApplier.ApplyHeaderFilters(
+                query,
+                new ShipInfoHeaderQueryModel { Checkbox = new Dictionary<string, List<string>> { ["Status"] = [status] } },
+                [new ShipInfoFieldMetadata { FieldName = "Status", Searchable = true, FilterType = ShipInfoFilterTypes.Checkbox }]);
         }
 
         if (filters.TryGetValue("CreateDate", out var createDate) && !string.IsNullOrWhiteSpace(createDate))

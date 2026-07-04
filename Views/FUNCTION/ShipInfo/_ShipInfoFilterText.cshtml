@@ -1,0 +1,14 @@
+@model (string FilterId, string FieldName)
+<div class="shipinfo-filter shipinfo-filter-text column-filter-text"
+     id="@Model.FilterId"
+     data-column="@Model.FieldName"
+     data-filter-type="Text">
+    <input type="text"
+           class="form-control form-control-sm shipinfo-filter-text-input"
+           autocomplete="off"
+           aria-label="@Model.FieldName" />
+    <div class="shipinfo-filter-actions d-flex gap-1 mt-1">
+        <button type="button" class="btn btn-primary btn-sm shipinfo-filter-confirm flex-fill">@Localizer["Common.Confirm"]</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm shipinfo-filter-reset">@Localizer["Common.Reset"]</button>
+    </div>
+</div>

@@ -1,5 +1,10 @@
 ﻿{
     "header":  {
+                   "tableUi":  {
+                                     "stickyHeader":  true,
+                                     "stickyLeftColumns":  true,
+                                     "maxHeight":  "420px"
+                                 },
                    "initialSort":  {
                                        "fieldName":  "CreateDate",
                                        "direction":  "desc"
@@ -27,11 +32,15 @@
                                   },
                                   {
                                       "fieldName":  "CreateDate",
-                                      "visible":  false
+                                      "visible":  false,
+                                      "searchable":  true,
+                                      "filterType":  "Checkbox"
                                   },
                                   {
                                       "fieldName":  "Status",
-                                      "visible":  false
+                                      "visible":  false,
+                                      "searchable":  true,
+                                      "filterType":  "Checkbox"
                                   },
                                   {
                                     "fieldName":  "DepositCaseStatus",
@@ -43,11 +52,15 @@
                                 },
                                   {
                                       "fieldName":  "SaDate",
-                                      "visible":  true
+                                      "visible":  true,
+                                      "searchable":  true,
+                                      "filterType":  "DateRange"
                                   },
                                   {
                                       "fieldName":  "InvoiceNo",
-                                      "visible":  true
+                                      "visible":  true,
+                                      "searchable":  true,
+                                      "filterType":  "Text"
                                   },
                                   {
                                       "fieldName":  "Forwarder",
@@ -55,7 +68,9 @@
                                   },
                                   {
                                       "fieldName":  "Broker",
-                                      "visible":  true
+                                      "visible":  true,
+                                      "searchable":  true,
+                                      "filterType":  "Checkbox"
                                   },
                                   {
                                       "fieldName":  "Etd",
@@ -63,7 +78,9 @@
                                   },
                                   {
                                       "fieldName":  "Eta",
-                                      "visible":  true
+                                      "visible":  true,
+                                      "searchable":  true,
+                                      "filterType":  "Date"
                                   },
                                   {
                                       "fieldName":  "InvoiceDate",
@@ -281,6 +298,11 @@
                               ]
                },
     "detail":  {
+                   "tableUi":  {
+                                     "stickyHeader":  true,
+                                     "stickyLeftColumns":  true,
+                                     "maxHeight":  "420px"
+                                 },
                    "initialSort":  {
                                        "fieldName":  "InvoiceSeq",
                                        "direction":  "asc"
@@ -297,7 +319,7 @@
                                   {
                                       "fieldName":  "ArurCaseStatus",
                                       "visible":  true
-                                  }
+                                  },
                                   {
                                       "fieldName":  "CreateTime",
                                       "visible":  false
