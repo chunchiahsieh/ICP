@@ -1,0 +1,36 @@
+---
+description: PermissionScan 掃描 Resources 與 ResourceName 命名規範
+globs:
+  - Views/**/*.cshtml
+  - Services/PermissionScannerService.cs
+  - Services/PermissionResourceSyncService.cs
+  - Services/PermissionResourceNameResolver.cs
+  - Resources/SharedResource.resx
+alwaysApply: false
+---
+
+# PermissionScan / ResourceName
+
+## data-permissions
+
+- 每個受控元素同時加 `data-permissions` 與 `data-i18n-key`，**值必須相同**（ResourceCode）。
+- 按鈕顯示文字可用 `@Localizer["Common.Add"]` 等共用 key；**不得**指望掃描器從這段文字產生 ResourceName。
+
+## ResourceName（DB 給操作者看）
+
+- **固定繁中**，不需要 en/ja 多語系版本寫入 Resources 表。
+- **禁止**從 View inner text、`@Localizer[...]`、按鈕標籤推導 ResourceName。
+- 合法來源僅：
+  1. `SharedResource.resx` 中與 ResourceCode **同名**的 key（例 `Views.Setting.BuCode.Create`）
+  2. `PermissionResourceNameResolver.Resolve` 依 ResourceCode 推導
+  3. fallback：ResourceCode 字串本身
+
+## 新增權限資源時
+
+1. View 加上 `data-permissions` / `data-i18n-key`
+2. 在 `SharedResource.resx` 新增**同名**繁中 ResourceName（例：「BU 代碼新增」）
+3. 執行 Permission Scan 同步
+
+## 常見錯誤（禁止再發生）
+
+- ResourceName = `["Common.Add"]`、`Common.Edit`、`@Localizer[...]` → 代表掃描器誤用了 UI 多語系文字，應改走 `PermissionResourceNameResolver`。
