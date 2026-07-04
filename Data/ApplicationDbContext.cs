@@ -181,7 +181,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.NcdrRequestor).HasMaxLength(40);
             entity.Property(e => e.EndUserCode).HasMaxLength(30);
             entity.Property(e => e.EndUser).HasMaxLength(100);
-            entity.Property(e => e.RtNo).HasMaxLength(30);
+            entity.Property(e => e.RtNo).HasMaxLength(IcpHeader.RtNoMaxLength);
             entity.Property(e => e.Receiver).HasMaxLength(200);
             entity.Property(e => e.Owner).HasMaxLength(50);
             entity.Property(e => e.MachineNo).HasMaxLength(50);
@@ -206,7 +206,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.ShipToPartyAddress).HasMaxLength(200);
             entity.Property(e => e.EmgFlight).HasMaxLength(5);
             entity.Property(e => e.WbsElement).HasMaxLength(30);
-            entity.Property(e => e.Deposit).HasMaxLength(10);
+            entity.Property(e => e.Deposit).HasMaxLength(IcpHeader.DepositMaxLength);
             entity.Property(e => e.DepositCaseStatus).HasMaxLength(20).HasDefaultValue(ShipInfoCaseStatuses.NotInitiated).IsRequired();
             entity.Property(e => e.ArurCaseStatus).HasMaxLength(20).HasDefaultValue(ShipInfoCaseStatuses.NotInitiated).IsRequired();
             entity.Property(e => e.SapRemarks).HasMaxLength(1000);

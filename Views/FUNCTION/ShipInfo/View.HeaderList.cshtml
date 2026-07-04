@@ -83,27 +83,11 @@
                 <th class="shipinfo-action-col sorting_disabled"></th>
                 @foreach (var field in visibleFields)
                 {
-                    <th class="sorting_disabled shipinfo-filter-cell">
+                    <th class="sorting_disabled pro-table-filter-cell">
                         @if (field.Searchable)
                         {
                             var filterId = $"filter-{Model.TableId}-{field.FieldName}";
-                            var filterType = ShipInfoMetadataHelper.ResolveFilterType(field);
-                            var filterModel = (filterId, field.FieldName);
-                            @switch (filterType)
-                            {
-                                case ShipInfoFilterTypes.Text:
-                                    @await Html.PartialAsync("_ShipInfoFilterText", filterModel)
-                                    break;
-                                case ShipInfoFilterTypes.DateRange:
-                                    @await Html.PartialAsync("_ShipInfoFilterDateRange", filterModel)
-                                    break;
-                                case ShipInfoFilterTypes.Date:
-                                    @await Html.PartialAsync("_ShipInfoFilterDate", filterModel)
-                                    break;
-                                default:
-                                    @await Html.PartialAsync("_ShipInfoFilterCheckbox", filterModel)
-                                    break;
-                            }
+                            @await Html.PartialAsync("_ProDataTablesFilterByType", (filterId, field.FieldName, ShipInfoMetadataHelper.ResolveFilterType(field)))
                         }
                     </th>
                 }

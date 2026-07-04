@@ -48,6 +48,7 @@
     app.loadDetails = function (headerId) {
         if (!headerId) {
             state.detailItems = [];
+            state.detailRowCount = 0;
             $('#shipInfoDetailDataDiv').empty();
             return $.Deferred().resolve().promise();
         }

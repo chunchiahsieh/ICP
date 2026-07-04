@@ -49,6 +49,10 @@
         var permission = app.getStatusPermission(app.getHeaderStatus(getStatusSource()));
         var canEdit = app.hasPermission('Views.Function.ShipInfo.Edit') && permission.edit;
         var canDelete = app.hasPermission('Views.Function.ShipInfo.Delete') && permission.delete;
+        if (state.viewModalKind === 'detail') {
+            canDelete = canDelete && app.canDeleteDetail();
+        }
+
         var editing = !!state.viewModalEditing;
 
         $('#btnShipInfoViewEdit').toggleClass('d-none', editing || !canEdit);
@@ -100,6 +104,9 @@
 
             state.viewModalData = response.data || {};
             renderViewForm(state.viewModalData);
+            if (state.viewModalKind === 'detail') {
+                app.getDetailRowCount();
+            }
             updateViewModalButtons();
         }).fail(function (xhr) {
             app.showToast((xhr.responseJSON && xhr.responseJSON.message) || messages.saveFailed, 'danger');
@@ -246,6 +253,11 @@
 
     app.showDetailDeleteConfirm = function (detailId) {
         if (!detailId || !app.hasPermission('Views.Function.ShipInfo.Delete')) {
+            return;
+        }
+
+        if (!app.canDeleteDetail()) {
+            app.showToast(messages.deleteLastDetailNotAllowed || messages.deleteFailed, 'warning');
             return;
         }
 

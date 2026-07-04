@@ -61,10 +61,7 @@ public static class ShipInfoFieldConfigMerger
             field.Visible = entry.Visible.Value;
         }
 
-        if (entry.Searchable.HasValue)
-        {
-            field.Searchable = entry.Searchable.Value;
-        }
+        field.Searchable = entry.Searchable ?? true;
 
         if (!string.IsNullOrWhiteSpace(entry.FilterType))
         {

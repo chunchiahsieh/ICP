@@ -43,4 +43,30 @@ public static class ShipInfoCaseStatusResolver
         Normalize(status) is ShipInfoCaseStatuses.NotInitiated or ShipInfoCaseStatuses.Failed;
 
     public static bool IsActionLocked(string? status) => !CanCreateCase(status);
+
+    public static bool MatchesSearch(string normalizedCode, string search)
+    {
+        if (string.IsNullOrWhiteSpace(search))
+        {
+            return true;
+        }
+
+        if (normalizedCode.Contains(search, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return GetSearchAliases(normalizedCode).Any(alias =>
+            alias.Contains(search, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static IEnumerable<string> GetSearchAliases(string normalizedCode) =>
+        normalizedCode switch
+        {
+            ShipInfoCaseStatuses.NotInitiated => ["NotInitiated", "未起案"],
+            ShipInfoCaseStatuses.Initiated => ["Initiated", "已起案"],
+            ShipInfoCaseStatuses.Failed => ["Failed", "起案失敗"],
+            ShipInfoCaseStatuses.Processing => ["Processing", "處理中"],
+            _ => [normalizedCode]
+        };
 }

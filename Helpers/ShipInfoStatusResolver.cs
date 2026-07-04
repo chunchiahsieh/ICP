@@ -48,4 +48,29 @@ public static class ShipInfoStatusResolver
 
         return trimmed;
     }
+
+    public static bool MatchesSearch(string normalizedStatus, string search)
+    {
+        if (string.IsNullOrWhiteSpace(search))
+        {
+            return true;
+        }
+
+        if (normalizedStatus.Contains(search, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return GetSearchAliases(normalizedStatus).Any(alias =>
+            alias.Contains(search, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static IEnumerable<string> GetSearchAliases(string normalizedStatus) =>
+        normalizedStatus switch
+        {
+            ShipInfoStatuses.Processing => ["Processing", "處理中"],
+            ShipInfoStatuses.WarehouseReceived => ["WarehouseReceived", "庫房已接收"],
+            ShipInfoStatuses.Cancelled => ["Cancelled", "作廢"],
+            _ => [normalizedStatus]
+        };
 }

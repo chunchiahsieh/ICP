@@ -1,0 +1,20 @@
+@model (string FilterId, string Column)
+<div class="dropdown pro-table-filter pro-table-filter-text"
+     id="@Model.FilterId"
+     data-column="@Model.Column"
+     data-filter-type="Text">
+    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle w-100"
+            data-bs-toggle="dropdown" data-bs-auto-close="outside" data-bs-boundary="viewport" aria-expanded="false">
+        @Localizer["Common.Filter"] <span class="filter-count">(0)</span>
+    </button>
+    <div class="dropdown-menu users-filter-menu p-2">
+        <input type="text"
+               class="form-control form-control-sm pro-table-filter-text-input"
+               autocomplete="off"
+               aria-label="@Model.Column" />
+        <div class="pro-table-filter-actions d-flex gap-1 mt-2">
+            <button type="button" class="btn btn-primary btn-sm pro-table-filter-confirm flex-fill">@Localizer["Common.Confirm"]</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm pro-table-filter-reset">@Localizer["Common.Reset"]</button>
+        </div>
+    </div>
+</div>

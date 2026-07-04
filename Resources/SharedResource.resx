@@ -240,6 +240,9 @@
   <data name="ShipInfo.DeleteFailed" xml:space="preserve">
     <value>刪除失敗</value>
   </data>
+  <data name="ShipInfo.DeleteLastDetailNotAllowed" xml:space="preserve">
+    <value>至少需保留一筆 Detail，無法刪除。</value>
+  </data>
   <data name="ShipInfo.NoData" xml:space="preserve">
     <value>查無資料</value>
   </data>

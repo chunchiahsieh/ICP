@@ -252,6 +252,11 @@ public static class ShipInfoQueryFilterApplier
             return query;
         }
 
+        if (!IsValidDateFilterValue(fromValue))
+        {
+            return query;
+        }
+
         return query.Where(BuildStringCompareExpression<TEntity>(fieldName, fromValue, compareGreaterOrEqual: true));
     }
 
@@ -268,6 +273,11 @@ public static class ShipInfoQueryFilterApplier
 
         var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
         if (propertyType != typeof(string))
+        {
+            return query;
+        }
+
+        if (!IsValidDateFilterValue(toValue))
         {
             return query;
         }
@@ -334,12 +344,19 @@ public static class ShipInfoQueryFilterApplier
         var property = Expression.Property(parameter, fieldName);
         var notNull = Expression.NotEqual(property, Expression.Constant(null, typeof(string)));
         var compareConstant = Expression.Constant(compareValue, typeof(string));
+        var compareToMethod = typeof(string).GetMethod(nameof(string.CompareTo), [typeof(string)])!;
+        var compareToCall = Expression.Call(property, compareToMethod, compareConstant);
+        var zero = Expression.Constant(0);
         var compare = compareGreaterOrEqual
-            ? Expression.GreaterThanOrEqual(property, compareConstant)
-            : Expression.LessThanOrEqual(property, compareConstant);
+            ? Expression.GreaterThanOrEqual(compareToCall, zero)
+            : Expression.LessThanOrEqual(compareToCall, zero);
         var body = Expression.AndAlso(notNull, compare);
         return Expression.Lambda<Func<TEntity, bool>>(body, parameter);
     }
+
+    private static bool IsValidDateFilterValue(string value) =>
+        DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out _)
+        || DateTime.TryParse(value, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out _);
 
     private static Expression<Func<TEntity, bool>> BuildNullableContainsExpression<TEntity, TValue>(
         string fieldName,

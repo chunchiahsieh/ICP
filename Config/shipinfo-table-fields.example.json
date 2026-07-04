@@ -1,5 +1,5 @@
 {
-  "_comment": "欄位順序由 fields 陣列順序決定。filterType: Checkbox(預設) | Text | DateRange | Date。tableUi 控制表頭/操作欄固定。",
+  "_comment": "欄位順序由 fields 陣列順序決定。filterType: Checkbox(預設) | Text | DateRange | Date。searchable 預設 true，僅需對不需篩選的欄位設 searchable: false。filterType: Checkbox 且 searchable 時，選項自動從 DB distinct。tableUi 控制表頭/操作欄固定。",
   "header": {
     "tableUi": {
       "stickyHeader": true,
@@ -8,13 +8,13 @@
     },
     "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
     "fields": [
-      { "fieldName": "Id", "visible": false },
-      { "fieldName": "CreateDate", "visible": true, "searchable": true, "filterType": "Checkbox" },
-      { "fieldName": "Status", "visible": true, "searchable": true, "filterType": "Checkbox" },
-      { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "SaDate", "visible": true, "searchable": true, "filterType": "DateRange" },
-      { "fieldName": "Eta", "visible": true, "searchable": true, "filterType": "Date" },
-      { "fieldName": "Broker", "visible": true, "searchable": true }
+      { "fieldName": "Id", "visible": false, "searchable": false },
+      { "fieldName": "CreateDate", "visible": true, "filterType": "Checkbox" },
+      { "fieldName": "Status", "visible": true, "filterType": "Checkbox" },
+      { "fieldName": "InvoiceNo", "visible": true, "filterType": "Text" },
+      { "fieldName": "SaDate", "visible": true, "filterType": "DateRange" },
+      { "fieldName": "Eta", "visible": true, "filterType": "Date" },
+      { "fieldName": "Broker", "visible": true }
     ]
   },
   "detail": {
@@ -25,8 +25,8 @@
     },
     "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
     "fields": [
-      { "fieldName": "InvoiceSeq", "visible": true, "searchable": true, "filterType": "Checkbox" },
-      { "fieldName": "ItemNo", "visible": true, "searchable": true, "filterType": "Text" }
+      { "fieldName": "InvoiceSeq", "visible": true, "filterType": "Checkbox" },
+      { "fieldName": "ItemNo", "visible": true, "filterType": "Text" }
     ]
   }
 }

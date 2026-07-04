@@ -7,6 +7,9 @@ namespace ICP.Models.Icp;
 [Table("ICP_HEADER")]
 public class IcpHeader : IcpAuditableEntity
 {
+    public const int DepositMaxLength = 30;
+    public const int RtNoMaxLength = 30;
+
     [Column("CREATE_DATE")]
     [MaxLength(20)]
     public string? CreateDate { get; set; }
@@ -126,7 +129,7 @@ public class IcpHeader : IcpAuditableEntity
     public string? EndUser { get; set; }
 
     [Column("RT_NO")]
-    [MaxLength(30)]
+    [MaxLength(RtNoMaxLength)]
     public string? RtNo { get; set; }
 
     [Column("RECEIVER")]
@@ -226,7 +229,7 @@ public class IcpHeader : IcpAuditableEntity
     public string? WbsElement { get; set; }
 
     [Column("DEPOSIT")]
-    [MaxLength(10)]
+    [MaxLength(DepositMaxLength)]
     public string? Deposit { get; set; }
 
     [Column("DEPOSIT_CASE_STATUS")]

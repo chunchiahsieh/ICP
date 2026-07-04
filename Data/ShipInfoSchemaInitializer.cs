@@ -27,6 +27,14 @@ public static class ShipInfoSchemaInitializer
         END
         """;
 
+    private const string EnsureDepositColumnLengthSql = """
+        IF COL_LENGTH('dbo.ICP_HEADER', 'DEPOSIT') IS NOT NULL
+           AND COL_LENGTH('dbo.ICP_HEADER', 'DEPOSIT') < 30
+        BEGIN
+            ALTER TABLE dbo.ICP_HEADER ALTER COLUMN DEPOSIT NVARCHAR(30) NULL;
+        END
+        """;
+
     private const string EnsureCaseStatusColumnsSql = """
         IF COL_LENGTH('dbo.ICP_HEADER', 'DEPOSIT_CASE_STATUS') IS NULL
         BEGIN
@@ -94,6 +102,7 @@ public static class ShipInfoSchemaInitializer
         try
         {
             await db.Database.ExecuteSqlRawAsync(EnsureAuditLogTableSql, cancellationToken);
+            await db.Database.ExecuteSqlRawAsync(EnsureDepositColumnLengthSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(EnsureCaseStatusColumnsSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(MigrateCaseStatusDataSql, cancellationToken);
         }

@@ -29,7 +29,7 @@ public class ShipInfoFieldMetadata
     public bool Visible { get; set; } = true;
 
     [JsonPropertyName("searchable")]
-    public bool Searchable { get; set; }
+    public bool Searchable { get; set; } = true;
 
     [JsonPropertyName("filterType")]
     public string FilterType { get; set; } = ShipInfoFilterTypes.Checkbox;

@@ -3,7 +3,6 @@ using ICP.Helpers;
 using ICP.Models.Icp;
 using ICP.Models.ShipInfo;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace ICP.Repositories;
 
@@ -86,48 +85,7 @@ public class ShipInfoRepository : IShipInfoRepository
         CancellationToken cancellationToken = default)
     {
         var query = _db.IcpHeaders.AsNoTracking();
-        var term = search?.Trim();
-
-        if (column.Equals("Status", StringComparison.OrdinalIgnoreCase))
-        {
-            var headers = await query.ToListAsync(cancellationToken);
-            var statuses = headers
-                .Select(ShipInfoStatusResolver.Resolve)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .OrderBy(x => x)
-                .AsEnumerable();
-
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                statuses = statuses.Where(x => x.Contains(term, StringComparison.OrdinalIgnoreCase));
-            }
-
-            return statuses.Take(200).ToList();
-        }
-
-        return column switch
-        {
-            "CreateDate" => await DistinctStringColumnAsync(query.Select(x => x.CreateDate), term, cancellationToken),
-            "InvoiceNo" => await DistinctStringColumnAsync(query.Select(x => x.InvoiceNo), term, cancellationToken),
-            "TetPo" => await DistinctStringColumnAsync(query.Select(x => x.TetPo), term, cancellationToken),
-            "SaDate" => await DistinctStringColumnAsync(query.Select(x => x.SaDate), term, cancellationToken),
-            "Broker" => await DistinctStringColumnAsync(query.Select(x => x.Broker), term, cancellationToken),
-            "Forwarder" => await DistinctStringColumnAsync(query.Select(x => x.Forwarder), term, cancellationToken),
-            "Eta" => await DistinctStringColumnAsync(query.Select(x => x.Eta), term, cancellationToken),
-            "Etd" => await DistinctStringColumnAsync(query.Select(x => x.Etd), term, cancellationToken),
-            "InvoiceDate" => await DistinctStringColumnAsync(query.Select(x => x.InvoiceDate), term, cancellationToken),
-            "Mawb" => await DistinctStringColumnAsync(query.Select(x => x.Mawb), term, cancellationToken),
-            "Hawb" => await DistinctStringColumnAsync(query.Select(x => x.Hawb), term, cancellationToken),
-            "Flt" => await DistinctStringColumnAsync(query.Select(x => x.Flt), term, cancellationToken),
-            "DeliveryTo" => await DistinctStringColumnAsync(query.Select(x => x.DeliveryTo), term, cancellationToken),
-            "Warehouse" => await DistinctStringColumnAsync(query.Select(x => x.Warehouse), term, cancellationToken),
-            "OrderType" => await DistinctStringColumnAsync(query.Select(x => x.OrderType), term, cancellationToken),
-            "Deposit" => await DistinctStringColumnAsync(query.Select(x => x.Deposit), term, cancellationToken),
-            "RtNo" => await DistinctStringColumnAsync(query.Select(x => x.RtNo), term, cancellationToken),
-            "Notes" => await DistinctStringColumnAsync(query.Select(x => x.Notes), term, cancellationToken),
-            "SapRemarks" => await DistinctStringColumnAsync(query.Select(x => x.SapRemarks), term, cancellationToken),
-            _ => []
-        };
+        return await ShipInfoDistinctValuesHelper.GetHeaderDistinctValuesAsync(query, column, search, cancellationToken);
     }
 
     public async Task<IReadOnlyList<string>> GetDistinctDetailValuesAsync(
@@ -143,24 +101,7 @@ public class ShipInfoRepository : IShipInfoRepository
 
         var invoiceNo = ShipInfoKeyHelper.ParseInvoiceNo(headerKey);
         var query = _db.IcpDetails.AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
-        var term = search?.Trim();
-
-        return column switch
-        {
-            "InvoiceSeq" => await DistinctDoubleColumnAsync(query.Select(x => (double?)x.InvoiceSeq), term, cancellationToken),
-            "TetPoLine" => await DistinctStringColumnAsync(query.Select(x => x.TetPoLine), term, cancellationToken),
-            "ItemNo" => await DistinctStringColumnAsync(query.Select(x => x.ItemNo), term, cancellationToken),
-            "Description" => await DistinctStringColumnAsync(query.Select(x => x.Description), term, cancellationToken),
-            "Qty" => await DistinctDecimalColumnAsync(query.Select(x => x.Qty), term, cancellationToken),
-            "Uom" => await DistinctStringColumnAsync(query.Select(x => x.Uom), term, cancellationToken),
-            "Coo" => await DistinctStringColumnAsync(query.Select(x => x.Coo), term, cancellationToken),
-            "Price" => await DistinctDoubleColumnAsync(query.Select(x => x.Price), term, cancellationToken),
-            "Amount" => await DistinctDoubleColumnAsync(query.Select(x => x.Amount), term, cancellationToken),
-            "Currency" => await DistinctStringColumnAsync(query.Select(x => x.Currency), term, cancellationToken),
-            "CartonNo" => await DistinctDoubleColumnAsync(query.Select(x => x.CartonNo), term, cancellationToken),
-            "GrossWeight" => await DistinctDecimalColumnAsync(query.Select(x => x.GrossWeight), term, cancellationToken),
-            _ => []
-        };
+        return await ShipInfoDistinctValuesHelper.GetDetailDistinctValuesAsync(query, column, search, cancellationToken);
     }
 
     public async Task<ShipInfoDetailListResult> GetDetailsByHeaderKeyAsync(
@@ -259,23 +200,21 @@ public class ShipInfoRepository : IShipInfoRepository
     public async Task DeleteHeaderWithDetailsAsync(string headerRowKey, CancellationToken cancellationToken = default)
     {
         var (invoiceNo, tetPo) = ShipInfoKeyHelper.ParseHeaderRowKey(headerRowKey);
-        var details = await _db.IcpDetails
-            .Where(x => x.InvoiceNo == invoiceNo)
-            .ToListAsync(cancellationToken);
+        var header = await _db.IcpHeaders
+            .Include(x => x.Details)
+            .FirstOrDefaultAsync(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo, cancellationToken);
 
-        if (details.Count > 0)
+        if (header is null)
         {
-            _db.IcpDetails.RemoveRange(details);
+            return;
         }
 
-        var header = await _db.IcpHeaders.FirstOrDefaultAsync(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo, cancellationToken);
-        if (header is not null)
-        {
-            _db.IcpHeaders.Remove(header);
-        }
-
+        _db.IcpHeaders.Remove(header);
         await _db.SaveChangesAsync(cancellationToken);
     }
+
+    public Task<int> CountDetailsByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default) =>
+        _db.IcpDetails.AsNoTracking().CountAsync(x => x.InvoiceNo == invoiceNo, cancellationToken);
 
     public async Task DeleteDetailAsync(string detailKey, CancellationToken cancellationToken = default)
     {
@@ -318,75 +257,6 @@ public class ShipInfoRepository : IShipInfoRepository
                 throw;
             }
         });
-    }
-
-    private static async Task<IReadOnlyList<string>> DistinctStringColumnAsync(
-        IQueryable<string?> source,
-        string? search,
-        CancellationToken cancellationToken)
-    {
-        var query = source.Where(x => x != null && x != string.Empty);
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            query = query.Where(x => x!.Contains(search));
-        }
-
-        return await query
-            .Select(x => x!)
-            .Distinct()
-            .OrderBy(x => x)
-            .Take(200)
-            .ToListAsync(cancellationToken);
-    }
-
-    private static async Task<IReadOnlyList<string>> DistinctDoubleColumnAsync(
-        IQueryable<double?> source,
-        string? search,
-        CancellationToken cancellationToken)
-    {
-        var query = source.Where(x => x != null);
-        var values = await query
-            .Select(x => x!.Value)
-            .Distinct()
-            .OrderBy(x => x)
-            .Take(200)
-            .ToListAsync(cancellationToken);
-
-        var strings = values
-            .Select(x => x.ToString(CultureInfo.InvariantCulture))
-            .AsEnumerable();
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            strings = strings.Where(x => x.Contains(search, StringComparison.OrdinalIgnoreCase));
-        }
-
-        return strings.ToList();
-    }
-
-    private static async Task<IReadOnlyList<string>> DistinctDecimalColumnAsync(
-        IQueryable<decimal?> source,
-        string? search,
-        CancellationToken cancellationToken)
-    {
-        var query = source.Where(x => x != null);
-        var values = await query
-            .Select(x => x!.Value)
-            .Distinct()
-            .OrderBy(x => x)
-            .Take(200)
-            .ToListAsync(cancellationToken);
-
-        var strings = values
-            .Select(x => x.ToString(CultureInfo.InvariantCulture))
-            .AsEnumerable();
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            strings = strings.Where(x => x.Contains(search, StringComparison.OrdinalIgnoreCase));
-        }
-
-        return strings.ToList();
     }
 
     private static IQueryable<IcpHeader> ApplyHeaderFilters(

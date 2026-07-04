@@ -1,0 +1,19 @@
+@model (string FilterId, string Column, string FilterType)
+@{
+    var filterType = string.IsNullOrWhiteSpace(Model.FilterType) ? "Checkbox" : Model.FilterType.Trim();
+}
+@switch (filterType)
+{
+    case "Text":
+        @await Html.PartialAsync("_ProDataTablesFilterText", (Model.FilterId, Model.Column))
+        break;
+    case "DateRange":
+        @await Html.PartialAsync("_ProDataTablesFilterDateRange", (Model.FilterId, Model.Column))
+        break;
+    case "Date":
+        @await Html.PartialAsync("_ProDataTablesFilterDate", (Model.FilterId, Model.Column))
+        break;
+    default:
+        @await Html.PartialAsync("_ProDataTablesFilter", (Model.FilterId, Model.Column))
+        break;
+}

@@ -28,6 +28,7 @@
         pageSize: 50,
         totalCount: 0,
         detailItems: [],
+        detailRowCount: 0,
         pendingDeleteDetailId: null,
         pendingDeleteHeaderKey: null,
         viewModalKind: null,
@@ -281,6 +282,17 @@
 
         $btn.prop('disabled', false).html($btn.data('orig-html') || $btn.html());
         $btn.removeData('orig-html');
+    };
+
+    app.getDetailRowCount = function ($scope) {
+        var $root = $scope || $('#shipInfoDetailDataDiv');
+        var count = $root.find('#shipInfoDetailTable tbody tr[data-detail-id]').length;
+        app.state.detailRowCount = count;
+        return count;
+    };
+
+    app.canDeleteDetail = function () {
+        return app.getDetailRowCount() > 1;
     };
 
     app.updateHeaderActionState = function () {

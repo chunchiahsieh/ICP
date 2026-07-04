@@ -59,6 +59,8 @@ public interface IShipInfoRepository
 
     Task DeleteHeaderWithDetailsAsync(string headerRowKey, CancellationToken cancellationToken = default);
 
+    Task<int> CountDetailsByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default);
+
     Task DeleteDetailAsync(string detailKey, CancellationToken cancellationToken = default);
 
     Task AddAuditLogsAsync(IEnumerable<ShipInfoAuditLog> logs, CancellationToken cancellationToken = default);

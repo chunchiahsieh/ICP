@@ -1,0 +1,24 @@
+.pro-table-filter-cell {
+    min-width: 8rem;
+    vertical-align: top;
+}
+
+.pro-table-filter:not(.column-filter-dropdown) > .dropdown-toggle {
+    min-width: 8rem;
+}
+
+.pro-table-filter:not(.column-filter-dropdown) .dropdown-menu {
+    min-width: 12rem;
+}
+
+.pro-table-filter-actions .btn {
+    white-space: nowrap;
+}
+
+.users-filter-menu {
+    z-index: 1080;
+}
+
+.column-filter-dropdown .dropdown-menu {
+    z-index: 1080;
+}

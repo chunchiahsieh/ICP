@@ -9,17 +9,21 @@
     var headerTableInstance = null;
     var detailTableInstance = null;
 
+    function getFiltersApi() {
+        return global.ProTableFilters || global.ShipInfoTableFilters;
+    }
+
     function isFieldVisible(field) {
         return field.visible !== false && field.Visible !== false;
     }
 
     function isFieldSearchable(field) {
-        return field.searchable === true || field.Searchable === true;
+        return field.searchable !== false && field.Searchable !== false;
     }
 
     function buildFilterFieldMap(fields, tableId) {
         var map = {};
-        var filtersApi = global.ShipInfoTableFilters;
+        var filtersApi = getFiltersApi();
         (fields || []).forEach(function (field) {
             var fieldName = field.fieldName || field.FieldName;
             if (!fieldName || !isFieldVisible(field) || !isFieldSearchable(field)) {
@@ -37,15 +41,15 @@
     }
 
     function buildShipInfoFilterHooks() {
-        var filtersApi = global.ShipInfoTableFilters;
+        var filtersApi = getFiltersApi();
         if (!filtersApi) {
             return {};
         }
 
         return {
-            customGetFilterValues: filtersApi.getShipInfoFilterValues,
-            customBuildQueryPayload: filtersApi.buildShipInfoQueryPayload,
-            customRestoreFilterValues: filtersApi.restoreShipInfoFilterValues
+            customGetFilterValues: filtersApi.getProTableFilterValues || filtersApi.getShipInfoFilterValues,
+            customBuildQueryPayload: filtersApi.buildProTableQueryPayload || filtersApi.buildShipInfoQueryPayload,
+            customRestoreFilterValues: filtersApi.restoreProTableFilterValues || filtersApi.restoreShipInfoFilterValues
         };
     }
 
@@ -80,8 +84,26 @@
             },
             onDraw: function ($div) {
                 syncStickyHeaderOffset($div);
+            },
+            formatFilterOptionLabel: function (column, value) {
+                if (!column || value == null) {
+                    return value;
+                }
+
+                var col = String(column);
+                if (col === 'DepositCaseStatus' || col === 'ArurCaseStatus') {
+                    return app.formatCaseStatusLabel(value);
+                }
+
+                if (col === 'Status') {
+                    return app.formatStatusLabel(value);
+                }
+
+                return value;
             }
         }, buildShipInfoFilterHooks());
+
+        var filtersApi = getFiltersApi();
 
         if (kind === 'detail') {
             base.autoLoad = false;
@@ -93,11 +115,17 @@
             };
             base.onAfterRender = function ($div) {
                 bindDetailTableEvents($div);
+                if (filtersApi && filtersApi.updateAllProTableFilterCounts) {
+                    filtersApi.updateAllProTableFilterCounts($div, base.filterFieldMap);
+                }
             };
         } else {
             base.onAfterRender = function ($div) {
                 bindHeaderTableEvents($div);
                 app.updateHeaderActionState();
+                if (filtersApi && filtersApi.updateAllProTableFilterCounts) {
+                    filtersApi.updateAllProTableFilterCounts($div, base.filterFieldMap);
+                }
             };
         }
 
@@ -180,7 +208,7 @@
     $(document)
         .off('click.shipinfoHeaderRow', '#shipInfoHeaderDataDiv #shipInfoHeaderTable tbody tr[data-header-id]')
         .on('click.shipinfoHeaderRow', '#shipInfoHeaderDataDiv #shipInfoHeaderTable tbody tr[data-header-id]', function (e) {
-            if ($(e.target).closest('.shipinfo-header-radio, .shipinfo-header-edit-btn, .dropdown-menu, .column-filter-dropdown, .shipinfo-filter').length) {
+            if ($(e.target).closest('.shipinfo-header-radio, .shipinfo-header-edit-btn, .dropdown-menu, .column-filter-dropdown, .pro-table-filter').length) {
                 return;
             }
 
@@ -191,6 +219,7 @@
 
     function bindDetailTableEvents($scope) {
         syncStickyHeaderOffset($scope);
+        app.getDetailRowCount($scope);
 
         $scope.find('#shipInfoDetailTable .shipinfo-detail-edit-btn').off('click.shipinfo').on('click.shipinfo', function (e) {
             e.preventDefault();
@@ -279,8 +308,21 @@
         headerTableInstance = ProDataTables.initUsers(buildShipInfoTableConfig('header'));
         detailTableInstance = ProDataTables.initUsers(buildShipInfoTableConfig('detail'));
 
-        if (global.ShipInfoTableFilters) {
-            global.ShipInfoTableFilters.bindShipInfoFilterActions(app);
+        if (global.ProTableFilters) {
+            global.ProTableFilters.bindProTableFilterActions({
+                pageSelector: '.shipinfo-page',
+                resolveReload: function ($container) {
+                    if ($container.is('#shipInfoHeaderDataDiv') && app.headerTableInstance) {
+                        return function () { app.headerTableInstance.reload(); };
+                    }
+
+                    if ($container.is('#shipInfoDetailDataDiv') && app.detailTableInstance) {
+                        return function () { app.detailTableInstance.reload(); };
+                    }
+
+                    return null;
+                }
+            });
         }
 
         app.headerTableInstance = headerTableInstance;

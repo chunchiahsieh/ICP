@@ -218,21 +218,6 @@
     box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
 }
 
-.shipinfo-page .shipinfo-filter-cell {
-    min-width: 8rem;
-    vertical-align: top;
-}
-
-.shipinfo-page .shipinfo-filter-text,
-.shipinfo-page .shipinfo-filter-date,
-.shipinfo-page .shipinfo-filter-date-range {
-    min-width: 8rem;
-}
-
-.shipinfo-page .shipinfo-filter-actions .btn {
-    white-space: nowrap;
-}
-
 .shipinfo-page #shipInfoHeaderTable tbody tr.table-primary > .shipinfo-action-col {
     box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
 }

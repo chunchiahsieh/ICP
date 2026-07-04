@@ -105,8 +105,21 @@
 
     function renderCheckboxOptions($dropdown, options) {
       var $container = $dropdown.find('.users-filter-options');
+      var column = $dropdown.data('column');
+      var formatLabel = typeof config.formatFilterOptionLabel === 'function'
+        ? config.formatFilterOptionLabel
+        : null;
       $container.empty();
-      $.each(options, function (index, value) {
+      $.each(options, function (index, option) {
+        var value = option;
+        var label = option;
+        if (option && typeof option === 'object') {
+          value = option.value != null ? option.value : option.Value;
+          label = option.label != null ? option.label : (option.Label != null ? option.Label : value);
+        }
+        if (formatLabel) {
+          label = formatLabel(column, value) || value;
+        }
         var id = $dropdown.attr('id') + '-cb-' + index;
         var $item = $('<div class="form-check"></div>');
         $item.append(
@@ -117,7 +130,7 @@
         $item.append(
           $('<label class="form-check-label"></label>')
             .attr('for', id)
-            .text(value)
+            .text(label)
         );
         $container.append($item);
       });

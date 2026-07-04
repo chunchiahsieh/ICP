@@ -97,11 +97,6 @@ public class ShipInfoService : IShipInfoService
             return Task.FromResult<IReadOnlyList<string>>([]);
         }
 
-        if (!ShipInfoTableFilterColumns.IsDetailAllowed(column))
-        {
-            throw new ShipInfoBusinessException("Filter column is invalid.");
-        }
-
         var config = _metadataProvider.GetPageConfig(CultureInfo.CurrentUICulture.Name);
         var field = config.DetailFields.FirstOrDefault(x =>
             string.Equals(x.FieldName, column, StringComparison.OrdinalIgnoreCase));
@@ -295,12 +290,22 @@ public class ShipInfoService : IShipInfoService
         var header = await RequireHeaderByRowKeyAsync(headerRowKey, cancellationToken);
         EnsureStatusAllows(header, permission => permission.Delete, "Detail cannot be deleted in current status.");
 
-        await _repository.AddAuditLogsAsync(
-        [
-            CreateAuditLog("Detail", detailKey, headerKey, "Delete", userName)
-        ], cancellationToken);
+        var detailCount = await _repository.CountDetailsByInvoiceNoAsync(detail.InvoiceNo, cancellationToken);
+        if (detailCount <= 1)
+        {
+            throw new ShipInfoBusinessException("At least one detail row must remain.");
+        }
 
-        await _repository.DeleteDetailAsync(detailKey, cancellationToken);
+        await _repository.ExecuteInTransactionAsync(async () =>
+        {
+            await _repository.AddAuditLogsAsync(
+            [
+                CreateAuditLog("Detail", detailKey, headerKey, "Delete", userName)
+            ], cancellationToken);
+
+            await _repository.DeleteDetailAsync(detailKey, cancellationToken);
+        }, cancellationToken);
+
         LogOperation("DeleteDetail", headerKey: headerKey, detailKey: detailKey);
     }
 
@@ -478,10 +483,20 @@ public class ShipInfoService : IShipInfoService
         throw new ShipInfoBusinessException("Case type is invalid.");
     }
 
-    private static string GenerateCaseNo(string caseType, string invoiceNo, string tetPo)
+    private static string GenerateCaseNo(string caseType, string invoiceNo, string? _)
     {
         var prefix = caseType == ShipInfoCaseTypes.Deposit ? "DEP" : "ARUR";
-        return $"{prefix}-{invoiceNo}-{tetPo}-{DateTime.Now:yyyyMMddHHmmss}";
+        var maxLength = caseType == ShipInfoCaseTypes.Deposit
+            ? IcpHeader.DepositMaxLength
+            : IcpHeader.RtNoMaxLength;
+        var normalizedInvoice = (invoiceNo ?? string.Empty).Trim();
+        if (string.IsNullOrEmpty(normalizedInvoice))
+        {
+            throw new ShipInfoBusinessException("Invoice number is required to generate a case number.");
+        }
+
+        var caseNo = $"{prefix}-{normalizedInvoice}";
+        return caseNo.Length <= maxLength ? caseNo : caseNo[..maxLength];
     }
 
     private static IReadOnlyList<string> ValidateCaseCreation(
