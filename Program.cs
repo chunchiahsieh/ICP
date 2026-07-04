@@ -9,10 +9,12 @@ using ICP.Infrastructure;
 using ICP.Models.Auth;
 using ICP.Models;
 using ICP.Models.ShipInfo;
+using ICP.Models.Integration;
 
 using ICP.Repositories;
 
 using ICP.Services;
+using ICP.Services.Integration;
 
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -72,6 +74,9 @@ builder.Services.Configure<ForwarderDataUploadOptions>(
 builder.Services.Configure<TariffDataOptions>(
     builder.Configuration.GetSection(TariffDataOptions.SectionName));
 
+builder.Services.Configure<IntegrationOptions>(
+    builder.Configuration.GetSection(IntegrationOptions.SectionName));
+
 var shipInfoTableFieldsConfiguration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("Config/shipinfo-table-fields.json", optional: false, reloadOnChange: true)
@@ -128,6 +133,10 @@ builder.Services.AddScoped<UserResourcePermissionService>();
 builder.Services.AddScoped<ForwarderDataImportService>();
 builder.Services.AddSingleton<ForwarderPendingFileStore>();
 builder.Services.AddScoped<IShipInfoRepository, ShipInfoRepository>();
+builder.Services.AddScoped<IIntegrationEventOutboxRepository, IntegrationEventOutboxRepository>();
+builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
+builder.Services.AddSingleton<IShipInfoCaseEventFactory, ShipInfoCaseEventFactory>();
+builder.Services.AddHostedService<IntegrationEventOutboxPublisherWorker>();
 builder.Services.AddScoped<ShipInfoMetadataProvider>();
 builder.Services.AddScoped<ShipInfoLookupService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
@@ -191,6 +200,7 @@ using (var scope = app.Services.CreateScope())
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("ShipInfoSchema");
         await ShipInfoSchemaInitializer.EnsureAuditLogTableAsync(db, logger);
+        await IntegrationSchemaInitializer.EnsureOutboxTableAsync(db, logger);
     }
 }
 

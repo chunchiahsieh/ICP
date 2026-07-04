@@ -25,15 +25,21 @@ public class ShipInfoMetadataProvider
     {
         var normalizedCulture = culture ?? "zh-TW";
         var tableFields = _tableFieldsOptions.CurrentValue;
-        var headerFields = MergeAndLabelFields(ShipInfoTableFieldCatalog.BuildHeaderCatalog(), tableFields.Header, normalizedCulture);
-        var detailFields = MergeAndLabelFields(ShipInfoTableFieldCatalog.BuildDetailCatalog(), tableFields.Detail, normalizedCulture);
+        var headerCatalog = ShipInfoFieldCatalog.BuildHeaderCatalog();
+        var detailCatalog = ShipInfoFieldCatalog.BuildDetailCatalog();
+        var headerListFields = MergeAndLabelFields(headerCatalog, tableFields.Header, ShipInfoFieldConfigMerger.MergeList, normalizedCulture);
+        var detailListFields = MergeAndLabelFields(detailCatalog, tableFields.Detail, ShipInfoFieldConfigMerger.MergeList, normalizedCulture);
+        var headerEditFields = MergeAndLabelFields(headerCatalog, tableFields.Header, ShipInfoFieldConfigMerger.MergeEdit, normalizedCulture);
+        var detailEditFields = MergeAndLabelFields(detailCatalog, tableFields.Detail, ShipInfoFieldConfigMerger.MergeEdit, normalizedCulture);
 
         return new ShipInfoPageConfig
         {
             Culture = normalizedCulture,
-            HeaderFields = headerFields,
-            DetailFields = detailFields,
-            SearchFields = ShipInfoMetadataHelper.GetSearchFields(headerFields),
+            HeaderFields = headerListFields,
+            DetailFields = detailListFields,
+            HeaderEditFields = headerEditFields,
+            DetailEditFields = detailEditFields,
+            SearchFields = ShipInfoMetadataHelper.GetSearchFields(headerListFields),
             StatusRules = ShipInfoStatusRules.BuildMatrix(),
             HeaderInitialSort = tableFields.Header.InitialSort,
             DetailInitialSort = tableFields.Detail.InitialSort,
@@ -43,19 +49,18 @@ public class ShipInfoMetadataProvider
     }
 
     public IReadOnlyList<ShipInfoFieldMetadata> GetHeaderEditFields() =>
-        ShipInfoTableFieldCatalog.BuildHeaderCatalog()
-            .Where(x => x.FieldName is "Status" or "SaDate" or "Eta")
-            .ToList();
+        GetPageConfig().HeaderEditFields.Where(x => x.Editable).ToList();
 
     public IReadOnlyList<ShipInfoFieldMetadata> GetDetailEditFields() =>
-        ShipInfoTableFieldCatalog.BuildDetailCatalog().Where(x => x.Editable).ToList();
+        GetPageConfig().DetailEditFields.Where(x => x.Editable).ToList();
 
     private IReadOnlyList<ShipInfoFieldMetadata> MergeAndLabelFields(
         IReadOnlyList<ShipInfoFieldMetadata> catalog,
         ShipInfoTableSectionOptions? section,
+        Func<IReadOnlyList<ShipInfoFieldMetadata>, ShipInfoTableSectionOptions?, ILogger?, IReadOnlyList<ShipInfoFieldMetadata>> merge,
         string culture)
     {
-        var merged = ShipInfoFieldConfigMerger.Merge(catalog, section, _logger);
+        var merged = merge(catalog, section, _logger);
         ShipInfoFieldLabelResolver.ApplyLabels(merged, _localizerFactory, culture);
         return merged;
     }

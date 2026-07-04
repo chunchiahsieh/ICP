@@ -14,4 +14,29 @@ public static class ShipInfoControlTypes
     public const string Radio = "Radio";
     public const string Textarea = "Textarea";
     public const string Label = "Label";
+
+    public static string Normalize(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Text;
+        }
+
+        return value.Trim() switch
+        {
+            Text => Text,
+            Number => Number,
+            Decimal => Decimal,
+            Currency => Currency,
+            Date => Date,
+            DateTime => DateTime,
+            DateRange => DateRange,
+            Select => Select,
+            Checkbox => Checkbox,
+            Radio => Radio,
+            Textarea => Textarea,
+            Label => Label,
+            _ => Text
+        };
+    }
 }

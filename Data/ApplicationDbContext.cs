@@ -35,6 +35,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<ShipInfoAuditLog> ShipInfoAuditLogs => Set<ShipInfoAuditLog>();
 
+    public DbSet<IntegrationEventOutbox> IntegrationEventOutboxes => Set<IntegrationEventOutbox>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemConfig>(entity =>
@@ -270,6 +272,23 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.CreateTime).HasDefaultValueSql("getdate()").IsRequired();
             entity.Property(e => e.CreateUser).HasMaxLength(100);
             entity.Property(e => e.UpdateUser).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<IntegrationEventOutbox>(entity =>
+        {
+            entity.ToTable("INTEGRATION_EVENT_OUTBOX");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.EventType).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.CaseType).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.HeaderKey).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.CaseNo).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PayloadJson).IsRequired();
+            entity.Property(e => e.Status).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("sysutcdatetime()").IsRequired();
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
+            entity.HasIndex(e => new { e.Status, e.CreateTime })
+                .HasDatabaseName("IX_INTEGRATION_EVENT_OUTBOX_Status_CreateTime");
         });
 
         modelBuilder.Entity<Resource>(entity =>

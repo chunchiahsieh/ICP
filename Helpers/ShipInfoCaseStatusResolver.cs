@@ -31,6 +31,7 @@ public static class ShipInfoCaseStatusResolver
         }
 
         if (trimmed.Equals(ShipInfoCaseStatuses.Processing, StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals("起案中", StringComparison.Ordinal)
             || trimmed.Equals("處理中", StringComparison.Ordinal))
         {
             return ShipInfoCaseStatuses.Processing;
@@ -66,7 +67,7 @@ public static class ShipInfoCaseStatusResolver
             ShipInfoCaseStatuses.NotInitiated => ["NotInitiated", "未起案"],
             ShipInfoCaseStatuses.Initiated => ["Initiated", "已起案"],
             ShipInfoCaseStatuses.Failed => ["Failed", "起案失敗"],
-            ShipInfoCaseStatuses.Processing => ["Processing", "處理中"],
+            ShipInfoCaseStatuses.Processing => ["Processing", "起案中", "處理中"],
             _ => [normalizedCode]
         };
 }

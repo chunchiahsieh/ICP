@@ -21,20 +21,41 @@ public static class ShipInfoQueryFilterApplier
         IQueryable<IcpHeader> query,
         ShipInfoHeaderQueryModel criteria,
         IReadOnlyList<ShipInfoFieldMetadata> fields) =>
-        ApplyFilters(query, criteria, fields, HeaderProperties, ApplyHeaderStatusCheckbox);
+        ApplyFilters(query, criteria, fields, HeaderProperties, ApplyHeaderStatusCheckbox, isHeader: true);
 
     public static IQueryable<IcpDetail> ApplyDetailFilters(
         IQueryable<IcpDetail> query,
         ShipInfoDetailQueryModel criteria,
         IReadOnlyList<ShipInfoFieldMetadata> fields) =>
-        ApplyFilters(query, criteria, fields, DetailProperties, null);
+        ApplyDetailFiltersInternal(query, criteria, fields, DetailProperties);
+
+    private static IQueryable<IcpDetail> ApplyDetailFiltersInternal(
+        IQueryable<IcpDetail> query,
+        ShipInfoDetailQueryModel criteria,
+        IReadOnlyList<ShipInfoFieldMetadata> fields,
+        IReadOnlyDictionary<string, PropertyInfo> properties) =>
+        ApplyFilters(
+            query,
+            new ShipInfoHeaderQueryModel
+            {
+                Checkbox = criteria.Checkbox,
+                Text = criteria.Text,
+                DateFrom = criteria.DateFrom,
+                DateTo = criteria.DateTo,
+                Date = criteria.Date
+            },
+            fields,
+            properties,
+            null,
+            isHeader: false);
 
     private static IQueryable<TEntity> ApplyFilters<TEntity>(
         IQueryable<TEntity> query,
         ShipInfoHeaderQueryModel criteria,
         IReadOnlyList<ShipInfoFieldMetadata> fields,
         IReadOnlyDictionary<string, PropertyInfo> properties,
-        Func<IQueryable<TEntity>, List<string>, IQueryable<TEntity>>? statusCheckboxHandler)
+        Func<IQueryable<TEntity>, List<string>, IQueryable<TEntity>>? statusCheckboxHandler,
+        bool isHeader)
         where TEntity : class
     {
         var searchable = fields
@@ -60,7 +81,13 @@ public static class ShipInfoQueryFilterApplier
                 continue;
             }
 
-            query = ApplyCheckboxFilter(query, fieldName, values, properties);
+            var entityColumn = ShipInfoFieldBinding.ResolveEntityPropertyName(meta, isHeader);
+            if (string.IsNullOrWhiteSpace(entityColumn))
+            {
+                continue;
+            }
+
+            query = ApplyCheckboxFilter(query, entityColumn, values, properties);
         }
 
         foreach (var (fieldName, term) in criteria.Text)
@@ -75,7 +102,13 @@ public static class ShipInfoQueryFilterApplier
                 continue;
             }
 
-            query = ApplyTextFilter(query, fieldName, term.Trim(), properties);
+            var entityColumn = ShipInfoFieldBinding.ResolveEntityPropertyName(meta, isHeader);
+            if (string.IsNullOrWhiteSpace(entityColumn))
+            {
+                continue;
+            }
+
+            query = ApplyTextFilter(query, entityColumn, term.Trim(), properties);
         }
 
         foreach (var (fieldName, fromValue) in criteria.DateFrom)
@@ -90,7 +123,13 @@ public static class ShipInfoQueryFilterApplier
                 continue;
             }
 
-            query = ApplyDateFromFilter(query, fieldName, fromValue.Trim(), properties);
+            var entityColumn = ShipInfoFieldBinding.ResolveEntityPropertyName(meta, isHeader);
+            if (string.IsNullOrWhiteSpace(entityColumn))
+            {
+                continue;
+            }
+
+            query = ApplyDateFromFilter(query, entityColumn, fromValue.Trim(), properties);
         }
 
         foreach (var (fieldName, toValue) in criteria.DateTo)
@@ -105,7 +144,13 @@ public static class ShipInfoQueryFilterApplier
                 continue;
             }
 
-            query = ApplyDateToFilter(query, fieldName, toValue.Trim(), properties);
+            var entityColumn = ShipInfoFieldBinding.ResolveEntityPropertyName(meta, isHeader);
+            if (string.IsNullOrWhiteSpace(entityColumn))
+            {
+                continue;
+            }
+
+            query = ApplyDateToFilter(query, entityColumn, toValue.Trim(), properties);
         }
 
         foreach (var (fieldName, dateValue) in criteria.Date)
@@ -120,32 +165,17 @@ public static class ShipInfoQueryFilterApplier
                 continue;
             }
 
-            query = ApplyExactDateFilter(query, fieldName, dateValue.Trim(), properties);
+            var entityColumn = ShipInfoFieldBinding.ResolveEntityPropertyName(meta, isHeader);
+            if (string.IsNullOrWhiteSpace(entityColumn))
+            {
+                continue;
+            }
+
+            query = ApplyExactDateFilter(query, entityColumn, dateValue.Trim(), properties);
         }
 
         return query;
     }
-
-    private static IQueryable<TEntity> ApplyFilters<TEntity>(
-        IQueryable<TEntity> query,
-        ShipInfoDetailQueryModel criteria,
-        IReadOnlyList<ShipInfoFieldMetadata> fields,
-        IReadOnlyDictionary<string, PropertyInfo> properties,
-        Func<IQueryable<TEntity>, List<string>, IQueryable<TEntity>>? statusCheckboxHandler)
-        where TEntity : class =>
-        ApplyFilters(
-            query,
-            new ShipInfoHeaderQueryModel
-            {
-                Checkbox = criteria.Checkbox,
-                Text = criteria.Text,
-                DateFrom = criteria.DateFrom,
-                DateTo = criteria.DateTo,
-                Date = criteria.Date
-            },
-            fields,
-            properties,
-            statusCheckboxHandler);
 
     private static IQueryable<IcpHeader> ApplyHeaderStatusCheckbox(
         IQueryable<IcpHeader> query,

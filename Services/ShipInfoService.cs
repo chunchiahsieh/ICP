@@ -1,15 +1,25 @@
 using System.Globalization;
+using System.Text.Json;
 
 using ICP.Helpers;
 using ICP.Models.Icp;
+using ICP.Models.Integration;
 using ICP.Models.ShipInfo;
 using ICP.Repositories;
+using ICP.Services.Integration;
 
 namespace ICP.Services;
 
 public class ShipInfoService : IShipInfoService
 {
+    private static readonly JsonSerializerOptions IntegrationEventJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
     private readonly IShipInfoRepository _repository;
+    private readonly IIntegrationEventOutboxRepository _outboxRepository;
+    private readonly IShipInfoCaseEventFactory _caseEventFactory;
     private readonly ShipInfoMetadataProvider _metadataProvider;
     private readonly ShipInfoLookupService _lookupService;
     private readonly UserResourcePermissionService _permissionService;
@@ -18,6 +28,8 @@ public class ShipInfoService : IShipInfoService
 
     public ShipInfoService(
         IShipInfoRepository repository,
+        IIntegrationEventOutboxRepository outboxRepository,
+        IShipInfoCaseEventFactory caseEventFactory,
         ShipInfoMetadataProvider metadataProvider,
         ShipInfoLookupService lookupService,
         UserResourcePermissionService permissionService,
@@ -25,6 +37,8 @@ public class ShipInfoService : IShipInfoService
         ILogger<ShipInfoService> logger)
     {
         _repository = repository;
+        _outboxRepository = outboxRepository;
+        _caseEventFactory = caseEventFactory;
         _metadataProvider = metadataProvider;
         _lookupService = lookupService;
         _permissionService = permissionService;
@@ -174,10 +188,10 @@ public class ShipInfoService : IShipInfoService
     }
 
     public IReadOnlyList<string> ValidateHeaderValues(IReadOnlyDictionary<string, string?> values) =>
-        ValidateEditableValues(_metadataProvider.GetPageConfig().HeaderFields, values);
+        ValidateEditableValues(_metadataProvider.GetPageConfig().HeaderEditFields, values);
 
     public IReadOnlyList<string> ValidateDetailValues(IReadOnlyDictionary<string, string?> values) =>
-        ValidateEditableValues(_metadataProvider.GetPageConfig().DetailFields, values);
+        ValidateEditableValues(_metadataProvider.GetPageConfig().DetailEditFields, values);
 
     public async Task<Dictionary<string, object?>> SaveHeaderAsync(
         ShipInfoSaveRequest request,
@@ -406,10 +420,23 @@ public class ShipInfoService : IShipInfoService
                 oldStatus: oldStatus,
                 newStatus: newStatus);
 
+            var integrationEvent = _caseEventFactory.Create(
+                headerRowKey,
+                invoiceKey,
+                caseType,
+                caseNo,
+                oldStatus,
+                newStatus,
+                header,
+                details,
+                userName);
+            var payloadJson = JsonSerializer.Serialize(integrationEvent, IntegrationEventJsonOptions);
+
             await _repository.ExecuteInTransactionAsync(async () =>
             {
                 await _repository.UpdateHeaderAndDetailsAsync(header, details, cancellationToken);
                 await _repository.AddAuditLogsAsync([auditLog], cancellationToken);
+                await _outboxRepository.EnqueueAsync(integrationEvent, payloadJson, userName, cancellationToken);
             }, cancellationToken);
 
             LogOperation(caseType == ShipInfoCaseTypes.Deposit ? "Deposit" : "ARUR", headerKey: invoiceKey, extra: caseNo);

@@ -10,6 +10,9 @@ public class ShipInfoFieldMetadata
     [JsonPropertyName("fieldName")]
     public string FieldName { get; set; } = string.Empty;
 
+    [JsonIgnore]
+    public string? EntityPropertyName { get; set; }
+
     [JsonPropertyName("displayName")]
     public string DisplayName { get; set; } = string.Empty;
 

@@ -26,8 +26,8 @@
 
     function getModalFields() {
         return state.viewModalKind === 'header'
-            ? app.getAllHeaderFields()
-            : app.getDetailFields();
+            ? app.getHeaderEditFormFields()
+            : app.getDetailEditFormFields();
     }
 
     function getEditableFieldNames() {

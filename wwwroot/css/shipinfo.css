@@ -318,18 +318,3 @@
 .shipinfo-case-drawer .accordion-button {
     font-weight: 600;
 }
-
-.shipinfo-page .shipinfo-header-toolbar .shipinfo-case-status-group {
-    gap: 0.35rem;
-}
-
-.shipinfo-page .shipinfo-case-status-label {
-    font-size: 0.8125rem;
-    color: var(--bs-secondary-color, #6c757d);
-    white-space: nowrap;
-}
-
-.shipinfo-page .shipinfo-case-status {
-    min-width: 4.5rem;
-    font-weight: 500;
-}

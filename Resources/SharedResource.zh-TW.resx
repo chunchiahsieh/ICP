@@ -691,7 +691,7 @@
     <value>起案失敗</value>
   </data>
   <data name="ShipInfo.CaseStatus.Processing" xml:space="preserve">
-    <value>處理中</value>
+    <value>起案中</value>
   </data>
   <data name="ShipInfo.DepositCaseStatus" xml:space="preserve">
     <value>押金起案</value>

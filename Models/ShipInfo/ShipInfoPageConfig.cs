@@ -13,6 +13,12 @@ public class ShipInfoPageConfig
     [JsonPropertyName("detailFields")]
     public IReadOnlyList<ShipInfoFieldMetadata> DetailFields { get; init; } = [];
 
+    [JsonPropertyName("headerEditFields")]
+    public IReadOnlyList<ShipInfoFieldMetadata> HeaderEditFields { get; init; } = [];
+
+    [JsonPropertyName("detailEditFields")]
+    public IReadOnlyList<ShipInfoFieldMetadata> DetailEditFields { get; init; } = [];
+
     [JsonPropertyName("searchFields")]
     public IReadOnlyList<ShipInfoFieldMetadata> SearchFields { get; init; } = [];
 

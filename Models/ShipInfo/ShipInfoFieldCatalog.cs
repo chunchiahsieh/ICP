@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using ICP.Models.Icp;
+using ICP.Helpers;
+using ICP.Models.ShipInfo;
 
 namespace ICP.Models.ShipInfo;
 
-public static class ShipInfoTableFieldCatalog
+public static class ShipInfoFieldCatalog
 {
     public static readonly string[] HeaderFieldOrder =
     [
@@ -31,23 +32,27 @@ public static class ShipInfoTableFieldCatalog
         "DepositCaseStatus", "ArurCaseStatus"
     ];
 
-    private static readonly Dictionary<string, PropertyInfo> HeaderProperties =
-        BuildPropertyMap(typeof(IcpAuditableEntity), typeof(IcpHeader));
+    private static readonly Dictionary<string, PropertyInfo> HeaderDtoProperties =
+        ShipInfoFieldBinding.GetHeaderDtoProperties()
+            .ToDictionary(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
 
-    private static readonly Dictionary<string, PropertyInfo> DetailProperties =
-        BuildPropertyMap(typeof(IcpAuditableEntity), typeof(IcpDetail));
+    private static readonly Dictionary<string, PropertyInfo> DetailDtoProperties =
+        ShipInfoFieldBinding.GetDetailDtoProperties()
+            .ToDictionary(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
 
     private static readonly Dictionary<string, ShipInfoFieldSpec> HeaderSpecs = new(StringComparer.OrdinalIgnoreCase)
     {
         ["Status"] = new(ShipInfoControlTypes.Select, editable: true, searchable: true, lookupCategory: ShipInfoStatuses.LookupCategory, group: "Basic"),
         ["CreateDate"] = new(ShipInfoControlTypes.Text, editable: false, searchable: true, maxLength: 20, group: "Basic"),
-        ["SaDate"] = new(ShipInfoControlTypes.DateRange, editable: true, searchable: true, maxLength: 10, group: "Shipping"),
+        ["SaDate"] = new(ShipInfoControlTypes.Date, editable: true, searchable: true, maxLength: 10, group: "Shipping"),
         ["InvoiceNo"] = new(ShipInfoControlTypes.Text, editable: false, searchable: true, maxLength: 30, group: "Invoice"),
         ["Broker"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: "Broker", maxLength: 30, group: "Customs"),
-        ["Eta"] = new(ShipInfoControlTypes.DateRange, editable: true, searchable: true, maxLength: 10, group: "Shipping"),
+        ["Eta"] = new(ShipInfoControlTypes.Date, editable: true, searchable: true, maxLength: 10, group: "Shipping"),
         ["DeliveryTo"] = new(ShipInfoControlTypes.Select, editable: false, lookupCategory: "DeliveryToList", maxLength: 20, group: "Warehouse"),
         ["Notes"] = new(ShipInfoControlTypes.Textarea, editable: false, maxLength: 1000, group: "Other"),
         ["SapRemarks"] = new(ShipInfoControlTypes.Textarea, editable: false, maxLength: 1000, group: "Other"),
+        ["DepositCaseStatus"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: ShipInfoCaseStatuses.DepositCaseStatusCategory, group: "Case"),
+        ["ArurCaseStatus"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: ShipInfoCaseStatuses.ArurCaseStatusCategory, group: "Case"),
         ["CreateTime"] = new(ShipInfoControlTypes.DateTime, editable: false, group: "Audit"),
         ["UpdateTime"] = new(ShipInfoControlTypes.DateTime, editable: false, group: "Audit"),
     };
@@ -55,40 +60,52 @@ public static class ShipInfoTableFieldCatalog
     private static readonly Dictionary<string, ShipInfoFieldSpec> DetailSpecs = new(StringComparer.OrdinalIgnoreCase)
     {
         ["InvoiceSeq"] = new(ShipInfoControlTypes.Decimal, editable: false, group: "Basic"),
-        ["Description"] = new(ShipInfoControlTypes.Text, editable: true, maxLength: 60, group: "Basic"),
-        ["Qty"] = new(ShipInfoControlTypes.Decimal, editable: true, required: true, minValue: 0, group: "Basic"),
-        ["Uom"] = new(ShipInfoControlTypes.Text, editable: true, maxLength: 10, group: "Basic"),
-        ["Coo"] = new(ShipInfoControlTypes.Text, editable: true, maxLength: 50, group: "Basic"),
-        ["CartonNo"] = new(ShipInfoControlTypes.Decimal, editable: true, group: "Packing"),
-        ["GrossWeight"] = new(ShipInfoControlTypes.Decimal, editable: true, group: "Packing"),
+        ["Description"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 60, group: "Basic"),
+        ["Qty"] = new(ShipInfoControlTypes.Decimal, editable: false, required: true, minValue: 0, group: "Basic"),
+        ["Uom"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 10, group: "Basic"),
+        ["Coo"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 50, group: "Basic"),
+        ["CartonNo"] = new(ShipInfoControlTypes.Decimal, editable: false, group: "Packing"),
+        ["GrossWeight"] = new(ShipInfoControlTypes.Decimal, editable: false, group: "Packing"),
+        ["DepositCaseStatus"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: ShipInfoCaseStatuses.DepositCaseStatusCategory, group: "Case"),
+        ["ArurCaseStatus"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: ShipInfoCaseStatuses.ArurCaseStatusCategory, group: "Case"),
         ["CreateTime"] = new(ShipInfoControlTypes.DateTime, editable: false, group: "Audit"),
         ["UpdateTime"] = new(ShipInfoControlTypes.DateTime, editable: false, group: "Audit"),
     };
 
     public static IReadOnlyList<ShipInfoFieldMetadata> BuildHeaderCatalog() =>
-        BuildCatalog("header", HeaderFieldOrder, HeaderProperties, HeaderSpecs);
+        BuildCatalog("header", HeaderFieldOrder, HeaderDtoProperties, HeaderSpecs, isHeader: true);
 
     public static IReadOnlyList<ShipInfoFieldMetadata> BuildDetailCatalog() =>
-        BuildCatalog("detail", DetailFieldOrder, DetailProperties, DetailSpecs);
+        BuildCatalog("detail", DetailFieldOrder, DetailDtoProperties, DetailSpecs, isHeader: false);
 
     private static IReadOnlyList<ShipInfoFieldMetadata> BuildCatalog(
         string tableKind,
         IReadOnlyList<string> fieldOrder,
-        IReadOnlyDictionary<string, PropertyInfo> properties,
-        IReadOnlyDictionary<string, ShipInfoFieldSpec> specs)
+        IReadOnlyDictionary<string, PropertyInfo> dtoProperties,
+        IReadOnlyDictionary<string, ShipInfoFieldSpec> specs,
+        bool isHeader)
     {
         var fields = new List<ShipInfoFieldMetadata>(fieldOrder.Count);
         for (var index = 0; index < fieldOrder.Count; index++)
         {
             var fieldName = fieldOrder[index];
-            properties.TryGetValue(fieldName, out var property);
+            if (!dtoProperties.TryGetValue(fieldName, out var property))
+            {
+                continue;
+            }
+
             specs.TryGetValue(fieldName, out var spec);
             spec ??= ShipInfoFieldSpec.FromProperty(property);
+            if (property.GetCustomAttribute<ShipInfoComputedAttribute>() is not null)
+            {
+                spec = spec.With(searchable: false, editable: false);
+            }
 
             fields.Add(new ShipInfoFieldMetadata
             {
                 Id = $"{tableKind}-{ToKebabCase(fieldName)}",
                 FieldName = fieldName,
+                EntityPropertyName = ShipInfoFieldBinding.ResolveEntityPropertyName(fieldName, isHeader),
                 DisplayName = HumanizeFieldName(fieldName),
                 DisplayNameZh = HumanizeFieldName(fieldName),
                 LabelKey = $"ShipInfo.Field.{fieldName}",
@@ -103,36 +120,12 @@ public static class ShipInfoTableFieldCatalog
                 Visible = true,
                 MaxLength = spec.MaxLength,
                 MinValue = spec.MinValue,
-                Group = spec.Group
+                Group = spec.Group,
+                ReadOnly = property.GetCustomAttribute<ShipInfoComputedAttribute>() is not null
             });
         }
 
         return fields;
-    }
-
-    private static Dictionary<string, PropertyInfo> BuildPropertyMap(params Type[] types)
-    {
-        var map = new Dictionary<string, PropertyInfo>(StringComparer.OrdinalIgnoreCase);
-        foreach (var type in types)
-        {
-            foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                if (property.GetIndexParameters().Length > 0)
-                {
-                    continue;
-                }
-
-                if (typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType)
-                    && property.PropertyType != typeof(string))
-                {
-                    continue;
-                }
-
-                map[property.Name] = property;
-            }
-        }
-
-        return map;
     }
 
     private static string HumanizeFieldName(string fieldName) =>
@@ -195,13 +188,20 @@ public static class ShipInfoTableFieldCatalog
             Group = group;
         }
 
-        public static ShipInfoFieldSpec FromProperty(PropertyInfo? property)
-        {
-            if (property is null)
-            {
-                return new ShipInfoFieldSpec(ShipInfoControlTypes.Text);
-            }
+        public ShipInfoFieldSpec With(bool? searchable = null, bool? editable = null) =>
+            new(
+                ControlType,
+                searchable ?? Searchable,
+                editable ?? Editable,
+                Required,
+                LookupCategory,
+                SearchControlType,
+                MaxLength,
+                MinValue,
+                Group);
 
+        public static ShipInfoFieldSpec FromProperty(PropertyInfo property)
+        {
             var maxLength = property.GetCustomAttribute<MaxLengthAttribute>()?.Length;
             var controlType = ResolveControlType(property.PropertyType);
             return new ShipInfoFieldSpec(controlType, maxLength: maxLength);

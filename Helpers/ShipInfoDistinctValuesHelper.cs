@@ -40,12 +40,18 @@ public static class ShipInfoDistinctValuesHelper
             return GetCaseStatusDistinctAsync(query, column, term, cancellationToken);
         }
 
-        if (!HeaderProperties.TryGetValue(column, out var property))
+        var entityColumn = ShipInfoFieldBinding.ResolveEntityPropertyName(column, isHeader: true);
+        if (string.IsNullOrWhiteSpace(entityColumn))
         {
             return Task.FromResult<IReadOnlyList<string>>([]);
         }
 
-        return GetDistinctByPropertyTypeAsync(query, column, property, term, cancellationToken);
+        if (!HeaderProperties.TryGetValue(entityColumn, out var property))
+        {
+            return Task.FromResult<IReadOnlyList<string>>([]);
+        }
+
+        return GetDistinctByPropertyTypeAsync(query, entityColumn, property, term, cancellationToken);
     }
 
     public static Task<IReadOnlyList<string>> GetDetailDistinctValuesAsync(
@@ -66,12 +72,18 @@ public static class ShipInfoDistinctValuesHelper
             return GetCaseStatusDistinctAsync(query, column, term, cancellationToken);
         }
 
-        if (!DetailProperties.TryGetValue(column, out var property))
+        var entityColumn = ShipInfoFieldBinding.ResolveEntityPropertyName(column, isHeader: false);
+        if (string.IsNullOrWhiteSpace(entityColumn))
         {
             return Task.FromResult<IReadOnlyList<string>>([]);
         }
 
-        return GetDistinctByPropertyTypeAsync(query, column, property, term, cancellationToken);
+        if (!DetailProperties.TryGetValue(entityColumn, out var property))
+        {
+            return Task.FromResult<IReadOnlyList<string>>([]);
+        }
+
+        return GetDistinctByPropertyTypeAsync(query, entityColumn, property, term, cancellationToken);
     }
 
     private static bool IsCaseStatusColumn(string column) =>

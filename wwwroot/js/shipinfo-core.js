@@ -161,7 +161,7 @@
             return 'Failed';
         }
 
-        if (lower === 'processing' || normalized === '處理中') {
+        if (lower === 'processing' || normalized === '起案中' || normalized === '處理中') {
             return 'Processing';
         }
 
@@ -192,34 +192,6 @@
         };
 
         return map[code] || value || messages.caseStatusNotInitiated;
-    };
-
-    app.getCaseStatusBadgeClass = function (status) {
-        var code = app.normalizeCaseStatus(status);
-        if (code === 'Initiated') {
-            return 'text-bg-success';
-        }
-
-        if (code === 'Failed') {
-            return 'text-bg-warning';
-        }
-
-        if (code === 'Processing') {
-            return 'text-bg-info';
-        }
-
-        return 'text-bg-secondary';
-    };
-
-    app.updateCaseStatusBadge = function ($badge, status) {
-        if (!$badge || !$badge.length) {
-            return;
-        }
-
-        $badge
-            .removeClass('text-bg-secondary text-bg-success text-bg-warning text-bg-info')
-            .addClass(app.getCaseStatusBadgeClass(status))
-            .text(app.formatCaseStatusLabel(status));
     };
 
     app.getHeaderStatus = function (row) {
@@ -315,8 +287,6 @@
             || !statusPermission.arur
             || !app.hasPermission('Views.Function.ShipInfo.ARUR');
 
-        app.updateCaseStatusBadge($('#shipInfoDepositCaseStatus'), depositCaseStatus);
-        app.updateCaseStatusBadge($('#shipInfoArurCaseStatus'), arurCaseStatus);
         $('#btnShipInfoDeposit').prop('disabled', depositDisabled);
         $('#btnShipInfoArur').prop('disabled', arurDisabled);
     };
@@ -330,8 +300,30 @@
         return app.renderApi.getAllFields(app.getHeaderFields());
     };
 
+    app.getHeaderEditFormFields = function () {
+        var state = app.state;
+        var fields = state.pageConfig
+            ? (state.pageConfig.headerEditFields || state.pageConfig.HeaderEditFields || [])
+            : [];
+        return app.renderApi.getAllFields(fields);
+    };
+
     app.getHeaderEditFields = function () {
-        return app.getAllHeaderFields().filter(function (field) {
+        return app.getHeaderEditFormFields().filter(function (field) {
+            return field.editable !== false && field.Editable !== false;
+        });
+    };
+
+    app.getDetailEditFormFields = function () {
+        var state = app.state;
+        var fields = state.pageConfig
+            ? (state.pageConfig.detailEditFields || state.pageConfig.DetailEditFields || [])
+            : [];
+        return app.renderApi.getAllFields(fields);
+    };
+
+    app.getDetailEditFields = function () {
+        return app.getDetailEditFormFields().filter(function (field) {
             return field.editable !== false && field.Editable !== false;
         });
     };
@@ -339,12 +331,6 @@
     app.getDetailFields = function () {
         var state = app.state;
         return state.pageConfig ? (state.pageConfig.detailFields || state.pageConfig.DetailFields || []) : [];
-    };
-
-    app.getDetailEditFields = function () {
-        return app.getDetailFields().filter(function (field) {
-            return field.editable !== false && field.Editable !== false;
-        });
     };
 
     app.getSearchFields = function () {

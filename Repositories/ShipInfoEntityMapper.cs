@@ -8,77 +8,13 @@ namespace ICP.Repositories;
 
 public static class ShipInfoEntityMapper
 {
-    public static Dictionary<string, object?> MapEntity(object entity)
-    {
-        var result = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-        foreach (var property in entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+    public static Dictionary<string, object?> MapEntity(object entity) =>
+        entity switch
         {
-            if (!property.CanRead || property.GetIndexParameters().Length > 0)
-            {
-                continue;
-            }
-
-            if (property.GetCustomAttribute<System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute>() is not null)
-            {
-                continue;
-            }
-
-            var value = property.GetValue(entity);
-            result[property.Name] = value;
-        }
-
-        switch (entity)
-        {
-            case IcpHeader header:
-                EnrichHeader(result, header);
-                break;
-            case IcpDetail detail:
-                EnrichDetail(result, detail);
-                break;
-        }
-
-        return result;
-    }
-
-    private static void EnrichHeader(Dictionary<string, object?> result, IcpHeader header)
-    {
-        var headerKey = ShipInfoKeyHelper.BuildHeaderKey(header);
-        var headerRowKey = ShipInfoKeyHelper.BuildHeaderRowKey(header);
-        var status = ShipInfoStatusResolver.Resolve(header);
-        result["HeaderKey"] = headerKey;
-        result["HeaderRowKey"] = headerRowKey;
-        result["RowId"] = header.Id;
-        result["Id"] = headerRowKey;
-        result["Status"] = status;
-        result["SaDateFrom"] = header.SaDate;
-        result["EtaFrom"] = header.Eta;
-        result["ShipNo"] = header.TetPo;
-        result["Customer"] = header.EndUser ?? header.SoldToParty;
-        result["DepositNo"] = header.Deposit;
-        result["ArurNo"] = header.RtNo;
-        result["DepositCaseStatus"] = ShipInfoCaseStatusResolver.Normalize(header.DepositCaseStatus);
-        result["ArurCaseStatus"] = ShipInfoCaseStatusResolver.Normalize(header.ArurCaseStatus);
-        result["Flight"] = header.Flt;
-        result["Remark"] = header.Notes ?? header.SapRemarks;
-    }
-
-    private static void EnrichDetail(Dictionary<string, object?> result, IcpDetail detail)
-    {
-        var detailKey = ShipInfoKeyHelper.BuildDetailKey(detail);
-        var headerKey = ShipInfoKeyHelper.BuildHeaderKey(detail.InvoiceNo);
-        result["DetailKey"] = detailKey;
-        result["RowId"] = detail.Id;
-        result["Id"] = detailKey;
-        result["HeaderKey"] = headerKey;
-        result["LineNo"] = detail.InvoiceSeq;
-        result["MaterialCode"] = detail.ItemNo;
-        result["Quantity"] = detail.Qty;
-        result["Weight"] = detail.GrossWeight ?? (object?)detail.NetWeightOfTheItem;
-        result["InvoiceQty"] = detail.Qty;
-        result["Carton"] = detail.CartonNo;
-        result["DepositCaseStatus"] = ShipInfoCaseStatusResolver.Normalize(detail.DepositCaseStatus);
-        result["ArurCaseStatus"] = ShipInfoCaseStatusResolver.Normalize(detail.ArurCaseStatus);
-    }
+            IcpHeader header => ShipInfoRowDtoMapper.MapHeader(header),
+            IcpDetail detail => ShipInfoRowDtoMapper.MapDetail(detail),
+            _ => throw new ArgumentException($"Unsupported entity type: {entity.GetType().Name}", nameof(entity))
+        };
 
     public static void ApplyEditableValues(
         object entity,
@@ -93,7 +29,7 @@ public static class ShipInfoEntityMapper
 
         foreach (var field in fields.Where(x => x.Editable))
         {
-            ApplyFieldValue(entity, field, values);
+            ApplyFieldValue(entity, field, values, isHeader: false);
         }
     }
 
@@ -106,10 +42,11 @@ public static class ShipInfoEntityMapper
         {
             if (string.Equals(field.ControlType, ShipInfoControlTypes.DateRange, StringComparison.OrdinalIgnoreCase))
             {
+                var entityPropertyName = ShipInfoFieldBinding.ResolveEntityPropertyName(field, isHeader: true);
                 var fromKey = field.FieldName + "From";
-                if (values.TryGetValue(fromKey, out var fromValue))
+                if (values.TryGetValue(fromKey, out var fromValue) && !string.IsNullOrWhiteSpace(entityPropertyName))
                 {
-                    header.GetType().GetProperty(field.FieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)
+                    header.GetType().GetProperty(entityPropertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)
                         ?.SetValue(header, NormalizeDateValue(fromValue));
                 }
 
@@ -118,7 +55,7 @@ public static class ShipInfoEntityMapper
 
             if (!string.Equals(field.FieldName, "Status", StringComparison.OrdinalIgnoreCase))
             {
-                ApplyFieldValue(header, field, values);
+                ApplyFieldValue(header, field, values, isHeader: true);
                 continue;
             }
 
@@ -143,14 +80,21 @@ public static class ShipInfoEntityMapper
     private static void ApplyFieldValue(
         object entity,
         ShipInfoFieldMetadata field,
-        IReadOnlyDictionary<string, string?> values)
+        IReadOnlyDictionary<string, string?> values,
+        bool isHeader)
     {
         if (!values.TryGetValue(field.FieldName, out var rawValue))
         {
             return;
         }
 
-        var property = entity.GetType().GetProperty(field.FieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+        var entityPropertyName = ShipInfoFieldBinding.ResolveEntityPropertyName(field, isHeader);
+        if (string.IsNullOrWhiteSpace(entityPropertyName))
+        {
+            return;
+        }
+
+        var property = entity.GetType().GetProperty(entityPropertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
         if (property is null || !property.CanWrite)
         {
             return;
@@ -180,12 +124,19 @@ public static class ShipInfoEntityMapper
         IReadOnlyDictionary<string, string?> values,
         IReadOnlyList<ShipInfoFieldMetadata> fields)
     {
+        var isHeader = entity is IcpHeader;
         var changes = new List<FieldChange>();
         foreach (var field in fields)
         {
             if (string.Equals(field.ControlType, ShipInfoControlTypes.DateRange, StringComparison.OrdinalIgnoreCase))
             {
-                var dateProperty = entity.GetType().GetProperty(field.FieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                var dateEntityProperty = ShipInfoFieldBinding.ResolveEntityPropertyName(field, isHeader);
+                if (string.IsNullOrWhiteSpace(dateEntityProperty))
+                {
+                    continue;
+                }
+
+                var dateProperty = entity.GetType().GetProperty(dateEntityProperty, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
                 if (dateProperty is null || !dateProperty.CanRead)
                 {
                     continue;
@@ -202,7 +153,13 @@ public static class ShipInfoEntityMapper
                 continue;
             }
 
-            var property = entity.GetType().GetProperty(field.FieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            var entityPropertyName = ShipInfoFieldBinding.ResolveEntityPropertyName(field, isHeader);
+            if (string.IsNullOrWhiteSpace(entityPropertyName))
+            {
+                continue;
+            }
+
+            var property = entity.GetType().GetProperty(entityPropertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
             if (property is null || !property.CanRead)
             {
                 continue;
@@ -245,6 +202,12 @@ public static class ShipInfoEntityMapper
         }
 
         var trimmed = rawValue.Trim();
+        if (string.Equals(field.FieldName, "DepositCaseStatus", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(field.FieldName, "ArurCaseStatus", StringComparison.OrdinalIgnoreCase))
+        {
+            trimmed = ShipInfoCaseStatusResolver.Normalize(trimmed);
+        }
+
         if (underlyingType == typeof(string))
         {
             return trimmed;
