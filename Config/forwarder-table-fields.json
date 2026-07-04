@@ -1,0 +1,32 @@
+{
+  "tableUi": {"stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "600px"},
+  "initialSort": { "fieldName": "Type", "direction": "asc" },
+  "list": {
+    "fields": [
+      { "fieldName": "DuplicateStatus", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "RowNo", "visible": true, "searchable": false },
+      { "fieldName": "Type", "visible": true, "searchable": false },
+      { "fieldName": "InvoiceNo", "visible": true, "searchable": false, "filterType": "Text"},
+      { "fieldName": "CustomerReference", "visible": true, "searchable": false },
+      { "fieldName": "MaterialCode", "visible": true, "searchable": false },
+      { "fieldName": "OrderMaterialName", "visible": true, "searchable": false },
+      { "fieldName": "Quantity", "visible": true, "searchable": false },
+      { "fieldName": "PortOfLoading", "visible": true, "searchable": false },
+      { "fieldName": "ShipToName", "visible": true, "searchable": false },
+      { "fieldName": "ShipToAddress", "visible": true, "searchable": false },
+      { "fieldName": "ShipToPartyCountryCode", "visible": true, "searchable": false },
+      { "fieldName": "ShipToPortCode", "visible": true, "searchable": false },
+      { "fieldName": "FreightCharge", "visible": true, "searchable": false },
+      { "fieldName": "ConfirmedCustomDate", "visible": true, "searchable": false },
+      { "fieldName": "Hawb", "visible": true, "searchable": false },
+      { "fieldName": "Mawb", "visible": true, "searchable": false },
+      { "fieldName": "Etd", "visible": true, "searchable": false },
+      { "fieldName": "Eta", "visible": true, "searchable": false },
+      { "fieldName": "Flight1", "visible": true, "searchable": false },
+      { "fieldName": "Flight2", "visible": true, "searchable": false },
+      { "fieldName": "Cb", "visible": true, "searchable": false },
+      { "fieldName": "Action", "visible": true, "searchable": false },
+      { "fieldName": "Mdp", "visible": true, "searchable": false }
+    ]
+  }
+}

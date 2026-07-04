@@ -78,23 +78,77 @@ public class ForwarderDataImportService
             throw new InvalidOperationException("檔案中沒有可匯入的資料列");
         }
 
+        var consistencyErrors = new List<string>();
+        ForwarderImportRules.ValidatePerInvoiceFieldConsistency(rows, consistencyErrors);
+        ThrowIfErrors(consistencyErrors);
+
         return rows;
+    }
+
+    public async Task<IReadOnlyList<string>> GetDuplicateInvoiceNumbersAsync(
+        IEnumerable<string> invoiceNumbers,
+        CancellationToken cancellationToken = default)
+    {
+        var incoming = invoiceNumbers
+            .Where(invoice => !string.IsNullOrWhiteSpace(invoice))
+            .Select(invoice => invoice.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (incoming.Count == 0)
+        {
+            return [];
+        }
+
+        var existingInvoices = await _db.ForwarderDataUploads
+            .AsNoTracking()
+            .Select(x => x.InvoiceNo)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+
+        return ForwarderImportRules.FindDuplicateInvoiceNumbers(incoming, existingInvoices);
     }
 
     public async Task<ForwarderDataImportResult> SaveAsync(
         string storedFilePath,
         string createUser,
+        bool confirmOverwrite = false,
         CancellationToken cancellationToken = default)
     {
         var rows = await ParseAsync(storedFilePath, createUser, cancellationToken);
+        var duplicateInvoices = await GetDuplicateInvoiceNumbersAsync(
+            rows.Select(row => row.InvoiceNo),
+            cancellationToken);
+
+        if (duplicateInvoices.Count > 0 && !confirmOverwrite)
+        {
+            return ForwarderDataImportResult.NeedOverwriteConfirmation(duplicateInvoices);
+        }
 
         await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
         try
         {
+            var overwrittenCount = 0;
+            if (duplicateInvoices.Count > 0)
+            {
+                overwrittenCount = await ArchiveAndRemoveByInvoicesAsync(
+                    duplicateInvoices,
+                    storedFilePath,
+                    createUser,
+                    cancellationToken);
+            }
+
             _db.ForwarderDataUploads.AddRange(rows);
             await _db.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
-            return ForwarderDataImportResult.SaveOk(rows.Count, storedFilePath);
+            return new ForwarderDataImportResult
+            {
+                Success = true,
+                ImportedCount = rows.Count,
+                OverwrittenCount = overwrittenCount,
+                FilePath = storedFilePath,
+                Message = $"成功儲存 {rows.Count} 筆"
+            };
         }
         catch
         {
@@ -103,11 +157,110 @@ public class ForwarderDataImportService
         }
     }
 
+    private async Task<int> ArchiveAndRemoveByInvoicesAsync(
+        IReadOnlyList<string> invoiceNumbers,
+        string replacedByFilePath,
+        string removedUser,
+        CancellationToken cancellationToken)
+    {
+        var invoiceSet = new HashSet<string>(invoiceNumbers, StringComparer.OrdinalIgnoreCase);
+        var existingRows = await _db.ForwarderDataUploads
+            .Where(row => invoiceNumbers.Contains(row.InvoiceNo))
+            .ToListAsync(cancellationToken);
+
+        existingRows = existingRows
+            .Where(row => invoiceSet.Contains(row.InvoiceNo))
+            .ToList();
+
+        if (existingRows.Count == 0)
+        {
+            return 0;
+        }
+
+        var removedTime = DateTime.Now;
+        var resolvedUser = TruncateUser(removedUser);
+        var archives = existingRows
+            .Select(row => ForwarderDataUploadArchive.FromEntity(row, removedTime, resolvedUser, replacedByFilePath))
+            .ToList();
+
+        _db.ForwarderDataUploadArchives.AddRange(archives);
+        _db.ForwarderDataUploads.RemoveRange(existingRows);
+        await _db.SaveChangesAsync(cancellationToken);
+        return existingRows.Count;
+    }
+
     public Task<ForwarderDataImportResult> ImportAsync(
         string storedFilePath,
         string createUser,
+        bool confirmOverwrite = false,
         CancellationToken cancellationToken = default) =>
-        SaveAsync(storedFilePath, createUser, cancellationToken);
+        SaveAsync(storedFilePath, createUser, confirmOverwrite, cancellationToken);
+
+    public async Task<IReadOnlyList<ForwarderDataUploadRowViewModel>> BuildRowViewModelsAsync(
+        IReadOnlyList<ForwarderDataUpload> rows,
+        bool preview,
+        CancellationToken cancellationToken = default)
+    {
+        var inFileMultiLineCounts = rows
+            .GroupBy(BuildInFileMultiLineKey, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.OrdinalIgnoreCase);
+
+        HashSet<string> dbDuplicateSet;
+        if (preview)
+        {
+            var duplicateInvoices = await GetDuplicateInvoiceNumbersAsync(
+                rows.Select(row => row.InvoiceNo),
+                cancellationToken);
+            dbDuplicateSet = new HashSet<string>(duplicateInvoices, StringComparer.OrdinalIgnoreCase);
+        }
+        else
+        {
+            dbDuplicateSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        return rows
+            .Select(row =>
+            {
+                var invoiceNo = row.InvoiceNo.Trim();
+                var inFileKey = BuildInFileMultiLineKey(row);
+                return new ForwarderDataUploadRowViewModel
+                {
+                    Row = row,
+                    IsDbDuplicate = dbDuplicateSet.Contains(invoiceNo),
+                    IsInFileMultiLine = inFileMultiLineCounts.TryGetValue(inFileKey, out var count) && count > 1
+                };
+            })
+            .ToList();
+    }
+
+    private static string BuildInFileMultiLineKey(ForwarderDataUpload row) =>
+        $"{row.InvoiceNo.Trim()}|{row.MaterialCode?.Trim() ?? string.Empty}";
+
+    public static IReadOnlyList<ForwarderDataUploadRowViewModel> ApplyDuplicateStatusFilter(
+        IReadOnlyList<ForwarderDataUploadRowViewModel> rows,
+        IReadOnlyList<string> duplicateStatuses)
+    {
+        if (duplicateStatuses.Count == 0)
+        {
+            return rows;
+        }
+
+        var statusSet = new HashSet<string>(
+            duplicateStatuses.Where(status => !string.IsNullOrWhiteSpace(status)),
+            StringComparer.OrdinalIgnoreCase);
+
+        if (statusSet.Count == 0)
+        {
+            return rows;
+        }
+
+        return rows
+            .Where(row =>
+                (statusSet.Contains("DbDuplicate") && row.IsDbDuplicate)
+                || (statusSet.Contains("InFileMultiLine") && row.IsInFileMultiLine)
+                || (statusSet.Contains("None") && !row.IsDbDuplicate && !row.IsInFileMultiLine))
+            .ToList();
+    }
 
     private static List<ForwarderDataUpload> ParseExcelRows(Stream stream, string filePath, string createUser)
     {

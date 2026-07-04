@@ -1134,6 +1134,30 @@
   <data name="Forwarder.ForwarderDataUpload.RemovePendingFile" xml:space="preserve">
     <value>移除</value>
   </data>
+  <data name="Forwarder.ForwarderDataUpload.DuplicateInvoiceConfirm" xml:space="preserve">
+    <value>此檔案含有已存在於系統的 Invoice。舊資料可能已被取用過，確認上傳將完全覆蓋舊資料並備份備查、記錄移除時間。&#xA;&#xA;【是】確認上傳並覆蓋&#xA;【否】取消此檔案上傳</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DuplicateInvoicePreview" xml:space="preserve">
+    <value>此檔案含有已存在於系統的 Invoice，請於表格「重複」欄確認；儲存時將提示是否覆蓋。</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Duplicate" xml:space="preserve">
+    <value>重複</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Column.RowNo" xml:space="preserve">
+    <value>筆數</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.DbDuplicate" xml:space="preserve">
+    <value>系統已存在</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.InFileMultiLine" xml:space="preserve">
+    <value>檔內多筆</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.None" xml:space="preserve">
+    <value>非重複</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.OverwriteArchivedMessage" xml:space="preserve">
+    <value>已備份並覆蓋 {0} 筆舊資料。</value>
+  </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>貨代資料上傳查詢</value>
   </data>

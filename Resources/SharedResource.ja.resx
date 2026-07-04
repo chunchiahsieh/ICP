@@ -1134,6 +1134,30 @@
   <data name="Forwarder.ForwarderDataUpload.RemovePendingFile" xml:space="preserve">
     <value>削除</value>
   </data>
+  <data name="Forwarder.ForwarderDataUpload.DuplicateInvoiceConfirm" xml:space="preserve">
+    <value>このファイルにはシステムに既存の Invoice が含まれます。既存データは使用済みの可能性があります。上書きすると旧データは完全に置き換えられ、削除時刻付きでバックアップされます。&#xA;&#xA;【はい】アップロードして上書き&#xA;【いいえ】このファイルのアップロードをキャンセル</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DuplicateInvoicePreview" xml:space="preserve">
+    <value>このファイルにはシステムに既存の Invoice が含まれます。表の「重複」列で確認してください。保存時に上書き確認が表示されます。</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Duplicate" xml:space="preserve">
+    <value>重複</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Column.RowNo" xml:space="preserve">
+    <value>番号</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.DbDuplicate" xml:space="preserve">
+    <value>システム既存</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.InFileMultiLine" xml:space="preserve">
+    <value>ファイル内複数行</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.None" xml:space="preserve">
+    <value>重複なし</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.OverwriteArchivedMessage" xml:space="preserve">
+    <value>{0} 件の旧データをバックアップして上書きしました。</value>
+  </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>フォワーダーデータアップロード照会</value>
   </data>
