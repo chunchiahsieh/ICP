@@ -341,7 +341,7 @@ public class ShipInfoService : IShipInfoService
             ?? throw new ShipInfoNotFoundException("Header not found.");
 
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
-        var details = await _repository.GetDetailEntitiesByHeaderKeyAsync(invoiceKey, cancellationToken);
+        var details = (await _repository.GetDetailEntitiesByHeaderKeyAsync(invoiceKey, cancellationToken)).ToList();
         var validationMessages = ValidateCaseCreation(header, details, caseType, previewOnly: false);
         if (validationMessages.Count > 0)
         {
@@ -349,46 +349,103 @@ public class ShipInfoService : IShipInfoService
         }
 
         var oldStatus = ShipInfoStatusResolver.Resolve(header);
-        var caseNo = GenerateCaseNo(caseType, header.InvoiceNo, header.TetPo);
+        ApplyCaseStatus(header, details, caseType, ShipInfoCaseStatuses.Processing, userName);
+
+        try
+        {
+            await _repository.ExecuteInTransactionAsync(async () =>
+            {
+                await _repository.UpdateHeaderAndDetailsAsync(header, details, cancellationToken);
+            }, cancellationToken);
+
+            var caseNo = GenerateCaseNo(caseType, header.InvoiceNo, header.TetPo);
+            if (caseType == ShipInfoCaseTypes.Deposit)
+            {
+                header.Deposit = caseNo;
+            }
+            else
+            {
+                header.RtNo = caseNo;
+            }
+
+            ApplyCaseStatus(header, details, caseType, ShipInfoCaseStatuses.Initiated, userName);
+            CrudAuditHelper.ApplyUpdateAudit(header, userName);
+            foreach (var detail in details)
+            {
+                CrudAuditHelper.ApplyUpdateAudit(detail, userName);
+            }
+
+            var newStatus = ShipInfoStatusResolver.Resolve(header);
+            var auditLog = CreateAuditLog(
+                "Header",
+                headerRowKey,
+                invoiceKey,
+                "CreateCase",
+                userName,
+                caseType: caseType,
+                caseNo: caseNo,
+                oldStatus: oldStatus,
+                newStatus: newStatus);
+
+            await _repository.ExecuteInTransactionAsync(async () =>
+            {
+                await _repository.UpdateHeaderAndDetailsAsync(header, details, cancellationToken);
+                await _repository.AddAuditLogsAsync([auditLog], cancellationToken);
+            }, cancellationToken);
+
+            LogOperation(caseType == ShipInfoCaseTypes.Deposit ? "Deposit" : "ARUR", headerKey: invoiceKey, extra: caseNo);
+
+            return new ShipInfoCaseCreateResult
+            {
+                HeaderKey = headerRowKey,
+                CaseType = caseType,
+                DepositNo = caseType == ShipInfoCaseTypes.Deposit ? caseNo : header.Deposit,
+                ArurNo = caseType == ShipInfoCaseTypes.Arur ? caseNo : header.RtNo,
+                NewStatus = newStatus
+            };
+        }
+        catch (Exception ex) when (ex is not ShipInfoBusinessException and not ShipInfoNotFoundException)
+        {
+            ApplyCaseStatus(header, details, caseType, ShipInfoCaseStatuses.Failed, userName);
+            foreach (var detail in details)
+            {
+                CrudAuditHelper.ApplyUpdateAudit(detail, userName);
+            }
+
+            CrudAuditHelper.ApplyUpdateAudit(header, userName);
+            await _repository.ExecuteInTransactionAsync(async () =>
+            {
+                await _repository.UpdateHeaderAndDetailsAsync(header, details, cancellationToken);
+            }, cancellationToken);
+
+            throw;
+        }
+    }
+
+    private static void ApplyCaseStatus(
+        IcpHeader header,
+        IReadOnlyList<IcpDetail> details,
+        string caseType,
+        string caseStatus,
+        string? userName)
+    {
+        var normalized = ShipInfoCaseStatusResolver.Normalize(caseStatus);
         if (caseType == ShipInfoCaseTypes.Deposit)
         {
-            header.Deposit = caseNo;
+            header.DepositCaseStatus = normalized;
+            foreach (var detail in details)
+            {
+                detail.DepositCaseStatus = normalized;
+            }
         }
         else
         {
-            header.RtNo = caseNo;
+            header.ArurCaseStatus = normalized;
+            foreach (var detail in details)
+            {
+                detail.ArurCaseStatus = normalized;
+            }
         }
-
-        CrudAuditHelper.ApplyUpdateAudit(header, userName);
-
-        var newStatus = ShipInfoStatusResolver.Resolve(header);
-        var auditLog = CreateAuditLog(
-            "Header",
-            headerRowKey,
-            invoiceKey,
-            "CreateCase",
-            userName,
-            caseType: caseType,
-            caseNo: caseNo,
-            oldStatus: oldStatus,
-            newStatus: newStatus);
-
-        await _repository.ExecuteInTransactionAsync(async () =>
-        {
-            await _repository.UpdateHeaderAsync(header, cancellationToken);
-            await _repository.AddAuditLogsAsync([auditLog], cancellationToken);
-        }, cancellationToken);
-
-        LogOperation(caseType == ShipInfoCaseTypes.Deposit ? "Deposit" : "ARUR", headerKey: invoiceKey, extra: caseNo);
-
-        return new ShipInfoCaseCreateResult
-        {
-            HeaderKey = headerRowKey,
-            CaseType = caseType,
-            DepositNo = caseType == ShipInfoCaseTypes.Deposit ? caseNo : header.Deposit,
-            ArurNo = caseType == ShipInfoCaseTypes.Arur ? caseNo : header.RtNo,
-            NewStatus = newStatus
-        };
     }
 
     private static string NormalizeCaseType(string caseType)
@@ -430,9 +487,9 @@ public class ShipInfoService : IShipInfoService
                 errors.Add("Deposit case cannot be created in current status.");
             }
 
-            if (!string.IsNullOrWhiteSpace(header.Deposit))
+            if (!ShipInfoCaseStatusResolver.CanCreateCase(header.DepositCaseStatus))
             {
-                errors.Add("Deposit case already exists.");
+                errors.Add("Deposit case cannot be created in current case status.");
             }
         }
         else
@@ -442,9 +499,9 @@ public class ShipInfoService : IShipInfoService
                 errors.Add("ARUR case cannot be created in current status.");
             }
 
-            if (!string.IsNullOrWhiteSpace(header.RtNo))
+            if (!ShipInfoCaseStatusResolver.CanCreateCase(header.ArurCaseStatus))
             {
-                errors.Add("ARUR case already exists.");
+                errors.Add("ARUR case cannot be created in current case status.");
             }
         }
 

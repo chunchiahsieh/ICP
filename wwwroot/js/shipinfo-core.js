@@ -141,6 +141,86 @@
         return value === true || value === 1 || value === '1' || String(value).toLowerCase() === 'true' || String(value).toLowerCase() === 'y';
     };
 
+    app.normalizeCaseStatus = function (value) {
+        var normalized = String(value || '').trim();
+        if (!normalized) {
+            return 'NotInitiated';
+        }
+
+        var lower = normalized.toLowerCase();
+        if (lower === 'notinitiated' || normalized === '未起案') {
+            return 'NotInitiated';
+        }
+
+        if (lower === 'initiated' || normalized === '已起案') {
+            return 'Initiated';
+        }
+
+        if (lower === 'failed' || normalized === '起案失敗') {
+            return 'Failed';
+        }
+
+        if (lower === 'processing' || normalized === '處理中') {
+            return 'Processing';
+        }
+
+        return normalized;
+    };
+
+    app.canCreateCase = function (status) {
+        var code = app.normalizeCaseStatus(status);
+        return code === 'NotInitiated' || code === 'Failed';
+    };
+
+    app.getDepositCaseStatus = function (row) {
+        return app.normalizeCaseStatus(app.getRowValue(row, ['DepositCaseStatus', 'depositCaseStatus']));
+    };
+
+    app.getArurCaseStatus = function (row) {
+        return app.normalizeCaseStatus(app.getRowValue(row, ['ArurCaseStatus', 'arurCaseStatus']));
+    };
+
+    app.formatCaseStatusLabel = function (value) {
+        var messages = app.messages;
+        var code = app.normalizeCaseStatus(value);
+        var map = {
+            NotInitiated: messages.caseStatusNotInitiated,
+            Initiated: messages.caseStatusInitiated,
+            Failed: messages.caseStatusFailed,
+            Processing: messages.caseStatusProcessing
+        };
+
+        return map[code] || value || messages.caseStatusNotInitiated;
+    };
+
+    app.getCaseStatusBadgeClass = function (status) {
+        var code = app.normalizeCaseStatus(status);
+        if (code === 'Initiated') {
+            return 'text-bg-success';
+        }
+
+        if (code === 'Failed') {
+            return 'text-bg-warning';
+        }
+
+        if (code === 'Processing') {
+            return 'text-bg-info';
+        }
+
+        return 'text-bg-secondary';
+    };
+
+    app.updateCaseStatusBadge = function ($badge, status) {
+        if (!$badge || !$badge.length) {
+            return;
+        }
+
+        $badge
+            .removeClass('text-bg-secondary text-bg-success text-bg-warning text-bg-info')
+            .addClass(app.getCaseStatusBadgeClass(status))
+            .text(app.formatCaseStatusLabel(status));
+    };
+
     app.getHeaderStatus = function (row) {
         return app.getRowValue(row, ['Status', 'status']) || '';
     };
@@ -160,16 +240,6 @@
         }
 
         return { edit: true, delete: true, deposit: true, arur: true };
-    };
-
-    app.isDepositCompleted = function (row) {
-        return !!(app.getRowValue(row, ['Deposit', 'deposit'])
-            || app.getRowValue(row, ['DepositNo', 'depositNo']));
-    };
-
-    app.isArurCompleted = function (row) {
-        return !!(app.getRowValue(row, ['RtNo', 'rtNo'])
-            || app.getRowValue(row, ['ArurNo', 'arurNo']));
     };
 
     app.setHeaderLoading = function (isLoading) {
@@ -215,23 +285,26 @@
 
     app.updateHeaderActionState = function () {
         var state = app.state;
+        var messages = app.messages;
         var hasSelection = !!state.selectedHeaderRowKey;
         var busy = state.headerLoading || state.detailLoading || state.actionBusy || state.caseSubmitting;
         var row = state.selectedHeaderRow;
         var statusPermission = app.getStatusPermission(app.getHeaderStatus(row));
-        var depositDone = app.isDepositCompleted(row);
-        var arurDone = app.isArurCompleted(row);
+        var depositCaseStatus = hasSelection ? app.getDepositCaseStatus(row) : 'NotInitiated';
+        var arurCaseStatus = hasSelection ? app.getArurCaseStatus(row) : 'NotInitiated';
         var depositDisabled = !hasSelection
             || busy
-            || depositDone
+            || !app.canCreateCase(depositCaseStatus)
             || !statusPermission.deposit
             || !app.hasPermission('Views.Function.ShipInfo.Deposit');
         var arurDisabled = !hasSelection
             || busy
-            || arurDone
+            || !app.canCreateCase(arurCaseStatus)
             || !statusPermission.arur
             || !app.hasPermission('Views.Function.ShipInfo.ARUR');
 
+        app.updateCaseStatusBadge($('#shipInfoDepositCaseStatus'), depositCaseStatus);
+        app.updateCaseStatusBadge($('#shipInfoArurCaseStatus'), arurCaseStatus);
         $('#btnShipInfoDeposit').prop('disabled', depositDisabled);
         $('#btnShipInfoArur').prop('disabled', arurDisabled);
     };

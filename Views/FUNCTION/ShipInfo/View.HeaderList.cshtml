@@ -4,7 +4,7 @@
 @{
     var isHeader = string.Equals(Model.TableKind, "Header", StringComparison.OrdinalIgnoreCase);
     var visibleFields = ShipInfoTableViewHelper.GetVisibleFields(Model.Fields);
-    var hasFilterRow = visibleFields.Count > 0;
+    var hasFilterRow = visibleFields.Any(field => field.Searchable);
     var emptyTableMessage = isHeader
         ? Localizer["ShipInfo.NoData"].Value
         : (!string.IsNullOrWhiteSpace(Model.SelectedHeaderKey)
@@ -19,6 +19,14 @@
         {
             var normalized = ShipInfoStatusResolver.Normalize(Convert.ToString(value));
             return Localizer[$"ShipInfo.Status.{normalized}"].Value;
+        }
+
+        if ((string.Equals(field.FieldName, "DepositCaseStatus", StringComparison.OrdinalIgnoreCase)
+             || string.Equals(field.FieldName, "ArurCaseStatus", StringComparison.OrdinalIgnoreCase))
+            && !string.IsNullOrWhiteSpace(Convert.ToString(value)))
+        {
+            var caseStatus = ShipInfoCaseStatusResolver.Normalize(Convert.ToString(value));
+            return Localizer[$"ShipInfo.CaseStatus.{caseStatus}"].Value;
         }
 
         return ShipInfoTableViewHelper.FormatCellValue(value, field);
@@ -53,9 +61,12 @@
                 <th class="shipinfo-action-col sorting_disabled"></th>
                 @foreach (var field in visibleFields)
                 {
-                    var filterId = $"filter-{Model.TableId}-{field.FieldName}";
                     <th class="sorting_disabled">
-                        @await Html.PartialAsync("_ProDataTablesFilter", (filterId, field.FieldName))
+                        @if (field.Searchable)
+                        {
+                            var filterId = $"filter-{Model.TableId}-{field.FieldName}";
+                            @await Html.PartialAsync("_ProDataTablesFilter", (filterId, field.FieldName))
+                        }
                     </th>
                 }
             </tr>

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ICP.Models.ShipInfo;
 
 namespace ICP.Models.Icp;
 
@@ -93,6 +94,14 @@ public class IcpDetail : IcpAuditableEntity
     [Column("HAZMAT")]
     [MaxLength(5)]
     public string? Hazmat { get; set; }
+
+    [Column("DEPOSIT_CASE_STATUS")]
+    [MaxLength(20)]
+    public string DepositCaseStatus { get; set; } = ShipInfoCaseStatuses.NotInitiated;
+
+    [Column("ARUR_CASE_STATUS")]
+    [MaxLength(20)]
+    public string ArurCaseStatus { get; set; } = ShipInfoCaseStatuses.NotInitiated;
 
     public IcpHeader? Header { get; set; }
 }

@@ -26,6 +26,7 @@
     z-index: 3;
     background-color: var(--bs-table-bg, #f8f9fa);
     box-shadow: 0 1px 0 var(--bs-border-color, #dee2e6);
+    white-space: nowrap;
 }
 
 .shipinfo-page .shipinfo-sticky-header tr.users-filter-row th {
@@ -37,6 +38,13 @@
     font-weight: normal;
     padding: 0.35rem;
     box-shadow: 0 1px 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page .shipinfo-pro-table thead.shipinfo-sticky-header tr:first-child th.shipinfo-radio-col,
+.shipinfo-page .shipinfo-pro-table thead.shipinfo-sticky-header tr:first-child th.shipinfo-action-col,
+.shipinfo-page .shipinfo-pro-table thead.shipinfo-sticky-header tr.users-filter-row th.shipinfo-radio-col,
+.shipinfo-page .shipinfo-pro-table thead.shipinfo-sticky-header tr.users-filter-row th.shipinfo-action-col {
+    z-index: 7;
 }
 
 .shipinfo-page .shipinfo-sticky-header tr.users-filter-row th.sorting_disabled {
@@ -174,6 +182,11 @@
     box-shadow: none;
 }
 
+.shipinfo-page .shipinfo-pro-table thead.shipinfo-sticky-header tr.users-filter-row th.shipinfo-radio-col,
+.shipinfo-page .shipinfo-pro-table thead.shipinfo-sticky-header tr.users-filter-row th.shipinfo-action-col {
+    background-color: var(--bs-table-bg, #f8f9fa);
+}
+
 .shipinfo-page .shipinfo-pro-table.table-striped > tbody > tr:nth-of-type(odd) > .shipinfo-radio-col,
 .shipinfo-page .shipinfo-pro-table.table-striped > tbody > tr:nth-of-type(odd) > .shipinfo-action-col {
     background-color: #f2f2f2;
@@ -305,4 +318,19 @@
 
 .shipinfo-case-drawer .accordion-button {
     font-weight: 600;
+}
+
+.shipinfo-page .shipinfo-header-toolbar .shipinfo-case-status-group {
+    gap: 0.35rem;
+}
+
+.shipinfo-page .shipinfo-case-status-label {
+    font-size: 0.8125rem;
+    color: var(--bs-secondary-color, #6c757d);
+    white-space: nowrap;
+}
+
+.shipinfo-page .shipinfo-case-status {
+    min-width: 4.5rem;
+    font-weight: 500;
 }

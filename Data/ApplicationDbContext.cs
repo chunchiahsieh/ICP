@@ -1,4 +1,5 @@
 using ICP.Models.Icp;
+using ICP.Models.ShipInfo;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICP.Data;
@@ -206,6 +207,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.EmgFlight).HasMaxLength(5);
             entity.Property(e => e.WbsElement).HasMaxLength(30);
             entity.Property(e => e.Deposit).HasMaxLength(10);
+            entity.Property(e => e.DepositCaseStatus).HasMaxLength(20).HasDefaultValue(ShipInfoCaseStatuses.NotInitiated).IsRequired();
+            entity.Property(e => e.ArurCaseStatus).HasMaxLength(20).HasDefaultValue(ShipInfoCaseStatuses.NotInitiated).IsRequired();
             entity.Property(e => e.SapRemarks).HasMaxLength(1000);
             entity.Property(e => e.Notes).HasMaxLength(1000);
             entity.Property(e => e.Cancellation).HasMaxLength(10);
@@ -242,6 +245,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.ElFlag).HasMaxLength(5);
             entity.Property(e => e.SdsFlag).HasMaxLength(5);
             entity.Property(e => e.Hazmat).HasMaxLength(5);
+            entity.Property(e => e.DepositCaseStatus).HasMaxLength(20).HasDefaultValue(ShipInfoCaseStatuses.NotInitiated).IsRequired();
+            entity.Property(e => e.ArurCaseStatus).HasMaxLength(20).HasDefaultValue(ShipInfoCaseStatuses.NotInitiated).IsRequired();
             entity.Property(e => e.CreateTime).HasDefaultValueSql("getdate()").IsRequired();
             entity.Property(e => e.CreateUser).HasMaxLength(100);
             entity.Property(e => e.UpdateUser).HasMaxLength(100);

@@ -21,7 +21,15 @@
     <div class="card mb-3 shipinfo-header-card">
         <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
             <span>@Localizer["ShipInfo.HeaderTitle"]</span>
-            <div class="d-flex flex-wrap gap-2 shipinfo-header-toolbar">
+            <div class="d-flex flex-wrap gap-2 align-items-center shipinfo-header-toolbar">
+                <div class="d-flex align-items-center gap-2 shipinfo-case-status-group">
+                    <span class="shipinfo-case-status-label">@Localizer["ShipInfo.DepositCaseStatus"]</span>
+                    <span id="shipInfoDepositCaseStatus" class="shipinfo-case-status badge text-bg-secondary">@Localizer["ShipInfo.CaseStatus.NotInitiated"]</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 shipinfo-case-status-group">
+                    <span class="shipinfo-case-status-label">@Localizer["ShipInfo.ArurCaseStatus"]</span>
+                    <span id="shipInfoArurCaseStatus" class="shipinfo-case-status badge text-bg-secondary">@Localizer["ShipInfo.CaseStatus.NotInitiated"]</span>
+                </div>
                 <button type="button" class="btn btn-sm btn-success" id="btnShipInfoDeposit" data-permissions="Views.Function.ShipInfo.Deposit" disabled>
                     <i class="bi bi-box-arrow-up me-1"></i>@Localizer["ShipInfo.Deposit"]
                 </button>
@@ -236,7 +244,13 @@
                 arurConfirmTitle = Localizer["ShipInfo.ArurConfirmTitle"].Value,
                 arurConfirmMessage = Localizer["ShipInfo.ArurConfirmMessage"].Value,
                 caseCreateSuccess = Localizer["ShipInfo.CaseCreateSuccess"].Value,
-                caseCreateFailed = Localizer["ShipInfo.CaseCreateFailed"].Value
+                caseCreateFailed = Localizer["ShipInfo.CaseCreateFailed"].Value,
+                caseStatusNotInitiated = Localizer["ShipInfo.CaseStatus.NotInitiated"].Value,
+                caseStatusInitiated = Localizer["ShipInfo.CaseStatus.Initiated"].Value,
+                caseStatusFailed = Localizer["ShipInfo.CaseStatus.Failed"].Value,
+                caseStatusProcessing = Localizer["ShipInfo.CaseStatus.Processing"].Value,
+                depositCaseStatus = Localizer["ShipInfo.DepositCaseStatus"].Value,
+                arurCaseStatus = Localizer["ShipInfo.ArurCaseStatus"].Value
             }))
         };
     </script>

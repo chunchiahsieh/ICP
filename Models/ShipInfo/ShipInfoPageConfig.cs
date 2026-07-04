@@ -19,4 +19,16 @@ public class ShipInfoPageConfig
     [JsonPropertyName("statusRules")]
     public IReadOnlyDictionary<string, ShipInfoActionPermission> StatusRules { get; init; }
         = new Dictionary<string, ShipInfoActionPermission>();
+
+    [JsonPropertyName("headerInitialSort")]
+    public ShipInfoTableInitialSort? HeaderInitialSort { get; init; }
+
+    [JsonPropertyName("detailInitialSort")]
+    public ShipInfoTableInitialSort? DetailInitialSort { get; init; }
+
+    [JsonPropertyName("headerTableUi")]
+    public ShipInfoTableUiOptions HeaderTableUi { get; init; } = ShipInfoTableUiOptions.MergeDefaults(null);
+
+    [JsonPropertyName("detailTableUi")]
+    public ShipInfoTableUiOptions DetailTableUi { get; init; } = ShipInfoTableUiOptions.MergeDefaults(null);
 }

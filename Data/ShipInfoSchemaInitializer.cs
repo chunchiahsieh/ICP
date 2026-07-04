@@ -27,6 +27,65 @@ public static class ShipInfoSchemaInitializer
         END
         """;
 
+    private const string EnsureCaseStatusColumnsSql = """
+        IF COL_LENGTH('dbo.ICP_HEADER', 'DEPOSIT_CASE_STATUS') IS NULL
+        BEGIN
+            ALTER TABLE dbo.ICP_HEADER
+                ADD DEPOSIT_CASE_STATUS NVARCHAR(20) NOT NULL
+                    CONSTRAINT DF_ICP_HEADER_DEPOSIT_CASE_STATUS DEFAULT (N'NotInitiated');
+        END
+
+        IF COL_LENGTH('dbo.ICP_HEADER', 'ARUR_CASE_STATUS') IS NULL
+        BEGIN
+            ALTER TABLE dbo.ICP_HEADER
+                ADD ARUR_CASE_STATUS NVARCHAR(20) NOT NULL
+                    CONSTRAINT DF_ICP_HEADER_ARUR_CASE_STATUS DEFAULT (N'NotInitiated');
+        END
+
+        IF COL_LENGTH('dbo.ICP_DETAIL', 'DEPOSIT_CASE_STATUS') IS NULL
+        BEGIN
+            ALTER TABLE dbo.ICP_DETAIL
+                ADD DEPOSIT_CASE_STATUS NVARCHAR(20) NOT NULL
+                    CONSTRAINT DF_ICP_DETAIL_DEPOSIT_CASE_STATUS DEFAULT (N'NotInitiated');
+        END
+
+        IF COL_LENGTH('dbo.ICP_DETAIL', 'ARUR_CASE_STATUS') IS NULL
+        BEGIN
+            ALTER TABLE dbo.ICP_DETAIL
+                ADD ARUR_CASE_STATUS NVARCHAR(20) NOT NULL
+                    CONSTRAINT DF_ICP_DETAIL_ARUR_CASE_STATUS DEFAULT (N'NotInitiated');
+        END
+        """;
+
+    private const string MigrateCaseStatusDataSql = """
+        IF COL_LENGTH('dbo.ICP_HEADER', 'DEPOSIT_CASE_STATUS') IS NOT NULL
+        BEGIN
+            UPDATE dbo.ICP_HEADER
+            SET DEPOSIT_CASE_STATUS = N'Initiated'
+            WHERE NULLIF(LTRIM(RTRIM(DEPOSIT)), N'') IS NOT NULL
+              AND DEPOSIT_CASE_STATUS = N'NotInitiated';
+
+            UPDATE dbo.ICP_HEADER
+            SET ARUR_CASE_STATUS = N'Initiated'
+            WHERE NULLIF(LTRIM(RTRIM(RT_NO)), N'') IS NOT NULL
+              AND ARUR_CASE_STATUS = N'NotInitiated';
+
+            UPDATE d
+            SET d.DEPOSIT_CASE_STATUS = h.DEPOSIT_CASE_STATUS
+            FROM dbo.ICP_DETAIL d
+            INNER JOIN dbo.ICP_HEADER h ON d.INVOICE_NO = h.INVOICE_NO AND d.TET_PO = h.TET_PO
+            WHERE h.DEPOSIT_CASE_STATUS = N'Initiated'
+              AND d.DEPOSIT_CASE_STATUS = N'NotInitiated';
+
+            UPDATE d
+            SET d.ARUR_CASE_STATUS = h.ARUR_CASE_STATUS
+            FROM dbo.ICP_DETAIL d
+            INNER JOIN dbo.ICP_HEADER h ON d.INVOICE_NO = h.INVOICE_NO AND d.TET_PO = h.TET_PO
+            WHERE h.ARUR_CASE_STATUS = N'Initiated'
+              AND d.ARUR_CASE_STATUS = N'NotInitiated';
+        END
+        """;
+
     public static async Task EnsureAuditLogTableAsync(
         ApplicationDbContext db,
         ILogger logger,
@@ -35,10 +94,12 @@ public static class ShipInfoSchemaInitializer
         try
         {
             await db.Database.ExecuteSqlRawAsync(EnsureAuditLogTableSql, cancellationToken);
+            await db.Database.ExecuteSqlRawAsync(EnsureCaseStatusColumnsSql, cancellationToken);
+            await db.Database.ExecuteSqlRawAsync(MigrateCaseStatusDataSql, cancellationToken);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unable to ensure SHIPINFO_AUDIT_LOG table exists.");
+            logger.LogError(ex, "Unable to ensure ShipInfo schema objects exist.");
             throw;
         }
     }

@@ -12,5 +12,7 @@ public class ShipInfoTableListViewModel
 
     public IReadOnlyList<ShipInfoFieldMetadata> Fields { get; init; } = [];
 
+    public ShipInfoTableUiOptions TableUi { get; init; } = ShipInfoTableUiOptions.MergeDefaults(null);
+
     public IReadOnlyList<Dictionary<string, object?>> Items { get; init; } = [];
 }

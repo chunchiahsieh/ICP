@@ -375,6 +375,279 @@
   <data name="ShipInfo.InvoiceNo" xml:space="preserve">
     <value>Invoice No</value>
   </data>
+  <data name="ShipInfo.Field.Status" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="ShipInfo.Field.CreateDate" xml:space="preserve">
+    <value>建立日期</value>
+  </data>
+  <data name="ShipInfo.Field.SaDate" xml:space="preserve">
+    <value>SA 日期</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceNo" xml:space="preserve">
+    <value>發票號碼</value>
+  </data>
+  <data name="ShipInfo.Field.Broker" xml:space="preserve">
+    <value>報關行</value>
+  </data>
+  <data name="ShipInfo.Field.Eta" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="ShipInfo.Field.TetPo" xml:space="preserve">
+    <value>TET PO</value>
+  </data>
+  <data name="ShipInfo.Field.Forwarder" xml:space="preserve">
+    <value>貨代</value>
+  </data>
+  <data name="ShipInfo.Field.Etd" xml:space="preserve">
+    <value>ETD</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceDate" xml:space="preserve">
+    <value>發票日期</value>
+  </data>
+  <data name="ShipInfo.Field.Mawb" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="ShipInfo.Field.Hawb" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="ShipInfo.Field.Flt" xml:space="preserve">
+    <value>航班</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryTo" xml:space="preserve">
+    <value>交貨對象</value>
+  </data>
+  <data name="ShipInfo.Field.Warehouse" xml:space="preserve">
+    <value>倉庫</value>
+  </data>
+  <data name="ShipInfo.Field.OrderType" xml:space="preserve">
+    <value>訂單類型</value>
+  </data>
+  <data name="ShipInfo.Field.Deposit" xml:space="preserve">
+    <value>押金</value>
+  </data>
+  <data name="ShipInfo.Field.DepositCaseStatus" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.Field.ArurCaseStatus" xml:space="preserve">
+    <value>ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.Field.RtNo" xml:space="preserve">
+    <value>RT 單號</value>
+  </data>
+  <data name="ShipInfo.Field.Notes" xml:space="preserve">
+    <value>備註</value>
+  </data>
+  <data name="ShipInfo.Field.SapRemarks" xml:space="preserve">
+    <value>SAP 備註</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceSeq" xml:space="preserve">
+    <value>發票序號</value>
+  </data>
+  <data name="ShipInfo.Field.TetPoLine" xml:space="preserve">
+    <value>TET PO 項次</value>
+  </data>
+  <data name="ShipInfo.Field.ItemNo" xml:space="preserve">
+    <value>料號</value>
+  </data>
+  <data name="ShipInfo.Field.Description" xml:space="preserve">
+    <value>品名</value>
+  </data>
+  <data name="ShipInfo.Field.Qty" xml:space="preserve">
+    <value>數量</value>
+  </data>
+  <data name="ShipInfo.Field.Uom" xml:space="preserve">
+    <value>單位</value>
+  </data>
+  <data name="ShipInfo.Field.Coo" xml:space="preserve">
+    <value>產地</value>
+  </data>
+  <data name="ShipInfo.Field.Price" xml:space="preserve">
+    <value>單價</value>
+  </data>
+  <data name="ShipInfo.Field.Amount" xml:space="preserve">
+    <value>金額</value>
+  </data>
+  <data name="ShipInfo.Field.Currency" xml:space="preserve">
+    <value>幣別</value>
+  </data>
+  <data name="ShipInfo.Field.CartonNo" xml:space="preserve">
+    <value>箱號</value>
+  </data>
+  <data name="ShipInfo.Field.GrossWeight" xml:space="preserve">
+    <value>毛重</value>
+  </data>
+  <data name="ShipInfo.Field.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="ShipInfo.Field.CreateTime" xml:space="preserve">
+    <value>建立時間</value>
+  </data>
+  <data name="ShipInfo.Field.CreateUser" xml:space="preserve">
+    <value>建立者</value>
+  </data>
+  <data name="ShipInfo.Field.UpdateTime" xml:space="preserve">
+    <value>更新時間</value>
+  </data>
+  <data name="ShipInfo.Field.UpdateUser" xml:space="preserve">
+    <value>更新者</value>
+  </data>
+  <data name="ShipInfo.Field.Freight" xml:space="preserve">
+    <value>運費</value>
+  </data>
+  <data name="ShipInfo.Field.DestinationPort" xml:space="preserve">
+    <value>目的港</value>
+  </data>
+  <data name="ShipInfo.Field.DestinationCountry" xml:space="preserve">
+    <value>目的國</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceType" xml:space="preserve">
+    <value>發票類型</value>
+  </data>
+  <data name="ShipInfo.Field.Incoterms" xml:space="preserve">
+    <value>貿易條件</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryDate" xml:space="preserve">
+    <value>交貨日期</value>
+  </data>
+  <data name="ShipInfo.Field.Bu" xml:space="preserve">
+    <value>BU</value>
+  </data>
+  <data name="ShipInfo.Field.OrderPriority" xml:space="preserve">
+    <value>訂單優先序</value>
+  </data>
+  <data name="ShipInfo.Field.MdpFlag" xml:space="preserve">
+    <value>MDP 旗標</value>
+  </data>
+  <data name="ShipInfo.Field.TotalCartons" xml:space="preserve">
+    <value>總箱數</value>
+  </data>
+  <data name="ShipInfo.Field.NcdrNo" xml:space="preserve">
+    <value>NCDR 單號</value>
+  </data>
+  <data name="ShipInfo.Field.NcdrRequestor" xml:space="preserve">
+    <value>NCDR 申請人</value>
+  </data>
+  <data name="ShipInfo.Field.EndUserCode" xml:space="preserve">
+    <value>終端用戶代碼</value>
+  </data>
+  <data name="ShipInfo.Field.EndUser" xml:space="preserve">
+    <value>終端用戶</value>
+  </data>
+  <data name="ShipInfo.Field.Receiver" xml:space="preserve">
+    <value>收貨人</value>
+  </data>
+  <data name="ShipInfo.Field.Owner" xml:space="preserve">
+    <value>負責人</value>
+  </data>
+  <data name="ShipInfo.Field.MachineNo" xml:space="preserve">
+    <value>機台編號</value>
+  </data>
+  <data name="ShipInfo.Field.MachineType" xml:space="preserve">
+    <value>機台類型</value>
+  </data>
+  <data name="ShipInfo.Field.ShipReason" xml:space="preserve">
+    <value>出貨原因</value>
+  </data>
+  <data name="ShipInfo.Field.Forklift" xml:space="preserve">
+    <value>堆高機</value>
+  </data>
+  <data name="ShipInfo.Field.MovingLabor" xml:space="preserve">
+    <value>搬運人力</value>
+  </data>
+  <data name="ShipInfo.Field.CarMethod" xml:space="preserve">
+    <value>車輛方式</value>
+  </data>
+  <data name="ShipInfo.Field.ArriveTime" xml:space="preserve">
+    <value>到達時間</value>
+  </data>
+  <data name="ShipInfo.Field.WasteDisposal" xml:space="preserve">
+    <value>廢棄物處理</value>
+  </data>
+  <data name="ShipInfo.Field.DriverDetails" xml:space="preserve">
+    <value>司機資訊</value>
+  </data>
+  <data name="ShipInfo.Field.OrderReason" xml:space="preserve">
+    <value>訂單原因</value>
+  </data>
+  <data name="ShipInfo.Field.ArrivalNoticeFlag" xml:space="preserve">
+    <value>到貨通知旗標</value>
+  </data>
+  <data name="ShipInfo.Field.ArrivalNotice" xml:space="preserve">
+    <value>到貨通知</value>
+  </data>
+  <data name="ShipInfo.Field.ReasonForDeliveryDelay" xml:space="preserve">
+    <value>延遲交貨原因</value>
+  </data>
+  <data name="ShipInfo.Field.DelayNotificationDate" xml:space="preserve">
+    <value>延遲通知日期</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryNo" xml:space="preserve">
+    <value>交貨單號</value>
+  </data>
+  <data name="ShipInfo.Field.SoldToPartyCode" xml:space="preserve">
+    <value>售達方代碼</value>
+  </data>
+  <data name="ShipInfo.Field.SoldToParty" xml:space="preserve">
+    <value>售達方</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToPartyCode" xml:space="preserve">
+    <value>送達方代碼</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToParty" xml:space="preserve">
+    <value>送達方</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToPartyAddress" xml:space="preserve">
+    <value>送達方地址</value>
+  </data>
+  <data name="ShipInfo.Field.EmgFlight" xml:space="preserve">
+    <value>緊急航班</value>
+  </data>
+  <data name="ShipInfo.Field.WbsElement" xml:space="preserve">
+    <value>WBS 元素</value>
+  </data>
+  <data name="ShipInfo.Field.Cancellation" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ShipInfo.Field.ReasonForCancellation" xml:space="preserve">
+    <value>取消原因</value>
+  </data>
+  <data name="ShipInfo.Field.AttachedFile" xml:space="preserve">
+    <value>附件</value>
+  </data>
+  <data name="ShipInfo.Field.Rate" xml:space="preserve">
+    <value>匯率</value>
+  </data>
+  <data name="ShipInfo.Field.PackingType" xml:space="preserve">
+    <value>包裝類型</value>
+  </data>
+  <data name="ShipInfo.Field.Length" xml:space="preserve">
+    <value>長度</value>
+  </data>
+  <data name="ShipInfo.Field.Width" xml:space="preserve">
+    <value>寬度</value>
+  </data>
+  <data name="ShipInfo.Field.Hight" xml:space="preserve">
+    <value>高度</value>
+  </data>
+  <data name="ShipInfo.Field.NetWeightOfTheItem" xml:space="preserve">
+    <value>淨重</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryLineNo" xml:space="preserve">
+    <value>交貨行號</value>
+  </data>
+  <data name="ShipInfo.Field.Eccn" xml:space="preserve">
+    <value>ECCN</value>
+  </data>
+  <data name="ShipInfo.Field.ElFlag" xml:space="preserve">
+    <value>EL 旗標</value>
+  </data>
+  <data name="ShipInfo.Field.SdsFlag" xml:space="preserve">
+    <value>SDS 旗標</value>
+  </data>
+  <data name="ShipInfo.Field.Hazmat" xml:space="preserve">
+    <value>危險品</value>
+  </data>
   <data name="ShipInfo.TotalInvoiceQty" xml:space="preserve">
     <value>Total Invoice Qty</value>
   </data>
@@ -404,6 +677,24 @@
   </data>
   <data name="ShipInfo.CaseCreateFailed" xml:space="preserve">
     <value>起案失敗</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.NotInitiated" xml:space="preserve">
+    <value>未起案</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Initiated" xml:space="preserve">
+    <value>已起案</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Failed" xml:space="preserve">
+    <value>起案失敗</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Processing" xml:space="preserve">
+    <value>處理中</value>
+  </data>
+  <data name="ShipInfo.DepositCaseStatus" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.ArurCaseStatus" xml:space="preserve">
+    <value>ARUR 起案</value>
   </data>
   <data name="Views.Function.ShipInfo.View" xml:space="preserve">
     <value>Ship Info 查詢</value>

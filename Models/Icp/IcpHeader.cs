@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ICP.Models.ShipInfo;
 
 namespace ICP.Models.Icp;
 
@@ -227,6 +228,14 @@ public class IcpHeader : IcpAuditableEntity
     [Column("DEPOSIT")]
     [MaxLength(10)]
     public string? Deposit { get; set; }
+
+    [Column("DEPOSIT_CASE_STATUS")]
+    [MaxLength(20)]
+    public string DepositCaseStatus { get; set; } = ShipInfoCaseStatuses.NotInitiated;
+
+    [Column("ARUR_CASE_STATUS")]
+    [MaxLength(20)]
+    public string ArurCaseStatus { get; set; } = ShipInfoCaseStatuses.NotInitiated;
 
     [Column("SAP_REMARKS")]
     [MaxLength(1000)]

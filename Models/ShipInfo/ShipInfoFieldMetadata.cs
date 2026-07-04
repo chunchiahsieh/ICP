@@ -16,6 +16,12 @@ public class ShipInfoFieldMetadata
     [JsonPropertyName("displayNameZh")]
     public string DisplayNameZh { get; set; } = string.Empty;
 
+    [JsonPropertyName("labelKey")]
+    public string? LabelKey { get; set; }
+
+    [JsonPropertyName("label")]
+    public string? Label { get; set; }
+
     [JsonPropertyName("displayOrder")]
     public int DisplayOrder { get; set; }
 
@@ -24,6 +30,9 @@ public class ShipInfoFieldMetadata
 
     [JsonPropertyName("searchable")]
     public bool Searchable { get; set; }
+
+    [JsonPropertyName("filterType")]
+    public string FilterType { get; set; } = ShipInfoFilterTypes.Checkbox;
 
     [JsonPropertyName("editable")]
     public bool Editable { get; set; } = true;

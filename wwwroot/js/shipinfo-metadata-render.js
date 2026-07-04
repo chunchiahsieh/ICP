@@ -21,6 +21,11 @@
     }
 
     function resolveLabel(field, culture) {
+        var resolved = getField(field, 'Label') || getField(field, 'label');
+        if (resolved) {
+            return resolved;
+        }
+
         var normalizedCulture = (culture || 'zh-TW').toLowerCase();
         if (normalizedCulture.indexOf('zh') === 0) {
             return getField(field, 'DisplayNameZh') || getField(field, 'displayNameZh') || getField(field, 'DisplayName') || getField(field, 'displayName') || getField(field, 'FieldName') || getField(field, 'fieldName');

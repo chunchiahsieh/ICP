@@ -244,6 +244,17 @@
         dtOptions = $.extend(true, {}, dtOptions, config.dataTableOptions);
       }
 
+      if (typeof config.onDraw === 'function') {
+        var existingDrawCallback = dtOptions.drawCallback;
+        var onDraw = config.onDraw;
+        dtOptions.drawCallback = function () {
+          if (typeof existingDrawCallback === 'function') {
+            existingDrawCallback.apply(this, arguments);
+          }
+          onDraw($(config.dataDivSelector));
+        };
+      }
+
       $table.DataTable(dtOptions);
     }
 

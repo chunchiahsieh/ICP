@@ -8,6 +8,7 @@ using ICP.Infrastructure;
 
 using ICP.Models.Auth;
 using ICP.Models;
+using ICP.Models.ShipInfo;
 
 using ICP.Repositories;
 
@@ -71,6 +72,16 @@ builder.Services.Configure<ForwarderDataUploadOptions>(
 builder.Services.Configure<TariffDataOptions>(
     builder.Configuration.GetSection(TariffDataOptions.SectionName));
 
+var shipInfoTableFieldsConfiguration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("Config/shipinfo-table-fields.json", optional: false, reloadOnChange: true)
+    .Build();
+
+builder.Services
+    .AddOptions<ShipInfoTableFieldsOptions>()
+    .Bind(shipInfoTableFieldsConfiguration)
+    .ValidateOnStart();
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var supportedCultures = new[] { "zh-TW", "en", "ja" };
@@ -117,7 +128,7 @@ builder.Services.AddScoped<UserResourcePermissionService>();
 builder.Services.AddScoped<ForwarderDataImportService>();
 builder.Services.AddSingleton<ForwarderPendingFileStore>();
 builder.Services.AddScoped<IShipInfoRepository, ShipInfoRepository>();
-builder.Services.AddSingleton<ShipInfoMetadataProvider>();
+builder.Services.AddScoped<ShipInfoMetadataProvider>();
 builder.Services.AddScoped<ShipInfoLookupService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
 builder.Services.AddScoped<ShipInfoApiExceptionFilter>();

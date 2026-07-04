@@ -15,6 +15,8 @@ public static class ShipInfoTableFilterColumns
     private static readonly HashSet<string> DetailColumns = new(StringComparer.OrdinalIgnoreCase)
     {
         "InvoiceSeq",
+        "DepositCaseStatus",
+        "ArurCaseStatus",
         "TetPoLine",
         "ItemNo",
         "Description",

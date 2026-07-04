@@ -17,6 +17,11 @@ public static class ShipInfoTableViewHelper
 
     public static string ResolveLabel(ShipInfoFieldMetadata field, string? culture)
     {
+        if (!string.IsNullOrWhiteSpace(field.Label))
+        {
+            return field.Label;
+        }
+
         var normalizedCulture = (culture ?? "zh-TW").ToLowerInvariant();
         if (normalizedCulture.StartsWith("zh", StringComparison.Ordinal))
         {
@@ -33,16 +38,20 @@ public static class ShipInfoTableViewHelper
             return string.Empty;
         }
 
-        if (field.ControlType is ShipInfoControlTypes.Date or ShipInfoControlTypes.DateRange)
+        if (field.ControlType is ShipInfoControlTypes.Date or ShipInfoControlTypes.DateRange or ShipInfoControlTypes.DateTime)
         {
             if (value is DateTime dateTime)
             {
-                return dateTime.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                return field.ControlType is ShipInfoControlTypes.DateTime
+                    ? dateTime.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
+                    : dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
 
             if (DateTime.TryParse(Convert.ToString(value, CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var parsed))
             {
-                return parsed.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                return field.ControlType is ShipInfoControlTypes.DateTime
+                    ? parsed.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
+                    : parsed.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
         }
 

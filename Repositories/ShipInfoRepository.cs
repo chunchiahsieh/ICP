@@ -240,6 +240,20 @@ public class ShipInfoRepository : IShipInfoRepository
         await _db.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task UpdateHeaderAndDetailsAsync(
+        IcpHeader header,
+        IReadOnlyList<IcpDetail> details,
+        CancellationToken cancellationToken = default)
+    {
+        _db.IcpHeaders.Update(header);
+        if (details.Count > 0)
+        {
+            _db.IcpDetails.UpdateRange(details);
+        }
+
+        await _db.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task DeleteHeaderWithDetailsAsync(string headerRowKey, CancellationToken cancellationToken = default)
     {
         var (invoiceNo, tetPo) = ShipInfoKeyHelper.ParseHeaderRowKey(headerRowKey);

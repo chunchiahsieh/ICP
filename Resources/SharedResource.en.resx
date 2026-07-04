@@ -375,6 +375,279 @@
   <data name="ShipInfo.InvoiceNo" xml:space="preserve">
     <value>Invoice No</value>
   </data>
+  <data name="ShipInfo.Field.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ShipInfo.Field.CreateDate" xml:space="preserve">
+    <value>Create Date</value>
+  </data>
+  <data name="ShipInfo.Field.SaDate" xml:space="preserve">
+    <value>SA Date</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceNo" xml:space="preserve">
+    <value>Invoice No</value>
+  </data>
+  <data name="ShipInfo.Field.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="ShipInfo.Field.Eta" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="ShipInfo.Field.TetPo" xml:space="preserve">
+    <value>TET PO</value>
+  </data>
+  <data name="ShipInfo.Field.Forwarder" xml:space="preserve">
+    <value>Forwarder</value>
+  </data>
+  <data name="ShipInfo.Field.Etd" xml:space="preserve">
+    <value>ETD</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceDate" xml:space="preserve">
+    <value>Invoice Date</value>
+  </data>
+  <data name="ShipInfo.Field.Mawb" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="ShipInfo.Field.Hawb" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="ShipInfo.Field.Flt" xml:space="preserve">
+    <value>Flight</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryTo" xml:space="preserve">
+    <value>Delivery To</value>
+  </data>
+  <data name="ShipInfo.Field.Warehouse" xml:space="preserve">
+    <value>Warehouse</value>
+  </data>
+  <data name="ShipInfo.Field.OrderType" xml:space="preserve">
+    <value>Order Type</value>
+  </data>
+  <data name="ShipInfo.Field.Deposit" xml:space="preserve">
+    <value>Deposit</value>
+  </data>
+  <data name="ShipInfo.Field.DepositCaseStatus" xml:space="preserve">
+    <value>Deposit Case Status</value>
+  </data>
+  <data name="ShipInfo.Field.ArurCaseStatus" xml:space="preserve">
+    <value>ARUR Case Status</value>
+  </data>
+  <data name="ShipInfo.Field.RtNo" xml:space="preserve">
+    <value>RT No</value>
+  </data>
+  <data name="ShipInfo.Field.Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="ShipInfo.Field.SapRemarks" xml:space="preserve">
+    <value>SAP Remarks</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceSeq" xml:space="preserve">
+    <value>Invoice Seq</value>
+  </data>
+  <data name="ShipInfo.Field.TetPoLine" xml:space="preserve">
+    <value>TET PO Line</value>
+  </data>
+  <data name="ShipInfo.Field.ItemNo" xml:space="preserve">
+    <value>Item No</value>
+  </data>
+  <data name="ShipInfo.Field.Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ShipInfo.Field.Qty" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="ShipInfo.Field.Uom" xml:space="preserve">
+    <value>UOM</value>
+  </data>
+  <data name="ShipInfo.Field.Coo" xml:space="preserve">
+    <value>COO</value>
+  </data>
+  <data name="ShipInfo.Field.Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="ShipInfo.Field.Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="ShipInfo.Field.Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+  <data name="ShipInfo.Field.CartonNo" xml:space="preserve">
+    <value>Carton No</value>
+  </data>
+  <data name="ShipInfo.Field.GrossWeight" xml:space="preserve">
+    <value>Gross Weight</value>
+  </data>
+  <data name="ShipInfo.Field.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="ShipInfo.Field.CreateTime" xml:space="preserve">
+    <value>Create Time</value>
+  </data>
+  <data name="ShipInfo.Field.CreateUser" xml:space="preserve">
+    <value>Create User</value>
+  </data>
+  <data name="ShipInfo.Field.UpdateTime" xml:space="preserve">
+    <value>Update Time</value>
+  </data>
+  <data name="ShipInfo.Field.UpdateUser" xml:space="preserve">
+    <value>Update User</value>
+  </data>
+  <data name="ShipInfo.Field.Freight" xml:space="preserve">
+    <value>Freight</value>
+  </data>
+  <data name="ShipInfo.Field.DestinationPort" xml:space="preserve">
+    <value>Destination Port</value>
+  </data>
+  <data name="ShipInfo.Field.DestinationCountry" xml:space="preserve">
+    <value>Destination Country</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceType" xml:space="preserve">
+    <value>Invoice Type</value>
+  </data>
+  <data name="ShipInfo.Field.Incoterms" xml:space="preserve">
+    <value>Incoterms</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryDate" xml:space="preserve">
+    <value>Delivery Date</value>
+  </data>
+  <data name="ShipInfo.Field.Bu" xml:space="preserve">
+    <value>BU</value>
+  </data>
+  <data name="ShipInfo.Field.OrderPriority" xml:space="preserve">
+    <value>Order Priority</value>
+  </data>
+  <data name="ShipInfo.Field.MdpFlag" xml:space="preserve">
+    <value>MDP Flag</value>
+  </data>
+  <data name="ShipInfo.Field.TotalCartons" xml:space="preserve">
+    <value>Total Cartons</value>
+  </data>
+  <data name="ShipInfo.Field.NcdrNo" xml:space="preserve">
+    <value>NCDR No</value>
+  </data>
+  <data name="ShipInfo.Field.NcdrRequestor" xml:space="preserve">
+    <value>NCDR Requestor</value>
+  </data>
+  <data name="ShipInfo.Field.EndUserCode" xml:space="preserve">
+    <value>End User Code</value>
+  </data>
+  <data name="ShipInfo.Field.EndUser" xml:space="preserve">
+    <value>End User</value>
+  </data>
+  <data name="ShipInfo.Field.Receiver" xml:space="preserve">
+    <value>Receiver</value>
+  </data>
+  <data name="ShipInfo.Field.Owner" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+  <data name="ShipInfo.Field.MachineNo" xml:space="preserve">
+    <value>Machine No</value>
+  </data>
+  <data name="ShipInfo.Field.MachineType" xml:space="preserve">
+    <value>Machine Type</value>
+  </data>
+  <data name="ShipInfo.Field.ShipReason" xml:space="preserve">
+    <value>Ship Reason</value>
+  </data>
+  <data name="ShipInfo.Field.Forklift" xml:space="preserve">
+    <value>Forklift</value>
+  </data>
+  <data name="ShipInfo.Field.MovingLabor" xml:space="preserve">
+    <value>Moving Labor</value>
+  </data>
+  <data name="ShipInfo.Field.CarMethod" xml:space="preserve">
+    <value>Car Method</value>
+  </data>
+  <data name="ShipInfo.Field.ArriveTime" xml:space="preserve">
+    <value>Arrive Time</value>
+  </data>
+  <data name="ShipInfo.Field.WasteDisposal" xml:space="preserve">
+    <value>Waste Disposal</value>
+  </data>
+  <data name="ShipInfo.Field.DriverDetails" xml:space="preserve">
+    <value>Driver Details</value>
+  </data>
+  <data name="ShipInfo.Field.OrderReason" xml:space="preserve">
+    <value>Order Reason</value>
+  </data>
+  <data name="ShipInfo.Field.ArrivalNoticeFlag" xml:space="preserve">
+    <value>Arrival Notice Flag</value>
+  </data>
+  <data name="ShipInfo.Field.ArrivalNotice" xml:space="preserve">
+    <value>Arrival Notice</value>
+  </data>
+  <data name="ShipInfo.Field.ReasonForDeliveryDelay" xml:space="preserve">
+    <value>Reason For Delivery Delay</value>
+  </data>
+  <data name="ShipInfo.Field.DelayNotificationDate" xml:space="preserve">
+    <value>Delay Notification Date</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryNo" xml:space="preserve">
+    <value>Delivery No</value>
+  </data>
+  <data name="ShipInfo.Field.SoldToPartyCode" xml:space="preserve">
+    <value>Sold To Party Code</value>
+  </data>
+  <data name="ShipInfo.Field.SoldToParty" xml:space="preserve">
+    <value>Sold To Party</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToPartyCode" xml:space="preserve">
+    <value>Ship To Party Code</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToParty" xml:space="preserve">
+    <value>Ship To Party</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToPartyAddress" xml:space="preserve">
+    <value>Ship To Party Address</value>
+  </data>
+  <data name="ShipInfo.Field.EmgFlight" xml:space="preserve">
+    <value>EMG Flight</value>
+  </data>
+  <data name="ShipInfo.Field.WbsElement" xml:space="preserve">
+    <value>WBS Element</value>
+  </data>
+  <data name="ShipInfo.Field.Cancellation" xml:space="preserve">
+    <value>Cancellation</value>
+  </data>
+  <data name="ShipInfo.Field.ReasonForCancellation" xml:space="preserve">
+    <value>Reason For Cancellation</value>
+  </data>
+  <data name="ShipInfo.Field.AttachedFile" xml:space="preserve">
+    <value>Attached File</value>
+  </data>
+  <data name="ShipInfo.Field.Rate" xml:space="preserve">
+    <value>Rate</value>
+  </data>
+  <data name="ShipInfo.Field.PackingType" xml:space="preserve">
+    <value>Packing Type</value>
+  </data>
+  <data name="ShipInfo.Field.Length" xml:space="preserve">
+    <value>Length</value>
+  </data>
+  <data name="ShipInfo.Field.Width" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="ShipInfo.Field.Hight" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="ShipInfo.Field.NetWeightOfTheItem" xml:space="preserve">
+    <value>Net Weight Of The Item</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryLineNo" xml:space="preserve">
+    <value>Delivery Line No</value>
+  </data>
+  <data name="ShipInfo.Field.Eccn" xml:space="preserve">
+    <value>ECCN</value>
+  </data>
+  <data name="ShipInfo.Field.ElFlag" xml:space="preserve">
+    <value>EL Flag</value>
+  </data>
+  <data name="ShipInfo.Field.SdsFlag" xml:space="preserve">
+    <value>SDS Flag</value>
+  </data>
+  <data name="ShipInfo.Field.Hazmat" xml:space="preserve">
+    <value>Hazmat</value>
+  </data>
   <data name="ShipInfo.TotalInvoiceQty" xml:space="preserve">
     <value>Total Invoice Qty</value>
   </data>
@@ -404,6 +677,24 @@
   </data>
   <data name="ShipInfo.CaseCreateFailed" xml:space="preserve">
     <value>Failed to create case</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.NotInitiated" xml:space="preserve">
+    <value>Not initiated</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Initiated" xml:space="preserve">
+    <value>Initiated</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Processing" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="ShipInfo.DepositCaseStatus" xml:space="preserve">
+    <value>Deposit Case</value>
+  </data>
+  <data name="ShipInfo.ArurCaseStatus" xml:space="preserve">
+    <value>ARUR Case</value>
   </data>
   <data name="Views.Function.ShipInfo.View" xml:space="preserve">
     <value>Ship Info View</value>

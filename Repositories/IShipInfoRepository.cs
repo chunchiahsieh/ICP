@@ -50,6 +50,11 @@ public interface IShipInfoRepository
 
     Task UpdateDetailAsync(IcpDetail detail, CancellationToken cancellationToken = default);
 
+    Task UpdateHeaderAndDetailsAsync(
+        IcpHeader header,
+        IReadOnlyList<IcpDetail> details,
+        CancellationToken cancellationToken = default);
+
     Task DeleteHeaderWithDetailsAsync(string headerRowKey, CancellationToken cancellationToken = default);
 
     Task DeleteDetailAsync(string detailKey, CancellationToken cancellationToken = default);

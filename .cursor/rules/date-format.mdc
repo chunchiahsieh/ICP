@@ -1,0 +1,43 @@
+---
+description: 專案日期格式 yyyy-MM-dd（顯示與編輯一致）
+alwaysApply: true
+---
+
+# 日期格式
+
+本專案日期一律使用 **`yyyy-MM-dd`**（例：`2026-06-06`），**顯示與編輯**皆同。
+
+## 規則
+
+| 情境 | 格式 | 範例 |
+|------|------|------|
+| 日期（Date / DateRange / 字串日期欄） | `yyyy-MM-dd` | `2026-06-06` |
+| 日期時間（含時分秒，如 audit `CreateTime`） | `yyyy-MM-dd HH:mm:ss` | `2026-06-06 14:30:00` |
+| 日期時間（僅時分，若 UI 需要） | `yyyy-MM-dd HH:mm` | `2026-06-06 14:30` |
+
+- **禁止**在新增或修改程式時使用 `yyyy/MM/dd`、`dd/MM/yyyy` 等其它分隔或順序（除非明確處理外部匯入的**輸入解析**，解析後仍輸出 `yyyy-MM-dd`）。
+- C# 格式化使用 `CultureInfo.InvariantCulture`。
+- 前端 `<input type="date">` 的 `value` 必須為 `yyyy-MM-dd`（HTML 標準）。
+- API / JSON 回傳給前端的日期字串，優先 `yyyy-MM-dd`。
+
+## 實作參考
+
+```csharp
+// 日期
+dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+// 日期時間（audit 等）
+dateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+```
+
+```javascript
+// type="date" 僅接受 yyyy-MM-dd
+$input.attr('type', 'date').val('2026-06-06');
+```
+
+## 修改程式時
+
+- Razor 列表：`@item.SomeDate.ToString("yyyy-MM-dd")`
+- Helper / Service 顯示：統一 `yyyy-MM-dd`
+- 儲存前正規化（如 ShipInfo 字串日期欄）：`yyyy-MM-dd`
+- 既有舊格式程式碼若碰觸到，順便改為本規範

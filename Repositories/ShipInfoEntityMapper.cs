@@ -56,6 +56,8 @@ public static class ShipInfoEntityMapper
         result["Customer"] = header.EndUser ?? header.SoldToParty;
         result["DepositNo"] = header.Deposit;
         result["ArurNo"] = header.RtNo;
+        result["DepositCaseStatus"] = ShipInfoCaseStatusResolver.Normalize(header.DepositCaseStatus);
+        result["ArurCaseStatus"] = ShipInfoCaseStatusResolver.Normalize(header.ArurCaseStatus);
         result["Flight"] = header.Flt;
         result["Remark"] = header.Notes ?? header.SapRemarks;
     }
@@ -74,6 +76,8 @@ public static class ShipInfoEntityMapper
         result["Weight"] = detail.GrossWeight ?? (object?)detail.NetWeightOfTheItem;
         result["InvoiceQty"] = detail.Qty;
         result["Carton"] = detail.CartonNo;
+        result["DepositCaseStatus"] = ShipInfoCaseStatusResolver.Normalize(detail.DepositCaseStatus);
+        result["ArurCaseStatus"] = ShipInfoCaseStatusResolver.Normalize(detail.ArurCaseStatus);
     }
 
     public static void ApplyEditableValues(

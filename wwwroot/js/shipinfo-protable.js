@@ -9,22 +9,80 @@
     var headerTableInstance = null;
     var detailTableInstance = null;
 
+    function isFieldVisible(field) {
+        return field.visible !== false && field.Visible !== false;
+    }
+
+    function isFieldSearchable(field) {
+        return field.searchable === true || field.Searchable === true;
+    }
+
     function buildFilterFieldMap(fields, tableId) {
         var map = {};
         (fields || []).forEach(function (field) {
             var fieldName = field.fieldName || field.FieldName;
-            if (!fieldName) {
-                return;
-            }
-
-            var visible = field.visible !== false && field.Visible !== false;
-            if (!visible) {
+            if (!fieldName || !isFieldVisible(field) || !isFieldSearchable(field)) {
                 return;
             }
 
             map['filter-' + tableId + '-' + fieldName] = fieldName;
         });
         return map;
+    }
+
+    function buildColumnDefs(kind) {
+        if (kind === 'header') {
+            return [{ orderable: false, targets: [0, 1] }];
+        }
+
+        return [
+            { orderable: false, targets: 0 },
+            { type: 'num', targets: 1 }
+        ];
+    }
+
+    function buildShipInfoTableConfig(kind, overrides) {
+        var urls = app.urls;
+        var pageConfig = app.state.pageConfig || {};
+        var tableId = kind === 'header' ? 'shipInfoHeaderTable' : 'shipInfoDetailTable';
+        var fields = getPageConfigFields(kind);
+
+        var base = {
+            tableSelector: '#' + tableId,
+            dataDivSelector: kind === 'header' ? '#shipInfoHeaderDataDiv' : '#shipInfoDetailDataDiv',
+            filterFieldMap: buildFilterFieldMap(fields, tableId),
+            filterOptionsUrl: kind === 'header' ? urls.headerFilterOptions : urls.detailFilterOptions,
+            queryUrl: kind === 'header' ? urls.queryHeader : urls.queryDetail,
+            pageLength: 50,
+            preserveSort: false,
+            initialSort: resolveInitialSort(kind, pageConfig),
+            dataTableOptions: {
+                columnDefs: buildColumnDefs(kind)
+            },
+            onDraw: function ($div) {
+                syncStickyHeaderOffset($div);
+            }
+        };
+
+        if (kind === 'detail') {
+            base.autoLoad = false;
+            base.filterOptionsExtraParams = function () {
+                return { headerKey: app.state.selectedHeaderKey || '' };
+            };
+            base.extraQueryParams = function () {
+                return { headerKey: app.state.selectedHeaderKey || '' };
+            };
+            base.onAfterRender = function ($div) {
+                bindDetailTableEvents($div);
+            };
+        } else {
+            base.onAfterRender = function ($div) {
+                bindHeaderTableEvents($div);
+                app.updateHeaderActionState();
+            };
+        }
+
+        return ProDataTables.buildConfig($.extend(true, {}, base, overrides || {}));
     }
 
     function getPageConfigFields(kind) {
@@ -143,52 +201,64 @@
         state.selectedHeaderRow = parseRowData($selected);
     };
 
+    function resolveInitialSort(kind, pageConfig) {
+        var fields = getPageConfigFields(kind)
+            .filter(function (field) {
+                return field.visible !== false && field.Visible !== false;
+            })
+            .sort(function (a, b) {
+                var orderA = a.displayOrder != null ? a.displayOrder : (a.DisplayOrder != null ? a.DisplayOrder : 0);
+                var orderB = b.displayOrder != null ? b.displayOrder : (b.DisplayOrder != null ? b.DisplayOrder : 0);
+                if (orderA !== orderB) {
+                    return orderA - orderB;
+                }
+
+                var nameA = (a.fieldName || a.FieldName || '').toLowerCase();
+                var nameB = (b.fieldName || b.FieldName || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+
+        var sortConfig = kind === 'detail'
+            ? (pageConfig.detailInitialSort || pageConfig.DetailInitialSort)
+            : (pageConfig.headerInitialSort || pageConfig.HeaderInitialSort);
+        var leadingOffset = kind === 'header' ? 2 : 1;
+        var fallback = kind === 'header' ? [[3, 'desc']] : [[1, 'asc']];
+
+        if (!sortConfig) {
+            return fallback;
+        }
+
+        var targetFieldName = sortConfig.fieldName || sortConfig.FieldName;
+        if (!targetFieldName) {
+            return fallback;
+        }
+
+        var fieldIndex = -1;
+        fields.forEach(function (field, index) {
+            var fieldName = field.fieldName || field.FieldName;
+            if (fieldName && fieldName.toLowerCase() === String(targetFieldName).toLowerCase()) {
+                fieldIndex = index;
+            }
+        });
+
+        if (fieldIndex < 0) {
+            return fallback;
+        }
+
+        var direction = String(sortConfig.direction || sortConfig.Direction || 'asc').toLowerCase() === 'desc'
+            ? 'desc'
+            : 'asc';
+
+        return [[leadingOffset + fieldIndex, direction]];
+    }
+
     app.initProTables = function () {
-        var urls = app.urls;
         if (!global.ProDataTables || !ProDataTables.initUsers) {
             return;
         }
 
-        headerTableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
-            tableSelector: '#shipInfoHeaderTable',
-            dataDivSelector: '#shipInfoHeaderDataDiv',
-            filterFieldMap: buildFilterFieldMap(getPageConfigFields('header'), 'shipInfoHeaderTable'),
-            filterOptionsUrl: urls.headerFilterOptions,
-            queryUrl: urls.queryHeader,
-            pageLength: 50,
-            initialSort: [[3, 'desc']],
-            onAfterRender: function ($div) {
-                bindHeaderTableEvents($div);
-                app.updateHeaderActionState();
-            }
-        }));
-
-        detailTableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
-            tableSelector: '#shipInfoDetailTable',
-            dataDivSelector: '#shipInfoDetailDataDiv',
-            filterFieldMap: buildFilterFieldMap(getPageConfigFields('detail'), 'shipInfoDetailTable'),
-            filterOptionsUrl: urls.detailFilterOptions,
-            filterOptionsExtraParams: function () {
-                return { headerKey: app.state.selectedHeaderKey || '' };
-            },
-            queryUrl: urls.queryDetail,
-            pageLength: 50,
-            autoLoad: false,
-            preserveSort: false,
-            initialSort: [[1, 'asc']],
-            dataTableOptions: {
-                columnDefs: [
-                    { orderable: false, targets: 0 },
-                    { type: 'num', targets: 1 }
-                ]
-            },
-            extraQueryParams: function () {
-                return { headerKey: app.state.selectedHeaderKey || '' };
-            },
-            onAfterRender: function ($div) {
-                bindDetailTableEvents($div);
-            }
-        }));
+        headerTableInstance = ProDataTables.initUsers(buildShipInfoTableConfig('header'));
+        detailTableInstance = ProDataTables.initUsers(buildShipInfoTableConfig('detail'));
 
         app.headerTableInstance = headerTableInstance;
         app.detailTableInstance = detailTableInstance;

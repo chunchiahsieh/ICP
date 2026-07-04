@@ -43,6 +43,12 @@ public static class ShipInfoMetadataHelper
             ? field.ControlType
             : field.SearchControlType;
 
+    public static string ResolveFilterType(ShipInfoFieldMetadata field) =>
+        ShipInfoFilterTypes.Normalize(field.FilterType);
+
+    public static bool IsCheckboxFilter(ShipInfoFieldMetadata field) =>
+        string.Equals(ResolveFilterType(field), ShipInfoFilterTypes.Checkbox, StringComparison.OrdinalIgnoreCase);
+
     public static IReadOnlyList<string> ValidateFieldValues(
         IReadOnlyList<ShipInfoFieldMetadata> fields,
         IReadOnlyDictionary<string, string?> values,

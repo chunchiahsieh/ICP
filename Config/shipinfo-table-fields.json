@@ -1,0 +1,419 @@
+﻿{
+    "header":  {
+                   "initialSort":  {
+                                       "fieldName":  "CreateDate",
+                                       "direction":  "desc"
+                                   },
+                   "fields":  [
+                                  {
+                                      "fieldName":  "Id",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "CreateTime",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "CreateUser",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "UpdateTime",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "UpdateUser",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "CreateDate",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "Status",
+                                      "visible":  false
+                                  },
+                                  {
+                                    "fieldName":  "DepositCaseStatus",
+                                    "visible":  true
+                                },
+                                {
+                                    "fieldName":  "ArurCaseStatus",
+                                    "visible":  true
+                                },
+                                  {
+                                      "fieldName":  "SaDate",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "InvoiceNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Forwarder",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Broker",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Etd",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Eta",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "InvoiceDate",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Mawb",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Hawb",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Flt",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Freight",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "DestinationPort",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "DestinationCountry",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Warehouse",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "InvoiceType",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Incoterms",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "OrderType",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "DeliveryDate",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "DeliveryTo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Bu",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "TetPo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "OrderPriority",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "MdpFlag",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "TotalCartons",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "NcdrNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "NcdrRequestor",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "EndUserCode",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "EndUser",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "RtNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Receiver",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Owner",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "MachineNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "MachineType",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ShipReason",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Forklift",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "MovingLabor",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "CarMethod",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ArriveTime",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "WasteDisposal",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "DriverDetails",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "OrderReason",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ArrivalNoticeFlag",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ArrivalNotice",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ReasonForDeliveryDelay",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "DelayNotificationDate",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "DeliveryNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "SoldToPartyCode",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "SoldToParty",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ShipToPartyCode",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ShipToParty",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ShipToPartyAddress",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "EmgFlight",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "WbsElement",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Deposit",
+                                      "visible":  true
+                                  },
+                                  
+                                  {
+                                      "fieldName":  "SapRemarks",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Notes",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Cancellation",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ReasonForCancellation",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "AttachedFile",
+                                      "visible":  true
+                                  }
+                              ]
+               },
+    "detail":  {
+                   "initialSort":  {
+                                       "fieldName":  "InvoiceSeq",
+                                       "direction":  "asc"
+                                   },
+                   "fields":  [
+                                  {
+                                      "fieldName":  "Id",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "DepositCaseStatus",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ArurCaseStatus",
+                                      "visible":  true
+                                  }
+                                  {
+                                      "fieldName":  "CreateTime",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "CreateUser",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "UpdateTime",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "UpdateUser",
+                                      "visible":  false
+                                  },
+                                  {
+                                      "fieldName":  "InvoiceNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "TetPo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "TetPoLine",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "InvoiceSeq",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ItemNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Description",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Qty",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Uom",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Coo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Price",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Amount",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Currency",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Rate",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "PackingType",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "CartonNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Length",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Width",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Hight",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "GrossWeight",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "NetWeightOfTheItem",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "DeliveryLineNo",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Eccn",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "ElFlag",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "SdsFlag",
+                                      "visible":  true
+                                  },
+                                  {
+                                      "fieldName":  "Hazmat",
+                                      "visible":  true
+                                  }
+                              ]
+               }
+}

@@ -55,4 +55,9 @@
     <Folder Include="Views\Permission\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Config\shipinfo-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\shipinfo-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

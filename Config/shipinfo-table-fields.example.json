@@ -1,0 +1,18 @@
+{
+  "_comment": "欄位順序由 fields 陣列順序決定（不需 displayOrder）。完整欄位順序請參考 Models/ShipInfo/ShipInfoTableFieldCatalog.cs。",
+  "header": {
+    "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
+    "fields": [
+      { "fieldName": "Id", "visible": true },
+      { "fieldName": "CreateDate", "visible": true },
+      { "fieldName": "Status", "visible": true }
+    ]
+  },
+  "detail": {
+    "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
+    "fields": [
+      { "fieldName": "InvoiceSeq", "visible": true },
+      { "fieldName": "ItemNo", "visible": true }
+    ]
+  }
+}
