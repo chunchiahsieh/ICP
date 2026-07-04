@@ -8,7 +8,9 @@ using ICP.Infrastructure;
 
 using ICP.Models.Auth;
 using ICP.Models;
+using ICP.Models.Tariff;
 using ICP.Models.ShipInfo;
+using ICP.Models.Forwarder;
 using ICP.Models.Integration;
 
 using ICP.Repositories;
@@ -87,6 +89,27 @@ builder.Services
     .Bind(shipInfoTableFieldsConfiguration)
     .ValidateOnStart();
 
+var forwarderTableFieldsConfiguration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("Config/forwarder-table-fields.json", optional: false, reloadOnChange: true)
+    .Build();
+
+builder.Services
+    .AddOptions<ForwarderTableFieldsOptions>()
+    .Bind(forwarderTableFieldsConfiguration)
+    .ValidateOnStart();
+
+
+var tariffTableFieldsConfiguration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("Config/tariff-table-fields.json", optional: false, reloadOnChange: true)
+    .Build();
+
+builder.Services
+    .AddOptions<TariffTableFieldsOptions>()
+    .Bind(tariffTableFieldsConfiguration)
+    .ValidateOnStart();
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var supportedCultures = new[] { "zh-TW", "en", "ja" };
@@ -138,6 +161,8 @@ builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 builder.Services.AddSingleton<IShipInfoCaseEventFactory, ShipInfoCaseEventFactory>();
 builder.Services.AddHostedService<IntegrationEventOutboxPublisherWorker>();
 builder.Services.AddScoped<ShipInfoMetadataProvider>();
+builder.Services.AddScoped<ForwarderTableMetadataProvider>();
+builder.Services.AddScoped<TariffTableMetadataProvider>();
 builder.Services.AddScoped<ShipInfoLookupService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
 builder.Services.AddScoped<ShipInfoApiExceptionFilter>();
@@ -201,6 +226,7 @@ using (var scope = app.Services.CreateScope())
         var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("ShipInfoSchema");
         await ShipInfoSchemaInitializer.EnsureAuditLogTableAsync(db, logger);
         await IntegrationSchemaInitializer.EnsureOutboxTableAsync(db, logger);
+        await ForwarderSchemaInitializer.EnsureArchiveTableAsync(db, logger);
     }
 }
 

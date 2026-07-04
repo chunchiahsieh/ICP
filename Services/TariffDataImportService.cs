@@ -99,11 +99,17 @@ public class TariffDataImportService
                 .ToListAsync(cancellationToken)
             : [];
 
+        var knownHawbSet = new HashSet<string>(knownHawbs, StringComparer.OrdinalIgnoreCase);
+        foreach (var hawb in rows.Select(r => r.HAWB).Where(h => !string.IsNullOrWhiteSpace(h)))
+        {
+            knownHawbSet.Add(hawb);
+        }
+
         var hawbErrors = new List<string>();
         TariffCustomsImportRules.ValidateNewRowHawbs(
             rows,
             existingInvoiceSet,
-            new HashSet<string>(knownHawbs, StringComparer.OrdinalIgnoreCase),
+            knownHawbSet,
             tariffDataExists,
             hawbErrors);
         TariffCustomsImportRules.ThrowIfErrors(hawbErrors);

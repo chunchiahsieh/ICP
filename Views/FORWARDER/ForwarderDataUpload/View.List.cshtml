@@ -1,59 +1,109 @@
 @model ICP.Models.ForwarderDataUploadListViewModel
+@using ICP.Helpers
+@using ICP.Models.Forwarder
+@{
+    var wrapStyle = string.IsNullOrWhiteSpace(Model.TableUi.MaxHeight)
+        ? null
+        : $"max-height: {Model.TableUi.MaxHeight};";
+    var wrapClasses = "forwarder-table-wrap";
+    if (Model.TableUi.StickyHeader == true)
+    {
+        wrapClasses += " forwarder-sticky-enabled";
+    }
 
-<table id="datatable" class="table table-striped table-sm">
-    <thead>
-        <tr>
-            <th>Type</th>
-            <th>Invoice No.</th>
-            <th>Customer Reference</th>
-            <th>Material Code</th>
-            <th>Order Material Name</th>
-            <th>Quantity</th>
-            <th>Port of Loading</th>
-            <th>Ship to Name</th>
-            <th>Ship to Address</th>
-            <th>Ship to Party Country Code</th>
-            <th>Ship to Port Code</th>
-            <th>Freight charge</th>
-            <th>Confirmed Custom Date</th>
-            <th>HAWB</th>
-            <th>MAWB</th>
-            <th>ETD</th>
-            <th>ETA</th>
-            <th>FLIGHT 1#</th>
-            <th>FLIGHT 2#</th>
-            <th>C/B</th>
-            <th>Action</th>
-            <th>MDP</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.ListData)
+    if (Model.TableUi.StickyLeftColumns == true)
+    {
+        wrapClasses += " forwarder-sticky-left-enabled";
+    }
+
+    var theadClasses = "table-light";
+    if (Model.TableUi.StickyHeader == true)
+    {
+        theadClasses += " forwarder-sticky-header";
+    }
+
+    string ResolveHeaderCellClass(ForwarderTableFieldMetadata field)
+    {
+        if (Model.TableUi.StickyLeftColumns == true
+            && string.Equals(field.FieldName, "DuplicateStatus", StringComparison.OrdinalIgnoreCase))
         {
-            <tr>
-                <td>@item.Type</td>
-                <td>@item.InvoiceNo</td>
-                <td>@item.CustomerReference</td>
-                <td>@item.MaterialCode</td>
-                <td>@item.OrderMaterialName</td>
-                <td>@(item.Quantity?.ToString("0.####") ?? string.Empty)</td>
-                <td>@item.PortOfLoading</td>
-                <td>@item.ShipToName</td>
-                <td>@item.ShipToAddress</td>
-                <td>@item.ShipToPartyCountryCode</td>
-                <td>@item.ShipToPortCode</td>
-                <td>@item.FreightCharge</td>
-                <td>@(item.ConfirmedCustomDate?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
-                <td>@item.Hawb</td>
-                <td>@item.Mawb</td>
-                <td>@(item.Etd?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
-                <td>@(item.Eta?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
-                <td>@item.Flight1</td>
-                <td>@item.Flight2</td>
-                <td>@item.Cb</td>
-                <td>@item.Action</td>
-                <td>@item.Mdp</td>
-            </tr>
+            return "forwarder-duplicate-col";
         }
-    </tbody>
-</table>
+
+        return string.Empty;
+    }
+}
+
+<div class="@wrapClasses" @(wrapStyle is not null ? Html.Raw($"style=\"{wrapStyle}\"") : null)>
+    <table id="datatable" class="table table-striped table-sm table-bordered align-middle mb-0 forwarder-pro-table w-100">
+        <thead class="@theadClasses">
+            <tr>
+                @foreach (var field in Model.Fields)
+                {
+                    var headerClass = ResolveHeaderCellClass(field);
+                    <th class="@headerClass">@ForwarderTableViewHelper.ResolveHeaderLabel(field, key => Localizer[key].Value)</th>
+                }
+            </tr>
+            @if (Model.HasFilterRow)
+            {
+                <tr class="users-filter-row">
+                    @foreach (var field in Model.Fields)
+                    {
+                        var filterClass = ResolveHeaderCellClass(field);
+                        var thClass = string.IsNullOrWhiteSpace(filterClass)
+                            ? "sorting_disabled"
+                            : $"{filterClass} sorting_disabled";
+                        <th class="@thClass">
+                            @if (field.Searchable)
+                            {
+                                @await Html.PartialAsync("_ProDataTablesFilter", ($"filter-{field.FieldName}", field.FieldName))
+                            }
+                        </th>
+                    }
+                </tr>
+            }
+        </thead>
+        <tbody>
+            @{
+                var rowIndex = 0;
+            }
+            @foreach (var item in Model.ListData)
+            {
+                rowIndex++;
+                <tr class="@ForwarderTableViewHelper.ResolveRowClass(item)">
+                    @foreach (var field in Model.Fields)
+                    {
+                        @if (string.Equals(field.FieldName, "DuplicateStatus", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var duplicateCellClass = Model.TableUi.StickyLeftColumns == true
+                                ? "forwarder-duplicate-cell forwarder-duplicate-col"
+                                : "forwarder-duplicate-cell";
+                            <td class="@duplicateCellClass">
+                                @if (item.IsDbDuplicate)
+                                {
+                                    <span class="forwarder-duplicate-label forwarder-duplicate-label-issue">@Localizer["Forwarder.ForwarderDataUpload.Duplicate.DbDuplicate"]</span>
+                                }
+                                @if (item.IsInFileMultiLine)
+                                {
+                                    <span class="forwarder-duplicate-label forwarder-duplicate-label-issue">@Localizer["Forwarder.ForwarderDataUpload.Duplicate.InFileMultiLine"]</span>
+                                }
+                                @if (!item.IsDbDuplicate && !item.IsInFileMultiLine)
+                                {
+                                    <span class="forwarder-duplicate-label forwarder-duplicate-label-ok">@Localizer["Forwarder.ForwarderDataUpload.Duplicate.None"]</span>
+                                }
+                            </td>
+                        }
+                        else if (string.Equals(field.FieldName, "RowNo", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <td class="forwarder-rowno-col text-center">@rowIndex</td>
+                        }
+                        else
+                        {
+                            <td>@ForwarderTableViewHelper.FormatCellValue(item, field.FieldName)</td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

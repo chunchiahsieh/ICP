@@ -1026,6 +1026,12 @@
   <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
     <value>Cost file {0} uploaded successfully</value>
   </data>
+  <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Broker.TariffData.DownloadTemplate" xml:space="preserve">
+    <value>Download Template</value>
+  </data>
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
     <value>Tariff Data View</value>
   </data>
@@ -1037,6 +1043,9 @@
   </data>
   <data name="Views.Broker.TariffData.UploadCost" xml:space="preserve">
     <value>Upload Cost</value>
+  </data>
+  <data name="Broker.TariffData.Column.RowNo" xml:space="preserve">
+    <value>No.</value>
   </data>
   <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
     <value>MAWB</value>
@@ -1133,6 +1142,30 @@
   </data>
   <data name="Forwarder.ForwarderDataUpload.RemovePendingFile" xml:space="preserve">
     <value>Remove</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DuplicateInvoiceConfirm" xml:space="preserve">
+    <value>This file contains invoices that already exist in the system. Existing data may already be in use. Confirming will fully replace old data; removed records are archived with removal time.&#xA;&#xA;[Yes] Upload and overwrite&#xA;[No] Cancel this file upload</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DuplicateInvoicePreview" xml:space="preserve">
+    <value>This file contains invoices that already exist in the system. Check the Duplicate column in the table; you will be asked to confirm overwrite on save.</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Column.RowNo" xml:space="preserve">
+    <value>No.</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.DbDuplicate" xml:space="preserve">
+    <value>Exists in system</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.InFileMultiLine" xml:space="preserve">
+    <value>Multiple lines in file</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.None" xml:space="preserve">
+    <value>Not duplicate</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.OverwriteArchivedMessage" xml:space="preserve">
+    <value>{0} existing row(s) archived and replaced.</value>
   </data>
   <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
     <value>Forwarder Data Upload View</value>

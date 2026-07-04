@@ -16,6 +16,8 @@
 
     var uploaderButtonText = Localizer["Forwarder.ForwarderDataUpload.UploaderButton"].Value;
 
+    var forwarderTableConfigJson = ViewData["ForwarderTableConfigJson"] as string ?? "{}";
+
 }
 
 
@@ -27,6 +29,8 @@
     <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
 
     <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/css/forwarder-data-upload.css" asp-append-version="true" />
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -50,8 +54,8 @@
 
 
 
-<div data-permissions="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload"
-
+<div class="forwarder-data-upload-page"
+     data-permissions="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload"
      data-i18n-key="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload">
 
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
@@ -115,7 +119,11 @@
 
         <div id="pageMessage" class="alert alert-info py-2 mb-3" role="alert"></div>
 
-        <div id="DataDiv"></div>
+        <div class="card forwarder-table-card">
+            <div class="card-body p-0 forwarder-table-card-body">
+                <div id="DataDiv" class="forwarder-data-div"></div>
+            </div>
+        </div>
 
     </div>
 
@@ -172,6 +180,11 @@
             var pendingFilesRemainingText = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.PendingFilesRemaining"].Value));
             var previewMessageTemplate = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.PreviewMessage"].Value));
             var removePendingFileTitle = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.RemovePendingFile"].Value));
+            var duplicateInvoiceConfirmMessage = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.DuplicateInvoiceConfirm"].Value));
+            var duplicateStatusDbDuplicateLabel = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.Duplicate.DbDuplicate"].Value));
+            var duplicateStatusInFileMultiLineLabel = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.Duplicate.InFileMultiLine"].Value));
+            var duplicateStatusNoneLabel = @Html.Raw(JsonSerializer.Serialize(Localizer["Forwarder.ForwarderDataUpload.Duplicate.None"].Value));
+            var forwarderTableConfig = @Html.Raw(forwarderTableConfigJson);
 
             function hasPermission(code) {
                 var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
@@ -272,13 +285,57 @@
 
             function renderPendingFileList() {
 
-                var $list = $('#pendingFileList');
+                $('#pendingFileSection').addClass('d-none');
 
-                $list.empty();
+                $('#pendingFileList').empty();
 
-                if (pendingFiles.length === 0) {
+            }
 
-                    $('#pendingFileSection').addClass('d-none');
+
+
+            function cancelPendingFileQuietly(filePath) {
+
+                if (!filePath) {
+
+                    return $.Deferred().resolve().promise();
+
+                }
+
+
+
+                return $.ajax({
+
+                    url: '@Url.Action("CancelPending", "ForwarderDataUpload")',
+
+                    type: 'POST',
+
+                    data: { filePath: filePath },
+
+                    dataType: 'json'
+
+                });
+
+            }
+
+
+
+            function setSinglePendingFile(item, done) {
+
+                var previous = pendingFiles.filter(function (pending) {
+
+                    return !pathEquals(pending.filePath, item.filePath);
+
+                });
+
+                pendingFiles = [item];
+
+                if (previous.length === 0) {
+
+                    if (typeof done === 'function') {
+
+                        done();
+
+                    }
 
                     return;
 
@@ -286,61 +343,17 @@
 
 
 
-                $('#pendingFileSection').removeClass('d-none');
+                $.when.apply($, previous.map(function (pending) {
 
-                pendingFiles.forEach(function (item) {
+                    return cancelPendingFileQuietly(pending.filePath);
 
-                    var isActive = pathEquals(item.filePath, activeFilePath);
+                })).always(function () {
 
-                    var btnClass = isActive ? 'btn-primary' : 'btn-outline-secondary';
+                    if (typeof done === 'function') {
 
-                    var $group = $('<span class="btn-group btn-group-sm" role="group"></span>');
-
-                    var $selectBtn = $('<button type="button" class="btn btn-sm"></button>');
-
-                    $selectBtn.addClass(btnClass);
-
-                    $selectBtn.text(item.fileName || resolveFileName(null, item.filePath));
-
-                    if (item.message) {
-
-                        $selectBtn.attr('title', item.message);
+                        done();
 
                     }
-
-                    $selectBtn.on('click', function () {
-
-                        selectPendingFile(item.filePath);
-
-                    });
-
-
-
-                    var $removeBtn = $('<button type="button" class="btn btn-sm px-2"></button>');
-
-                    $removeBtn.addClass(btnClass);
-
-                    $removeBtn.attr('title', removePendingFileTitle);
-
-                    $removeBtn.attr('aria-label', removePendingFileTitle);
-
-                    $removeBtn.html('&times;');
-
-                    $removeBtn.on('click', function (e) {
-
-                        e.preventDefault();
-
-                        e.stopPropagation();
-
-                        removePendingFile(item.filePath);
-
-                    });
-
-
-
-                    $group.append($selectBtn, $removeBtn);
-
-                    $list.append($group);
 
                 });
 
@@ -524,11 +537,51 @@
 
 
 
+            function syncForwarderStickyHeaderOffset() {
+
+                if (!forwarderTableConfig.stickyHeader) {
+
+                    return;
+
+                }
+
+
+
+                $('#DataDiv .forwarder-pro-table').each(function () {
+
+                    var table = this;
+
+                    var $titleRow = $(table).find('thead.forwarder-sticky-header > tr').first();
+
+                    if (!$titleRow.length) {
+
+                        return;
+
+                    }
+
+
+
+                    var titleHeight = Math.ceil($titleRow[0].getBoundingClientRect().height);
+
+                    table.style.setProperty('--forwarder-header-row-height', titleHeight + 'px');
+
+                });
+
+            }
+
+
+
             function buildTableConfig() {
+
+                var sortColumn = forwarderTableConfig.initialSortColumn ?? 0;
+
+                var sortDirection = forwarderTableConfig.initialSortDirection || 'asc';
 
                 return ProDataTables.buildConfig({
 
-                    filterFieldMap: {},
+                    filterFieldMap: forwarderTableConfig.filterFieldMap || {},
+
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "ForwarderDataUpload")',
 
                     queryUrl: '@Url.Action("Query", "ForwarderDataUpload")',
 
@@ -538,9 +591,55 @@
 
                     lengthMenu: [[-1], [lengthMenuAll]],
 
-                    initialSort: [[0, 'asc']],
+                    initialSort: [[sortColumn, sortDirection]],
+
+                    onDraw: function () {
+
+                        syncForwarderStickyHeaderOffset();
+
+                    },
+
+                    formatFilterOptionLabel: function (column, value) {
+
+                        if (column === 'DuplicateStatus') {
+
+                            if (value === 'DbDuplicate') {
+
+                                return duplicateStatusDbDuplicateLabel;
+
+                            }
+
+                            if (value === 'InFileMultiLine') {
+
+                                return duplicateStatusInFileMultiLineLabel;
+
+                            }
+
+                            if (value === 'None') {
+
+                                return duplicateStatusNoneLabel;
+
+                            }
+
+                        }
+
+                        return value;
+
+                    },
 
                     extraQueryParams: function () {
+
+                        return {
+
+                            filePath: lastFilePath,
+
+                            preview: isPreviewMode
+
+                        };
+
+                    },
+
+                    filterOptionsExtraParams: function () {
 
                         return {
 
@@ -624,59 +723,47 @@
 
                 var fileName = resolveFileName(response, filePath);
 
-                var existing = findPendingFile(filePath);
+                var pendingItem = {
+
+                    filePath: filePath,
+
+                    fileName: fileName,
+
+                    message: response.message || '',
+
+                    previewCount: response.previewCount || response.PreviewCount || 0,
+
+                    duplicateInvoiceNos: response.duplicateInvoiceNos || response.DuplicateInvoiceNos || []
+
+                };
 
 
 
-                if (existing) {
+                setSinglePendingFile(pendingItem, function () {
 
-                    existing.message = response.message || existing.message;
+                    activeFilePath = filePath;
 
-                    existing.previewCount = response.previewCount || response.PreviewCount || existing.previewCount;
+                    lastFilePath = filePath;
 
-                    existing.fileName = fileName || existing.fileName;
+                    isPreviewMode = true;
 
-                } else {
+                    $('#importResultTitle')
+                        .removeClass('text-success')
+                        .text(importResultTitleText);
 
-                    pendingFiles.push({
+                    updatePageMessage();
 
-                        filePath: filePath,
+                    $('#importResultSection').removeClass('d-none');
 
-                        fileName: fileName,
+                    $('#btnSaveImport').prop('disabled', false);
 
-                        message: response.message || '',
+                    $('#DataDiv').removeClass('d-none');
 
-                        previewCount: response.previewCount || response.PreviewCount || 0
+                    renderPendingFileList();
 
-                    });
+                    reloadPreviewTable();
 
-                }
-
-
-
-                activeFilePath = filePath;
-
-                lastFilePath = filePath;
-
-                isPreviewMode = true;
-
-                $('#importResultTitle')
-                    .removeClass('text-success')
-                    .text(importResultTitleText);
-
-                updatePageMessage();
-
-                $('#importResultSection').removeClass('d-none');
-
-                $('#btnSaveImport').prop('disabled', false);
-
-                $('#DataDiv').removeClass('d-none');
-
-                renderPendingFileList();
-
-                reloadPreviewTable();
-
-                document.getElementById('importResultSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
 
             }
 
@@ -733,9 +820,9 @@
 
 
 
-            $('#btnSaveImport').on('click', function () {
+            function saveImportFile(filePath, confirmOverwrite) {
 
-                if (!activeFilePath || $(this).prop('disabled')) {
+                if (!filePath) {
 
                     return;
 
@@ -743,9 +830,7 @@
 
 
 
-                var savingFilePath = (findPendingFile(activeFilePath) || { filePath: activeFilePath }).filePath;
-
-                var $btn = $(this);
+                var $btn = $('#btnSaveImport');
 
                 $btn.prop('disabled', true);
 
@@ -757,15 +842,45 @@
 
                     type: 'POST',
 
-                    data: { filePath: savingFilePath },
+                    data: {
+
+                        filePath: filePath,
+
+                        confirmOverwrite: !!confirmOverwrite
+
+                    },
 
                     dataType: 'json',
 
                     success: function (response) {
 
+                        if (response && response.requiresConfirmation) {
+
+                            $btn.prop('disabled', false);
+
+                            var duplicateInvoiceNos = response.duplicateInvoiceNos || response.DuplicateInvoiceNos || [];
+
+                            if (confirm(response && response.message ? response.message : duplicateInvoiceConfirmMessage)) {
+
+                                saveImportFile(filePath, true);
+
+                                return;
+
+                            }
+
+
+
+                            removePendingFile(filePath);
+
+                            return;
+
+                        }
+
+
+
                         if (response && response.success) {
 
-                            showSaveSuccess(response, savingFilePath);
+                            showSaveSuccess(response, filePath);
 
                         } else {
 
@@ -793,6 +908,24 @@
 
                 });
 
+            }
+
+
+
+            $('#btnSaveImport').on('click', function () {
+
+                if (!activeFilePath || $(this).prop('disabled')) {
+
+                    return;
+
+                }
+
+
+
+                var savingFilePath = (findPendingFile(activeFilePath) || { filePath: activeFilePath }).filePath;
+
+                saveImportFile(savingFilePath, false);
+
             });
 
 
@@ -812,9 +945,7 @@
 
                     fileTypes: '.xlsx,.xls,.csv',
 
-                    multiple: true,
-
-                    sequentialUpload: true,
+                    multiple: false,
 
                     maxSize: maxSizeMb,
 

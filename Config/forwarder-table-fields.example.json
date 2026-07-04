@@ -1,0 +1,16 @@
+{
+  "tableUi": {
+    "stickyHeader": true,
+    "stickyLeftColumns": true,
+    "maxHeight": "500px"
+  },
+  "initialSort": { "fieldName": "Type", "direction": "asc" },
+  "list": {
+    "fields": [
+      { "fieldName": "DuplicateStatus", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "RowNo", "visible": true, "searchable": false },
+      { "fieldName": "Type", "visible": true, "searchable": false },
+      { "fieldName": "InvoiceNo", "visible": true, "searchable": false }
+    ]
+  }
+}

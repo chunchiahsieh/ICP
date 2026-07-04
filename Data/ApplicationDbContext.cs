@@ -27,6 +27,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<ForwarderDataUpload> ForwarderDataUploads => Set<ForwarderDataUpload>();
 
+    public DbSet<ForwarderDataUploadArchive> ForwarderDataUploadArchives => Set<ForwarderDataUploadArchive>();
+
     public DbSet<TariffData> TariffDataRecords => Set<TariffData>();
 
     public DbSet<IcpHeader> IcpHeaders => Set<IcpHeader>();
@@ -92,6 +94,37 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.CreateUser).HasMaxLength(50).IsRequired();
             entity.Property(e => e.UpdateUser).HasMaxLength(50);
             entity.Property(e => e.FilePath).HasMaxLength(500).IsRequired();
+        });
+
+        modelBuilder.Entity<ForwarderDataUploadArchive>(entity =>
+        {
+            entity.ToTable("ForwarderDataUploadArchive");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Type).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.InvoiceNo).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.CustomerReference).HasMaxLength(100);
+            entity.Property(e => e.MaterialCode).HasMaxLength(100);
+            entity.Property(e => e.OrderMaterialName).HasMaxLength(500);
+            entity.Property(e => e.Quantity).HasPrecision(18, 4);
+            entity.Property(e => e.PortOfLoading).HasMaxLength(100);
+            entity.Property(e => e.ShipToName).HasMaxLength(300);
+            entity.Property(e => e.ShipToAddress).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.ShipToPartyCountryCode).HasMaxLength(100);
+            entity.Property(e => e.ShipToPortCode).HasMaxLength(50);
+            entity.Property(e => e.FreightCharge).HasMaxLength(100);
+            entity.Property(e => e.Hawb).HasMaxLength(50);
+            entity.Property(e => e.Mawb).HasMaxLength(50);
+            entity.Property(e => e.Flight1).HasMaxLength(50);
+            entity.Property(e => e.Flight2).HasMaxLength(50);
+            entity.Property(e => e.Cb).HasMaxLength(50);
+            entity.Property(e => e.Action).HasMaxLength(100);
+            entity.Property(e => e.Mdp).HasMaxLength(50);
+            entity.Property(e => e.CreateUser).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.UpdateUser).HasMaxLength(50);
+            entity.Property(e => e.FilePath).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.RemovedUser).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ReplacedByFilePath).HasMaxLength(500).IsRequired();
         });
 
         modelBuilder.Entity<TariffData>(entity =>

@@ -14,6 +14,12 @@ public class ForwarderDataImportResult
 
     public IReadOnlyList<string> Errors { get; init; } = [];
 
+    public bool RequiresOverwriteConfirmation { get; init; }
+
+    public IReadOnlyList<string> DuplicateInvoiceNos { get; init; } = [];
+
+    public int OverwrittenCount { get; init; }
+
     public static ForwarderDataImportResult Ok(int importedCount, string filePath, int skippedCount = 0) =>
         new()
         {
@@ -48,5 +54,14 @@ public class ForwarderDataImportResult
             Success = false,
             Message = message,
             Errors = errors ?? []
+        };
+
+    public static ForwarderDataImportResult NeedOverwriteConfirmation(IReadOnlyList<string> duplicateInvoiceNos) =>
+        new()
+        {
+            Success = false,
+            RequiresOverwriteConfirmation = true,
+            DuplicateInvoiceNos = duplicateInvoiceNos,
+            Message = "duplicate invoice"
         };
 }

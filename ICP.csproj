@@ -59,6 +59,10 @@
   <ItemGroup>
     <Content Update="Config\shipinfo-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\shipinfo-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\forwarder-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\forwarder-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\tariff-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\tariff-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

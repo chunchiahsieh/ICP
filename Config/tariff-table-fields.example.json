@@ -1,0 +1,25 @@
+{
+  "tableUi": {"stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "420px"},
+  "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
+  "list": {
+    "fields": [
+      { "fieldName": "RowNo", "visible": true, "searchable": false },
+      { "fieldName": "MAWB", "visible": true, "searchable": true },
+      { "fieldName": "HAWB", "visible": true, "searchable": true },
+      { "fieldName": "ImportDate", "visible": true, "searchable": true },
+      { "fieldName": "DeclarationDate", "visible": true, "searchable": true },
+      { "fieldName": "ReleaseDate", "visible": true, "searchable": true },
+      { "fieldName": "InvoiceNumber", "visible": true, "searchable": true },
+      { "fieldName": "DescriptionOfGoods", "visible": true, "searchable": true },
+      { "fieldName": "HTSNumber", "visible": true, "searchable": true },
+      { "fieldName": "EntryNumber", "visible": true, "searchable": true },
+      { "fieldName": "Mode", "visible": true, "searchable": true },
+      { "fieldName": "PortOfDeparture", "visible": true, "searchable": true },
+      { "fieldName": "FlightNo", "visible": true, "searchable": true },
+      { "fieldName": "Shipper", "visible": true, "searchable": true },
+      { "fieldName": "Broker", "visible": true, "searchable": true },
+      { "fieldName": "AirSea", "visible": true, "searchable": true },
+      { "fieldName": "CreateDate", "visible": true, "searchable": true }
+    ]
+  }
+}
