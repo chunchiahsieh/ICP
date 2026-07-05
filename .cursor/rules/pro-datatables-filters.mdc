@@ -1,0 +1,132 @@
+---
+description: ProDataTables 四種篩選元件（Checkbox/Text/DateRange/Date）必須 config 驅動並全層串接
+globs:
+  - Config/*-table-fields.json
+  - Config/*-table-fields.example.json
+  - wwwroot/js/pro-datatables.js
+  - wwwroot/js/pro-table-filters.js
+  - wwwroot/js/*-protable.js
+  - Views/**/View*.cshtml
+  - Views/**/View.*.cshtml
+  - Helpers/*QueryFilterApplier.cs
+  - Models/**/*QueryModel.cs
+  - Services/*TableMetadataProvider.cs
+  - Controllers/*Controller.cs
+alwaysApply: false
+---
+
+# ProDataTables 四種篩選元件 Config 規範
+
+凡使用 `pro-datatables.js` 的表格，**必須**透過 config 設定 `filterType`，並串接四種篩選元件與後端查詢管線。禁止僅在 JSON 寫 `filterType` 卻沿用舊版 Checkbox-only 實作。
+
+## 四種 filterType（統一入口）
+
+一律透過 `_ProDataTablesFilterByType` 渲染，**禁止**在 `View.List.cshtml` 直接寫死 `_ProDataTablesFilter`。
+
+| filterType | Partial | 用途 |
+|------------|---------|------|
+| `Checkbox` | `_ProDataTablesFilter` | 多選 distinct 值 |
+| `Text` | `_ProDataTablesFilterText` | 模糊搜尋（`Contains` / `LIKE`） |
+| `DateRange` | `_ProDataTablesFilterDateRange` | 起迄日期 |
+| `Date` | `_ProDataTablesFilterDate` | 單日精確 |
+
+```cshtml
+@await Html.PartialAsync("_ProDataTablesFilterByType",
+    ($"filter-{field.FieldName}", field.FieldName, ResolveFilterType(field)))
+```
+
+## Config JSON（唯一欄位設定來源）
+
+每個 ProDataTables 頁面應有 `Config/{module}-table-fields.json`（及 `.example.json`）：
+
+```json
+{
+  "tableUi": { "stickyHeader": true, "maxHeight": "420px" },
+  "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
+  "list": {
+    "fields": [
+      { "fieldName": "HAWB", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "ImportDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "CreateDate", "visible": true, "searchable": true, "filterType": "Date" }
+    ]
+  }
+}
+```
+
+- `searchable: false` → 不渲染該欄篩選
+- 未指定 `filterType` → 預設 `Checkbox`
+- 日期格式遵循 `date-format.mdc`（`yyyy-MM-dd`）
+
+參考：`Config/shipinfo-table-fields.json`、`Config/tariff-table-fields.json`
+
+## 端到端管線（必須全層串接）
+
+```
+Config JSON (filterType)
+  → TableMetadataProvider (Fields + FilterType)
+  → View.List (_ProDataTablesFilterByType)
+  → View.cshtml (fields JSON + JS hooks)
+  → pro-table-filters.js + pro-datatables.js
+  → payload: Checkbox / Text / DateFrom / DateTo / Date
+  → Controller.Query (XxxQueryModel)
+  → XxxQueryFilterApplier
+  → EF Query
+```
+
+## 前端必備（View.cshtml）
+
+- CSS：`wwwroot/css/pro-table-filters.css`
+- JS 順序：`pro-datatables.js` → `pro-table-filters.js` → `{module}-protable.js`
+- 從 config `fields` 建構 `filterFieldMap`：
+
+```javascript
+{ "filter-HAWB": { fieldName: "HAWB", filterType: "Text" } }
+```
+
+參考：`wwwroot/js/tariff-protable.js`、`wwwroot/js/shipinfo-protable.js`
+
+`ProDataTables.buildConfig` 必須含：
+
+- `customGetFilterValues` → `ProTableFilters.getProTableFilterValues`
+- `customBuildQueryPayload` → `ProTableFilters.buildProTableQueryPayload`
+- `customRestoreFilterValues` → `ProTableFilters.restoreProTableFilterValues`
+- `onAfterRender` → `ProTableFilters.updateAllProTableFilterCounts`
+- `ProTableFilters.bindProTableFilterActions`（Text/Date 確認/重設）
+- 頁面容器加 `pro-datatables-page` class
+
+**禁止**僅傳舊版字串 map（如 `filter-HAWB → "HAWBs"`）而不帶 `{ fieldName, filterType }` 物件。
+
+## 後端必備
+
+Query Model 對齊 `ShipInfoHeaderQueryModel` / `TariffDataQueryModel`：
+
+- `Dictionary<string, List<string>> Checkbox`
+- `Dictionary<string, string> Text`
+- `Dictionary<string, string> DateFrom` / `DateTo` / `Date`
+
+其他要求：
+
+- `Controller.Query` 使用 `[FromForm] XxxQueryModel`
+- `GetFilterOptions` **僅**允許 `filterType == Checkbox` 的欄位
+- 查詢套用 `XxxQueryFilterApplier`（參考 `ShipInfoQueryFilterApplier`、`TariffQueryFilterApplier`）
+- `TableMetadataProvider` 讀入 `FilterType`（可用 `ShipInfoFilterTypes.Normalize`）
+
+## 新頁面檢查清單
+
+新增或修改 ProDataTables 表格時逐項確認：
+
+1. `Config/{module}-table-fields.json` 每個 searchable 欄位有 `filterType`
+2. `TableMetadataProvider` + `Program.cs` Options 註冊
+3. `View.List.cshtml` 使用 `_ProDataTablesFilterByType`
+4. `View.cshtml` 載入 `pro-table-filters.js` 與 hooks
+5. `{module}-protable.js` 建構 filterFieldMap
+6. `XxxQueryModel` + `XxxQueryFilterApplier`
+7. `Controller.Query` / `GetFilterOptions` 依 filterType 處理
+8. 手動驗證四種 filterType 各至少一欄可行
+
+## 既有頁面參考
+
+- **ShipInfo**：完整參考實作
+- **TariffData**：已對齊
+- **ForwarderDataUpload**：config 已有部分 `filterType`，View/JS 可能仍為舊管線；**修改時應一併遷移**，不可再擴充舊模式
