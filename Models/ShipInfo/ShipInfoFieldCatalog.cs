@@ -43,10 +43,10 @@ public static class ShipInfoFieldCatalog
     private static readonly Dictionary<string, ShipInfoFieldSpec> HeaderSpecs = new(StringComparer.OrdinalIgnoreCase)
     {
         ["CreateDate"] = new(ShipInfoControlTypes.Text, editable: false, searchable: true, maxLength: 20, group: "Basic"),
-        ["SaDate"] = new(ShipInfoControlTypes.Date, editable: true, searchable: true, maxLength: 10, group: "Shipping"),
+        ["SaDate"] = new(ShipInfoControlTypes.Date, editable: false, searchable: true, maxLength: 10, group: "Shipping"),
         ["InvoiceNo"] = new(ShipInfoControlTypes.Text, editable: false, searchable: true, maxLength: 30, group: "Invoice"),
         ["Broker"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: "Broker", maxLength: 30, group: "Customs"),
-        ["Eta"] = new(ShipInfoControlTypes.Date, editable: true, searchable: true, maxLength: 10, group: "Shipping"),
+        ["Eta"] = new(ShipInfoControlTypes.Date, editable: false, searchable: true, maxLength: 10, group: "Shipping"),
         ["DeliveryTo"] = new(ShipInfoControlTypes.Select, editable: false, lookupCategory: "DeliveryToList", maxLength: 20, group: "Warehouse"),
         ["Notes"] = new(ShipInfoControlTypes.Textarea, editable: false, maxLength: 1000, group: "Other"),
         ["SapRemarks"] = new(ShipInfoControlTypes.Textarea, editable: false, maxLength: 1000, group: "Other"),

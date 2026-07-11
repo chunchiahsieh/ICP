@@ -110,6 +110,36 @@ public static class ShipInfoEntityMapper
         }
 
         var trimmed = rawValue.Trim();
+        string[] formats =
+        [
+            "yyyy-MM-dd",
+            "yyyy/MM/dd",
+            "yyyy/M/d",
+            "yyyy-M-d"
+        ];
+
+        if (DateTime.TryParseExact(
+                trimmed,
+                formats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var exact))
+        {
+            return exact.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        }
+
+        // Allow datetime strings; keep date part only for date fields.
+        var dateToken = trimmed.Split(' ', 'T')[0];
+        if (DateTime.TryParseExact(
+                dateToken,
+                formats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out exact))
+        {
+            return exact.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        }
+
         if (DateTime.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed))
         {
             return parsed.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);

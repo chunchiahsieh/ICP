@@ -64,6 +64,8 @@ public static class ShipInfoFieldConfigMerger
 
             var copy = Clone(catalogField);
             copy.Visible = true;
+            // Opt-in editable: catalog defaults are ignored; only edit.fields with editable:true unlock editing.
+            copy.Editable = false;
             if (overrideByName.TryGetValue(catalogField.FieldName, out var entry))
             {
                 ApplyEditEntry(copy, entry);

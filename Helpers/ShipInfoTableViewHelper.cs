@@ -47,6 +47,18 @@ public static class ShipInfoTableViewHelper
                     : dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
 
+            if (DateTime.TryParseExact(
+                    Convert.ToString(value, CultureInfo.InvariantCulture),
+                    ["yyyy-MM-dd", "yyyy/MM/dd", "yyyy/M/d", "yyyy-M-d"],
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var exact))
+            {
+                return field.ControlType is ShipInfoControlTypes.DateTime
+                    ? exact.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
+                    : exact.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            }
+
             if (DateTime.TryParse(Convert.ToString(value, CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var parsed))
             {
                 return field.ControlType is ShipInfoControlTypes.DateTime

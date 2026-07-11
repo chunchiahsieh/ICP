@@ -67,6 +67,79 @@
             });
     }
 
+    function pad2(n) {
+        return n < 10 ? '0' + n : String(n);
+    }
+
+    /**
+     * Normalize date strings to yyyy-MM-dd (accepts yyyy-MM-dd, yyyy/MM/dd, yyyy/M/d, parseable strings).
+     */
+    function normalizeDateInputValue(value) {
+        if (value == null) {
+            return '';
+        }
+
+        var text = String(value).trim();
+        if (!text) {
+            return '';
+        }
+
+        var dash = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(text);
+        if (dash) {
+            return dash[1] + '-' + pad2(Number(dash[2])) + '-' + pad2(Number(dash[3]));
+        }
+
+        var slash = /^(\d{4})\/(\d{1,2})\/(\d{1,2})/.exec(text);
+        if (slash) {
+            return slash[1] + '-' + pad2(Number(slash[2])) + '-' + pad2(Number(slash[3]));
+        }
+
+        var parsed = Date.parse(text);
+        if (!isNaN(parsed)) {
+            var d = new Date(parsed);
+            return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+        }
+
+        return text;
+    }
+
+    function isValidYyyyMmDd(value) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) {
+            return false;
+        }
+
+        var parts = value.split('-');
+        var y = Number(parts[0]);
+        var m = Number(parts[1]);
+        var d = Number(parts[2]);
+        var dt = new Date(y, m - 1, d);
+        return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+    }
+
+    function normalizeDateTimeInputValue(value) {
+        if (value == null) {
+            return '';
+        }
+
+        var text = String(value).trim();
+        if (!text) {
+            return '';
+        }
+
+        var firstToken = text.split(/[\sT]/)[0];
+        var datePart = normalizeDateInputValue(firstToken);
+        if (!datePart || !isValidYyyyMmDd(datePart)) {
+            return normalizeDateInputValue(text);
+        }
+
+        var timeMatch = text.match(/[T\s](\d{1,2}):(\d{2})(?::(\d{2}))?/);
+        if (!timeMatch) {
+            return datePart;
+        }
+
+        return datePart + ' ' + pad2(Number(timeMatch[1])) + ':' + pad2(Number(timeMatch[2]));
+    }
+
     function enrichDateRangeValues(values) {
         var enriched = $.extend({}, values || {});
         ['SaDate', 'Eta'].forEach(function (fieldName) {
@@ -74,6 +147,20 @@
                 enriched[fieldName + 'From'] = enriched[fieldName];
             }
         });
+
+        Object.keys(enriched).forEach(function (key) {
+            var lower = key.toLowerCase();
+            if (lower === 'sadate' || lower === 'eta' || lower.endsWith('from') || lower.endsWith('to')
+                || lower.endsWith('date')) {
+                if (typeof enriched[key] === 'string' && enriched[key]) {
+                    // Only normalize obvious date-like fields when key suggests date
+                    if (/date|eta|etd|sadate/i.test(key)) {
+                        enriched[key] = normalizeDateInputValue(enriched[key]);
+                    }
+                }
+            }
+        });
+
         return enriched;
     }
     function getVisibleFields(fields) {
@@ -153,18 +240,30 @@
             var fromValue = '';
             var toValue = '';
             if (options.values && options.values[fieldName + 'From']) {
-                fromValue = options.values[fieldName + 'From'];
+                fromValue = normalizeDateInputValue(options.values[fieldName + 'From']);
             }
             if (options.values && options.values[fieldName + 'To']) {
-                toValue = options.values[fieldName + 'To'];
+                toValue = normalizeDateInputValue(options.values[fieldName + 'To']);
             }
 
             var $dateRange = $('<div class="row g-2 shipinfo-date-range"></div>')
                 .attr('data-field', fieldName)
                 .append(
-                    $('<div class="col"></div>').append('<input type="date" class="form-control shipinfo-control" data-range-part="from" data-field="' + escapeHtml(fieldName) + 'From" value="' + escapeHtml(fromValue) + '" />'),
+                    $('<div class="col"></div>').append(
+                        $('<input type="text" class="form-control shipinfo-control" inputmode="numeric" placeholder="yyyy-MM-dd" pattern="\\d{4}-\\d{2}-\\d{2}" />')
+                            .attr('data-range-part', 'from')
+                            .attr('data-field', fieldName + 'From')
+                            .attr('data-control-type', 'Date')
+                            .val(fromValue)
+                    ),
                     $('<div class="col-auto align-self-center">~</div>'),
-                    $('<div class="col"></div>').append('<input type="date" class="form-control shipinfo-control" data-range-part="to" data-field="' + escapeHtml(fieldName) + 'To" value="' + escapeHtml(toValue) + '" />')
+                    $('<div class="col"></div>').append(
+                        $('<input type="text" class="form-control shipinfo-control" inputmode="numeric" placeholder="yyyy-MM-dd" pattern="\\d{4}-\\d{2}-\\d{2}" />')
+                            .attr('data-range-part', 'to')
+                            .attr('data-field', fieldName + 'To')
+                            .attr('data-control-type', 'Date')
+                            .val(toValue)
+                    )
                 );
 
             if (lockControl) {
@@ -217,18 +316,25 @@
         var inputType = 'text';
         if (controlType === 'Number' || controlType === 'Decimal' || controlType === 'Currency') {
             inputType = 'number';
-        } else if (controlType === 'Date') {
-            inputType = 'date';
+        }
+
+        var displayValue = value == null ? '' : value;
+        if (controlType === 'Date') {
+            displayValue = normalizeDateInputValue(displayValue);
         } else if (controlType === 'DateTime') {
-            inputType = 'datetime-local';
+            displayValue = normalizeDateTimeInputValue(displayValue);
         }
 
         var $input = $('<input class="form-control shipinfo-control" />')
             .attr('type', inputType)
             .attr('data-field', fieldName)
             .attr('data-control-type', controlType)
-            .attr('placeholder', placeholder)
-            .val(value == null ? '' : value);
+            .attr('placeholder', placeholder || (controlType === 'Date' ? 'yyyy-MM-dd' : (controlType === 'DateTime' ? 'yyyy-MM-dd HH:mm' : '')))
+            .val(displayValue);
+
+        if (controlType === 'Date') {
+            $input.attr('inputmode', 'numeric').attr('pattern', '\\d{4}-\\d{2}-\\d{2}');
+        }
 
         if (maxLength) {
             $input.attr('maxlength', maxLength);
@@ -404,13 +510,21 @@
                 return;
             }
 
-            values[fieldName] = ($control.val() || '').toString().trim();
+            var raw = ($control.val() || '').toString().trim();
+            var controlType = ($control.attr('data-control-type') || '').toString();
+            if (controlType === 'Date') {
+                raw = normalizeDateInputValue(raw);
+            } else if (controlType === 'DateTime') {
+                raw = normalizeDateTimeInputValue(raw);
+            }
+
+            values[fieldName] = raw;
         });
 
         $container.find('.shipinfo-date-range').each(function () {
             var baseField = $(this).data('field');
-            var fromValue = $(this).find('[data-range-part="from"]').val() || '';
-            var toValue = $(this).find('[data-range-part="to"]').val() || '';
+            var fromValue = normalizeDateInputValue($(this).find('[data-range-part="from"]').val() || '');
+            var toValue = normalizeDateInputValue($(this).find('[data-range-part="to"]').val() || '');
             values[baseField + 'From'] = fromValue;
             values[baseField + 'To'] = toValue;
         });
@@ -478,9 +592,15 @@
             var required = getField(field, 'Required') || getField(field, 'required');
 
             if (controlType === 'DateRange') {
-                var fromValue = values[fieldName + 'From'];
-                var toValue = values[fieldName + 'To'];
-                if (fromValue && toValue && Date.parse(fromValue) > Date.parse(toValue)) {
+                var fromValue = normalizeDateInputValue(values[fieldName + 'From']);
+                var toValue = normalizeDateInputValue(values[fieldName + 'To']);
+                if (fromValue && !isValidYyyyMmDd(fromValue)) {
+                    errors.push({ fieldName: fieldName + 'From', message: label + ' date format is invalid (yyyy-MM-dd)' });
+                }
+                if (toValue && !isValidYyyyMmDd(toValue)) {
+                    errors.push({ fieldName: fieldName + 'To', message: label + ' date format is invalid (yyyy-MM-dd)' });
+                }
+                if (fromValue && toValue && isValidYyyyMmDd(fromValue) && isValidYyyyMmDd(toValue) && fromValue > toValue) {
                     errors.push({ fieldName: fieldName + 'From', message: label + ' end date must be on or after start date' });
                 }
                 return;
@@ -536,10 +656,17 @@
                 }
             }
 
-            if (controlType === 'Date' || controlType === 'DateTime') {
-                var parsed = Date.parse(value);
-                if (isNaN(parsed)) {
-                    errors.push({ fieldName: fieldName, message: label + ' date format is invalid' });
+            if (controlType === 'Date') {
+                if (!isValidYyyyMmDd(value)) {
+                    errors.push({ fieldName: fieldName, message: label + ' date format is invalid (yyyy-MM-dd)' });
+                }
+            }
+
+            if (controlType === 'DateTime') {
+                var normalizedDt = normalizeDateTimeInputValue(value);
+                var dateOnly = normalizedDt.substring(0, 10);
+                if (!isValidYyyyMmDd(dateOnly)) {
+                    errors.push({ fieldName: fieldName, message: label + ' date format is invalid (yyyy-MM-dd)' });
                 }
             }
         });
@@ -593,6 +720,7 @@
         getVisibleFields: getVisibleFields,
         getAllFields: getAllFields,
         enrichDateRangeValues: enrichDateRangeValues,
+        normalizeDateInputValue: normalizeDateInputValue,
         setFieldsEditable: setFieldsEditable,
         resolveLabel: resolveLabel,
         canUseField: canUseField,
