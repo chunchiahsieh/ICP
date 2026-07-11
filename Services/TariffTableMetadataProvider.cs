@@ -11,6 +11,8 @@ public class TariffTableMetadataProvider
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["RowNo"] = "Broker.TariffData.Column.RowNo",
+            ["DeclarationPdf"] = "Broker.TariffData.Column.PDF",
+            ["CostFile"] = "Broker.TariffData.Column.Cost",
             ["MAWB"] = "Broker.TariffData.Column.MAWB",
             ["HAWB"] = "Broker.TariffData.Column.HAWB",
             ["ImportDate"] = "Broker.TariffData.Column.ImportDate",
@@ -92,7 +94,7 @@ public class TariffTableMetadataProvider
             {
                 FieldName = pair.Key,
                 Visible = true,
-                Searchable = !string.Equals(pair.Key, "RowNo", StringComparison.OrdinalIgnoreCase),
+                Searchable = !TariffMetadataHelper.IsVirtualField(pair.Key),
                 FilterType = "Checkbox",
                 HeaderLabelKey = pair.Value
             })

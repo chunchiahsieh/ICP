@@ -12,5 +12,11 @@ public static class TariffMetadataHelper
         string.Equals(ResolveFilterType(field), ShipInfoFilterTypes.Checkbox, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsVirtualField(string fieldName) =>
-        string.Equals(fieldName, "RowNo", StringComparison.OrdinalIgnoreCase);
+        string.Equals(fieldName, "RowNo", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(fieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(fieldName, "CostFile", StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsAttachmentPresenceField(string fieldName) =>
+        string.Equals(fieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(fieldName, "CostFile", StringComparison.OrdinalIgnoreCase);
 }

@@ -57,6 +57,12 @@ public static class PermissionRequestResolver
                 return ResolveIfRegistered(registry, "Views.Broker.TariffData.UploadCustomsData");
             }
 
+            if (action.Equals("DownloadAttachment", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.View");
+            }
+
             if (IsReadAction(action))
             {
                 return ResolveIfRegistered(registry, "Views.Broker.TariffData.View");

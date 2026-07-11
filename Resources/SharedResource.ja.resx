@@ -1062,6 +1062,9 @@
   <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
     <value>Cost ファイル {0} のアップロードに成功しました</value>
   </data>
+  <data name="Broker.TariffData.HawbNotFound" xml:space="preserve">
+    <value>HAWB {0} は関税データに存在しないためアップロードできません</value>
+  </data>
   <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
     <value>すべて</value>
   </data>
@@ -1082,6 +1085,24 @@
   </data>
   <data name="Broker.TariffData.Column.RowNo" xml:space="preserve">
     <value>番号</value>
+  </data>
+  <data name="Broker.TariffData.Column.PDF" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="Broker.TariffData.Column.Cost" xml:space="preserve">
+    <value>Cost</value>
+  </data>
+  <data name="Broker.TariffData.Filter.HasPdf" xml:space="preserve">
+    <value>PDF あり</value>
+  </data>
+  <data name="Broker.TariffData.Filter.NonePdf" xml:space="preserve">
+    <value>PDF なし</value>
+  </data>
+  <data name="Broker.TariffData.Filter.HasCost" xml:space="preserve">
+    <value>Cost あり</value>
+  </data>
+  <data name="Broker.TariffData.Filter.NoneCost" xml:space="preserve">
+    <value>Cost なし</value>
   </data>
   <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
     <value>MAWB</value>

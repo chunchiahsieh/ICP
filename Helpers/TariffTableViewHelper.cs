@@ -1,3 +1,4 @@
+using System.Globalization;
 using ICP.Models.Icp;
 using ICP.Models.Tariff;
 
@@ -11,7 +12,7 @@ public static class TariffTableViewHelper
     public static string FormatCellValue(TariffData item, string fieldName)
     {
         if (string.IsNullOrWhiteSpace(fieldName)
-            || string.Equals(fieldName, "RowNo", StringComparison.OrdinalIgnoreCase))
+            || TariffMetadataHelper.IsVirtualField(fieldName))
         {
             return string.Empty;
         }
@@ -20,9 +21,9 @@ public static class TariffTableViewHelper
         {
             nameof(TariffData.MAWB) => item.MAWB,
             nameof(TariffData.HAWB) => item.HAWB,
-            nameof(TariffData.ImportDate) => item.ImportDate.ToString("yyyy/MM/dd"),
-            nameof(TariffData.DeclarationDate) => item.DeclarationDate.ToString("yyyy/MM/dd"),
-            nameof(TariffData.ReleaseDate) => item.ReleaseDate.ToString("yyyy/MM/dd"),
+            nameof(TariffData.ImportDate) => item.ImportDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            nameof(TariffData.DeclarationDate) => item.DeclarationDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            nameof(TariffData.ReleaseDate) => item.ReleaseDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
             nameof(TariffData.InvoiceNumber) => item.InvoiceNumber,
             nameof(TariffData.DescriptionOfGoods) => item.DescriptionOfGoods,
             nameof(TariffData.HTSNumber) => item.HTSNumber,
@@ -33,7 +34,7 @@ public static class TariffTableViewHelper
             nameof(TariffData.Shipper) => item.Shipper ?? string.Empty,
             nameof(TariffData.Broker) => item.Broker ?? string.Empty,
             nameof(TariffData.AirSea) => item.AirSea,
-            nameof(TariffData.CreateDate) => item.CreateDate.ToString("yyyy/MM/dd"),
+            nameof(TariffData.CreateDate) => item.CreateDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
             _ => string.Empty
         };
     }

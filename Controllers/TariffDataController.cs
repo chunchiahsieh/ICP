@@ -19,6 +19,12 @@ public class TariffDataController : Controller
     private static readonly HashSet<string> ExcelExtensions = new(StringComparer.OrdinalIgnoreCase) { ".xlsx", ".xls" };
     private static readonly HashSet<string> PdfExtensions = new(StringComparer.OrdinalIgnoreCase) { ".pdf" };
 
+    private enum TariffAttachmentKind
+    {
+        DeclarationPdf,
+        Cost
+    }
+
     private readonly ApplicationDbContext _db;
     private readonly IWebHostEnvironment _environment;
     private readonly TariffDataOptions _options;
@@ -102,6 +108,11 @@ public class TariffDataController : Controller
         if (string.IsNullOrWhiteSpace(column) || !_tableMetadataProvider.IsCheckboxFilterColumn(column))
         {
             return BadRequest();
+        }
+
+        if (TariffMetadataHelper.IsAttachmentPresenceField(column))
+        {
+            return Json(GetAttachmentPresenceFilterOptions(column, search));
         }
 
         var options = await GetDistinctColumnValuesAsync(column, search, cancellationToken);
@@ -195,22 +206,51 @@ public class TariffDataController : Controller
     [HttpPost]
     [RequestSizeLimit(52_428_800)]
     public Task<IActionResult> UploadDeclarationPdf(IFormFile? file, CancellationToken cancellationToken = default) =>
-        UploadAsync(
-            file,
-            PdfExtensions,
-            "declaration-pdf",
-            _localizer["Broker.TariffData.UploadDeclarationPdfSuccess"].Value,
-            cancellationToken);
+        UploadHawbAttachmentAsync(file, TariffAttachmentKind.DeclarationPdf, cancellationToken);
 
     [HttpPost]
     [RequestSizeLimit(52_428_800)]
     public Task<IActionResult> UploadCost(IFormFile? file, CancellationToken cancellationToken = default) =>
-        UploadAsync(
-            file,
-            PdfExtensions,
-            "cost",
-            _localizer["Broker.TariffData.UploadCostSuccess"].Value,
-            cancellationToken);
+        UploadHawbAttachmentAsync(file, TariffAttachmentKind.Cost, cancellationToken);
+
+    [HttpGet]
+    public async Task<IActionResult> DownloadAttachment(
+        string kind,
+        string hawb,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(kind) || string.IsNullOrWhiteSpace(hawb))
+        {
+            return NotFound();
+        }
+
+        var hawbKey = hawb.Trim();
+        var item = await _db.TariffDataRecords
+            .AsNoTracking()
+            .Where(e => e.HAWB.ToLower() == hawbKey.ToLower())
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (item is null)
+        {
+            return NotFound();
+        }
+
+        var storageRoot = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options);
+        string? filePath = kind.Equals("pdf", StringComparison.OrdinalIgnoreCase)
+            ? TariffAttachmentHelper.FindDeclarationPdfPath(storageRoot, item)
+            : kind.Equals("cost", StringComparison.OrdinalIgnoreCase)
+                ? TariffAttachmentHelper.FindCostFilePath(storageRoot, item)
+                : null;
+
+        if (filePath is null)
+        {
+            return NotFound();
+        }
+
+        var downloadName = Path.GetFileName(filePath);
+        var contentType = ResolveContentType(Path.GetExtension(filePath));
+        return PhysicalFile(filePath, contentType, downloadName);
+    }
 
     private TariffDataSearchListViewModel CreateListViewModel(IReadOnlyList<TariffData> listData)
     {
@@ -220,7 +260,8 @@ public class TariffDataController : Controller
             ListData = listData,
             Fields = tableConfig.Fields,
             TableUi = tableConfig.TableUi,
-            HasFilterRow = tableConfig.HasFilterRow
+            HasFilterRow = tableConfig.HasFilterRow,
+            StorageRoot = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options)
         };
     }
 
@@ -235,10 +276,115 @@ public class TariffDataController : Controller
     {
         var tableConfig = _tableMetadataProvider.GetPageConfig();
         var query = TariffQueryFilterApplier.ApplyFilters(BaseQuery(), criteria, tableConfig.Fields);
+        query = await ApplyAttachmentPresenceFiltersAsync(query, criteria, tableConfig.Fields, cancellationToken);
 
         return await query
             .OrderByDescending(e => e.Id)
             .ToListAsync(cancellationToken);
+    }
+
+    private async Task<IQueryable<TariffData>> ApplyAttachmentPresenceFiltersAsync(
+        IQueryable<TariffData> query,
+        TariffDataQueryModel criteria,
+        IReadOnlyList<TariffTableFieldMetadata> fields,
+        CancellationToken cancellationToken)
+    {
+        var storageRoot = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options);
+
+        if (TryGetAttachmentCheckboxValues(criteria, fields, "DeclarationPdf", out var pdfValues))
+        {
+            var dbRows = await _db.TariffDataRecords
+                .AsNoTracking()
+                .Where(e => e.DeclarationFile != null && e.DeclarationFile != "")
+                .Select(e => new { e.HAWB, e.DeclarationFile })
+                .Distinct()
+                .ToListAsync(cancellationToken);
+
+            var hawbsWithPdf = TariffAttachmentHelper.CollectHawbsWithDeclarationPdf(
+                storageRoot,
+                dbRows.Select(r => (r.HAWB, (string?)r.DeclarationFile)));
+
+            query = TariffAttachmentHelper.ApplyPresenceFilter(query, pdfValues, hawbsWithPdf);
+        }
+
+        if (TryGetAttachmentCheckboxValues(criteria, fields, "CostFile", out var costValues))
+        {
+            var dbRows = await _db.TariffDataRecords
+                .AsNoTracking()
+                .Where(e => e.Cost != null && e.Cost != "")
+                .Select(e => new { e.HAWB, e.Cost })
+                .Distinct()
+                .ToListAsync(cancellationToken);
+
+            var hawbsWithCost = TariffAttachmentHelper.CollectHawbsWithCost(
+                storageRoot,
+                dbRows.Select(r => (r.HAWB, (string?)r.Cost)));
+
+            query = TariffAttachmentHelper.ApplyPresenceFilter(query, costValues, hawbsWithCost);
+        }
+
+        return query;
+    }
+
+    private static bool TryGetAttachmentCheckboxValues(
+        TariffDataQueryModel criteria,
+        IReadOnlyList<TariffTableFieldMetadata> fields,
+        string fieldName,
+        out List<string> values)
+    {
+        values = [];
+        var meta = fields.FirstOrDefault(field =>
+            string.Equals(field.FieldName, fieldName, StringComparison.OrdinalIgnoreCase));
+        if (meta is null
+            || !meta.Searchable
+            || !TariffMetadataHelper.IsCheckboxFilter(meta)
+            || !TariffMetadataHelper.IsAttachmentPresenceField(fieldName))
+        {
+            return false;
+        }
+
+        var selected = criteria.Checkbox
+            .FirstOrDefault(pair => string.Equals(pair.Key, fieldName, StringComparison.OrdinalIgnoreCase))
+            .Value;
+        if (selected is null || selected.Count == 0)
+        {
+            return false;
+        }
+
+        values = selected;
+        return true;
+    }
+
+    private List<object> GetAttachmentPresenceFilterOptions(string column, string? search)
+    {
+        var isPdf = string.Equals(column, "DeclarationPdf", StringComparison.OrdinalIgnoreCase);
+        var options = new (string value, string label)[]
+        {
+            (
+                TariffAttachmentHelper.PresenceHas,
+                isPdf
+                    ? _localizer["Broker.TariffData.Filter.HasPdf"].Value
+                    : _localizer["Broker.TariffData.Filter.HasCost"].Value
+            ),
+            (
+                TariffAttachmentHelper.PresenceNone,
+                isPdf
+                    ? _localizer["Broker.TariffData.Filter.NonePdf"].Value
+                    : _localizer["Broker.TariffData.Filter.NoneCost"].Value
+            )
+        };
+
+        IEnumerable<(string value, string label)> filtered = options;
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim();
+            filtered = options.Where(option =>
+                option.label.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return filtered
+            .Select(option => (object)new { option.value, option.label })
+            .ToList();
     }
 
     private async Task<List<string>> GetDistinctColumnValuesAsync(
@@ -270,11 +416,9 @@ public class TariffDataController : Controller
         };
     }
 
-    private async Task<IActionResult> UploadAsync(
+    private async Task<IActionResult> UploadHawbAttachmentAsync(
         IFormFile? file,
-        IReadOnlySet<string> allowedExtensions,
-        string subFolder,
-        string successMessageTemplate,
+        TariffAttachmentKind kind,
         CancellationToken cancellationToken)
     {
         if (file is null || file.Length == 0)
@@ -291,22 +435,46 @@ public class TariffDataController : Controller
             });
         }
 
+        var allowedExtensions = kind == TariffAttachmentKind.DeclarationPdf ? PdfExtensions : ExcelExtensions;
         var extension = Path.GetExtension(file.FileName);
         if (string.IsNullOrWhiteSpace(extension) || !allowedExtensions.Contains(extension))
         {
             return Json(new { success = false, message = _localizer["Broker.TariffData.InvalidFileType"].Value });
         }
 
-        var safeFileName = Path.GetFileName(file.FileName);
-        if (string.IsNullOrWhiteSpace(safeFileName))
+        var originalFileName = Path.GetFileName(file.FileName);
+        if (string.IsNullOrWhiteSpace(originalFileName))
         {
             return Json(new { success = false, message = _localizer["Broker.TariffData.InvalidFileName"].Value });
         }
 
+        var hawbKey = Path.GetFileNameWithoutExtension(originalFileName).Trim();
+        if (string.IsNullOrWhiteSpace(hawbKey))
+        {
+            return Json(new { success = false, message = _localizer["Broker.TariffData.InvalidFileName"].Value });
+        }
+
+        var matchingRows = await _db.TariffDataRecords
+            .Where(e => e.HAWB.ToLower() == hawbKey.ToLower())
+            .ToListAsync(cancellationToken);
+
+        if (matchingRows.Count == 0)
+        {
+            return Json(new
+            {
+                success = false,
+                message = string.Format(_localizer["Broker.TariffData.HawbNotFound"].Value, hawbKey)
+            });
+        }
+
+        var subFolder = kind == TariffAttachmentKind.DeclarationPdf
+            ? TariffAttachmentHelper.DeclarationPdfFolder
+            : TariffAttachmentHelper.CostFolder;
         var uploadDirectory = ResolveStorageDirectory(subFolder);
         Directory.CreateDirectory(uploadDirectory);
 
-        var storedFileName = $"{DateTime.Now:yyyyMMddHHmmssfff}_{safeFileName}";
+        var stem = TariffAttachmentHelper.SanitizeHawbFileStem(hawbKey);
+        var storedFileName = stem + extension.ToLowerInvariant();
         var storedPath = Path.GetFullPath(Path.Combine(uploadDirectory, storedFileName));
 
         try
@@ -316,18 +484,40 @@ public class TariffDataController : Controller
                 await file.CopyToAsync(stream, cancellationToken);
             }
 
-            _logger.LogInformation(
-                "Tariff data uploaded: {SubFolder} {FileName} -> {StoredPath}",
-                subFolder,
-                safeFileName,
-                storedPath);
+            if (kind == TariffAttachmentKind.DeclarationPdf)
+            {
+                var relativePath = $"{TariffAttachmentHelper.DeclarationPdfFolder}/{storedFileName}";
+                foreach (var row in matchingRows)
+                {
+                    row.DeclarationFile = relativePath.Length <= 500 ? relativePath : relativePath[..500];
+                }
+            }
+            else if (storedFileName.Length <= 50)
+            {
+                foreach (var row in matchingRows)
+                {
+                    row.Cost = storedFileName;
+                }
+            }
 
-            var message = string.Format(successMessageTemplate, safeFileName);
-            return Json(new { success = true, message, filePath = storedPath });
+            await _db.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation(
+                "Tariff HAWB attachment uploaded: {Kind} HAWB={Hawb} -> {StoredPath} ({RowCount} rows)",
+                kind,
+                hawbKey,
+                storedPath,
+                matchingRows.Count);
+
+            var successTemplate = kind == TariffAttachmentKind.DeclarationPdf
+                ? _localizer["Broker.TariffData.UploadDeclarationPdfSuccess"].Value
+                : _localizer["Broker.TariffData.UploadCostSuccess"].Value;
+            var message = string.Format(successTemplate, storedFileName);
+            return Json(new { success = true, message, filePath = storedPath, hawb = hawbKey });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Tariff data upload failed: {SubFolder} {FileName}", subFolder, safeFileName);
+            _logger.LogError(ex, "Tariff HAWB attachment upload failed: {Kind} {FileName}", kind, originalFileName);
 
             if (System.IO.File.Exists(storedPath))
             {
@@ -340,10 +530,16 @@ public class TariffDataController : Controller
 
     private string ResolveStorageDirectory(string subFolder)
     {
-        var root = Path.IsPathRooted(_options.StoragePath)
-            ? _options.StoragePath
-            : Path.Combine(_environment.ContentRootPath, _options.StoragePath);
-
+        var root = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options);
         return Path.GetFullPath(Path.Combine(root, subFolder));
     }
+
+    private static string ResolveContentType(string extension) =>
+        extension.ToLowerInvariant() switch
+        {
+            ".pdf" => "application/pdf",
+            ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ".xls" => "application/vnd.ms-excel",
+            _ => "application/octet-stream"
+        };
 }

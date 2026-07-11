@@ -12,4 +12,6 @@ public class TariffDataSearchListViewModel
     public TariffTableUiOptions TableUi { get; init; } = TariffTableUiOptions.MergeDefaults(null);
 
     public bool HasFilterRow { get; init; }
+
+    public string StorageRoot { get; init; } = string.Empty;
 }

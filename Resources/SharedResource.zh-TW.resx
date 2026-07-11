@@ -1062,6 +1062,9 @@
   <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
     <value>Cost 檔案 {0} 上傳成功</value>
   </data>
+  <data name="Broker.TariffData.HawbNotFound" xml:space="preserve">
+    <value>HAWB {0} 不存在於關稅資料，無法上傳</value>
+  </data>
   <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
     <value>全部</value>
   </data>
@@ -1082,6 +1085,24 @@
   </data>
   <data name="Broker.TariffData.Column.RowNo" xml:space="preserve">
     <value>筆數</value>
+  </data>
+  <data name="Broker.TariffData.Column.PDF" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="Broker.TariffData.Column.Cost" xml:space="preserve">
+    <value>Cost</value>
+  </data>
+  <data name="Broker.TariffData.Filter.HasPdf" xml:space="preserve">
+    <value>有 PDF</value>
+  </data>
+  <data name="Broker.TariffData.Filter.NonePdf" xml:space="preserve">
+    <value>無 PDF</value>
+  </data>
+  <data name="Broker.TariffData.Filter.HasCost" xml:space="preserve">
+    <value>有 Cost</value>
+  </data>
+  <data name="Broker.TariffData.Filter.NoneCost" xml:space="preserve">
+    <value>無 Cost</value>
   </data>
   <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
     <value>MAWB</value>

@@ -80,6 +80,38 @@
                                 : "text-center";
                             <td class="@rowNoClass">@rowIndex</td>
                         }
+                        else if (string.Equals(field.FieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var pdfPath = TariffAttachmentHelper.FindDeclarationPdfPath(Model.StorageRoot, item);
+                            <td class="text-center">
+                                @if (pdfPath is not null && !string.IsNullOrWhiteSpace(item.HAWB))
+                                {
+                                    <a href="@Url.Action("DownloadAttachment", "TariffData", new { kind = "pdf", hawb = item.HAWB })"
+                                       target="_blank"
+                                       rel="noopener"
+                                       title="PDF"
+                                       aria-label="PDF">
+                                        <i class="fas fa-file-pdf text-danger"></i>
+                                    </a>
+                                }
+                            </td>
+                        }
+                        else if (string.Equals(field.FieldName, "CostFile", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var costPath = TariffAttachmentHelper.FindCostFilePath(Model.StorageRoot, item);
+                            <td class="text-center">
+                                @if (costPath is not null && !string.IsNullOrWhiteSpace(item.HAWB))
+                                {
+                                    <a href="@Url.Action("DownloadAttachment", "TariffData", new { kind = "cost", hawb = item.HAWB })"
+                                       target="_blank"
+                                       rel="noopener"
+                                       title="Cost"
+                                       aria-label="Cost">
+                                        <i class="fas fa-file-excel text-success"></i>
+                                    </a>
+                                }
+                            </td>
+                        }
                         else
                         {
                             <td>@TariffTableViewHelper.FormatCellValue(item, field.FieldName)</td>

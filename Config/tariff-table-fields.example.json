@@ -4,6 +4,8 @@
   "list": {
     "fields": [
       { "fieldName": "RowNo", "visible": true, "searchable": false },
+      { "fieldName": "DeclarationPdf", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "CostFile", "visible": true, "searchable": true, "filterType": "Checkbox" },
       { "fieldName": "MAWB", "visible": true, "searchable": true, "filterType": "Text" },
       { "fieldName": "HAWB", "visible": true, "searchable": true, "filterType": "Text" },
       { "fieldName": "ImportDate", "visible": true, "searchable": true, "filterType": "DateRange" },

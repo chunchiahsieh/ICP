@@ -1,25 +1,27 @@
-{
-  "tableUi": {"stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "600px"},
-  "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
-  "list": {
-    "fields": [
-      { "fieldName": "RowNo", "visible": true, "searchable": false },
-      { "fieldName": "MAWB", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "HAWB", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "ImportDate", "visible": true, "searchable": true, "filterType": "DateRange" },
-      { "fieldName": "DeclarationDate", "visible": true, "searchable": true, "filterType": "DateRange" },
-      { "fieldName": "ReleaseDate", "visible": true, "searchable": true, "filterType": "DateRange" },
-      { "fieldName": "InvoiceNumber", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "DescriptionOfGoods", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "HTSNumber", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "EntryNumber", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "Mode", "visible": true, "searchable": true, "filterType": "Checkbox" },
-      { "fieldName": "PortOfDeparture", "visible": true, "searchable": true, "filterType": "Checkbox" },
-      { "fieldName": "FlightNo", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "Shipper", "visible": true, "searchable": true, "filterType": "Text" },
-      { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
-      { "fieldName": "AirSea", "visible": true, "searchable": true, "filterType": "Checkbox" },
-      { "fieldName": "CreateDate", "visible": true, "searchable": true, "filterType": "Date" }
-    ]
-  }
-}
+{
+  "tableUi": {"stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "600px"},
+  "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
+  "list": {
+    "fields": [
+      { "fieldName": "RowNo", "visible": true, "searchable": false },
+      { "fieldName": "DeclarationPdf", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "CostFile", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "MAWB", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "HAWB", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "ImportDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "DeclarationDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "ReleaseDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "InvoiceNumber", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "DescriptionOfGoods", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "HTSNumber", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "EntryNumber", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "Mode", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "PortOfDeparture", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "FlightNo", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "Shipper", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "AirSea", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "CreateDate", "visible": true, "searchable": true, "filterType": "Date" }
+    ]
+  }
+}

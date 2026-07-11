@@ -1062,6 +1062,9 @@
   <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
     <value>Cost file {0} uploaded successfully</value>
   </data>
+  <data name="Broker.TariffData.HawbNotFound" xml:space="preserve">
+    <value>HAWB {0} does not exist in tariff data and cannot be uploaded</value>
+  </data>
   <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
     <value>All</value>
   </data>
@@ -1082,6 +1085,24 @@
   </data>
   <data name="Broker.TariffData.Column.RowNo" xml:space="preserve">
     <value>No.</value>
+  </data>
+  <data name="Broker.TariffData.Column.PDF" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="Broker.TariffData.Column.Cost" xml:space="preserve">
+    <value>Cost</value>
+  </data>
+  <data name="Broker.TariffData.Filter.HasPdf" xml:space="preserve">
+    <value>Has PDF</value>
+  </data>
+  <data name="Broker.TariffData.Filter.NonePdf" xml:space="preserve">
+    <value>No PDF</value>
+  </data>
+  <data name="Broker.TariffData.Filter.HasCost" xml:space="preserve">
+    <value>Has Cost</value>
+  </data>
+  <data name="Broker.TariffData.Filter.NoneCost" xml:space="preserve">
+    <value>No Cost</value>
   </data>
   <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
     <value>MAWB</value>
