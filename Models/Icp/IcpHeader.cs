@@ -14,10 +14,6 @@ public class IcpHeader : IcpAuditableEntity
     [MaxLength(20)]
     public string? CreateDate { get; set; }
 
-    [Column("STATUS")]
-    [MaxLength(200)]
-    public string? Status { get; set; }
-
     [Column("SA_DATE")]
     [MaxLength(10)]
     public string? SaDate { get; set; }

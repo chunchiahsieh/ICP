@@ -65,7 +65,6 @@ public static class ShipInfoEntityMapper
             }
 
             var normalized = ShipInfoStatusResolver.Normalize(rawStatus);
-            header.Status = normalized;
             if (string.Equals(normalized, ShipInfoStatuses.Cancelled, StringComparison.OrdinalIgnoreCase))
             {
                 header.Cancellation = "Y";

@@ -187,12 +187,9 @@ public static class ShipInfoQueryFilterApplier
             .ToList();
 
         return query.Where(x =>
-            (x.Status != null && x.Status != "" && normalizedStatuses.Contains(x.Status))
-            || ((x.Status == null || x.Status == "")
-                && normalizedStatuses.Contains(ShipInfoStatuses.Cancelled)
+            (normalizedStatuses.Contains(ShipInfoStatuses.Cancelled)
                 && x.Cancellation != null && x.Cancellation != "")
-            || ((x.Status == null || x.Status == "")
-                && normalizedStatuses.Contains(ShipInfoStatuses.Processing)
+            || (normalizedStatuses.Contains(ShipInfoStatuses.Processing)
                 && (x.Cancellation == null || x.Cancellation == "")));
     }
 

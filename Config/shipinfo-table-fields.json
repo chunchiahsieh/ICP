@@ -4,13 +4,12 @@
     "initialSort": {"fieldName": "CreateDate", "direction": "desc"},
     "list": {
       "fields": [
-        {"fieldName": "Id", "visible": false, "searchable": false, "filterType": "Checkbox"},
+        {"fieldName": "Id", "visible": true, "searchable": false, "filterType": "Checkbox"},
         {"fieldName": "CreateTime", "visible": false, "searchable": false, "filterType": "Checkbox"},
         {"fieldName": "CreateUser", "visible": false, "searchable": false, "filterType": "Checkbox"},
         {"fieldName": "UpdateTime", "visible": false, "searchable": false, "filterType": "Checkbox"},
         {"fieldName": "UpdateUser", "visible": false, "searchable": false, "filterType": "Checkbox"},
         {"fieldName": "CreateDate", "visible": false, "searchable": true, "filterType": "Checkbox"},
-        {"fieldName": "Status", "visible": false, "searchable": true, "filterType": "Checkbox"},
         {"fieldName": "DepositCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox"},
         {"fieldName": "ArurCaseStatus", "visible": true, "searchable": true, "filterType": "Text"},
         {"fieldName": "SaDate", "visible": true, "searchable": true, "filterType": "DateRange"},
@@ -82,7 +81,15 @@
         {"fieldName": "Eta", "editable": true, "controlType": "Date"},
         {"fieldName": "Broker", "editable": true},
         {"fieldName": "DepositCaseStatus", "readOnly": true},
-        {"fieldName": "ArurCaseStatus", "readOnly": true}
+        {
+          "fieldName": "ArurCaseStatus",
+          "readOnly": true
+        },
+        {
+          "fieldName": "Cancellation",
+          "readOnly": true,
+          "controlType": "Text"
+        }
       ]
     }
   },

@@ -25,7 +25,7 @@ public static class ShipInfoStatusRules
         var normalized = ShipInfoStatusResolver.Normalize(status);
         return normalized switch
         {
-            ShipInfoStatuses.Processing or ShipInfoStatuses.WarehouseReceived => new ShipInfoActionPermission
+            ShipInfoStatuses.Processing => new ShipInfoActionPermission
             {
                 Edit = true,
                 Delete = true,

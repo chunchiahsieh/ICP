@@ -7,11 +7,6 @@ public static class ShipInfoStatusResolver
 {
     public static string Resolve(IcpHeader header)
     {
-        if (!string.IsNullOrWhiteSpace(header.Status))
-        {
-            return Normalize(header.Status);
-        }
-
         if (!string.IsNullOrWhiteSpace(header.Cancellation))
         {
             return ShipInfoStatuses.Cancelled;
@@ -32,12 +27,6 @@ public static class ShipInfoStatusResolver
             || trimmed.Equals("處理中", StringComparison.Ordinal))
         {
             return ShipInfoStatuses.Processing;
-        }
-
-        if (trimmed.Equals(ShipInfoStatuses.WarehouseReceived, StringComparison.OrdinalIgnoreCase)
-            || trimmed.Equals("庫房已接收", StringComparison.Ordinal))
-        {
-            return ShipInfoStatuses.WarehouseReceived;
         }
 
         if (trimmed.Equals(ShipInfoStatuses.Cancelled, StringComparison.OrdinalIgnoreCase)
@@ -69,7 +58,6 @@ public static class ShipInfoStatusResolver
         normalizedStatus switch
         {
             ShipInfoStatuses.Processing => ["Processing", "處理中"],
-            ShipInfoStatuses.WarehouseReceived => ["WarehouseReceived", "庫房已接收"],
             ShipInfoStatuses.Cancelled => ["Cancelled", "作廢"],
             _ => [normalizedStatus]
         };

@@ -11,7 +11,6 @@
       "fields": [
         { "fieldName": "Id", "visible": false, "searchable": false },
         { "fieldName": "CreateDate", "visible": true, "filterType": "Checkbox" },
-        { "fieldName": "Status", "visible": true, "filterType": "Checkbox" },
         { "fieldName": "InvoiceNo", "visible": true, "filterType": "Text" },
         { "fieldName": "SaDate", "visible": true, "filterType": "DateRange" },
         { "fieldName": "Eta", "visible": true, "filterType": "Date" },

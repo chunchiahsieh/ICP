@@ -363,9 +363,6 @@
   <data name="ShipInfo.Status.Processing" xml:space="preserve">
     <value>Processing</value>
   </data>
-  <data name="ShipInfo.Status.WarehouseReceived" xml:space="preserve">
-    <value>Warehouse Received</value>
-  </data>
   <data name="ShipInfo.Status.Cancelled" xml:space="preserve">
     <value>Cancelled</value>
   </data>

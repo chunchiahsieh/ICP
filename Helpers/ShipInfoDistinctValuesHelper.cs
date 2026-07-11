@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Reflection;
 using ICP.Models.Icp;
+using ICP.Models.ShipInfo;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICP.Helpers;
@@ -90,24 +91,21 @@ public static class ShipInfoDistinctValuesHelper
         column.Equals("DepositCaseStatus", StringComparison.OrdinalIgnoreCase)
         || column.Equals("ArurCaseStatus", StringComparison.OrdinalIgnoreCase);
 
-    private static async Task<IReadOnlyList<string>> GetHeaderStatusDistinctAsync(
-        IQueryable<IcpHeader> query,
+    private static Task<IReadOnlyList<string>> GetHeaderStatusDistinctAsync(
+        IQueryable<IcpHeader> _,
         string? search,
         CancellationToken cancellationToken)
     {
-        var headers = await query.ToListAsync(cancellationToken);
-        var statuses = headers
-            .Select(ShipInfoStatusResolver.Resolve)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(x => x)
-            .AsEnumerable();
+        IEnumerable<string> statuses = ShipInfoStatuses.LookupOptions
+            .Select(x => x.Value)
+            .OrderBy(x => x, StringComparer.OrdinalIgnoreCase);
 
         if (!string.IsNullOrWhiteSpace(search))
         {
             statuses = statuses.Where(x => ShipInfoStatusResolver.MatchesSearch(x, search));
         }
 
-        return statuses.Take(Limit).ToList();
+        return Task.FromResult<IReadOnlyList<string>>(statuses.Take(Limit).ToList());
     }
 
     private static async Task<IReadOnlyList<string>> GetCaseStatusDistinctAsync<TEntity>(

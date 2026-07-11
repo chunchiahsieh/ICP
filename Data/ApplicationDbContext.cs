@@ -191,7 +191,6 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
             entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired();
             entity.Property(e => e.CreateDate).HasMaxLength(20);
-            entity.Property(e => e.Status).HasMaxLength(200);
             entity.Property(e => e.SaDate).HasMaxLength(10);
             entity.Property(e => e.Forwarder).HasMaxLength(50);
             entity.Property(e => e.Broker).HasMaxLength(30);

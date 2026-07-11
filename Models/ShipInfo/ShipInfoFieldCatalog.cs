@@ -10,7 +10,7 @@ public static class ShipInfoFieldCatalog
     public static readonly string[] HeaderFieldOrder =
     [
         "Id", "CreateTime", "CreateUser", "UpdateTime", "UpdateUser",
-        "CreateDate", "Status", "SaDate", "InvoiceNo", "Forwarder", "Broker", "Etd", "Eta",
+        "CreateDate", "SaDate", "InvoiceNo", "Forwarder", "Broker", "Etd", "Eta",
         "InvoiceDate", "Mawb", "Hawb", "Flt", "Freight", "DestinationPort", "DestinationCountry",
         "Warehouse", "InvoiceType", "Incoterms", "OrderType", "DeliveryDate", "DeliveryTo", "Bu",
         "TetPo", "OrderPriority", "MdpFlag", "TotalCartons", "NcdrNo", "NcdrRequestor",
@@ -42,7 +42,6 @@ public static class ShipInfoFieldCatalog
 
     private static readonly Dictionary<string, ShipInfoFieldSpec> HeaderSpecs = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["Status"] = new(ShipInfoControlTypes.Select, editable: true, searchable: true, lookupCategory: ShipInfoStatuses.LookupCategory, group: "Basic"),
         ["CreateDate"] = new(ShipInfoControlTypes.Text, editable: false, searchable: true, maxLength: 20, group: "Basic"),
         ["SaDate"] = new(ShipInfoControlTypes.Date, editable: true, searchable: true, maxLength: 10, group: "Shipping"),
         ["InvoiceNo"] = new(ShipInfoControlTypes.Text, editable: false, searchable: true, maxLength: 30, group: "Invoice"),

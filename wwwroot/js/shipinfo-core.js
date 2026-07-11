@@ -346,7 +346,6 @@
 
         var map = {
             Processing: messages.statusProcessing,
-            WarehouseReceived: messages.statusWarehouseReceived,
             Cancelled: messages.statusCancelled
         };
 
