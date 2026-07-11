@@ -76,20 +76,7 @@
     "edit": {
       "includeAllExceptSystem": true,
       "fields": [
-        {"fieldName": "SaDate", "editable": true, "controlType": "Date"},
-        {"fieldName": "InvoiceNo", "editable": true, "controlType": "Text"},
-        {"fieldName": "Eta", "editable": true, "controlType": "Date"},
-        {"fieldName": "Broker", "editable": true},
-        {"fieldName": "DepositCaseStatus", "readOnly": true},
-        {
-          "fieldName": "ArurCaseStatus",
-          "readOnly": true
-        },
-        {
-          "fieldName": "Cancellation",
-          "readOnly": true,
-          "controlType": "Text"
-        }
+      
       ]
     }
   },

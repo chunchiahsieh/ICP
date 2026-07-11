@@ -154,6 +154,8 @@ builder.Services.AddSingleton<ResourceRouteRegistryService>();
 builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<UserResourcePermissionService>();
 builder.Services.AddScoped<ForwarderDataImportService>();
+builder.Services.AddScoped<AddDiSaImportService>();
+builder.Services.AddSingleton<AddDiSaPendingFileStore>();
 builder.Services.AddSingleton<ForwarderPendingFileStore>();
 builder.Services.AddScoped<IShipInfoRepository, ShipInfoRepository>();
 builder.Services.AddScoped<IIntegrationEventOutboxRepository, IntegrationEventOutboxRepository>();

@@ -736,7 +736,46 @@
     <value>檔案超過 {0}MB</value>
   </data>
   <data name="Function.AddDiSa.InvalidFileType" xml:space="preserve">
-    <value>僅支援 .xlsx、.xls、.csv 格式</value>
+    <value>僅支援 .xlsx、.xls 格式</value>
+  </data>
+  <data name="Function.AddDiSa.UploadSuccess" xml:space="preserve">
+    <value>儲存成功：Header {0} 筆、Detail {1} 筆</value>
+  </data>
+  <data name="Function.AddDiSa.UploadFailed" xml:space="preserve">
+    <value>匯入失敗，請檢查檔案內容後重試</value>
+  </data>
+  <data name="Function.AddDiSa.ParseSuccess" xml:space="preserve">
+    <value>已解析 Header {0} 筆、Detail {1} 筆，請按儲存</value>
+  </data>
+  <data name="Function.AddDiSa.SaveSuccess" xml:space="preserve">
+    <value>儲存成功：Header {0} 筆、Detail {1} 筆</value>
+  </data>
+  <data name="Function.AddDiSa.PleaseUploadFirst" xml:space="preserve">
+    <value>請先上傳檔案</value>
+  </data>
+  <data name="Function.AddDiSa.SaveFailed" xml:space="preserve">
+    <value>儲存失敗，請檢查後重試</value>
+  </data>
+  <data name="Function.AddDiSa.ImportResultTitle" xml:space="preserve">
+    <value>匯入預覽</value>
+  </data>
+  <data name="Function.AddDiSa.Column.CanUpload" xml:space="preserve">
+    <value>可否上傳</value>
+  </data>
+  <data name="Function.AddDiSa.Column.RowNo" xml:space="preserve">
+    <value>筆數</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.Ok" xml:space="preserve">
+    <value>可上傳</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.DbExists" xml:space="preserve">
+    <value>系統已存在，不可上傳</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.InvoiceInconsistent" xml:space="preserve">
+    <value>Invoice MAWB/HAWB/FLT/ETA 不一致</value>
+  </data>
+  <data name="Function.AddDiSa.CannotSaveMessage" xml:space="preserve">
+    <value>檔案無法儲存，請修正「可否上傳」欄位問題後重新上傳</value>
   </data>
   <data name="Views.Function.AddDiSa.View" xml:space="preserve">
     <value>新增 DI/SA 查詢</value>

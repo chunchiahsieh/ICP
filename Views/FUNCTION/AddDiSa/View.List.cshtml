@@ -1,0 +1,61 @@
+@model List<ICP.Helpers.AddDiSaImportRowViewModel>
+@using System.Globalization
+
+<div class="table-responsive adddisa-preview" data-can-save="@(Model.Count > 0 && Model.All(r => r.CanUpload) ? "true" : "false")">
+    <table class="table table-striped table-sm table-bordered align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>@Localizer["Function.AddDiSa.Column.CanUpload"]</th>
+                <th class="text-center">@Localizer["Function.AddDiSa.Column.RowNo"]</th>
+                <th>InvoiceNo</th>
+                <th>TetPo</th>
+                <th>Mawb</th>
+                <th>Hawb</th>
+                <th>Flt</th>
+                <th>Eta</th>
+                <th>ItemNo</th>
+                <th>Qty</th>
+            </tr>
+        </thead>
+        <tbody>
+        @{
+            var rowIndex = 0;
+        }
+        @foreach (var item in Model)
+        {
+            rowIndex++;
+            var row = item.Row;
+            var rowClass = item.IsDbDuplicate
+                ? "adddisa-row-db-duplicate"
+                : item.IsInvoiceInconsistent
+                    ? "adddisa-row-invoice-inconsistent"
+                    : string.Empty;
+            <tr class="@rowClass">
+                <td class="adddisa-canupload-cell">
+                    @if (item.IsDbDuplicate)
+                    {
+                        <span class="adddisa-canupload-label adddisa-canupload-label-issue">@Localizer["Function.AddDiSa.CanUpload.DbExists"]</span>
+                    }
+                    @if (item.IsInvoiceInconsistent)
+                    {
+                        <span class="adddisa-canupload-label adddisa-canupload-label-issue">@Localizer["Function.AddDiSa.CanUpload.InvoiceInconsistent"]</span>
+                    }
+                    @if (item.CanUpload)
+                    {
+                        <span class="adddisa-canupload-label adddisa-canupload-label-ok">@Localizer["Function.AddDiSa.CanUpload.Ok"]</span>
+                    }
+                </td>
+                <td class="text-center">@rowIndex</td>
+                <td>@row.InvoiceNo</td>
+                <td>@row.TetPo</td>
+                <td>@row.Mawb</td>
+                <td>@row.Hawb</td>
+                <td>@row.Flt</td>
+                <td>@row.Eta</td>
+                <td>@row.Detail.ItemNo</td>
+                <td>@(row.Detail.Qty?.ToString(CultureInfo.InvariantCulture))</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

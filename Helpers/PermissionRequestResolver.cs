@@ -92,7 +92,10 @@ public static class PermissionRequestResolver
 
         if (controller.Equals("AddDiSa", StringComparison.OrdinalIgnoreCase))
         {
-            if (action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+            if ((action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("Save", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("CancelPending", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("Query", StringComparison.OrdinalIgnoreCase))
                 && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
             {
                 return ResolveIfRegistered(registry, "Views.Function.AddDiSa.Upload");

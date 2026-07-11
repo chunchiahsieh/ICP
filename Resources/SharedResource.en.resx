@@ -736,7 +736,46 @@
     <value>File exceeds {0} MB</value>
   </data>
   <data name="Function.AddDiSa.InvalidFileType" xml:space="preserve">
-    <value>Only .xlsx, .xls, and .csv are supported</value>
+    <value>Only .xlsx and .xls are supported</value>
+  </data>
+  <data name="Function.AddDiSa.UploadSuccess" xml:space="preserve">
+    <value>Saved successfully: {0} header(s), {1} detail(s)</value>
+  </data>
+  <data name="Function.AddDiSa.UploadFailed" xml:space="preserve">
+    <value>Import failed. Please check the file and try again.</value>
+  </data>
+  <data name="Function.AddDiSa.ParseSuccess" xml:space="preserve">
+    <value>Parsed {0} header(s) and {1} detail(s). Please click Save.</value>
+  </data>
+  <data name="Function.AddDiSa.SaveSuccess" xml:space="preserve">
+    <value>Saved successfully: {0} header(s), {1} detail(s)</value>
+  </data>
+  <data name="Function.AddDiSa.PleaseUploadFirst" xml:space="preserve">
+    <value>Please upload a file first</value>
+  </data>
+  <data name="Function.AddDiSa.SaveFailed" xml:space="preserve">
+    <value>Save failed. Please check and try again.</value>
+  </data>
+  <data name="Function.AddDiSa.ImportResultTitle" xml:space="preserve">
+    <value>Import preview</value>
+  </data>
+  <data name="Function.AddDiSa.Column.CanUpload" xml:space="preserve">
+    <value>Can upload</value>
+  </data>
+  <data name="Function.AddDiSa.Column.RowNo" xml:space="preserve">
+    <value>No.</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.DbExists" xml:space="preserve">
+    <value>Already in system — cannot upload</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.InvoiceInconsistent" xml:space="preserve">
+    <value>Invoice MAWB/HAWB/FLT/ETA inconsistent</value>
+  </data>
+  <data name="Function.AddDiSa.CannotSaveMessage" xml:space="preserve">
+    <value>Cannot save. Fix the Can-upload issues and upload again.</value>
   </data>
   <data name="Views.Function.AddDiSa.View" xml:space="preserve">
     <value>Add DI/SA View</value>

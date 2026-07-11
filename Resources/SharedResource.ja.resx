@@ -736,7 +736,46 @@
     <value>ファイルが {0}MB を超えています</value>
   </data>
   <data name="Function.AddDiSa.InvalidFileType" xml:space="preserve">
-    <value>.xlsx、.xls、.csv のみ対応</value>
+    <value>.xlsx、.xls のみ対応</value>
+  </data>
+  <data name="Function.AddDiSa.UploadSuccess" xml:space="preserve">
+    <value>保存成功：Header {0} 件、Detail {1} 件</value>
+  </data>
+  <data name="Function.AddDiSa.UploadFailed" xml:space="preserve">
+    <value>取込に失敗しました。ファイル内容を確認して再試行してください。</value>
+  </data>
+  <data name="Function.AddDiSa.ParseSuccess" xml:space="preserve">
+    <value>解析済み：Header {0} 件、Detail {1} 件。保存してください</value>
+  </data>
+  <data name="Function.AddDiSa.SaveSuccess" xml:space="preserve">
+    <value>保存成功：Header {0} 件、Detail {1} 件</value>
+  </data>
+  <data name="Function.AddDiSa.PleaseUploadFirst" xml:space="preserve">
+    <value>先にファイルをアップロードしてください</value>
+  </data>
+  <data name="Function.AddDiSa.SaveFailed" xml:space="preserve">
+    <value>保存に失敗しました。内容を確認して再試行してください</value>
+  </data>
+  <data name="Function.AddDiSa.ImportResultTitle" xml:space="preserve">
+    <value>取込プレビュー</value>
+  </data>
+  <data name="Function.AddDiSa.Column.CanUpload" xml:space="preserve">
+    <value>取込可否</value>
+  </data>
+  <data name="Function.AddDiSa.Column.RowNo" xml:space="preserve">
+    <value>筆数</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.Ok" xml:space="preserve">
+    <value>取込可</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.DbExists" xml:space="preserve">
+    <value>システムに既存のため取込不可</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.InvoiceInconsistent" xml:space="preserve">
+    <value>Invoice の MAWB/HAWB/FLT/ETA が不一致</value>
+  </data>
+  <data name="Function.AddDiSa.CannotSaveMessage" xml:space="preserve">
+    <value>保存できません。「取込可否」の問題を修正して再アップロードしてください</value>
   </data>
   <data name="Views.Function.AddDiSa.View" xml:space="preserve">
     <value>DI/SA 追加照会</value>

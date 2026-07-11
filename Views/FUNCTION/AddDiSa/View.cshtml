@@ -3,12 +3,19 @@
     ViewData["Title"] = Localizer["Function.AddDiSa.Title"];
     var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
     var maxSizeHint = string.Format(Localizer["Function.AddDiSa.MaxSizeHint"].Value, maxSizeMb);
-    var saveButtonText = Localizer["Function.AddDiSa.SaveButton"].Value;
     var uploaderButtonText = Localizer["Function.AddDiSa.UploaderButton"].Value;
+    var saveButtonText = Localizer["Function.AddDiSa.SaveButton"].Value;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
+    <style>
+        .adddisa-preview .adddisa-canupload-cell { white-space: normal; min-width: 8rem; }
+        .adddisa-preview .adddisa-canupload-label-issue { display: block; color: #dc3545; font-weight: 600; }
+        .adddisa-preview .adddisa-canupload-label-ok { color: #198754; font-weight: 600; }
+        .adddisa-preview tr.adddisa-row-db-duplicate > td { background-color: #fdeaea !important; }
+        .adddisa-preview tr.adddisa-row-invoice-inconsistent > td { background-color: #fff3cd !important; }
+    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -48,6 +55,14 @@
             @saveButtonText
         </button>
     </div>
+
+    <div id="importResultSection" class="d-none mt-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h5 class="mb-0" id="importResultTitle">@Localizer["Function.AddDiSa.ImportResultTitle"]</h5>
+        </div>
+        <div id="pageMessage" class="alert alert-info py-2 mb-3" role="alert"></div>
+        <div id="DataDiv"></div>
+    </div>
 </div>
 
 <div class="d-none" aria-hidden="true">
@@ -63,6 +78,11 @@
             var maxSizeMb = @maxSizeMb;
             var maxSizeHint = @Html.Raw(JsonSerializer.Serialize(maxSizeHint));
             var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
+            var pendingFilePath = '';
+            var pleaseUploadFirst = @Html.Raw(JsonSerializer.Serialize(Localizer["Function.AddDiSa.PleaseUploadFirst"].Value));
+            var saveFailed = @Html.Raw(JsonSerializer.Serialize(Localizer["Function.AddDiSa.SaveFailed"].Value));
+            var importResultTitleText = @Html.Raw(JsonSerializer.Serialize(Localizer["Function.AddDiSa.ImportResultTitle"].Value));
+            var cannotSaveMessage = @Html.Raw(JsonSerializer.Serialize(Localizer["Function.AddDiSa.CannotSaveMessage"].Value));
 
             function hasPermission(code) {
                 var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
@@ -76,6 +96,126 @@
                 });
             }
 
+            function resolveFilePath(response) {
+                return response && (response.filePath || response.FilePath) || '';
+            }
+
+            function resolveCanSave(response) {
+                if (!response) {
+                    return false;
+                }
+
+                if (typeof response.canSave === 'boolean') {
+                    return response.canSave;
+                }
+
+                if (typeof response.CanSave === 'boolean') {
+                    return response.CanSave;
+                }
+
+                return false;
+            }
+
+            function loadPreview(filePath, canSave) {
+                if (!filePath) {
+                    return;
+                }
+
+                $.post('@Url.Action("Query", "AddDiSa")', { filePath: filePath })
+                    .done(function (html) {
+                        $('#DataDiv').html(html);
+                        var $preview = $('#DataDiv').find('[data-can-save]');
+                        if ($preview.length) {
+                            var fromPreview = $preview.attr('data-can-save') === 'true';
+                            $('#btnSaveImport').prop('disabled', !fromPreview);
+                            if (!fromPreview) {
+                                $('#pageMessage')
+                                    .removeClass('d-none alert-success alert-info')
+                                    .addClass('alert-warning')
+                                    .text(cannotSaveMessage);
+                            }
+                        } else {
+                            $('#btnSaveImport').prop('disabled', !canSave);
+                        }
+                    })
+                    .fail(function (xhr) {
+                        var message = xhr.responseJSON && xhr.responseJSON.message
+                            ? xhr.responseJSON.message
+                            : (xhr.responseText || saveFailed);
+                        $('#DataDiv').html('<div class="alert alert-danger m-0">' + $('<div>').text(message).html() + '</div>');
+                        $('#btnSaveImport').prop('disabled', true);
+                    });
+            }
+
+            function showImportResult(response) {
+                if (!response || !response.success) {
+                    return;
+                }
+
+                var filePath = resolveFilePath(response);
+                if (!filePath) {
+                    return;
+                }
+
+                var canSave = resolveCanSave(response);
+                pendingFilePath = filePath;
+                $('#importResultTitle')
+                    .removeClass('text-success')
+                    .text(importResultTitleText);
+                $('#pageMessage')
+                    .removeClass('d-none alert-success')
+                    .toggleClass('alert-info', canSave)
+                    .toggleClass('alert-warning', !canSave)
+                    .text(response.message || (canSave ? '' : cannotSaveMessage));
+                $('#importResultSection').removeClass('d-none');
+                $('#btnSaveImport').prop('disabled', !canSave);
+                loadPreview(filePath, canSave);
+            }
+
+            $('#btnSaveImport').on('click', function () {
+                var $btn = $(this);
+                if ($btn.prop('disabled')) {
+                    return;
+                }
+
+                if (!pendingFilePath) {
+                    alert(pleaseUploadFirst);
+                    return;
+                }
+
+                $btn.prop('disabled', true);
+
+                $.ajax({
+                    url: '@Url.Action("Save", "AddDiSa")',
+                    type: 'POST',
+                    data: { filePath: pendingFilePath },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response && response.success) {
+                            pendingFilePath = '';
+                            $('#DataDiv').empty();
+                            $('#pageMessage').addClass('d-none');
+                            $('#importResultTitle')
+                                .addClass('text-success')
+                                .text(response.message || '');
+                            $('#importResultSection').removeClass('d-none');
+                            $btn.prop('disabled', true);
+                            return;
+                        }
+
+                        $btn.prop('disabled', false);
+                        alert(response && response.message ? response.message : saveFailed);
+                    },
+                    error: function (xhr) {
+                        $btn.prop('disabled', false);
+                        var message = xhr.responseJSON && xhr.responseJSON.message
+                            ? xhr.responseJSON.message
+                            : saveFailed;
+                        alert(message);
+                    }
+                });
+            });
+
             if (hasPermission('Views.Function.AddDiSa.Upload')
                 && typeof window.createUploader === 'function') {
                 window.createUploader('#addDiSaUploader', {
@@ -83,11 +223,12 @@
                     buttonText: @Html.Raw(JsonSerializer.Serialize(uploaderButtonText)),
                     buttonClass: uploaderButtonClass,
                     uploadUrl: '@Url.Action("Upload", "AddDiSa")',
-                    fileTypes: '.xlsx,.xls,.csv',
-                    multiple: true,
+                    fileTypes: '.xlsx,.xls',
+                    multiple: false,
                     maxSize: maxSizeMb,
                     maxSizeHint: maxSizeHint,
-                    fieldName: 'file'
+                    fieldName: 'file',
+                    onSuccess: showImportResult
                 });
             }
         });
