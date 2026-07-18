@@ -78,13 +78,16 @@ public static class PermissionRequestResolver
         if (controller.Equals("ForwarderDataUpload", StringComparison.OrdinalIgnoreCase))
         {
             if ((action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
-                    || action.Equals("Save", StringComparison.OrdinalIgnoreCase))
+                    || action.Equals("Save", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("CancelPending", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("Query", StringComparison.OrdinalIgnoreCase))
                 && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
             {
                 return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.Upload");
             }
 
-            if (action.Equals("DownloadTemplate", StringComparison.OrdinalIgnoreCase)
+            if ((action.Equals("DownloadTemplate", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("GetFilterOptions", StringComparison.OrdinalIgnoreCase))
                 && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
                 return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.Upload");
@@ -128,8 +131,17 @@ public static class PermissionRequestResolver
 
         if (controller.Equals("MassUpdateNcpi", StringComparison.OrdinalIgnoreCase))
         {
-            if (action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+            if ((action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("Query", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("Save", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("CancelPending", StringComparison.OrdinalIgnoreCase))
                 && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Function.MassUpdateNcpi.Upload");
+            }
+
+            if (action.Equals("DownloadSample", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
                 return ResolveIfRegistered(registry, "Views.Function.MassUpdateNcpi.Upload");
             }
@@ -143,8 +155,17 @@ public static class PermissionRequestResolver
 
         if (controller.Equals("MassUpdateNonNcpi", StringComparison.OrdinalIgnoreCase))
         {
-            if (action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+            if ((action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("Query", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("Save", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("CancelPending", StringComparison.OrdinalIgnoreCase))
                 && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Function.MassUpdateNonNcpi.Upload");
+            }
+
+            if (action.Equals("DownloadSample", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
                 return ResolveIfRegistered(registry, "Views.Function.MassUpdateNonNcpi.Upload");
             }
@@ -153,6 +174,24 @@ public static class PermissionRequestResolver
                 && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
                 return ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.MassUpdateNonNcpi");
+            }
+        }
+
+        if (controller.Equals("ShippingReport", StringComparison.OrdinalIgnoreCase)
+            || controller.Equals("CompareIcpVsArUr", StringComparison.OrdinalIgnoreCase)
+            || controller.Equals("MassDataReport", StringComparison.OrdinalIgnoreCase))
+        {
+            if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Report.{controller}");
+            }
+
+            if (IsReadAction(action)
+                || action.Equals("GetPageConfig", StringComparison.OrdinalIgnoreCase)
+                || action.Equals("DownloadExcel", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Report.{controller}");
             }
         }
 

@@ -1,0 +1,25 @@
+{
+  "header": {
+    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "420px" },
+    "initialSort": { "fieldName": "SaDate", "direction": "desc" },
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "SaDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+        { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Checkbox" }
+      ]
+    }
+  },
+  "detail": {
+    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "420px" },
+    "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "InvoiceSeq", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "ItemNo", "visible": true, "searchable": true, "filterType": "Text" }
+      ]
+    }
+  }
+}

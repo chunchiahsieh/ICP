@@ -12,6 +12,7 @@ using ICP.Models.Tariff;
 using ICP.Models.ShipInfo;
 using ICP.Models.Forwarder;
 using ICP.Models.Integration;
+using ICP.Models.Report;
 
 using ICP.Repositories;
 
@@ -110,6 +111,38 @@ builder.Services
     .Bind(tariffTableFieldsConfiguration)
     .ValidateOnStart();
 
+var shippingReportTableFieldsConfiguration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("Config/shipping-report-table-fields.json", optional: false, reloadOnChange: true)
+    .Build();
+
+builder.Services
+    .AddOptions<ShipInfoTableFieldsOptions>(ReportKeys.ShippingReport)
+    .Bind(shippingReportTableFieldsConfiguration)
+    .ValidateOnStart();
+
+var compareIcpVsArUrTableFieldsConfiguration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("Config/compare-icp-vs-arur-table-fields.json", optional: false, reloadOnChange: true)
+    .Build();
+
+builder.Services
+    .AddOptions<ShipInfoTableFieldsOptions>(ReportKeys.CompareIcpVsArUr)
+    .Bind(compareIcpVsArUrTableFieldsConfiguration)
+    .ValidateOnStart();
+
+var massDataReportTableFieldsConfiguration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("Config/mass-data-report-table-fields.json", optional: false, reloadOnChange: true)
+    .Build();
+
+builder.Services
+    .AddOptions<ShipInfoTableFieldsOptions>(ReportKeys.MassDataReport)
+    .Bind(massDataReportTableFieldsConfiguration)
+    .ValidateOnStart();
+
+builder.Services.AddSingleton<ReportTableFieldsOptions>();
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var supportedCultures = new[] { "zh-TW", "en", "ja" };
@@ -155,7 +188,9 @@ builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<UserResourcePermissionService>();
 builder.Services.AddScoped<ForwarderDataImportService>();
 builder.Services.AddScoped<AddDiSaImportService>();
+builder.Services.AddScoped<MassUpdateImportService>();
 builder.Services.AddSingleton<AddDiSaPendingFileStore>();
+builder.Services.AddSingleton<MassUpdatePendingFileStore>();
 builder.Services.AddSingleton<ForwarderPendingFileStore>();
 builder.Services.AddScoped<IShipInfoRepository, ShipInfoRepository>();
 builder.Services.AddScoped<IIntegrationEventOutboxRepository, IntegrationEventOutboxRepository>();
@@ -163,10 +198,12 @@ builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 builder.Services.AddSingleton<IShipInfoCaseEventFactory, ShipInfoCaseEventFactory>();
 builder.Services.AddHostedService<IntegrationEventOutboxPublisherWorker>();
 builder.Services.AddScoped<ShipInfoMetadataProvider>();
+builder.Services.AddScoped<ReportMetadataProvider>();
 builder.Services.AddScoped<ForwarderTableMetadataProvider>();
 builder.Services.AddScoped<TariffTableMetadataProvider>();
 builder.Services.AddScoped<ShipInfoLookupService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
+builder.Services.AddScoped<IReportDataService, ReportDataService>();
 builder.Services.AddScoped<ShipInfoApiExceptionFilter>();
 builder.Services.AddScoped<TariffDataImportService>();
 builder.Services.AddScoped<RequireLoginFilter>();

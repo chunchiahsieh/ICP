@@ -721,7 +721,7 @@
     <value>ファイルをアップロード</value>
   </data>
   <data name="Function.AddDiSa.MaxSizeHint" xml:space="preserve">
-    <value>1 ファイル上限：{0} MB</value>
+    <value>1ファイルあたり最大 {0} MB。.xlsx、.xls に対応</value>
   </data>
   <data name="Function.AddDiSa.SaveButton" xml:space="preserve">
     <value>保存</value>
@@ -768,6 +768,9 @@
   <data name="Function.AddDiSa.CanUpload.Ok" xml:space="preserve">
     <value>取込可</value>
   </data>
+  <data name="Function.AddDiSa.CanUpload.All" xml:space="preserve">
+    <value>すべて</value>
+  </data>
   <data name="Function.AddDiSa.CanUpload.DbExists" xml:space="preserve">
     <value>システムに既存のため取込不可</value>
   </data>
@@ -807,6 +810,22 @@
   <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
     <value>非 NCPI 一括更新アップロード</value>
   </data>
+  <data name="Function.MassUpdate.DownloadSample" xml:space="preserve"><value>サンプルをダウンロード</value></data>
+  <data name="Function.MassUpdate.SaveButton" xml:space="preserve"><value>保存</value></data>
+  <data name="Function.MassUpdate.PreviewTitle" xml:space="preserve"><value>一括更新プレビュー</value></data>
+  <data name="Function.MassUpdate.ParseSuccess" xml:space="preserve"><value>{0} 行を解析：更新可能 {1} 行、未検出 {2} 行。</value></data>
+  <data name="Function.MassUpdate.SaveSuccess" xml:space="preserve"><value>Header {0} 件を更新（Excel 更新可能 {1} 行、未検出 {2} 行）。</value></data>
+  <data name="Function.MassUpdate.PleaseUploadFirst" xml:space="preserve"><value>先に一括更新ファイルをアップロードしてください。</value></data>
+  <data name="Function.MassUpdate.SaveFailed" xml:space="preserve"><value>一括更新の保存に失敗しました。</value></data>
+  <data name="Function.MassUpdate.CannotSave" xml:space="preserve"><value>未検出、重複、または無効な行が1件でもある場合、バッチ全体を更新できません。修正して再アップロードしてください。</value></data>
+  <data name="Function.MassUpdate.ClearValue" xml:space="preserve"><value>（クリア）</value></data>
+  <data name="Function.MassUpdate.Column.Status" xml:space="preserve"><value>取込可否</value></data>
+  <data name="Function.MassUpdate.Column.RowNo" xml:space="preserve"><value>番号</value></data>
+  <data name="Function.MassUpdate.Status.Duplicate" xml:space="preserve"><value>ファイル内 Invoice No 重複</value></data>
+  <data name="Function.MassUpdate.Status.NotFound" xml:space="preserve"><value>データなし</value></data>
+  <data name="Function.MassUpdate.Status.Matched" xml:space="preserve"><value>{0} 件更新可能</value></data>
+  <data name="Function.MassUpdate.StatusFilter.All" xml:space="preserve"><value>すべて</value></data>
+  <data name="Function.MassUpdate.StatusFilter.Matched" xml:space="preserve"><value>更新可能</value></data>
   <data name="Home.Subtitle" xml:space="preserve">
     <value>ASP.NET Core MVC (.NET 9)</value>
   </data>
@@ -1168,7 +1187,7 @@
     <value>ファイルをアップロード</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.MaxSizeHint" xml:space="preserve">
-    <value>1ファイルの上限：{0} MB</value>
+    <value>1ファイルあたり最大 {0} MB。.xlsx、.xls、.csv に対応</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.ImportResultTitle" xml:space="preserve">
     <value>取込結果</value>
@@ -1207,7 +1226,7 @@
     <value>このファイルにはシステムに既存の Invoice が含まれます。表の「重複」列で確認してください。保存時に上書き確認が表示されます。</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.Column.Duplicate" xml:space="preserve">
-    <value>重複</value>
+    <value>取込可否</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.Column.RowNo" xml:space="preserve">
     <value>番号</value>
@@ -1262,6 +1281,27 @@
   </data>
   <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
     <value>船積レポート</value>
+  </data>
+  <data name="Report.HeaderTitle" xml:space="preserve">
+    <value>ヘッダー</value>
+  </data>
+  <data name="Report.DetailTitle" xml:space="preserve">
+    <value>明細</value>
+  </data>
+  <data name="Report.DownloadExcel" xml:space="preserve">
+    <value>Excel をダウンロード</value>
+  </data>
+  <data name="Report.NoData" xml:space="preserve">
+    <value>データがありません</value>
+  </data>
+  <data name="Report.NoDetailData" xml:space="preserve">
+    <value>明細データがありません</value>
+  </data>
+  <data name="Report.SelectHeaderFirst" xml:space="preserve">
+    <value>先にヘッダーを選択してください</value>
+  </data>
+  <data name="Report.DownloadFailed" xml:space="preserve">
+    <value>Excel のダウンロードに失敗しました</value>
   </data>
   <data name="Views.Shared._SidebarNav.Setting" xml:space="preserve">
     <value>設定</value>

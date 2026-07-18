@@ -139,7 +139,7 @@ public partial class PermissionScannerService
         }
 
         if (parts.Length >= 2 &&
-            parts[0].Equals("REPORT", StringComparison.OrdinalIgnoreCase))
+            parts[0].Equals("Report", StringComparison.OrdinalIgnoreCase))
         {
             parts = parts[1..];
         }

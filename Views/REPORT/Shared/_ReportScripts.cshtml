@@ -1,0 +1,31 @@
+@using System.Text.Json
+@{
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+}
+<script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+<script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+<script src="~/js/pro-table-filters.js" asp-append-version="true"></script>
+<script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+<script src="~/js/report-data.js" asp-append-version="true"></script>
+<script>
+    window.ReportDataApp.init({
+        urls: {
+            pageConfig: '@Url.Action("GetPageConfig", controllerName)',
+            queryHeader: '@Url.Action("QueryHeader", controllerName)',
+            queryDetail: '@Url.Action("QueryDetail", controllerName)',
+            headerFilterOptions: '@Url.Action("GetHeaderFilterOptions", controllerName)',
+            detailFilterOptions: '@Url.Action("GetDetailFilterOptions", controllerName)',
+            downloadExcel: '@Url.Action("DownloadExcel", controllerName)'
+        },
+        messages: {
+            selectHeaderFirst: @Html.Raw(JsonSerializer.Serialize(Localizer["Report.SelectHeaderFirst"].Value)),
+            downloadFailed: @Html.Raw(JsonSerializer.Serialize(Localizer["Report.DownloadFailed"].Value)),
+            caseStatus: {
+                NotInitiated: @Html.Raw(JsonSerializer.Serialize(Localizer["ShipInfo.CaseStatus.NotInitiated"].Value)),
+                Initiated: @Html.Raw(JsonSerializer.Serialize(Localizer["ShipInfo.CaseStatus.Initiated"].Value)),
+                Failed: @Html.Raw(JsonSerializer.Serialize(Localizer["ShipInfo.CaseStatus.Failed"].Value)),
+                Processing: @Html.Raw(JsonSerializer.Serialize(Localizer["ShipInfo.CaseStatus.Processing"].Value))
+            }
+        }
+    });
+</script>

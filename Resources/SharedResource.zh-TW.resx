@@ -721,7 +721,7 @@
     <value>上傳檔案</value>
   </data>
   <data name="Function.AddDiSa.MaxSizeHint" xml:space="preserve">
-    <value>單檔大小上限：{0} MB</value>
+    <value>單檔上限 {0} MB，支援 .xlsx、.xls</value>
   </data>
   <data name="Function.AddDiSa.SaveButton" xml:space="preserve">
     <value>儲存</value>
@@ -768,6 +768,9 @@
   <data name="Function.AddDiSa.CanUpload.Ok" xml:space="preserve">
     <value>可上傳</value>
   </data>
+  <data name="Function.AddDiSa.CanUpload.All" xml:space="preserve">
+    <value>全部</value>
+  </data>
   <data name="Function.AddDiSa.CanUpload.DbExists" xml:space="preserve">
     <value>系統已存在，不可上傳</value>
   </data>
@@ -807,6 +810,22 @@
   <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
     <value>非 NCPI 批次更新上傳</value>
   </data>
+  <data name="Function.MassUpdate.DownloadSample" xml:space="preserve"><value>下載範例</value></data>
+  <data name="Function.MassUpdate.SaveButton" xml:space="preserve"><value>儲存</value></data>
+  <data name="Function.MassUpdate.PreviewTitle" xml:space="preserve"><value>批次更新預覽</value></data>
+  <data name="Function.MassUpdate.ParseSuccess" xml:space="preserve"><value>解析 {0} 列：可更新 {1} 列，查無 {2} 列。</value></data>
+  <data name="Function.MassUpdate.SaveSuccess" xml:space="preserve"><value>更新 {0} 筆 Header（Excel 可更新 {1} 列，查無 {2} 列）。</value></data>
+  <data name="Function.MassUpdate.PleaseUploadFirst" xml:space="preserve"><value>請先上傳批次更新檔案。</value></data>
+  <data name="Function.MassUpdate.SaveFailed" xml:space="preserve"><value>批次更新儲存失敗。</value></data>
+  <data name="Function.MassUpdate.CannotSave" xml:space="preserve"><value>只要有一列查無資料、重複或驗證失敗，整批皆不可更新。請修正後重新上傳。</value></data>
+  <data name="Function.MassUpdate.ClearValue" xml:space="preserve"><value>（清空）</value></data>
+  <data name="Function.MassUpdate.Column.Status" xml:space="preserve"><value>可否上傳</value></data>
+  <data name="Function.MassUpdate.Column.RowNo" xml:space="preserve"><value>筆數</value></data>
+  <data name="Function.MassUpdate.Status.Duplicate" xml:space="preserve"><value>檔內 Invoice No 重複</value></data>
+  <data name="Function.MassUpdate.Status.NotFound" xml:space="preserve"><value>查無資料</value></data>
+  <data name="Function.MassUpdate.Status.Matched" xml:space="preserve"><value>可更新 {0} 筆</value></data>
+  <data name="Function.MassUpdate.StatusFilter.All" xml:space="preserve"><value>全部</value></data>
+  <data name="Function.MassUpdate.StatusFilter.Matched" xml:space="preserve"><value>可更新</value></data>
   <data name="Home.Subtitle" xml:space="preserve">
     <value>ASP.NET Core MVC (.NET 9)</value>
   </data>
@@ -1168,7 +1187,7 @@
     <value>上傳檔案</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.MaxSizeHint" xml:space="preserve">
-    <value>單檔大小上限：{0} MB</value>
+    <value>單檔上限 {0} MB，支援 .xlsx、.xls、.csv</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.ImportResultTitle" xml:space="preserve">
     <value>匯入結果</value>
@@ -1207,7 +1226,7 @@
     <value>此檔案含有已存在於系統的 Invoice，請於表格「重複」欄確認；儲存時將提示是否覆蓋。</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.Column.Duplicate" xml:space="preserve">
-    <value>重複</value>
+    <value>可否上傳</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.Column.RowNo" xml:space="preserve">
     <value>筆數</value>
@@ -1262,6 +1281,27 @@
   </data>
   <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
     <value>船務報表</value>
+  </data>
+  <data name="Report.HeaderTitle" xml:space="preserve">
+    <value>表頭</value>
+  </data>
+  <data name="Report.DetailTitle" xml:space="preserve">
+    <value>明細</value>
+  </data>
+  <data name="Report.DownloadExcel" xml:space="preserve">
+    <value>下載 Excel</value>
+  </data>
+  <data name="Report.NoData" xml:space="preserve">
+    <value>查無資料</value>
+  </data>
+  <data name="Report.NoDetailData" xml:space="preserve">
+    <value>尚無明細資料</value>
+  </data>
+  <data name="Report.SelectHeaderFirst" xml:space="preserve">
+    <value>請先選擇一筆表頭</value>
+  </data>
+  <data name="Report.DownloadFailed" xml:space="preserve">
+    <value>下載 Excel 失敗</value>
   </data>
   <data name="Views.Shared._SidebarNav.Setting" xml:space="preserve">
     <value>設定</value>

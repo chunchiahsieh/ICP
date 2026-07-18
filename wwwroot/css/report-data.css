@@ -1,0 +1,8 @@
+.report-data-page .shipinfo-header-card,
+.report-data-page .shipinfo-detail-card {
+    overflow: hidden;
+}
+
+.report-data-page .report-table-wrap {
+    overflow: auto;
+}

@@ -9,13 +9,8 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
-    <style>
-        .adddisa-preview .adddisa-canupload-cell { white-space: normal; min-width: 8rem; }
-        .adddisa-preview .adddisa-canupload-label-issue { display: block; color: #dc3545; font-weight: 600; }
-        .adddisa-preview .adddisa-canupload-label-ok { color: #198754; font-weight: 600; }
-        .adddisa-preview tr.adddisa-row-db-duplicate > td { background-color: #fdeaea !important; }
-        .adddisa-preview tr.adddisa-row-invoice-inconsistent > td { background-color: #fff3cd !important; }
-    </style>
+    <link rel="stylesheet" href="~/css/upload-page.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/upload-preview-sort.css" asp-append-version="true" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -61,7 +56,11 @@
             <h5 class="mb-0" id="importResultTitle">@Localizer["Function.AddDiSa.ImportResultTitle"]</h5>
         </div>
         <div id="pageMessage" class="alert alert-info py-2 mb-3" role="alert"></div>
-        <div id="DataDiv"></div>
+        <div class="card upload-page-preview-card">
+            <div class="card-body">
+                <div id="DataDiv"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -73,6 +72,7 @@
 
 @section Scripts {
     <script src="~/Uploader/index.js" asp-append-version="true"></script>
+    <script src="~/js/upload-preview-sort.js" asp-append-version="true"></script>
     <script>
         $(function () {
             var maxSizeMb = @maxSizeMb;
@@ -116,6 +116,41 @@
                 return false;
             }
 
+            function cancelPendingQuietly(filePath) {
+                if (!filePath) {
+                    return $.Deferred().resolve().promise();
+                }
+
+                return $.ajax({
+                    url: '@Url.Action("CancelPending", "AddDiSa")',
+                    type: 'POST',
+                    data: { filePath: filePath },
+                    dataType: 'json'
+                });
+            }
+
+            function bindCanUploadFilter() {
+                var $preview = $('#DataDiv').find('.adddisa-preview');
+                var $filter = $preview.find('.adddisa-can-upload-filter');
+                if (!$filter.length) {
+                    return;
+                }
+
+                $filter.off('change.addDiSaCanUpload').on('change.addDiSaCanUpload', function () {
+                    var selected = String($(this).val() || '');
+                    $preview.find('tbody tr[data-upload-status]').each(function () {
+                        var statuses = String($(this).attr('data-upload-status') || '').split(/\s+/);
+                        $(this).toggle(!selected || statuses.indexOf(selected) >= 0);
+                    });
+                });
+            }
+
+            function bindPreviewSort() {
+                if (window.UploadPreviewSort && typeof window.UploadPreviewSort.bind === 'function') {
+                    window.UploadPreviewSort.bind($('#DataDiv'));
+                }
+            }
+
             function loadPreview(filePath, canSave) {
                 if (!filePath) {
                     return;
@@ -124,6 +159,8 @@
                 $.post('@Url.Action("Query", "AddDiSa")', { filePath: filePath })
                     .done(function (html) {
                         $('#DataDiv').html(html);
+                        bindCanUploadFilter();
+                        bindPreviewSort();
                         var $preview = $('#DataDiv').find('[data-can-save]');
                         if ($preview.length) {
                             var fromPreview = $preview.attr('data-can-save') === 'true';
@@ -158,18 +195,28 @@
                 }
 
                 var canSave = resolveCanSave(response);
-                pendingFilePath = filePath;
-                $('#importResultTitle')
-                    .removeClass('text-success')
-                    .text(importResultTitleText);
-                $('#pageMessage')
-                    .removeClass('d-none alert-success')
-                    .toggleClass('alert-info', canSave)
-                    .toggleClass('alert-warning', !canSave)
-                    .text(response.message || (canSave ? '' : cannotSaveMessage));
-                $('#importResultSection').removeClass('d-none');
-                $('#btnSaveImport').prop('disabled', !canSave);
-                loadPreview(filePath, canSave);
+                var previousPath = pendingFilePath;
+
+                function activate() {
+                    pendingFilePath = filePath;
+                    $('#importResultTitle')
+                        .removeClass('text-success')
+                        .text(importResultTitleText);
+                    $('#pageMessage')
+                        .removeClass('d-none alert-success')
+                        .toggleClass('alert-info', canSave)
+                        .toggleClass('alert-warning', !canSave)
+                        .text(response.message || (canSave ? '' : cannotSaveMessage));
+                    $('#importResultSection').removeClass('d-none');
+                    $('#btnSaveImport').prop('disabled', !canSave);
+                    loadPreview(filePath, canSave);
+                }
+
+                if (previousPath && previousPath !== filePath) {
+                    cancelPendingQuietly(previousPath).always(activate);
+                } else {
+                    activate();
+                }
             }
 
             $('#btnSaveImport').on('click', function () {
@@ -194,9 +241,12 @@
                         if (response && response.success) {
                             pendingFilePath = '';
                             $('#DataDiv').empty();
-                            $('#pageMessage').addClass('d-none');
                             $('#importResultTitle')
-                                .addClass('text-success')
+                                .removeClass('text-success')
+                                .text(importResultTitleText);
+                            $('#pageMessage')
+                                .removeClass('d-none alert-info alert-warning')
+                                .addClass('alert-success')
                                 .text(response.message || '');
                             $('#importResultSection').removeClass('d-none');
                             $btn.prop('disabled', true);
@@ -228,7 +278,25 @@
                     maxSize: maxSizeMb,
                     maxSizeHint: maxSizeHint,
                     fieldName: 'file',
-                    onSuccess: showImportResult
+                    onSuccess: showImportResult,
+                    onRemove: function (filePath) {
+                        if (!filePath) {
+                            return;
+                        }
+
+                        cancelPendingQuietly(filePath).always(function () {
+                            if (pendingFilePath === filePath) {
+                                pendingFilePath = '';
+                                $('#DataDiv').empty();
+                                $('#btnSaveImport').prop('disabled', true);
+                                $('#pageMessage').addClass('d-none').text('');
+                                $('#importResultSection').addClass('d-none');
+                                $('#importResultTitle')
+                                    .removeClass('text-success')
+                                    .text(importResultTitleText);
+                            }
+                        });
+                    }
                 });
             }
         });

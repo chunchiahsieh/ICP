@@ -1,0 +1,21 @@
+.upload-preview-sortable-th {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.upload-preview-sortable-th::after {
+    content: " \2195";
+    opacity: 0.35;
+    font-size: 0.75em;
+}
+
+.upload-preview-sort-asc::after {
+    content: " \25B2";
+    opacity: 0.85;
+}
+
+.upload-preview-sort-desc::after {
+    content: " \25BC";
+    opacity: 0.85;
+}

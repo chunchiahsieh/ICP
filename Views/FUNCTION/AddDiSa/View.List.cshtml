@@ -1,8 +1,21 @@
 @model List<ICP.Helpers.AddDiSaImportRowViewModel>
 @using System.Globalization
 
-<div class="table-responsive adddisa-preview" data-can-save="@(Model.Count > 0 && Model.All(r => r.CanUpload) ? "true" : "false")">
-    <table class="table table-striped table-sm table-bordered align-middle mb-0">
+<div class="adddisa-preview" data-can-save="@(Model.Count > 0 && Model.All(r => r.CanUpload) ? "true" : "false")">
+    <div class="upload-page-preview-toolbar">
+        <label class="form-label" for="addDiSaCanUploadFilter">
+            @Localizer["Function.AddDiSa.Column.CanUpload"]
+        </label>
+        <select id="addDiSaCanUploadFilter"
+                class="form-select form-select-sm adddisa-can-upload-filter">
+            <option value="">@Localizer["Function.AddDiSa.CanUpload.All"]</option>
+            <option value="ok">@Localizer["Function.AddDiSa.CanUpload.Ok"]</option>
+            <option value="dbduplicate">@Localizer["Function.AddDiSa.CanUpload.DbExists"]</option>
+            <option value="inconsistent">@Localizer["Function.AddDiSa.CanUpload.InvoiceInconsistent"]</option>
+        </select>
+    </div>
+    <div class="upload-page-preview-scroll adddisa-preview">
+    <table class="table table-striped table-sm table-bordered align-middle mb-0 upload-preview-sortable">
         <thead class="table-light">
             <tr>
                 <th>@Localizer["Function.AddDiSa.Column.CanUpload"]</th>
@@ -25,13 +38,26 @@
         {
             rowIndex++;
             var row = item.Row;
+            var statuses = new List<string>();
+            if (item.IsDbDuplicate)
+            {
+                statuses.Add("dbduplicate");
+            }
+            if (item.IsInvoiceInconsistent)
+            {
+                statuses.Add("inconsistent");
+            }
+            if (item.CanUpload)
+            {
+                statuses.Add("ok");
+            }
             var rowClass = item.IsDbDuplicate
                 ? "adddisa-row-db-duplicate"
                 : item.IsInvoiceInconsistent
                     ? "adddisa-row-invoice-inconsistent"
                     : string.Empty;
-            <tr class="@rowClass">
-                <td class="adddisa-canupload-cell">
+            <tr class="@rowClass" data-upload-status="@(string.Join(" ", statuses))">
+                <td class="adddisa-canupload-cell" data-sort="@(item.CanUpload ? "ok" : (item.IsDbDuplicate ? "dbduplicate" : "inconsistent"))">
                     @if (item.IsDbDuplicate)
                     {
                         <span class="adddisa-canupload-label adddisa-canupload-label-issue">@Localizer["Function.AddDiSa.CanUpload.DbExists"]</span>
@@ -45,7 +71,7 @@
                         <span class="adddisa-canupload-label adddisa-canupload-label-ok">@Localizer["Function.AddDiSa.CanUpload.Ok"]</span>
                     }
                 </td>
-                <td class="text-center">@rowIndex</td>
+                <td class="text-center" data-sort="@rowIndex">@rowIndex</td>
                 <td>@row.InvoiceNo</td>
                 <td>@row.TetPo</td>
                 <td>@row.Mawb</td>
@@ -58,4 +84,5 @@
         }
         </tbody>
     </table>
+    </div>
 </div>

@@ -1,11 +1,21 @@
-using Microsoft.AspNetCore.Mvc;
+using ICP.Models.Report;
+using ICP.Services;
+using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
-public class ShippingReportController : Controller
+public class ShippingReportController : ReportControllerBase
 {
-    public IActionResult Index()
+    public ShippingReportController(
+        IReportDataService reportDataService,
+        IStringLocalizer<SharedResource> localizer)
+        : base(reportDataService, localizer)
     {
-        return View("~/Views/REPORT/ShippingReport/View.cshtml");
     }
+
+    protected override string ReportKey => ReportKeys.ShippingReport;
+
+    protected override string PermissionCode => "Views.Shared._SidebarNav.Report.ShippingReport";
+
+    protected override string TitleKey => "Views.Shared._SidebarNav.Report.ShippingReport";
 }

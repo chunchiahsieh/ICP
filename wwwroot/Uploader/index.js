@@ -36,7 +36,8 @@ window.createUploader = function (selector, options) {
         fieldName: 'file',
         sequentialUpload: false,
         onSuccess: null,
-        onError: null
+        onError: null,
+        onRemove: null
     };
     const config = { ...defaultOptions, ...options };
 
@@ -326,6 +327,11 @@ window.createUploader = function (selector, options) {
             if (status === 'success') successCount--;
             if (status === 'error') errorCount--;
 
+            const pendingPath = $fileItem.attr('data-file-path') || '';
+            if (status === 'success' && pendingPath && typeof config.onRemove === 'function') {
+                config.onRemove(pendingPath);
+            }
+
             $fileItem.removeClass('opacity-100 scale-100').addClass('opacity-0 scale-95');
             setTimeout(() => {
                 $fileItem.remove();
@@ -369,6 +375,10 @@ window.createUploader = function (selector, options) {
                 $fileItem.find('.progress-bar').css('width', '100%');
                 if (response.success) {
                     $fileItem.attr('data-status', 'success');
+                    const responsePath = response.filePath || response.FilePath || '';
+                    if (responsePath) {
+                        $fileItem.attr('data-file-path', responsePath);
+                    }
                     successCount++;
                     updateFileCount();
 

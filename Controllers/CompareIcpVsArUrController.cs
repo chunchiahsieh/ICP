@@ -1,11 +1,21 @@
-using Microsoft.AspNetCore.Mvc;
+using ICP.Models.Report;
+using ICP.Services;
+using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers;
 
-public class CompareIcpVsArUrController : Controller
+public class CompareIcpVsArUrController : ReportControllerBase
 {
-    public IActionResult Index()
+    public CompareIcpVsArUrController(
+        IReportDataService reportDataService,
+        IStringLocalizer<SharedResource> localizer)
+        : base(reportDataService, localizer)
     {
-        return View("~/Views/REPORT/CompareIcpVsArUr/View.cshtml");
     }
+
+    protected override string ReportKey => ReportKeys.CompareIcpVsArUr;
+
+    protected override string PermissionCode => "Views.Shared._SidebarNav.Report.CompareIcpVsArUr";
+
+    protected override string TitleKey => "Views.Shared._SidebarNav.Report.CompareIcpVsArUr";
 }

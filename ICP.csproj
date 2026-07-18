@@ -35,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="ExcelDataReader" Version="3.8.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="9.0.5" />
@@ -63,6 +64,13 @@
     <Content Update="Config\forwarder-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\tariff-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\tariff-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\shipping-report-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\shipping-report-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\compare-icp-vs-arur-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\compare-icp-vs-arur-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\mass-data-report-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\mass-data-report-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Files\Mass Update Sample File.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

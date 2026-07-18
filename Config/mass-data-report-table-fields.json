@@ -1,0 +1,62 @@
+{
+  "header": {
+    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "420px" },
+    "initialSort": { "fieldName": "CreateTime", "direction": "desc" },
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "CreateTime", "visible": false, "searchable": true, "filterType": "DateRange" },
+        { "fieldName": "SaDate", "visible": false, "searchable": true, "filterType": "DateRange" },
+        { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Forwarder", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Etd", "visible": true, "searchable": true, "filterType": "Date" },
+        { "fieldName": "Eta", "visible": true, "searchable": true, "filterType": "Date" },
+        { "fieldName": "InvoiceDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+        { "fieldName": "Mawb", "visible": true, "searchable": true, "filterType": "Text" },
+        { "fieldName": "Hawb", "visible": true, "searchable": true, "filterType": "Text" },
+        { "fieldName": "Flt", "visible": true, "searchable": true, "filterType": "Text" },
+        { "fieldName": "DestinationPort", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "DeliveryDate", "visible": true, "searchable": true, "filterType": "DateRange" },
+        { "fieldName": "DeliveryTo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Bu", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "TotalCartons", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "DepositCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "ArurCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox" }
+      ]
+    }
+  },
+  "detail": {
+    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "420px" },
+    "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "TetPoLine", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "InvoiceSeq", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "ItemNo", "visible": true, "searchable": true, "filterType": "Text" },
+        { "fieldName": "Description", "visible": true, "searchable": true, "filterType": "Text" },
+        { "fieldName": "Qty", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Uom", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Coo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Price", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Amount", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Currency", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Rate", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "PackingType", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "CartonNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Length", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Width", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Hight", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "GrossWeight", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "NetWeightOfTheItem", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "DeliveryLineNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Eccn", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "ElFlag", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "SdsFlag", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Hazmat", "visible": true, "searchable": true, "filterType": "Checkbox" }
+      ]
+    }
+  }
+}

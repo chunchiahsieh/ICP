@@ -34,6 +34,19 @@
     }
 }
 
+<div>
+    <div class="upload-page-preview-toolbar">
+        <label class="form-label" for="forwarderCanUploadFilter">
+            @Localizer["Forwarder.ForwarderDataUpload.Column.Duplicate"]
+        </label>
+        <select id="forwarderCanUploadFilter"
+                class="form-select form-select-sm forwarder-can-upload-filter">
+            <option value="">@Localizer["Function.MassUpdate.StatusFilter.All"]</option>
+            <option value="None">@Localizer["Forwarder.ForwarderDataUpload.Duplicate.None"]</option>
+            <option value="DbDuplicate">@Localizer["Forwarder.ForwarderDataUpload.Duplicate.DbDuplicate"]</option>
+            <option value="InFileMultiLine">@Localizer["Forwarder.ForwarderDataUpload.Duplicate.InFileMultiLine"]</option>
+        </select>
+    </div>
 <div class="@wrapClasses" @(wrapStyle is not null ? Html.Raw($"style=\"{wrapStyle}\"") : null)>
     <table id="datatable" class="table table-striped table-sm table-bordered align-middle mb-0 forwarder-pro-table w-100">
         <thead class="@theadClasses">
@@ -54,7 +67,8 @@
                             ? "sorting_disabled"
                             : $"{filterClass} sorting_disabled";
                         <th class="@thClass">
-                            @if (field.Searchable)
+                            @if (field.Searchable
+                                && !string.Equals(field.FieldName, "DuplicateStatus", StringComparison.OrdinalIgnoreCase))
                             {
                                 @await Html.PartialAsync("_ProDataTablesFilter", ($"filter-{field.FieldName}", field.FieldName))
                             }
@@ -78,7 +92,12 @@
                             var duplicateCellClass = Model.TableUi.StickyLeftColumns == true
                                 ? "forwarder-duplicate-cell forwarder-duplicate-col"
                                 : "forwarder-duplicate-cell";
-                            <td class="@duplicateCellClass">
+                            var statusOrder = item.IsDbDuplicate
+                                ? "DbDuplicate"
+                                : item.IsInFileMultiLine
+                                    ? "InFileMultiLine"
+                                    : "None";
+                            <td class="@duplicateCellClass" data-order="@statusOrder">
                                 @if (item.IsDbDuplicate)
                                 {
                                     <span class="forwarder-duplicate-label forwarder-duplicate-label-issue">@Localizer["Forwarder.ForwarderDataUpload.Duplicate.DbDuplicate"]</span>
@@ -95,7 +114,7 @@
                         }
                         else if (string.Equals(field.FieldName, "RowNo", StringComparison.OrdinalIgnoreCase))
                         {
-                            <td class="forwarder-rowno-col text-center">@rowIndex</td>
+                            <td class="forwarder-rowno-col text-center" data-order="@rowIndex">@rowIndex</td>
                         }
                         else
                         {
@@ -106,4 +125,5 @@
             }
         </tbody>
     </table>
+</div>
 </div>

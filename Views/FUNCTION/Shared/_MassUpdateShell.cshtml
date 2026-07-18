@@ -1,0 +1,58 @@
+@{
+    var permissionPrefix = (string)ViewData["PermissionPrefix"]!;
+    var controllerName = (string)ViewData["ControllerName"]!;
+    var uploaderId = (string)ViewData["UploaderId"]!;
+    var titleKey = (string)ViewData["TitleKey"]!;
+    var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
+}
+
+<div data-permissions="Views.Shared._SidebarNav.Function.@controllerName"
+     data-i18n-key="Views.Shared._SidebarNav.Function.@controllerName"
+     class="mass-update-page"
+     data-controller="@controllerName"
+     data-permission="@permissionPrefix"
+     data-uploader-id="@uploaderId"
+     data-upload-url="@Url.Action("Upload", controllerName)"
+     data-query-url="@Url.Action("Query", controllerName)"
+     data-save-url="@Url.Action("Save", controllerName)"
+     data-cancel-url="@Url.Action("CancelPending", controllerName)"
+     data-max-size="@maxSizeMb"
+     data-uploader-title="@Localizer[$"{titleKey}.UploaderTitle"]"
+     data-uploader-button="@Localizer[$"{titleKey}.UploaderButton"]"
+     data-max-size-hint="@string.Format(Localizer[$"{titleKey}.MaxSizeHint"].Value, maxSizeMb)"
+     data-please-upload="@Localizer["Function.MassUpdate.PleaseUploadFirst"]"
+     data-save-failed="@Localizer["Function.MassUpdate.SaveFailed"]"
+     data-preview-title="@Localizer["Function.MassUpdate.PreviewTitle"]"
+     data-cannot-save="@Localizer["Function.MassUpdate.CannotSave"]">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer[$"Views.Shared._SidebarNav.Function.{controllerName}"]</h4>
+    </div>
+    <p class="text-muted small mb-3">@string.Format(Localizer[$"{titleKey}.MaxSizeHint"].Value, maxSizeMb)</p>
+
+    <div class="d-flex align-items-start gap-2 flex-wrap mb-3">
+        <div data-permissions="@permissionPrefix" data-i18n-key="@permissionPrefix">
+            <div id="@uploaderId"></div>
+        </div>
+        <a href="@Url.Action("DownloadSample", controllerName)"
+           class="btn btn-outline-secondary align-self-center"
+           data-permissions="@permissionPrefix"
+           data-i18n-key="@permissionPrefix">
+            @Localizer["Function.MassUpdate.DownloadSample"]
+        </a>
+        <button type="button"
+                class="btn btn-primary align-self-center mass-update-save"
+                disabled
+                data-permissions="@permissionPrefix"
+                data-i18n-key="@permissionPrefix">
+            @Localizer["Function.MassUpdate.SaveButton"]
+        </button>
+    </div>
+
+    <div class="mass-update-result d-none mt-4">
+        <h5 class="mass-update-result-title mb-2">@Localizer["Function.MassUpdate.PreviewTitle"]</h5>
+        <div class="mass-update-message alert alert-info py-2 mb-3" role="alert"></div>
+        <div class="card upload-page-preview-card">
+            <div class="card-body mass-update-data"></div>
+        </div>
+    </div>
+</div>

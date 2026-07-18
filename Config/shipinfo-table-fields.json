@@ -4,7 +4,7 @@
     "initialSort": {"fieldName": "CreateDate", "direction": "desc"},
     "list": {
       "fields": [
-        {"fieldName": "Id", "visible": true, "searchable": false, "filterType": "Checkbox"},
+        {"fieldName": "Id", "visible": false, "searchable": false, "filterType": "Checkbox"},
         {"fieldName": "CreateTime", "visible": false, "searchable": false, "filterType": "Checkbox"},
         {"fieldName": "CreateUser", "visible": false, "searchable": false, "filterType": "Checkbox"},
         {"fieldName": "UpdateTime", "visible": false, "searchable": false, "filterType": "Checkbox"},

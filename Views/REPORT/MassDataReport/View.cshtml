@@ -1,11 +1,10 @@
 @{
-    ViewData["Title"] = Localizer["Views.Shared._SidebarNav.Report.MassDataReport"];
+    Layout = "_Layout";
 }
-
-<div data-permissions="Views.Shared._SidebarNav.Report.MassDataReport"
-     data-i18n-key="Views.Shared._SidebarNav.Report.MassDataReport">
-    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
-        <h4 class="mb-0">@Localizer["Views.Shared._SidebarNav.Report.MassDataReport"]</h4>
-    </div>
-    <p class="text-muted">@Localizer["Function.Placeholder"]</p>
-</div>
+@section Styles {
+    @await Html.PartialAsync("~/Views/Report/Shared/_ReportStyles.cshtml")
+}
+@await Html.PartialAsync("~/Views/Report/Shared/_ReportShell.cshtml")
+@section Scripts {
+    @await Html.PartialAsync("~/Views/Report/Shared/_ReportScripts.cshtml")
+}

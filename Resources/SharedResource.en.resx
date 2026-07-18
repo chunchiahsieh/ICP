@@ -721,7 +721,7 @@
     <value>Upload File</value>
   </data>
   <data name="Function.AddDiSa.MaxSizeHint" xml:space="preserve">
-    <value>Max file size: {0} MB</value>
+    <value>Max {0} MB per file. Supported: .xlsx, .xls</value>
   </data>
   <data name="Function.AddDiSa.SaveButton" xml:space="preserve">
     <value>Save</value>
@@ -768,6 +768,9 @@
   <data name="Function.AddDiSa.CanUpload.Ok" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="Function.AddDiSa.CanUpload.All" xml:space="preserve">
+    <value>All</value>
+  </data>
   <data name="Function.AddDiSa.CanUpload.DbExists" xml:space="preserve">
     <value>Already in system — cannot upload</value>
   </data>
@@ -807,6 +810,22 @@
   <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
     <value>Non-NCPI mass update upload</value>
   </data>
+  <data name="Function.MassUpdate.DownloadSample" xml:space="preserve"><value>Download sample</value></data>
+  <data name="Function.MassUpdate.SaveButton" xml:space="preserve"><value>Save</value></data>
+  <data name="Function.MassUpdate.PreviewTitle" xml:space="preserve"><value>Mass update preview</value></data>
+  <data name="Function.MassUpdate.ParseSuccess" xml:space="preserve"><value>Parsed {0} rows: {1} can be updated, {2} not found.</value></data>
+  <data name="Function.MassUpdate.SaveSuccess" xml:space="preserve"><value>Updated {0} headers ({1} Excel rows were updatable, {2} not found).</value></data>
+  <data name="Function.MassUpdate.PleaseUploadFirst" xml:space="preserve"><value>Please upload a mass update file first.</value></data>
+  <data name="Function.MassUpdate.SaveFailed" xml:space="preserve"><value>Failed to save mass updates.</value></data>
+  <data name="Function.MassUpdate.CannotSave" xml:space="preserve"><value>If any row is not found, duplicated, or invalid, the entire batch is rejected. Correct it and upload again.</value></data>
+  <data name="Function.MassUpdate.ClearValue" xml:space="preserve"><value>(clear)</value></data>
+  <data name="Function.MassUpdate.Column.Status" xml:space="preserve"><value>Can upload</value></data>
+  <data name="Function.MassUpdate.Column.RowNo" xml:space="preserve"><value>No.</value></data>
+  <data name="Function.MassUpdate.Status.Duplicate" xml:space="preserve"><value>Duplicate Invoice No in file</value></data>
+  <data name="Function.MassUpdate.Status.NotFound" xml:space="preserve"><value>Not found</value></data>
+  <data name="Function.MassUpdate.Status.Matched" xml:space="preserve"><value>{0} headers can be updated</value></data>
+  <data name="Function.MassUpdate.StatusFilter.All" xml:space="preserve"><value>All</value></data>
+  <data name="Function.MassUpdate.StatusFilter.Matched" xml:space="preserve"><value>Updatable</value></data>
   <data name="Home.Subtitle" xml:space="preserve">
     <value>ASP.NET Core MVC (.NET 9)</value>
   </data>
@@ -1168,7 +1187,7 @@
     <value>Upload File</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.MaxSizeHint" xml:space="preserve">
-    <value>Maximum file size: {0} MB</value>
+    <value>Max {0} MB per file. Supported: .xlsx, .xls, .csv</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.ImportResultTitle" xml:space="preserve">
     <value>Import Result</value>
@@ -1207,7 +1226,7 @@
     <value>This file contains invoices that already exist in the system. Check the Duplicate column in the table; you will be asked to confirm overwrite on save.</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.Column.Duplicate" xml:space="preserve">
-    <value>Duplicate</value>
+    <value>Can upload</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.Column.RowNo" xml:space="preserve">
     <value>No.</value>
@@ -1262,6 +1281,27 @@
   </data>
   <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
     <value>Shipping Report</value>
+  </data>
+  <data name="Report.HeaderTitle" xml:space="preserve">
+    <value>Header</value>
+  </data>
+  <data name="Report.DetailTitle" xml:space="preserve">
+    <value>Detail</value>
+  </data>
+  <data name="Report.DownloadExcel" xml:space="preserve">
+    <value>Download Excel</value>
+  </data>
+  <data name="Report.NoData" xml:space="preserve">
+    <value>No data found</value>
+  </data>
+  <data name="Report.NoDetailData" xml:space="preserve">
+    <value>No detail data</value>
+  </data>
+  <data name="Report.SelectHeaderFirst" xml:space="preserve">
+    <value>Please select a header first</value>
+  </data>
+  <data name="Report.DownloadFailed" xml:space="preserve">
+    <value>Failed to download Excel</value>
   </data>
   <data name="Views.Shared._SidebarNav.Setting" xml:space="preserve">
     <value>Settings</value>

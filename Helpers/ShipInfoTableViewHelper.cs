@@ -43,7 +43,7 @@ public static class ShipInfoTableViewHelper
             if (value is DateTime dateTime)
             {
                 return field.ControlType is ShipInfoControlTypes.DateTime
-                    ? dateTime.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
+                    ? dateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
                     : dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
 
@@ -55,14 +55,14 @@ public static class ShipInfoTableViewHelper
                     out var exact))
             {
                 return field.ControlType is ShipInfoControlTypes.DateTime
-                    ? exact.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
+                    ? exact.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
                     : exact.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
 
             if (DateTime.TryParse(Convert.ToString(value, CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var parsed))
             {
                 return field.ControlType is ShipInfoControlTypes.DateTime
-                    ? parsed.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
+                    ? parsed.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
                     : parsed.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
         }

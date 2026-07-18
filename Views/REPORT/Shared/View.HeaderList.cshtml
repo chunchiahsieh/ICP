@@ -1,0 +1,123 @@
+@model ICP.Models.ShipInfo.ShipInfoTableListViewModel
+@using ICP.Helpers
+@using ICP.Models.ShipInfo
+@{
+    var isHeader = string.Equals(Model.TableKind, "Header", StringComparison.OrdinalIgnoreCase);
+    var visibleFields = ShipInfoTableViewHelper.GetVisibleFields(Model.Fields);
+    var hasFilterRow = visibleFields.Any(field => field.Searchable);
+    var tableUi = Model.TableUi ?? ShipInfoTableUiOptions.MergeDefaults(null);
+    var wrapClasses = "table-responsive shipinfo-table-wrap report-table-wrap";
+    if (tableUi.StickyHeader == true)
+    {
+        wrapClasses += " shipinfo-sticky-enabled";
+    }
+
+    if (tableUi.StickyLeftColumns == true)
+    {
+        wrapClasses += " shipinfo-sticky-left-enabled";
+    }
+
+    var wrapStyle = string.IsNullOrWhiteSpace(tableUi.MaxHeight)
+        ? null
+        : $"max-height: {tableUi.MaxHeight};";
+    var tableClasses = "table table-striped table-hover table-bordered align-middle mb-0 shipinfo-pro-table w-100";
+    var theadClasses = "table-light";
+    if (tableUi.StickyHeader == true)
+    {
+        theadClasses += " shipinfo-sticky-header";
+    }
+
+    var emptyTableMessage = isHeader
+        ? Localizer["Report.NoData"].Value
+        : (!string.IsNullOrWhiteSpace(Model.SelectedHeaderKey)
+            ? Localizer["Report.NoDetailData"].Value
+            : Localizer["Report.SelectHeaderFirst"].Value);
+
+    string FormatCell(IReadOnlyDictionary<string, object?> item, ShipInfoFieldMetadata field)
+    {
+        var value = ShipInfoTableViewHelper.GetItemValue(item, field.FieldName);
+        if ((string.Equals(field.FieldName, "DepositCaseStatus", StringComparison.OrdinalIgnoreCase)
+             || string.Equals(field.FieldName, "ArurCaseStatus", StringComparison.OrdinalIgnoreCase))
+            && !string.IsNullOrWhiteSpace(Convert.ToString(value)))
+        {
+            var caseStatus = ShipInfoCaseStatusResolver.Normalize(Convert.ToString(value));
+            return Localizer[$"ShipInfo.CaseStatus.{caseStatus}"].Value;
+        }
+
+        return ShipInfoTableViewHelper.FormatCellValue(value, field);
+    }
+}
+
+<div class="@wrapClasses" @(wrapStyle is not null ? Html.Raw($"style=\"{wrapStyle}\"") : null)>
+<table id="@Model.TableId"
+       class="@tableClasses"
+       data-empty-table="@emptyTableMessage">
+    <thead class="@theadClasses">
+        <tr>
+            @if (isHeader)
+            {
+                <th class="shipinfo-radio-col sorting_disabled">
+                    <span class="visually-hidden">@Localizer["Report.SelectHeaderFirst"]</span>
+                </th>
+            }
+            @foreach (var field in visibleFields)
+            {
+                <th>@ShipInfoTableViewHelper.ResolveLabel(field, Model.Culture)</th>
+            }
+        </tr>
+        @if (hasFilterRow)
+        {
+            <tr class="users-filter-row">
+                @if (isHeader)
+                {
+                    <th class="shipinfo-radio-col sorting_disabled"></th>
+                }
+                @foreach (var field in visibleFields)
+                {
+                    <th class="sorting_disabled pro-table-filter-cell">
+                        @if (field.Searchable)
+                        {
+                            var filterId = $"filter-{Model.TableId}-{field.FieldName}";
+                            @await Html.PartialAsync("_ProDataTablesFilterByType", (filterId, field.FieldName, ShipInfoMetadataHelper.ResolveFilterType(field)))
+                        }
+                    </th>
+                }
+            </tr>
+        }
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            var entityId = ShipInfoTableViewHelper.GetItemValue(item, "Id");
+            var rowJson = ShipInfoTableViewHelper.SerializeRowData(item);
+            <tr data-entity-id="@entityId"
+                data-row="@rowJson"
+                @(isHeader ? Html.Raw($"data-header-id=\"{entityId}\"") : Html.Raw($"data-detail-id=\"{entityId}\""))>
+                @if (isHeader)
+                {
+                    <td class="shipinfo-radio-col text-center">
+                        <input type="radio"
+                               class="form-check-input report-header-radio"
+                               name="reportHeaderSelect"
+                               value="@entityId"
+                               aria-label="@Localizer["Report.SelectHeaderFirst"]" />
+                    </td>
+                }
+                @foreach (var field in visibleFields)
+                {
+                    var value = ShipInfoTableViewHelper.GetItemValue(item, field.FieldName);
+                    var formatted = FormatCell(item, field);
+                    if (string.Equals(field.FieldName, "InvoiceSeq", StringComparison.OrdinalIgnoreCase) && value is not null)
+                    {
+                        <td data-order="@Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)">@formatted</td>
+                    }
+                    else
+                    {
+                        <td>@formatted</td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

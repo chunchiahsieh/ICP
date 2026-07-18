@@ -1,0 +1,86 @@
+/* Shared chrome for Forwarder / AddDiSa / MassUpdate upload preview */
+
+.upload-page-preview-card {
+    overflow: hidden;
+}
+
+.upload-page-preview-card .card-body {
+    padding: 0;
+}
+
+.upload-page-preview-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem 0.5rem;
+}
+
+.upload-page-preview-toolbar .form-label {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+.upload-page-preview-toolbar .form-select {
+    width: auto;
+    min-width: 12rem;
+}
+
+.upload-page-preview-scroll {
+    max-height: 65vh;
+    overflow: auto;
+}
+
+.upload-page-preview-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--bs-table-bg, #f8f9fa);
+    box-shadow: 0 1px 0 var(--bs-border-color, #dee2e6);
+}
+
+.upload-page-preview-scroll table {
+    margin-bottom: 0;
+}
+
+/* MassUpdate wide tables */
+.upload-page-preview-scroll.mass-update-preview table {
+    min-width: 2200px;
+}
+
+.upload-page-preview-scroll.mass-update-preview td {
+    white-space: normal;
+}
+
+.upload-page-preview-scroll tr.mass-update-row-duplicate > td {
+    background-color: #fdeaea !important;
+}
+
+.upload-page-preview-scroll tr.mass-update-row-not-found > td {
+    background-color: #fff3cd !important;
+}
+
+.upload-page-preview-scroll.adddisa-preview .adddisa-canupload-cell {
+    white-space: normal;
+    min-width: 8rem;
+}
+
+.upload-page-preview-scroll.adddisa-preview .adddisa-canupload-label-issue {
+    display: block;
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.upload-page-preview-scroll.adddisa-preview .adddisa-canupload-label-ok {
+    color: #198754;
+    font-weight: 600;
+}
+
+.upload-page-preview-scroll.adddisa-preview tr.adddisa-row-db-duplicate > td {
+    background-color: #fdeaea !important;
+}
+
+.upload-page-preview-scroll.adddisa-preview tr.adddisa-row-invoice-inconsistent > td {
+    background-color: #fff3cd !important;
+}
