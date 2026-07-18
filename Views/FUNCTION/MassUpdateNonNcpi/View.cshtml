@@ -24,7 +24,15 @@
     </script>
 }
 
-@await Html.PartialAsync("~/Views/FUNCTION/Shared/_MassUpdateShell.cshtml", null, shellData)
+<div data-permissions="Views.Function.MassUpdateNonNcpi.View"
+     data-i18n-key="Views.Function.MassUpdateNonNcpi.View">
+    @await Html.PartialAsync("~/Views/FUNCTION/Shared/_MassUpdateShell.cshtml", null, shellData)
+    <div class="d-none" aria-hidden="true">
+        <button type="button"
+                data-permissions="Views.Function.MassUpdateNonNcpi.Upload"
+                data-i18n-key="Views.Function.MassUpdateNonNcpi.Upload">Upload</button>
+    </div>
+</div>
 
 @section Scripts {
     <script src="~/Uploader/index.js" asp-append-version="true"></script>

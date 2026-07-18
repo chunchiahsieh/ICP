@@ -4,7 +4,10 @@
 @section Styles {
     @await Html.PartialAsync("~/Views/Report/Shared/_ReportStyles.cshtml")
 }
-@await Html.PartialAsync("~/Views/Report/Shared/_ReportShell.cshtml")
+<div data-permissions="Views.Report.CompareIcpVsArUr.View"
+     data-i18n-key="Views.Report.CompareIcpVsArUr.View">
+    @await Html.PartialAsync("~/Views/Report/Shared/_ReportShell.cshtml")
+</div>
 @section Scripts {
     @await Html.PartialAsync("~/Views/Report/Shared/_ReportScripts.cshtml")
 }

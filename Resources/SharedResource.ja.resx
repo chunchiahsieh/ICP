@@ -795,6 +795,9 @@
   <data name="Function.MassUpdateNcpi.MaxSizeHint" xml:space="preserve">
     <value>1ファイルあたり最大 {0} MB。.xlsx、.xls、.csv に対応</value>
   </data>
+  <data name="Views.Function.MassUpdateNcpi.View" xml:space="preserve">
+    <value>一括更新 (NCPI) 照会</value>
+  </data>
   <data name="Views.Function.MassUpdateNcpi.Upload" xml:space="preserve">
     <value>NCPI 一括更新アップロード</value>
   </data>
@@ -806,6 +809,9 @@
   </data>
   <data name="Function.MassUpdateNonNcpi.MaxSizeHint" xml:space="preserve">
     <value>1ファイルあたり最大 {0} MB。.xlsx、.xls、.csv に対応</value>
+  </data>
+  <data name="Views.Function.MassUpdateNonNcpi.View" xml:space="preserve">
+    <value>一括更新 (非 NCPI) 照会</value>
   </data>
   <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
     <value>非 NCPI 一括更新アップロード</value>
@@ -1029,6 +1035,9 @@
   </data>
   <data name="Views.Shared._SidebarNav.Broker" xml:space="preserve">
     <value>通関</value>
+  </data>
+  <data name="Views.Broker.CustomsDataDownload.View" xml:space="preserve">
+    <value>通関データダウンロード照会</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
     <value>通関データダウンロード</value>
@@ -1255,6 +1264,9 @@
   <data name="Views.Shared._SidebarNav.Function.AddDiSa" xml:space="preserve">
     <value>DI/SA 追加</value>
   </data>
+  <data name="Views.Function.Export.View" xml:space="preserve">
+    <value>エクスポート照会</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Function.Export" xml:space="preserve">
     <value>エクスポート</value>
   </data>
@@ -1281,6 +1293,15 @@
   </data>
   <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
     <value>船積レポート</value>
+  </data>
+  <data name="Views.Report.CompareIcpVsArUr.View" xml:space="preserve">
+    <value>ICP と AR/UR 比較照会</value>
+  </data>
+  <data name="Views.Report.MassDataReport.View" xml:space="preserve">
+    <value>一括データレポート照会</value>
+  </data>
+  <data name="Views.Report.ShippingReport.View" xml:space="preserve">
+    <value>船積レポート照会</value>
   </data>
   <data name="Report.HeaderTitle" xml:space="preserve">
     <value>ヘッダー</value>

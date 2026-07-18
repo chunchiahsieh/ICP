@@ -795,6 +795,9 @@
   <data name="Function.MassUpdateNcpi.MaxSizeHint" xml:space="preserve">
     <value>單檔上限 {0} MB，支援 .xlsx、.xls、.csv</value>
   </data>
+  <data name="Views.Function.MassUpdateNcpi.View" xml:space="preserve">
+    <value>大量更新 (NCPI) 查詢</value>
+  </data>
   <data name="Views.Function.MassUpdateNcpi.Upload" xml:space="preserve">
     <value>NCPI 批次更新上傳</value>
   </data>
@@ -806,6 +809,9 @@
   </data>
   <data name="Function.MassUpdateNonNcpi.MaxSizeHint" xml:space="preserve">
     <value>單檔上限 {0} MB，支援 .xlsx、.xls、.csv</value>
+  </data>
+  <data name="Views.Function.MassUpdateNonNcpi.View" xml:space="preserve">
+    <value>大量更新 (非 NCPI) 查詢</value>
   </data>
   <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
     <value>非 NCPI 批次更新上傳</value>
@@ -1029,6 +1035,9 @@
   </data>
   <data name="Views.Shared._SidebarNav.Broker" xml:space="preserve">
     <value>報關</value>
+  </data>
+  <data name="Views.Broker.CustomsDataDownload.View" xml:space="preserve">
+    <value>關務資料下載查詢</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
     <value>關務資料下載</value>
@@ -1255,6 +1264,9 @@
   <data name="Views.Shared._SidebarNav.Function.AddDiSa" xml:space="preserve">
     <value>新增 DI/SA</value>
   </data>
+  <data name="Views.Function.Export.View" xml:space="preserve">
+    <value>匯出查詢</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Function.Export" xml:space="preserve">
     <value>匯出</value>
   </data>
@@ -1281,6 +1293,15 @@
   </data>
   <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
     <value>船務報表</value>
+  </data>
+  <data name="Views.Report.CompareIcpVsArUr.View" xml:space="preserve">
+    <value>ICP 與 AR/UR 比對查詢</value>
+  </data>
+  <data name="Views.Report.MassDataReport.View" xml:space="preserve">
+    <value>大量資料報表查詢</value>
+  </data>
+  <data name="Views.Report.ShippingReport.View" xml:space="preserve">
+    <value>船務報表查詢</value>
   </data>
   <data name="Report.HeaderTitle" xml:space="preserve">
     <value>表頭</value>

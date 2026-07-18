@@ -36,7 +36,8 @@ public partial class PermissionScannerService
                     continue;
                 }
 
-                if (resourceCode.StartsWith('@'))
+                // Skip Razor expressions (e.g. "@permissionPrefix" or "Views....@controllerName").
+                if (resourceCode.Contains('@', StringComparison.Ordinal))
                 {
                     continue;
                 }

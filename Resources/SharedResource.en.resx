@@ -795,6 +795,9 @@
   <data name="Function.MassUpdateNcpi.MaxSizeHint" xml:space="preserve">
     <value>Max {0} MB per file. Supported: .xlsx, .xls, .csv</value>
   </data>
+  <data name="Views.Function.MassUpdateNcpi.View" xml:space="preserve">
+    <value>Mass Update (NCPI) View</value>
+  </data>
   <data name="Views.Function.MassUpdateNcpi.Upload" xml:space="preserve">
     <value>NCPI mass update upload</value>
   </data>
@@ -806,6 +809,9 @@
   </data>
   <data name="Function.MassUpdateNonNcpi.MaxSizeHint" xml:space="preserve">
     <value>Max {0} MB per file. Supported: .xlsx, .xls, .csv</value>
+  </data>
+  <data name="Views.Function.MassUpdateNonNcpi.View" xml:space="preserve">
+    <value>Mass Update (non-NCPI) View</value>
   </data>
   <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
     <value>Non-NCPI mass update upload</value>
@@ -1029,6 +1035,9 @@
   </data>
   <data name="Views.Shared._SidebarNav.Broker" xml:space="preserve">
     <value>Broker</value>
+  </data>
+  <data name="Views.Broker.CustomsDataDownload.View" xml:space="preserve">
+    <value>Customs Data Download View</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
     <value>Customs Data Download</value>
@@ -1255,6 +1264,9 @@
   <data name="Views.Shared._SidebarNav.Function.AddDiSa" xml:space="preserve">
     <value>Add DI/SA</value>
   </data>
+  <data name="Views.Function.Export.View" xml:space="preserve">
+    <value>Export View</value>
+  </data>
   <data name="Views.Shared._SidebarNav.Function.Export" xml:space="preserve">
     <value>Export</value>
   </data>
@@ -1281,6 +1293,15 @@
   </data>
   <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
     <value>Shipping Report</value>
+  </data>
+  <data name="Views.Report.CompareIcpVsArUr.View" xml:space="preserve">
+    <value>Compare ICP vs AR/UR View</value>
+  </data>
+  <data name="Views.Report.MassDataReport.View" xml:space="preserve">
+    <value>Mass Data Report View</value>
+  </data>
+  <data name="Views.Report.ShippingReport.View" xml:space="preserve">
+    <value>Shipping Report View</value>
   </data>
   <data name="Report.HeaderTitle" xml:space="preserve">
     <value>Header</value>

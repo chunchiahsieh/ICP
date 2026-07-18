@@ -60,18 +60,18 @@ public static class PermissionRequestResolver
             if (action.Equals("DownloadAttachment", StringComparison.OrdinalIgnoreCase)
                 && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
-                return ResolveIfRegistered(registry, "Views.Broker.TariffData.View");
+                return "Views.Broker.TariffData.View";
             }
 
             if (IsReadAction(action))
             {
-                return ResolveIfRegistered(registry, "Views.Broker.TariffData.View");
+                return "Views.Broker.TariffData.View";
             }
 
             if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
                 && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
-                return ResolveIfRegistered(registry, "Views.Broker.TariffData.View");
+                return "Views.Broker.TariffData.View";
             }
         }
 
@@ -93,9 +93,11 @@ public static class PermissionRequestResolver
                 return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.Upload");
             }
 
-            if (IsReadAction(action))
+            if (IsReadAction(action)
+                || (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
+                    && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase)))
             {
-                return ResolveIfRegistered(registry, "Views.Forwarder.ForwarderDataUpload.View");
+                return "Views.Forwarder.ForwarderDataUpload.View";
             }
         }
 
@@ -116,16 +118,11 @@ public static class PermissionRequestResolver
                 return ResolveIfRegistered(registry, "Views.Function.AddDiSa.Upload");
             }
 
-            if (IsReadAction(action))
+            if (IsReadAction(action)
+                || (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
+                    && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase)))
             {
-                return ResolveIfRegistered(registry, "Views.Function.AddDiSa.View")
-                    ?? ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.AddDiSa");
-            }
-
-            if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
-                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
-            {
-                return ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.AddDiSa");
+                return "Views.Function.AddDiSa.View";
             }
         }
 
@@ -149,7 +146,7 @@ public static class PermissionRequestResolver
             if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
                 && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
-                return ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.MassUpdateNcpi");
+                return "Views.Function.MassUpdateNcpi.View";
             }
         }
 
@@ -173,7 +170,7 @@ public static class PermissionRequestResolver
             if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
                 && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
-                return ResolveIfRegistered(registry, "Views.Shared._SidebarNav.Function.MassUpdateNonNcpi");
+                return "Views.Function.MassUpdateNonNcpi.View";
             }
         }
 
@@ -184,42 +181,48 @@ public static class PermissionRequestResolver
             if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
                 && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
-                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Report.{controller}");
+                return $"Views.Report.{controller}.View";
             }
 
             if (IsReadAction(action)
                 || action.Equals("GetPageConfig", StringComparison.OrdinalIgnoreCase)
                 || action.Equals("DownloadExcel", StringComparison.OrdinalIgnoreCase))
             {
-                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Report.{controller}");
+                return $"Views.Report.{controller}.View";
             }
         }
 
         if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
             && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
         {
+            var route = PermissionRouteNormalizer.ControllerToRoute(controller);
+            var pageCode = registry.FindPageResourceCodeByRoute(route);
+            if (pageCode is not null)
+            {
+                return pageCode;
+            }
+
             if (SettingCategories.IsKnown(controller))
             {
-                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Setting.{controller}");
+                return $"Views.Setting.{controller}.View";
             }
 
             if (FunctionCategories.IsKnown(controller))
             {
-                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Function.{controller}");
+                return $"Views.Function.{controller}.View";
             }
 
             if (ReportCategories.IsKnown(controller))
             {
-                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Report.{controller}");
+                return $"Views.Report.{controller}.View";
             }
 
             if (BrokerCategories.IsKnown(controller))
             {
-                return ResolveIfRegistered(registry, $"Views.Shared._SidebarNav.Broker.{controller}");
+                return $"Views.Broker.{controller}.View";
             }
 
-            var route = PermissionRouteNormalizer.ControllerToRoute(controller);
-            return registry.FindPageResourceCodeByRoute(route);
+            return null;
         }
 
         var suffix = ResolveActionSuffix(action, actionArguments);
