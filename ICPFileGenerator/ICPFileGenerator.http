@@ -1,0 +1,16 @@
+@ICPFileGenerator_HostAddress = http://localhost:5208
+
+GET {{ICPFileGenerator_HostAddress}}/api/system/status
+Accept: application/json
+
+###
+
+GET {{ICPFileGenerator_HostAddress}}/api/file-generation-jobs
+Accept: application/json
+
+###
+
+GET {{ICPFileGenerator_HostAddress}}/api/file-generation-jobs?status=Completed
+Accept: application/json
+
+###

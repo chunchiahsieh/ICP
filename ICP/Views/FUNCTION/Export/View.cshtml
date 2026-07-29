@@ -1,0 +1,73 @@
+@model IReadOnlyList<ICP.Models.Icp.ExportRequest>
+@using System.Globalization
+@using ICP.Models.Icp
+@{
+    ViewData["Title"] = Localizer["Views.Shared._SidebarNav.Function.Export"];
+}
+
+<div data-permissions="Views.Function.Export.View"
+     data-i18n-key="Views.Function.Export.View">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+        <h4 class="mb-0">@Localizer["Views.Shared._SidebarNav.Function.Export"] (Demo)</h4>
+    </div>
+
+    @if (TempData["ExportOk"] is string ok)
+    {
+        <div class="alert alert-success">@ok</div>
+    }
+    @if (TempData["ExportError"] is string err)
+    {
+        <div class="alert alert-danger">@err</div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Upload" asp-controller="Export" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label class="form-label" for="file">Upload file</label>
+                    <input class="form-control" type="file" id="file" name="file" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Upload &amp; notify Hub</button>
+            </form>
+            <p class="text-muted small mt-2 mb-0">
+                Demo flow: ICP stores file + EXPORT_REQUEST → Hub creates FileGenerator Job → Worker completes → Hub updates ICP status.
+            </p>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>RequestId</th>
+                    <th>FileName</th>
+                    <th>Status</th>
+                    <th>CreateTime</th>
+                    <th>UpdateTime</th>
+                    <th>Error</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model is null || Model.Count == 0)
+            {
+                <tr><td colspan="6" class="text-muted">No export requests yet.</td></tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td><code>@item.Id.ToString("D")</code></td>
+                        <td>@item.FileName</td>
+                        <td>@item.Status</td>
+                        <td>@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)</td>
+                        <td>@(item.UpdateTime?.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) ?? "-")</td>
+                        <td class="small text-danger">@(item.ErrorMessage ?? "-")</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
