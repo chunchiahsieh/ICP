@@ -56,7 +56,7 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
             var updated = await cmd.ExecuteNonQueryAsync(cancellationToken);
             if (updated == 0)
             {
-                throw new InvalidOperationException($"EXPORT_REQUEST {request.RequestId:D} not found.");
+                ThrowNotFound(request.RequestId);
             }
         }
 
@@ -170,9 +170,24 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
         var updated = await cmd.ExecuteNonQueryAsync(cancellationToken);
         if (updated == 0)
         {
-            throw new InvalidOperationException($"EXPORT_REQUEST {requestId:D} not found.");
+            ThrowNotFound(requestId);
         }
 
         _logger.LogInformation("Demo: ExportRequest {RequestId} → {Status}", requestId, status);
+    }
+
+    private void ThrowNotFound(Guid requestId)
+    {
+        var builder = new SqlConnectionStringBuilder(_icpConnection);
+        var dataSource = builder.DataSource;
+        var catalog = builder.InitialCatalog;
+
+        _logger.LogWarning(
+            "EXPORT_REQUEST {RequestId} not found. Hub ICP_Connection DataSource={DataSource} Database={Database}",
+            requestId,
+            dataSource,
+            catalog);
+
+        throw new ExportRequestNotFoundException(requestId, dataSource, catalog);
     }
 }

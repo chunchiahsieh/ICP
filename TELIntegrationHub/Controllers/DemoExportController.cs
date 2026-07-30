@@ -20,8 +20,21 @@ public class DemoExportController : ControllerBase
         [FromBody] DemoExportRequestDto request,
         CancellationToken cancellationToken)
     {
-        await _orchestration.AcceptExportRequestAsync(request, cancellationToken);
-        return Ok(new { status = "accepted", requestId = request.RequestId });
+        try
+        {
+            await _orchestration.AcceptExportRequestAsync(request, cancellationToken);
+            return Ok(new { status = "accepted", requestId = request.RequestId });
+        }
+        catch (ExportRequestNotFoundException ex)
+        {
+            return NotFound(new
+            {
+                error = ex.Message,
+                requestId = ex.RequestId,
+                dataSource = ex.DataSource,
+                initialCatalog = ex.InitialCatalog
+            });
+        }
     }
 
     [HttpPost("file-jobs/completed")]
@@ -29,8 +42,21 @@ public class DemoExportController : ControllerBase
         [FromBody] DemoFileJobCompletedDto body,
         CancellationToken cancellationToken)
     {
-        await _orchestration.MarkExportCompletedAsync(body.RequestId, cancellationToken);
-        return Ok(new { status = "completed", body.RequestId });
+        try
+        {
+            await _orchestration.MarkExportCompletedAsync(body.RequestId, cancellationToken);
+            return Ok(new { status = "completed", body.RequestId });
+        }
+        catch (ExportRequestNotFoundException ex)
+        {
+            return NotFound(new
+            {
+                error = ex.Message,
+                requestId = ex.RequestId,
+                dataSource = ex.DataSource,
+                initialCatalog = ex.InitialCatalog
+            });
+        }
     }
 
     [HttpPost("file-jobs/failed")]
@@ -38,7 +64,20 @@ public class DemoExportController : ControllerBase
         [FromBody] DemoFileJobFailedDto body,
         CancellationToken cancellationToken)
     {
-        await _orchestration.MarkExportFailedAsync(body.RequestId, body.Error ?? "Unknown error", cancellationToken);
-        return Ok(new { status = "failed", body.RequestId });
+        try
+        {
+            await _orchestration.MarkExportFailedAsync(body.RequestId, body.Error ?? "Unknown error", cancellationToken);
+            return Ok(new { status = "failed", body.RequestId });
+        }
+        catch (ExportRequestNotFoundException ex)
+        {
+            return NotFound(new
+            {
+                error = ex.Message,
+                requestId = ex.RequestId,
+                dataSource = ex.DataSource,
+                initialCatalog = ex.InitialCatalog
+            });
+        }
     }
 }

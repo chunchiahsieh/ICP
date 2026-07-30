@@ -17,6 +17,12 @@
 | Hub | `ICP_Connection`、`ICPFileGenerator`（`TEL-ICPFileGenerator`） |
 | FileGen | `FileGenerator:Hub:BaseUrl` = `http://localhost:5261` |
 
+### 重要：ICP 與 Hub 必須同一 ICP 資料庫
+
+兩邊的 **`ConnectionStrings:ICP_Connection`** 必須指向**同一個** Server／Database（本機 AGA 預設皆為 `TEL-ICP`）。
+
+若不一致，Hub 更新 `EXPORT_REQUEST` 會找不到列，Demo API 回傳 **HTTP 404**，訊息會帶出 Hub 實際連到的 `Data Source`／`Initial Catalog`，方便對照 ICP 組態。
+
 ## 操作
 
 1. 開啟 ICP **Function → Export**
