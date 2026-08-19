@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36915.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICP", "ICP\ICP.csproj", "{590D350F-EECE-878C-828D-6057DBC3C9FF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TELIntegrationHub", "TELIntegrationHub", "{CC03B77E-1E10-034F-5EF1-49AE6677011D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEL.IntegrationHub", "TELIntegrationHub\TEL.IntegrationHub.csproj", "{2A9EDB93-4F4C-48C6-9BB3-27A518504DEC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICPFileGenerator", "ICPFileGenerator\ICPFileGenerator.csproj", "{E42C12C7-57AE-444D-B3D6-AD9431D4B0D9}"
@@ -60,9 +58,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{2A9EDB93-4F4C-48C6-9BB3-27A518504DEC} = {CC03B77E-1E10-034F-5EF1-49AE6677011D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {87323592-342B-4134-A32D-D51F5E0AABFA}

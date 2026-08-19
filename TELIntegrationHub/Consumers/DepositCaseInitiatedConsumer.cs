@@ -107,6 +107,8 @@ public sealed class DepositCaseInitiatedConsumer : IConsumer<JsonDocument>
             {
                 await _outboxCompletion.MarkCompletedAsync(message.MessageId, cancellationToken);
             }
+
+
         }
         catch (Exception ex)
         {

@@ -65,6 +65,10 @@ public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
             {
                 await _outboxCompletion.MarkCompletedAsync(message.MessageId, context.CancellationToken);
             }
+
+            //ARUR起案logic
+
+
         }
         catch (Exception ex)
         {
