@@ -104,11 +104,27 @@ ICP 在押金或 ARUR 起案成功後，會將**標準 Event Envelope**（含業
 2. 再按同一按鈕會將該 `HeaderKey`+`CaseType` 最新 Failed 列重設為 `Pending`（`RetryCount=0`），**不重產案號**、不改 case 狀態。
 3. 既有 `IntegrationEventOutboxPublisherWorker` 會再次發布。
 
-## Hub 尚未就緒時
+## Hub 消費（押金起案 → ILC）
 
-1. 維持 `Integration:RabbitMq:Enabled: false`。
-2. 照常起案；查詢 Outbox 確認 Envelope／`payload`。
-3. RabbitMQ 與 Hub 就緒後設 `Enabled: true`。
+`DepositCaseInitiatedConsumer`（`caseType=Deposit`）會：
+
+1. 寫入 ILC `dbo.Deposit_Head`／`Deposit_Import`／`Deposit_Buyer`（同一交易；僅使用欄位）
+2. MessageLog Success
+3. 將 ICP Outbox 標為 `Completed`
+
+連線：`ConnectionStrings:ILC_Connection`（例：`tetis87146` / `ILC`）。
+
+同一 `InvNo` 若 Head 已存在則略過 INSERT（冪等），仍標 Completed。
+
+## Hub 消費（ARUR 起案 → ILC）
+
+`ArurCaseInitiatedConsumer`（`caseType=ARUR`）會：
+
+1. 寫入 ILC `dbo.RT_ARUR_HEADER`（僅使用欄位；`CreateSys=I`、`Status=0`、`ArrivalType=1`）
+2. MessageLog Success
+3. 將 ICP Outbox 標為 `Completed`
+
+同一 `RT_NO` 已存在則略過 INSERT（冪等），仍標 Completed。
 
 ## 相關程式
 
@@ -122,5 +138,5 @@ ICP 在押金或 ARUR 起案成功後，會將**標準 Event Envelope**（含業
 
 ## 不在範圍
 
-- Hub 回寫 ICP／GEM／ARUR **業務表**（Outbox `Completed` 狀態回寫已實作）
+- Hub 回寫 GEM **業務表**（押金／ARUR 寫入 ILC 已實作）
 - Export 頁 Outbox 發送（契約由 Hub 預留）

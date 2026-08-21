@@ -15,6 +15,10 @@ public class ExportRequest
     [MaxLength(1024)]
     public string StoredPath { get; set; } = string.Empty;
 
+    /// <summary>Generated output folder path (Excel + PDFs), shared host with FileGenerator.</summary>
+    [MaxLength(1024)]
+    public string? OutputFilePath { get; set; }
+
     [MaxLength(32)]
     public string Status { get; set; } = ExportRequestStatuses.Pending;
 

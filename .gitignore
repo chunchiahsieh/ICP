@@ -34,6 +34,9 @@ ScaffoldingReadMe.txt
 ## Runtime uploads
 uploads/
 
+## Export generated files (under ICP project)
+ICP/ICPFileGenerator/
+
 ## Secrets (keep local overrides out of repo)
 appsettings.json
 appsettings.Development.json

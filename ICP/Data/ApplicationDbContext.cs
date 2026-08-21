@@ -331,6 +331,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.FileName).HasMaxLength(260).IsRequired();
             entity.Property(e => e.StoredPath).HasMaxLength(1024).IsRequired();
+            entity.Property(e => e.OutputFilePath).HasMaxLength(1024);
             entity.Property(e => e.Status).HasMaxLength(32).IsRequired();
             entity.Property(e => e.ErrorMessage).HasMaxLength(2000);
             entity.Property(e => e.CreateTime).HasDefaultValueSql("sysutcdatetime()").IsRequired();

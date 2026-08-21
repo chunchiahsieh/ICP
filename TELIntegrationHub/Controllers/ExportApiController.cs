@@ -5,19 +5,19 @@ using TEL.IntegrationHub.Services;
 namespace TEL.IntegrationHub.Controllers;
 
 [ApiController]
-[Route("api/demo")]
-public class DemoExportController : ControllerBase
+[Route("api/export")]
+public class ExportApiController : ControllerBase
 {
-    private readonly IExportDemoOrchestrationService _orchestration;
+    private readonly IExportOrchestrationService _orchestration;
 
-    public DemoExportController(IExportDemoOrchestrationService orchestration)
+    public ExportApiController(IExportOrchestrationService orchestration)
     {
         _orchestration = orchestration;
     }
 
     [HttpPost("export-requests")]
     public async Task<IActionResult> AcceptExportRequest(
-        [FromBody] DemoExportRequestDto request,
+        [FromBody] ExportRequestDto request,
         CancellationToken cancellationToken)
     {
         try
@@ -39,13 +39,16 @@ public class DemoExportController : ControllerBase
 
     [HttpPost("file-jobs/completed")]
     public async Task<IActionResult> FileJobCompleted(
-        [FromBody] DemoFileJobCompletedDto body,
+        [FromBody] FileJobCompletedDto body,
         CancellationToken cancellationToken)
     {
         try
         {
-            await _orchestration.MarkExportCompletedAsync(body.RequestId, cancellationToken);
-            return Ok(new { status = "completed", body.RequestId });
+            await _orchestration.MarkExportCompletedAsync(
+                body.RequestId,
+                body.OutputFilePath,
+                cancellationToken);
+            return Ok(new { status = "completed", body.RequestId, body.OutputFilePath });
         }
         catch (ExportRequestNotFoundException ex)
         {
@@ -61,7 +64,7 @@ public class DemoExportController : ControllerBase
 
     [HttpPost("file-jobs/failed")]
     public async Task<IActionResult> FileJobFailed(
-        [FromBody] DemoFileJobFailedDto body,
+        [FromBody] FileJobFailedDto body,
         CancellationToken cancellationToken)
     {
         try

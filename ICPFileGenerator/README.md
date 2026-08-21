@@ -82,6 +82,6 @@ dotnet run --project ICPFileGenerator/ICPFileGenerator.csproj --launch-profile h
 | GET | `/api/file-generation-jobs/{id}` |
 | GET | `/api/file-generation-jobs/request/{requestId}` |
 
-## Export Demo
+## Export
 
-見 [`docs/export-demo.md`](docs/export-demo.md)：ICP 上傳 → Hub → FileGen（略過產檔）→ Hub 回寫 ICP。
+見 [`docs/export.md`](docs/export.md)：ICP 上傳 → Hub → FileGen 產檔 → Hub 回寫 ICP。

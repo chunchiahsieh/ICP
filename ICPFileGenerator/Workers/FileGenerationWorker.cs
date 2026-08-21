@@ -100,7 +100,7 @@ public sealed class FileGenerationWorker : BackgroundService
             }
 
             await jobs.MarkCompletedAsync(job.Id, result.OutputFilePath, cancellationToken);
-            await hub.NotifyCompletedAsync(job.RequestId, cancellationToken);
+            await hub.NotifyCompletedAsync(job.RequestId, result.OutputFilePath, cancellationToken);
         }
         catch (Exception ex)
         {

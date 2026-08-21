@@ -8,7 +8,7 @@
 <div data-permissions="Views.Function.Export.View"
      data-i18n-key="Views.Function.Export.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
-        <h4 class="mb-0">@Localizer["Views.Shared._SidebarNav.Function.Export"] (Demo)</h4>
+        <h4 class="mb-0">@Localizer["Views.Shared._SidebarNav.Function.Export"]</h4>
     </div>
 
     @if (TempData["ExportOk"] is string ok)
@@ -25,13 +25,14 @@
             <form asp-action="Upload" asp-controller="Export" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
                 <div class="mb-3">
-                    <label class="form-label" for="file">Upload file</label>
-                    <input class="form-control" type="file" id="file" name="file" required />
+                    <label class="form-label" for="file">Upload Shipping advice Excel</label>
+                    <input class="form-control" type="file" id="file" name="file" accept=".xlsx,.xls" required />
                 </div>
                 <button type="submit" class="btn btn-primary">Upload &amp; notify Hub</button>
             </form>
             <p class="text-muted small mt-2 mb-0">
-                Demo flow: ICP stores file + EXPORT_REQUEST → Hub creates FileGenerator Job → Worker completes → Hub updates ICP status.
+                Flow: ICP upload → Hub Job (ShippingAdvice) → FileGenerator writes PickupNotice Excel + Case Mark PDFs
+                under shared OutputDirectory/{RequestId}/ → Completed → View files.
             </p>
         </div>
     </div>
@@ -46,12 +47,13 @@
                     <th>CreateTime</th>
                     <th>UpdateTime</th>
                     <th>Error</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
             @if (Model is null || Model.Count == 0)
             {
-                <tr><td colspan="6" class="text-muted">No export requests yet.</td></tr>
+                <tr><td colspan="7" class="text-muted">No export requests yet.</td></tr>
             }
             else
             {
@@ -64,6 +66,20 @@
                         <td>@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)</td>
                         <td>@(item.UpdateTime?.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) ?? "-")</td>
                         <td class="small text-danger">@(item.ErrorMessage ?? "-")</td>
+                        <td>
+                            @if (string.Equals(item.Status, ExportRequestStatuses.Completed, StringComparison.OrdinalIgnoreCase))
+                            {
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-primary js-export-files"
+                                        data-request-id="@item.Id.ToString("D")">
+                                    View files
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
                     </tr>
                 }
             }
@@ -71,3 +87,89 @@
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="exportFilesModal" tabindex="-1" aria-labelledby="exportFilesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportFilesModalLabel">Export output files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-muted mb-2" id="exportFilesPath"></p>
+                <div class="d-flex justify-content-end mb-2">
+                    <a id="exportDownloadAll" class="btn btn-sm btn-primary" href="#" style="display:none;">Download all (zip)</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>File</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="exportFilesBody">
+                        </tbody>
+                    </table>
+                </div>
+                <p id="exportFilesEmpty" class="text-muted mb-0" style="display:none;">No files found in output folder.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    document.querySelectorAll('.js-export-files').forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+            var requestId = btn.getAttribute('data-request-id');
+            var body = document.getElementById('exportFilesBody');
+            var empty = document.getElementById('exportFilesEmpty');
+            var pathEl = document.getElementById('exportFilesPath');
+            var zipBtn = document.getElementById('exportDownloadAll');
+            body.innerHTML = '';
+            empty.style.display = 'none';
+            zipBtn.style.display = 'none';
+            pathEl.textContent = 'Loading...';
+
+            try {
+                var res = await fetch('@Url.Action("Files", "Export")?id=' + encodeURIComponent(requestId));
+                if (!res.ok) throw new Error('Failed to load files (' + res.status + ')');
+                var data = await res.json();
+                pathEl.textContent = data.displayPath || ('RequestId: ' + requestId);
+
+                if (!data.files || data.files.length === 0) {
+                    empty.style.display = 'block';
+                } else {
+                    data.files.forEach(function (f) {
+                        var tr = document.createElement('tr');
+                        tr.innerHTML =
+                            '<td>' + f.fileName + '</td>' +
+                            '<td>' + (f.extension || '') + '</td>' +
+                            '<td>' + formatSize(f.sizeBytes || 0) + '</td>' +
+                            '<td><a class="btn btn-sm btn-outline-secondary" href="' + f.downloadUrl + '">Download</a></td>';
+                        body.appendChild(tr);
+                    });
+                    zipBtn.href = '@Url.Action("DownloadAll", "Export")?id=' + encodeURIComponent(requestId);
+                    zipBtn.style.display = 'inline-block';
+                }
+
+                var modal = new bootstrap.Modal(document.getElementById('exportFilesModal'));
+                modal.show();
+            } catch (e) {
+                pathEl.textContent = e.message || String(e);
+                var modal = new bootstrap.Modal(document.getElementById('exportFilesModal'));
+                modal.show();
+            }
+        });
+    });
+})();
+</script>

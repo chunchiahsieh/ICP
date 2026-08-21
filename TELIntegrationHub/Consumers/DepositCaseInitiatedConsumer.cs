@@ -5,20 +5,23 @@ using TEL.IntegrationHub.Services;
 
 namespace TEL.IntegrationHub.Consumers;
 
-/// <summary>Consumes icp.shipinfo.case.initiated when payload.caseType = Deposit.</summary>
+/// <summary>Consumes icp.shipinfo.case.initiated when payload.caseType = Deposit; writes ILC Deposit tables.</summary>
 public sealed class DepositCaseInitiatedConsumer : IConsumer<JsonDocument>
 {
     private readonly IMessageLogService _messageLogService;
     private readonly IIcpOutboxCompletionService _outboxCompletion;
+    private readonly IIlcDepositWriteService _ilcDepositWrite;
     private readonly ILogger<DepositCaseInitiatedConsumer> _logger;
 
     public DepositCaseInitiatedConsumer(
         IMessageLogService messageLogService,
         IIcpOutboxCompletionService outboxCompletion,
+        IIlcDepositWriteService ilcDepositWrite,
         ILogger<DepositCaseInitiatedConsumer> logger)
     {
         _messageLogService = messageLogService;
         _outboxCompletion = outboxCompletion;
+        _ilcDepositWrite = ilcDepositWrite;
         _logger = logger;
     }
 
@@ -97,22 +100,24 @@ public sealed class DepositCaseInitiatedConsumer : IConsumer<JsonDocument>
 
         try
         {
+            var writeResult = await _ilcDepositWrite.WriteFromShipInfoCaseAsync(message, cancellationToken);
             _logger.LogInformation(
-                "Handled 押金起案 event {MessageId} caseNo={CaseNo} correlationId={CorrelationId}",
+                "Handled Deposit case event {MessageId} caseNo={CaseNo} InvNo={CorrelationId} HeadKeyId={HeadKeyId} skippedDuplicate={Skipped}",
                 messageId,
                 message.Payload?.CaseNo,
-                message.CorrelationId);
+                message.CorrelationId,
+                writeResult.HeadKeyId,
+                writeResult.SkippedDuplicate);
+
             await _messageLogService.MarkSuccessAsync(log.Id, cancellationToken);
             if (message.MessageId != Guid.Empty)
             {
                 await _outboxCompletion.MarkCompletedAsync(message.MessageId, cancellationToken);
             }
-
-
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed handling 押金起案 event {MessageId}", messageId);
+            _logger.LogError(ex, "Failed handling Deposit case event {MessageId}", messageId);
             await _messageLogService.MarkFailedAsync(log.Id, ex.Message, cancellationToken);
             throw;
         }

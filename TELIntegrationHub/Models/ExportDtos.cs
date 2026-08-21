@@ -1,6 +1,6 @@
 namespace TEL.IntegrationHub.Models;
 
-public class DemoExportRequestDto
+public class ExportRequestDto
 {
     public Guid RequestId { get; set; }
 
@@ -11,12 +11,15 @@ public class DemoExportRequestDto
     public string? StoredPath { get; set; }
 }
 
-public class DemoFileJobCompletedDto
+public class FileJobCompletedDto
 {
     public Guid RequestId { get; set; }
+
+    /// <summary>Folder path containing generated Excel/PDF (same host as ICP).</summary>
+    public string? OutputFilePath { get; set; }
 }
 
-public class DemoFileJobFailedDto
+public class FileJobFailedDto
 {
     public Guid RequestId { get; set; }
 

@@ -37,6 +37,7 @@ public static class IntegrationSchemaInitializer
                 Id UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_EXPORT_REQUEST PRIMARY KEY,
                 FileName NVARCHAR(260) NOT NULL,
                 StoredPath NVARCHAR(1024) NOT NULL,
+                OutputFilePath NVARCHAR(1024) NULL,
                 Status NVARCHAR(32) NOT NULL,
                 ErrorMessage NVARCHAR(2000) NULL,
                 CreateTime DATETIME2 NOT NULL CONSTRAINT DF_EXPORT_REQUEST_CreateTime DEFAULT (SYSUTCDATETIME()),
@@ -45,6 +46,12 @@ public static class IntegrationSchemaInitializer
 
             CREATE INDEX IX_EXPORT_REQUEST_Status
                 ON dbo.EXPORT_REQUEST (Status);
+        END
+
+        IF OBJECT_ID(N'dbo.EXPORT_REQUEST', N'U') IS NOT NULL
+           AND COL_LENGTH(N'dbo.EXPORT_REQUEST', N'OutputFilePath') IS NULL
+        BEGIN
+            ALTER TABLE dbo.EXPORT_REQUEST ADD OutputFilePath NVARCHAR(1024) NULL;
         END
         """;
 

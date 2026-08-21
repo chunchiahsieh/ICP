@@ -8,7 +8,11 @@ public class FileGeneratorOptions
 
     public string WorkerId { get; set; } = "ICPFileGenerator-01";
 
-    public string OutputDirectory { get; set; } = "Output";
+    /// <summary>
+    /// Shared with ICP Integration:Export:OutputDirectory (same host).
+    /// Default points at ICP project folder <c>ICPFileGenerator</c>.
+    /// </summary>
+    public string OutputDirectory { get; set; } = @"..\ICP\ICPFileGenerator";
 
     public int ProcessingTimeoutMinutes { get; set; } = 30;
 

@@ -21,25 +21,29 @@ public sealed class HubNotificationService : IHubNotificationService
         _logger = logger;
     }
 
-    public async Task NotifyCompletedAsync(Guid requestId, CancellationToken cancellationToken = default)
+    public async Task NotifyCompletedAsync(
+        Guid requestId,
+        string? outputFilePath,
+        CancellationToken cancellationToken = default)
     {
-        var client = _httpClientFactory.CreateClient("HubDemo");
+        var client = _httpClientFactory.CreateClient("IntegrationHub");
         using var response = await client.PostAsJsonAsync(
-            "api/demo/file-jobs/completed",
-            new { requestId },
+            "api/export/file-jobs/completed",
+            new { requestId, outputFilePath },
             cancellationToken);
         response.EnsureSuccessStatusCode();
         _logger.LogInformation(
-            "[{Category}] Notified Hub Completed RequestId={RequestId}",
+            "[{Category}] Notified Hub Completed RequestId={RequestId} OutputFilePath={OutputFilePath}",
             FileGeneratorLogCategories.Hub,
-            requestId);
+            requestId,
+            outputFilePath);
     }
 
     public async Task NotifyFailedAsync(Guid requestId, string error, CancellationToken cancellationToken = default)
     {
-        var client = _httpClientFactory.CreateClient("HubDemo");
+        var client = _httpClientFactory.CreateClient("IntegrationHub");
         using var response = await client.PostAsJsonAsync(
-            "api/demo/file-jobs/failed",
+            "api/export/file-jobs/failed",
             new { requestId, error },
             cancellationToken);
         response.EnsureSuccessStatusCode();

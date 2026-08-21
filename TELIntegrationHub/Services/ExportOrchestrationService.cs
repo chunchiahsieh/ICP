@@ -4,26 +4,29 @@ using TEL.IntegrationHub.Models;
 
 namespace TEL.IntegrationHub.Services;
 
-public interface IExportDemoOrchestrationService
+public interface IExportOrchestrationService
 {
-    Task AcceptExportRequestAsync(DemoExportRequestDto request, CancellationToken cancellationToken = default);
+    Task AcceptExportRequestAsync(ExportRequestDto request, CancellationToken cancellationToken = default);
 
-    Task MarkExportCompletedAsync(Guid requestId, CancellationToken cancellationToken = default);
+    Task MarkExportCompletedAsync(
+        Guid requestId,
+        string? outputFilePath,
+        CancellationToken cancellationToken = default);
 
     Task MarkExportFailedAsync(Guid requestId, string error, CancellationToken cancellationToken = default);
 }
 
-public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationService
+public sealed class ExportOrchestrationService : IExportOrchestrationService
 {
     private readonly string _icpConnection;
     private readonly string _fileGenConnection;
     private readonly IMessageLogService _messageLog;
-    private readonly ILogger<ExportDemoOrchestrationService> _logger;
+    private readonly ILogger<ExportOrchestrationService> _logger;
 
-    public ExportDemoOrchestrationService(
+    public ExportOrchestrationService(
         IConfiguration configuration,
         IMessageLogService messageLog,
-        ILogger<ExportDemoOrchestrationService> logger)
+        ILogger<ExportOrchestrationService> logger)
     {
         _icpConnection = configuration.GetConnectionString("ICP_Connection")
             ?? throw new InvalidOperationException("ConnectionStrings:ICP_Connection is required.");
@@ -34,7 +37,7 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
     }
 
     public async Task AcceptExportRequestAsync(
-        DemoExportRequestDto request,
+        ExportRequestDto request,
         CancellationToken cancellationToken = default)
     {
         if (request.RequestId == Guid.Empty)
@@ -73,7 +76,7 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
                 )
                 VALUES
                 (
-                    @Id, @RequestId, N'ICP', @SourceRecordId, N'TXT',
+                    @Id, @RequestId, N'ICP', @SourceRecordId, N'ShippingAdvice',
                     @InputFilePath, N'Pending', 0, SYSUTCDATETIME()
                 );
                 """,
@@ -99,7 +102,7 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
         });
         var log = await _messageLog.RecordReceivedAsync(
             request.RequestId.ToString("D"),
-            "demo.export.request",
+            "export.request",
             "ICP",
             request.RequestId.ToString("D"),
             payload,
@@ -108,20 +111,29 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
         await _messageLog.MarkSuccessAsync(log.Id, cancellationToken);
 
         _logger.LogInformation(
-            "Demo: ExportRequest {RequestId} → Processing; Job {JobId} Pending",
+            "ExportRequest {RequestId} → Processing; Job {JobId} Pending",
             request.RequestId,
             jobId);
     }
 
-    public async Task MarkExportCompletedAsync(Guid requestId, CancellationToken cancellationToken = default)
+    public async Task MarkExportCompletedAsync(
+        Guid requestId,
+        string? outputFilePath,
+        CancellationToken cancellationToken = default)
     {
-        await UpdateExportStatusAsync(requestId, "Completed", error: null, cancellationToken);
+        await UpdateExportStatusAsync(
+            requestId,
+            "Completed",
+            error: null,
+            outputFilePath,
+            cancellationToken);
+        var payload = JsonSerializer.Serialize(new { requestId, outputFilePath });
         var log = await _messageLog.RecordReceivedAsync(
             $"{requestId:D}:completed",
-            "demo.export.completed",
+            "export.completed",
             "ICPFileGenerator",
             requestId.ToString("D"),
-            $"{{\"requestId\":\"{requestId:D}\"}}",
+            payload,
             "Export",
             cancellationToken);
         await _messageLog.MarkSuccessAsync(log.Id, cancellationToken);
@@ -132,10 +144,10 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
         string error,
         CancellationToken cancellationToken = default)
     {
-        await UpdateExportStatusAsync(requestId, "Failed", error, cancellationToken);
+        await UpdateExportStatusAsync(requestId, "Failed", error, outputFilePath: null, cancellationToken);
         var log = await _messageLog.RecordReceivedAsync(
             $"{requestId:D}:failed",
-            "demo.export.failed",
+            "export.failed",
             "ICPFileGenerator",
             requestId.ToString("D"),
             $"{{\"requestId\":\"{requestId:D}\",\"error\":{JsonSerializer.Serialize(error)}}}",
@@ -148,6 +160,7 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
         Guid requestId,
         string status,
         string? error,
+        string? outputFilePath,
         CancellationToken cancellationToken)
     {
         await using var icp = new SqlConnection(_icpConnection);
@@ -158,6 +171,10 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
             SET
                 Status = @Status,
                 ErrorMessage = @ErrorMessage,
+                OutputFilePath = CASE
+                    WHEN @OutputFilePath IS NULL THEN OutputFilePath
+                    ELSE @OutputFilePath
+                END,
                 UpdateTime = SYSUTCDATETIME()
             WHERE Id = @Id;
             """,
@@ -167,13 +184,24 @@ public sealed class ExportDemoOrchestrationService : IExportDemoOrchestrationSer
         cmd.Parameters.AddWithValue(
             "@ErrorMessage",
             string.IsNullOrWhiteSpace(error) ? DBNull.Value : error.Length > 2000 ? error[..2000] : error);
+        cmd.Parameters.AddWithValue(
+            "@OutputFilePath",
+            string.IsNullOrWhiteSpace(outputFilePath)
+                ? DBNull.Value
+                : outputFilePath.Length > 1024
+                    ? outputFilePath[..1024]
+                    : outputFilePath);
         var updated = await cmd.ExecuteNonQueryAsync(cancellationToken);
         if (updated == 0)
         {
             ThrowNotFound(requestId);
         }
 
-        _logger.LogInformation("Demo: ExportRequest {RequestId} → {Status}", requestId, status);
+        _logger.LogInformation(
+            "ExportRequest {RequestId} → {Status} OutputFilePath={OutputFilePath}",
+            requestId,
+            status,
+            outputFilePath);
     }
 
     private void ThrowNotFound(Guid requestId)

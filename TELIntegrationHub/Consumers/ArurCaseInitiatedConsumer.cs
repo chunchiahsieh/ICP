@@ -5,20 +5,23 @@ using TEL.IntegrationHub.Services;
 
 namespace TEL.IntegrationHub.Consumers;
 
-/// <summary>Consumes icp.shipinfo.case.initiated when payload.caseType = ARUR.</summary>
+/// <summary>Consumes icp.shipinfo.case.initiated when payload.caseType = ARUR; writes ILC RT_ARUR_HEADER.</summary>
 public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
 {
     private readonly IMessageLogService _messageLogService;
     private readonly IIcpOutboxCompletionService _outboxCompletion;
+    private readonly IIlcArurWriteService _ilcArurWrite;
     private readonly ILogger<ArurCaseInitiatedConsumer> _logger;
 
     public ArurCaseInitiatedConsumer(
         IMessageLogService messageLogService,
         IIcpOutboxCompletionService outboxCompletion,
+        IIlcArurWriteService ilcArurWrite,
         ILogger<ArurCaseInitiatedConsumer> logger)
     {
         _messageLogService = messageLogService;
         _outboxCompletion = outboxCompletion;
+        _ilcArurWrite = ilcArurWrite;
         _logger = logger;
     }
 
@@ -55,24 +58,23 @@ public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
 
         try
         {
+            var writeResult = await _ilcArurWrite.WriteFromShipInfoCaseAsync(message, context.CancellationToken);
             _logger.LogInformation(
-                "Handled ARUR 起案 event {MessageId} caseNo={CaseNo} correlationId={CorrelationId}",
+                "Handled ARUR case event {MessageId} caseNo={CaseNo} RT_NO={RtNo} skippedDuplicate={Skipped}",
                 messageId,
                 message.Payload?.CaseNo,
-                message.CorrelationId);
+                writeResult.RtNo,
+                writeResult.SkippedDuplicate);
+
             await _messageLogService.MarkSuccessAsync(log.Id, context.CancellationToken);
             if (message.MessageId != Guid.Empty)
             {
                 await _outboxCompletion.MarkCompletedAsync(message.MessageId, context.CancellationToken);
             }
-
-            //ARUR起案logic
-
-
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed handling ARUR 起案 event {MessageId}", messageId);
+            _logger.LogError(ex, "Failed handling ARUR case event {MessageId}", messageId);
             await _messageLogService.MarkFailedAsync(log.Id, ex.Message, context.CancellationToken);
             throw;
         }

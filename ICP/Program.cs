@@ -204,8 +204,8 @@ builder.Services.AddScoped<TariffTableMetadataProvider>();
 builder.Services.AddScoped<ShipInfoLookupService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
 builder.Services.AddScoped<IReportDataService, ReportDataService>();
-builder.Services.AddScoped<IExportDemoService, ExportDemoService>();
-builder.Services.AddHttpClient("HubDemo", (sp, client) =>
+builder.Services.AddScoped<IExportService, ExportService>();
+builder.Services.AddHttpClient("IntegrationHub", (sp, client) =>
 {
     var hub = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<IntegrationOptions>>().Value.Hub;
     var baseUrl = string.IsNullOrWhiteSpace(hub.BaseUrl) ? "http://localhost:5261" : hub.BaseUrl.TrimEnd('/') + "/";

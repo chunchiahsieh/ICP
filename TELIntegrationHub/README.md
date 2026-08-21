@@ -9,6 +9,8 @@
 
 - 消費 ICP 整合事件，依 payload 分流三種業務並寫入 `MESSAGE_LOG`
 - Hub 處理成功後，以 `messageId` 回寫 ICP `INTEGRATION_EVENT_OUTBOX` 為 `Completed`（需 `ConnectionStrings:ICP_Connection`）
+- 押金起案寫入 ILC（需 `ConnectionStrings:ILC_Connection`）→ `Deposit_Head`／`Deposit_Import`／`Deposit_Buyer`
+- ARUR 起案寫入 ILC → `RT_ARUR_HEADER`
 - Swagger 查詢 API
 - `Integration:RabbitMq:Enabled` 可開關（false 時不連 RabbitMQ，API 仍可用）
 
@@ -18,8 +20,8 @@
 
 | 業務 | 辨識方式 | Consumer |
 |------|----------|-----------|
-| 押金起案 | Envelope `eventType=icp.shipinfo.case.initiated` 且 `payload.caseType=Deposit` | `DepositCaseInitiatedConsumer` |
-| ARUR 起案 | 同上且 `payload.caseType=ARUR` | `ArurCaseInitiatedConsumer` |
+| 押金起案 | Envelope `eventType=icp.shipinfo.case.initiated` 且 `payload.caseType=Deposit` | `DepositCaseInitiatedConsumer` → 寫入 ILC `Deposit_Head`／`Deposit_Import`／`Deposit_Buyer` |
+| ARUR 起案 | 同上且 `payload.caseType=ARUR` | `ArurCaseInitiatedConsumer` → 寫入 ILC `RT_ARUR_HEADER` |
 | 匯出檔案 | Envelope `eventType=icp.export.completed`（預留；Function/Export） | `ExportFileCompletedConsumer` |
 
 事件契約為標準 **Event Envelope**（`messageId`／`sourceSystem`／`payload`…），見 [`docs/TEL_Integration_Hub_Definition.md`](docs/TEL_Integration_Hub_Definition.md) 與 `../ICP/docs/integration-events.md`。

@@ -9,6 +9,17 @@ public class IntegrationOptions
     public OutboxOptions Outbox { get; set; } = new();
 
     public HubClientOptions Hub { get; set; } = new();
+
+    public ExportClientOptions Export { get; set; } = new();
+}
+
+public class ExportClientOptions
+{
+    /// <summary>
+    /// Shared output root with FileGenerator (same host).
+    /// Default: folder <c>ICPFileGenerator</c> under the ICP project ContentRoot.
+    /// </summary>
+    public string OutputDirectory { get; set; } = "ICPFileGenerator";
 }
 
 public class HubClientOptions

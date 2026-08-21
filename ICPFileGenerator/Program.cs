@@ -28,7 +28,7 @@ builder.Services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
 builder.Services.AddScoped<IJobRepository, JobRepository>();
 builder.Services.AddScoped<IFileGenerationService, FileGenerationService>();
 builder.Services.AddScoped<IHubNotificationService, HubNotificationService>();
-builder.Services.AddHttpClient("HubDemo", (sp, client) =>
+builder.Services.AddHttpClient("IntegrationHub", (sp, client) =>
 {
     var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<FileGeneratorOptions>>().Value;
     var baseUrl = string.IsNullOrWhiteSpace(options.Hub.BaseUrl)
