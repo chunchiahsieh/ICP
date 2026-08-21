@@ -1,11 +1,7 @@
--- Create database TEL-ICPFileGenerator and table ICPFileGeneratorJob
-IF DB_ID(N'TEL-ICPFileGenerator') IS NULL
-BEGIN
-    CREATE DATABASE [TEL-ICPFileGenerator];
-END
-GO
-
-USE [TEL-ICPFileGenerator];
+-- Create table ICPFileGeneratorJob in the ICP database (shared with ICP app).
+-- Local (AGA): USE [TEL-ICP]
+-- TEL:        USE [ICP]
+USE [TEL-ICP];
 GO
 
 IF OBJECT_ID(N'dbo.ICPFileGeneratorJob', N'U') IS NULL

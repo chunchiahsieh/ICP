@@ -120,7 +120,7 @@ ICP 在押金或 ARUR 起案成功後，會將**標準 Event Envelope**（含業
 
 `ArurCaseInitiatedConsumer`（`caseType=ARUR`）會：
 
-1. 寫入 ILC `dbo.RT_ARUR_HEADER`（僅使用欄位；`CreateSys=I`、`Status=0`、`ArrivalType=1`）
+1. 寫入 ILC `dbo.RT_ARUR_HEADER`（僅使用欄位；`CreateSys=I`、`Status=5`、`A1_Start=A8`、`ArrivalType=1`）
 2. MessageLog Success
 3. 將 ICP Outbox 標為 `Completed`
 

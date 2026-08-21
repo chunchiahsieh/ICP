@@ -1,5 +1,5 @@
 -- Optional sample Pending job for local Worker testing
-USE [TEL-ICPFileGenerator];
+USE [TEL-ICP];
 GO
 
 INSERT INTO dbo.ICPFileGeneratorJob

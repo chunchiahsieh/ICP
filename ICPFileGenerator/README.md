@@ -41,7 +41,7 @@ dotnet build ICPFileGenerator/ICPFileGenerator.csproj
 
 ## Database / SQL Script
 
-資料庫名稱：**`TEL-ICPFileGenerator`**
+資料庫名稱：與 ICP **同庫**（本機 **`TEL-ICP`**／TEL **`ICP`**）
 
 1. 執行 [`sql/001_CreateDatabase_And_JobTable.sql`](sql/001_CreateDatabase_And_JobTable.sql)
 2. 執行 [`sql/002_ClaimNextFileGenerationJob.sql`](sql/002_ClaimNextFileGenerationJob.sql)
@@ -57,7 +57,7 @@ dotnet build ICPFileGenerator/ICPFileGenerator.csproj
 | AGA 電腦（`MachineName == AGA-PC`） | `appsettings.json`；Development 另加 `appsettings.Development.json` |
 | TEL / 非 AGA | **僅** `appsettings.TEL.json`（見 `Program.cs`） |
 
-連線字串鍵一律為 **`ConnectionStrings:ICPFileGenerator`**，資料庫為 `TEL-ICPFileGenerator`。
+連線字串鍵一律為 **`ConnectionStrings:ICPFileGenerator`**，資料庫與 ICP 相同（本機 `TEL-ICP`／TEL `ICP`）。
 
 - `FileGenerator:PollingIntervalSeconds`（預設 10）
 - `WorkerId`、`OutputDirectory`、`ProcessingTimeoutMinutes`、`MaxRetryCount`

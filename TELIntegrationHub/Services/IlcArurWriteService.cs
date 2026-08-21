@@ -89,7 +89,8 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
             ArrivalType = "1",
             RequestType = null,
             DependType = null,
-            Status = "0",
+            Status = "5",
+            A1Start = "A8",
             CreateSys = "I"
         };
 
@@ -139,14 +140,14 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
                 RT_NO, CreateBy, CreateDate, EmailTo, ShipToCode, ShipTo,
                 ArriveDate, ReceiptInfo, WHCode, TETPO, InvoiceNo, Attachment,
                 MAWB, HAWB, FLT, ETA, Remark, isSDriver, isSStacker,
-                ArrivalType, RequestType, DependType, Status, CreateSys
+                ArrivalType, RequestType, DependType, Status, A1_Start, CreateSys
             )
             VALUES
             (
                 @RT_NO, @CreateBy, @CreateDate, @EmailTo, @ShipToCode, @ShipTo,
                 @ArriveDate, @ReceiptInfo, @WHCode, @TETPO, @InvoiceNo, @Attachment,
                 @MAWB, @HAWB, @FLT, @ETA, @Remark, @isSDriver, @isSStacker,
-                @ArrivalType, @RequestType, @DependType, @Status, @CreateSys
+                @ArrivalType, @RequestType, @DependType, @Status, @A1_Start, @CreateSys
             );
             """,
             connection);
@@ -173,6 +174,7 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
         cmd.Parameters.AddWithValue("@RequestType", (object?)row.RequestType ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@DependType", (object?)row.DependType ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@Status", row.Status);
+        cmd.Parameters.AddWithValue("@A1_Start", row.A1Start);
         cmd.Parameters.AddWithValue("@CreateSys", row.CreateSys);
         await cmd.ExecuteNonQueryAsync(cancellationToken);
     }

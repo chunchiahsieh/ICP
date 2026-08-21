@@ -1,4 +1,4 @@
-USE [TEL-ICPFileGenerator];
+USE [TEL-ICP];
 GO
 
 CREATE OR ALTER PROCEDURE dbo.ClaimNextFileGenerationJob

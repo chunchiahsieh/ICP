@@ -47,7 +47,9 @@ public sealed class IlcRtArurHeader
 
     public string? DependType { get; set; }
 
-    public string Status { get; set; } = "0";
+    public string Status { get; set; } = "5";
+
+    public string A1Start { get; set; } = "A8";
 
     public string CreateSys { get; set; } = "I";
 }

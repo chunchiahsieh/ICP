@@ -4,7 +4,7 @@
 
 ## 啟動順序
 
-1. 執行 FileGen SQL：`sql/001`、`sql/002`（DB：`TEL-ICPFileGenerator`）
+1. 執行 FileGen SQL：`sql/001`、`sql/002`（DB：本機 `TEL-ICP`／TEL `ICP`）
 2. 啟動 Hub（埠 `5261`）
 3. 啟動 ICPFileGenerator（埠 `5208`）
 4. 啟動 ICP（IIS Express SSL `44388`）
@@ -15,7 +15,7 @@
 |------|----------|
 | ICP | `Integration:Hub:BaseUrl` = `http://localhost:5261` |
 | ICP | `Integration:Export:OutputDirectory` = `ICPFileGenerator`（ICP 專案下資料夾） |
-| Hub | `ICP_Connection`、`ICPFileGenerator`（`TEL-ICPFileGenerator`） |
+| Hub | `ICP_Connection`、`ICPFileGenerator`（與 ICP 同庫：本機 `TEL-ICP`／TEL `ICP`） |
 | FileGen | `FileGenerator:Hub:BaseUrl` = `http://localhost:5261` |
 | FileGen | `FileGenerator:OutputDirectory` = `../ICP/ICPFileGenerator`（與 ICP 同一資料夾） |
 
