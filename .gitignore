@@ -37,6 +37,10 @@ uploads/
 ## Export generated files (under ICP project)
 ICP/ICPFileGenerator/
 
+## Ship Info attachment storage (only relevant when a local path is configured)
+ICP/ATTACHED_FILE/
+ICP/ILCFileUpload/
+
 ## Secrets (keep local overrides out of repo)
 appsettings.json
 appsettings.Development.json

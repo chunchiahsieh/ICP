@@ -305,6 +305,7 @@
 
         $('#btnShipInfoDeposit').prop('disabled', depositDisabled);
         $('#btnShipInfoArur').prop('disabled', arurDisabled);
+        $('#btnShipInfoAttachments').prop('disabled', !hasSelection || busy);
     };
 
     app.getHeaderFields = function () {

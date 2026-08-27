@@ -25,6 +25,7 @@ public class ShipInfoService : IShipInfoService
     private readonly UserResourcePermissionService _permissionService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<ShipInfoService> _logger;
+    private readonly ShipInfoAttachmentService _attachmentService;
 
     public ShipInfoService(
         IShipInfoRepository repository,
@@ -34,7 +35,8 @@ public class ShipInfoService : IShipInfoService
         ShipInfoLookupService lookupService,
         UserResourcePermissionService permissionService,
         IHttpContextAccessor httpContextAccessor,
-        ILogger<ShipInfoService> logger)
+        ILogger<ShipInfoService> logger,
+        ShipInfoAttachmentService attachmentService)
     {
         _repository = repository;
         _outboxRepository = outboxRepository;
@@ -44,6 +46,7 @@ public class ShipInfoService : IShipInfoService
         _permissionService = permissionService;
         _httpContextAccessor = httpContextAccessor;
         _logger = logger;
+        _attachmentService = attachmentService;
     }
 
     public ShipInfoPageConfig GetPageConfig() =>
@@ -342,7 +345,11 @@ public class ShipInfoService : IShipInfoService
         var header = await RequireHeaderByRowKeyAsync(headerRowKey, cancellationToken);
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
         var details = await _repository.GetDetailEntitiesByHeaderKeyAsync(invoiceKey, cancellationToken);
-        var validationMessages = ValidateCaseCreation(header, details, normalizedCaseType, previewOnly: true);
+        var validationMessages = ValidateCaseCreation(header, details, normalizedCaseType, previewOnly: true).ToList();
+        if (normalizedCaseType == ShipInfoCaseTypes.Arur)
+        {
+            validationMessages.AddRange(await _attachmentService.ValidateArurAsync(header.Id, cancellationToken));
+        }
 
         LogOperation("QueryCaseDrawer", headerKey: invoiceKey, extra: normalizedCaseType);
 

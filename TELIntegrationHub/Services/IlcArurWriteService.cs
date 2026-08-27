@@ -14,8 +14,8 @@ public sealed class IlcArurWriteResult { public bool SkippedDuplicate { get; ini
 
 public sealed class IlcArurWriteService : IIlcArurWriteService
 {
-    private readonly string _ilc; private readonly IcpDbContext _icp; private readonly FiestaDbContext _fiesta; private readonly ILogger<IlcArurWriteService> _logger;
-    public IlcArurWriteService(IConfiguration c, IcpDbContext icp, FiestaDbContext fiesta, ILogger<IlcArurWriteService> logger) { _ilc = c.GetConnectionString("ILC_Connection") ?? throw new InvalidOperationException("ConnectionStrings:ILC_Connection is required."); _icp = icp; _fiesta = fiesta; _logger = logger; }
+    private readonly string _ilc; private readonly string _attachmentRoot; private readonly IcpDbContext _icp; private readonly FiestaDbContext _fiesta; private readonly ILogger<IlcArurWriteService> _logger;
+    public IlcArurWriteService(IConfiguration c, IcpDbContext icp, FiestaDbContext fiesta, ILogger<IlcArurWriteService> logger) { _ilc = c.GetConnectionString("ILC_Connection") ?? throw new InvalidOperationException("ConnectionStrings:ILC_Connection is required."); _attachmentRoot = c["ArurAttachment:IpcStorageRoot"]?.TrimEnd('\\', '/') ?? throw new InvalidOperationException("ArurAttachment:IpcStorageRoot is required."); _icp = icp; _fiesta = fiesta; _logger = logger; }
 
     public async Task<IlcArurWriteResult> WriteFromShipInfoCaseAsync(ShipInfoCaseInitiatedMessage message, CancellationToken ct = default)
     {
@@ -28,7 +28,8 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
         var shipTo = await _icp.SystemConfigs.AsNoTracking().Where(x => !x.IsDeleted && x.Category == "DeliveryToList" && x.Key1 == deliveryTo).Select(x => x.Value4).FirstOrDefaultAsync(ct);
         if (string.IsNullOrWhiteSpace(shipTo)) throw new InvalidOperationException($"DeliveryToList address not found for DeliveryTo '{deliveryTo ?? "(null)"}'.");
         var now = DateTime.Now; var tetPo = Get(h, "TetPo", "TETPO"); var invoiceNo = Get(h, "InvoiceNo"); var forklift = IsY(Get(h, "Forklift")); var driver = IsY(Get(h, "DriverDetails")); var waste = IsY(Get(h, "WasteDisposal"));
-        var row = new IlcRtArurHeader { Subject = $"AR {tetPo} {invoiceNo}", CreateBy = person.EmpId.Trim(), CreateDate = now, EditBy = person.EmpId.Trim(), EditDate = now, EmailTo = person.Address.Trim(), ShipToCode = deliveryTo, ShipTo = shipTo.Trim(), ArriveDate = ParseDate(Get(h, "ArriveTime")), ReceiptInfo = Get(h, "Receiver"), WhCode = Get(h, "Warehouse"), TetPo = tetPo, InvoiceNo = invoiceNo, Attachment = Get(h, "AttachedFile"), Mawb = Get(h, "Mawb", "MAWB"), Hawb = Get(h, "Hawb", "HAWB"), Flt = Get(h, "Flt", "FLT"), Eta = Get(h, "Eta", "ETA"), Remark = Remark(Get(h, "Notes"), forklift, Get(h, "MovingLabor"), waste, driver), IsSDriver = driver ? "Y" : "N", IsSStacker = forklift ? "Y" : "N", ArrivalType = "1", DependType = "1", RequestType = "2", Status = "5", A1Start = "A8", CreateSys = "ICP" };
+        var attachment = await BuildAttachmentAsync(Get(h, "RowId"), ct);
+        var row = new IlcRtArurHeader { Subject = $"AR {tetPo} {invoiceNo}", CreateBy = person.EmpId.Trim(), CreateDate = now, EditBy = person.EmpId.Trim(), EditDate = now, EmailTo = person.Address.Trim(), ShipToCode = deliveryTo, ShipTo = shipTo.Trim(), ArriveDate = ParseDate(Get(h, "ArriveTime")), ReceiptInfo = Get(h, "Receiver"), WhCode = Get(h, "Warehouse"), TetPo = tetPo, InvoiceNo = invoiceNo, Attachment = attachment, Mawb = Get(h, "Mawb", "MAWB"), Hawb = Get(h, "Hawb", "HAWB"), Flt = Get(h, "Flt", "FLT"), Eta = Get(h, "Eta", "ETA"), Remark = Remark(Get(h, "Notes"), forklift, Get(h, "MovingLabor"), waste, driver), IsSDriver = driver ? "Y" : "N", IsSStacker = forklift ? "Y" : "N", ArrivalType = "1", DependType = "1", RequestType = "2", Status = "5", A1Start = "A8", CreateSys = "ICP" };
         Validate(row);
         await using var conn = new SqlConnection(_ilc); await conn.OpenAsync(ct); await using var tx = (SqlTransaction)await conn.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         try { row.RtNo = await ClaimAsync(conn, tx, now, ct); await InsertAsync(conn, tx, row, ct); await tx.CommitAsync(ct); _logger.LogInformation("ILC RT_ARUR_HEADER written RT_NO={RtNo}", row.RtNo); return new IlcArurWriteResult { RtNo = row.RtNo }; }
@@ -77,6 +78,24 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
     private static void Add(SqlCommand c,string n,object? v)=>c.Parameters.AddWithValue(n,v??DBNull.Value);
     private static void Validate(IlcRtArurHeader r) { var f=new List<string>(); Check("WHCode",r.WhCode,3,f); Check("TETPO",r.TetPo,30,f); Check("Attachment",r.Attachment,1000,f); Check("Subject",r.Subject,50,f); if(f.Count>0) throw new InvalidOperationException("ARUR validation failed: "+string.Join("; ",f)); }
     private static void Check(string n,string? v,int max,ICollection<string> f){if(v?.Length>max)f.Add($"{n}: source length {v.Length} exceeds maximum {max}");}
+    private async Task<string?> BuildAttachmentAsync(string? ownerId, CancellationToken ct)
+    {
+        if (!Guid.TryParse(ownerId, out var headerId)) throw new InvalidOperationException("ARUR attachment validation failed: ICP_HEADER.RowId is missing or invalid.");
+        var files = await _icp.Attachments.AsNoTracking().Where(x => x.AttachmentType == "ICP_HEADER" && x.AttachmentOwnerId == headerId.ToString("D") && !x.IsDeleted).OrderBy(x => x.Id).Select(x => x.RelativePath).ToListAsync(ct);
+        if (files.Count == 0) return null;
+        var paths = new List<string>(files.Count);
+        foreach (var relative in files)
+        {
+            var path = Path.GetFullPath(Path.Combine(_attachmentRoot, relative));
+            var root = Path.GetFullPath(_attachmentRoot).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            if (!path.StartsWith(root, StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException($"ARUR attachment validation failed: invalid relative path '{relative}'.");
+            if (!File.Exists(path)) throw new InvalidOperationException($"ARUR attachment validation failed: file is missing '{relative}'.");
+            paths.Add(path);
+        }
+        var result = string.Join(',', paths);
+        if (result.Length > 1000) throw new InvalidOperationException($"ARUR attachment validation failed: Attachment source length {result.Length} exceeds maximum 1000.");
+        return result;
+    }
     private static string Remark(string? notes,bool forklift,string? labor,bool waste,bool driver){var p=new List<string>();if(!string.IsNullOrWhiteSpace(notes))p.Add(notes.Trim());if(forklift)p.Add("請安排堆高機");if(waste)p.Add("請處理廢棄物");if(driver)p.Add("請回報司機資訊");if(!string.IsNullOrWhiteSpace(labor))p.Add($"({labor.Trim()})");return string.Join(Environment.NewLine,p);}
     private static DateTime? ParseDate(string? v)=>DateTime.TryParse(v,CultureInfo.InvariantCulture,DateTimeStyles.AssumeLocal,out var d)?d:null;
     private static bool IsY(string? v)=>string.Equals(v?.Trim(),"Y",StringComparison.OrdinalIgnoreCase);

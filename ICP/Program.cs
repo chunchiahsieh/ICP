@@ -204,6 +204,7 @@ builder.Services.AddSingleton<AddDiSaPendingFileStore>();
 builder.Services.AddSingleton<MassUpdatePendingFileStore>();
 builder.Services.AddSingleton<ForwarderPendingFileStore>();
 builder.Services.AddScoped<IShipInfoRepository, ShipInfoRepository>();
+builder.Services.AddScoped<ShipInfoAttachmentService>();
 builder.Services.AddScoped<IIntegrationEventOutboxRepository, IntegrationEventOutboxRepository>();
 builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 builder.Services.AddSingleton<IShipInfoCaseEventFactory, ShipInfoCaseEventFactory>();

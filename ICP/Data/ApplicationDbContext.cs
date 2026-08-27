@@ -34,6 +34,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<StgRawShippingAdvice> StgRawShippingAdvice => Set<StgRawShippingAdvice>();
 
     public DbSet<IcpHeader> IcpHeaders => Set<IcpHeader>();
+    public DbSet<Attachment> Attachments => Set<Attachment>();
 
     public DbSet<IcpDetail> IcpDetails => Set<IcpDetail>();
 
@@ -322,6 +323,26 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(d => new { d.InvoiceNo, d.TetPo })
                 .HasPrincipalKey(h => new { h.InvoiceNo, h.TetPo })
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Attachment>(entity =>
+        {
+            entity.ToTable("Attachments");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasDefaultValueSql("newid()");
+            entity.Property(e => e.AttachmentType).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.AttachmentOwnerId).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.OriginalFileName).HasMaxLength(255).IsRequired();
+            entity.Property(e => e.StoredFileName).HasMaxLength(255).IsRequired();
+            entity.Property(e => e.RelativePath).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.ContentType).HasMaxLength(100);
+            entity.Property(e => e.CreateTime).HasColumnType("datetime2(7)").IsRequired();
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateTime).HasColumnType("datetime2(7)");
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
+            entity.HasIndex(e => new { e.AttachmentType, e.AttachmentOwnerId })
+                .HasDatabaseName("IX_Attachments_Active_Owner")
+                .HasFilter("[IsDeleted] = 0");
         });
 
         modelBuilder.Entity<IcpDetail>(entity =>

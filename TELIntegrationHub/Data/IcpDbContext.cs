@@ -13,6 +13,7 @@ public class IcpDbContext : DbContext
 
     public DbSet<IcpOutboxEntry> OutboxEntries => Set<IcpOutboxEntry>();
     public DbSet<IcpSystemConfig> SystemConfigs => Set<IcpSystemConfig>();
+    public DbSet<IcpAttachment> Attachments => Set<IcpAttachment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,6 +33,14 @@ public class IcpDbContext : DbContext
             entity.Property(x => x.Category).HasMaxLength(50);
             entity.Property(x => x.Key1).HasMaxLength(100);
             entity.Property(x => x.Value4).HasMaxLength(1000);
+        });
+        modelBuilder.Entity<IcpAttachment>(entity =>
+        {
+            entity.ToTable("Attachments");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.AttachmentType).HasMaxLength(50);
+            entity.Property(x => x.AttachmentOwnerId).HasMaxLength(100);
+            entity.Property(x => x.RelativePath).HasMaxLength(500);
         });
     }
 }

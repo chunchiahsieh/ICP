@@ -1,6 +1,7 @@
 using ICP.Filters;
 using ICP.Models;
 using ICP.Models.ShipInfo;
+using ICP.Repositories;
 using ICP.Services;
 
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,14 @@ namespace ICP.Controllers;
 public class ShipInfoController : Controller
 {
     private readonly IShipInfoService _shipInfoService;
+    private readonly IShipInfoRepository _repository;
+    private readonly ShipInfoAttachmentService _attachments;
 
-    public ShipInfoController(IShipInfoService shipInfoService)
+    public ShipInfoController(IShipInfoService shipInfoService, IShipInfoRepository repository, ShipInfoAttachmentService attachments)
     {
         _shipInfoService = shipInfoService;
+        _repository = repository;
+        _attachments = attachments;
     }
 
     [HttpGet]
@@ -188,4 +193,39 @@ public class ShipInfoController : Controller
         var result = await _shipInfoService.CreateArurCaseAsync(headerKey, User.Identity?.Name, cancellationToken);
         return Json(ApiResponse<ShipInfoCaseCreateResult>.Ok(result));
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAttachments(string headerKey, CancellationToken cancellationToken = default)
+    {
+        var header = await RequireHeaderAsync(headerKey, cancellationToken);
+        return Json(ApiResponse<IReadOnlyList<ShipInfoAttachmentDto>>.Ok(await _attachments.ListAsync(header.Id, cancellationToken)));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UploadAttachment(string headerKey, IFormFile file, CancellationToken cancellationToken = default)
+    {
+        var header = await RequireHeaderAsync(headerKey, cancellationToken);
+        var item = await _attachments.UploadAsync(header.Id, header.InvoiceNo, file, User.Identity?.Name, cancellationToken);
+        return Json(ApiResponse<ShipInfoAttachmentDto>.Ok(item, "Uploaded"));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DownloadAttachment(string headerKey, Guid id, CancellationToken cancellationToken = default)
+    {
+        var header = await RequireHeaderAsync(headerKey, cancellationToken);
+        var (item, path) = await _attachments.RequireActiveAsync(header.Id, id, cancellationToken);
+        if (!System.IO.File.Exists(path)) return NotFound(ApiResponse<object>.Fail($"Attachment file is missing: {item.OriginalFileName}"));
+        return PhysicalFile(path, item.ContentType ?? "application/octet-stream", item.OriginalFileName);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteAttachment(string headerKey, Guid id, CancellationToken cancellationToken = default)
+    {
+        var header = await RequireHeaderAsync(headerKey, cancellationToken);
+        await _attachments.DeleteAsync(header.Id, id, User.Identity?.Name, cancellationToken);
+        return Json(ApiResponse<object>.Ok(new { id }));
+    }
+
+    private async Task<ICP.Models.Icp.IcpHeader> RequireHeaderAsync(string headerKey, CancellationToken ct) =>
+        await _repository.GetHeaderByRowKeyAsync(headerKey, ct) ?? throw new KeyNotFoundException("Header not found.");
 }
