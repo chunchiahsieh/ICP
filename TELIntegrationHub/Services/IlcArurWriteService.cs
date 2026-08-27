@@ -37,9 +37,36 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
 
     private static async Task<string> ClaimAsync(SqlConnection c, SqlTransaction tx, DateTime now, CancellationToken ct)
     {
-        var day = now.ToString("yyyyMMdd", CultureInfo.InvariantCulture); await using var cmd = new SqlCommand("UPDATE dbo.SerialNumbers WITH (UPDLOCK, HOLDLOCK) SET LastNumber = LastNumber + 1 OUTPUT INSERTED.LastNumber WHERE Prefix = N'PRT' AND DateKey = @day;", c, tx); cmd.Parameters.AddWithValue("@day", day); var claimed = await cmd.ExecuteScalarAsync(ct); var number = claimed is null or DBNull ? (int?)null : Convert.ToInt32(claimed, CultureInfo.InvariantCulture);
-        if (number is null) { await using var insert = new SqlCommand("INSERT INTO dbo.SerialNumbers (Prefix, DateKey, LastNumber) VALUES (N'PRT', @day, 1);", c, tx); insert.Parameters.AddWithValue("@day", day); await insert.ExecuteNonQueryAsync(ct); number = 1; }
-        if (number > 999) throw new InvalidOperationException($"ARUR RT_NO daily sequence exceeded 999 for {day}."); return $"PRT-{day}-{number:000}";
+        var day = now.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+        await using var cmd = new SqlCommand("dbo.SP_GEN_SEQNO", c, tx)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+        cmd.Parameters.Add(new SqlParameter("@SYS_ID", SqlDbType.NVarChar, 20) { Value = "ICP" });
+        cmd.Parameters.Add(new SqlParameter("@GROUP_1", SqlDbType.NVarChar, 10) { Value = "PRT" });
+        cmd.Parameters.Add(new SqlParameter("@GROUP_2", SqlDbType.NVarChar, 10) { Value = day });
+        cmd.Parameters.Add(new SqlParameter("@GROUP_3", SqlDbType.NVarChar, 10) { Value = "" });
+        cmd.Parameters.Add(new SqlParameter("@GROUP_4", SqlDbType.NVarChar, 10) { Value = "" });
+        var maxSeq = new SqlParameter("@MAXSEQ", SqlDbType.Decimal)
+        {
+            Precision = 6,
+            Scale = 0,
+            Direction = ParameterDirection.Output
+        };
+        cmd.Parameters.Add(maxSeq);
+        await cmd.ExecuteNonQueryAsync(ct);
+        if (maxSeq.Value is null or DBNull)
+        {
+            throw new InvalidOperationException("SP_GEN_SEQNO did not return @MAXSEQ.");
+        }
+
+        var number = Convert.ToInt32(maxSeq.Value, CultureInfo.InvariantCulture);
+        if (number > 999)
+        {
+            throw new InvalidOperationException($"ARUR RT_NO daily sequence exceeded 999 for {day}.");
+        }
+
+        return $"PRT-{day}-{number:000}";
     }
 
     private static async Task InsertAsync(SqlConnection c, SqlTransaction tx, IlcRtArurHeader r, CancellationToken ct)

@@ -1,15 +1,3 @@
-USE [ILC];
-GO
-
-IF OBJECT_ID(N'dbo.SerialNumbers', N'U') IS NULL
-BEGIN
-    CREATE TABLE dbo.SerialNumbers
-    (
-        Prefix nvarchar(50) NOT NULL,
-        DateKey char(8) NOT NULL,
-        LastNumber int NOT NULL,
-        CONSTRAINT PK_SerialNumbers PRIMARY KEY CLUSTERED (Prefix, DateKey),
-        CONSTRAINT CK_SerialNumbers_LastNumber CHECK (LastNumber >= 0)
-    );
-END
-GO
+-- Retired. Do not execute.
+-- Hub ARUR 取號已改為呼叫 ILC dbo.SP_GEN_SEQNO（dbo.GEN_SEQNO）。
+-- 請勿再於新環境執行本檔；既有 SerialNumbers 表不必 DROP。

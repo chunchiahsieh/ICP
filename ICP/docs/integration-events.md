@@ -121,7 +121,7 @@ ICP 在押金或 ARUR 起案成功後，會將**標準 Event Envelope**（含業
 `ArurCaseInitiatedConsumer`（`caseType=ARUR`）會：
 
 1. 寫入 ILC `dbo.RT_ARUR_HEADER`（僅使用欄位；`CreateSys=ICP`、`Status=5`、`A1_Start=A8`、`ArrivalType=1`）
-2. ILC `RT_NO` 由 Hub 取每日流水號 `PRT-yyyyMMdd-001`～`999`（與 ICP 畫面的 `ARUR-{發票號}` 不同，這是預期行為）
+2. ILC `RT_NO` 由 Hub 呼叫 `dbo.SP_GEN_SEQNO`（`SYS_ID=ICP`、`GROUP_1=PRT`、`GROUP_2=yyyyMMdd`）組成 `PRT-yyyyMMdd-001`～`999`（與 ICP 畫面的 `ARUR-{發票號}` 不同，這是預期行為）。超過 999 會失敗並 rollback，因 `RT_NO` 為 nvarchar(16)
 3. MessageLog Success
 4. 將 ICP Outbox 標為 `Completed`
 

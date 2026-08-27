@@ -2,12 +2,11 @@
 
 ## ILC 資料庫設定
 
-使用具有 ILC DDL 權限的帳號，依序執行：
+使用具有 ILC DDL 權限的帳號執行：
 
-1. `TELIntegrationHub/sql/001_CreateSerialNumbers.sql`
-2. `TELIntegrationHub/sql/002_AlterRtArurHeader_CreateSys.sql`
+1. `TELIntegrationHub/sql/002_AlterRtArurHeader_CreateSys.sql`
 
-`SerialNumbers` 與 `RT_ARUR_HEADER` 必須位於同一個 `ILC` 資料庫；Hub 會在同一個交易內取得每日 `PRT-yyyyMMdd-001` 至 `999` 的流水號並寫入 ARUR Header。
+ARUR `RT_NO` 由 ILC 既有 `dbo.SP_GEN_SEQNO`（寫入 `dbo.GEN_SEQNO`）取得，參數為 `SYS_ID=ICP`、`GROUP_1=PRT`、`GROUP_2=當日 yyyyMMdd`、`GROUP_3`／`GROUP_4` 空字串。Hub 會在與寫入 `RT_ARUR_HEADER` 的同一交易內呼叫 SP，組成 `PRT-yyyyMMdd-001` 至 `999`。超過 999 會失敗並 rollback（`RT_NO` 為 nvarchar(16)，`PRT-yyyyMMdd-1000` 為 17 碼）。`001_CreateSerialNumbers.sql` 已停用（僅註解、無建表語句），不必再執行。
 
 ## 連線字串
 
@@ -16,7 +15,7 @@ Hub 的設定檔需提供下列連線字串：
 - `HubDatabase`：Hub 的 MessageLog 資料庫。
 - `ICP_Connection`：ICP 資料庫，用於 Outbox 與 Delivery To 對照查詢。
 - `FIESTA_Connection`：FIESTA 資料庫，用於 `MailGroup` 的操作者工號／信箱查詢。
-- `ILC_Connection`：ILC 資料庫，用於流水號與 `RT_ARUR_HEADER` 寫入。
+- `ILC_Connection`：ILC 資料庫，用於 `SP_GEN_SEQNO` 取號與 `RT_ARUR_HEADER` 寫入。
 
 ## ARUR 失敗處理
 
