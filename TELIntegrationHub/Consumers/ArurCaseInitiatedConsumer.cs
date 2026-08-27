@@ -65,7 +65,27 @@ public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
                 message.Payload?.CaseNo,
                 writeResult.RtNo,
                 writeResult.SkippedDuplicate);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed handling ARUR case event {MessageId}", messageId);
+            await _messageLogService.MarkFailedAsync(log.Id, ex.Message, context.CancellationToken);
 
+            var markedFailed = message.MessageId != Guid.Empty
+                && await _outboxCompletion.MarkArurFailedAsync(message.MessageId, ex.Message, context.CancellationToken);
+            if (!markedFailed)
+            {
+                throw new InvalidOperationException(
+                    $"ARUR ILC write failed and ICP Outbox could not be marked Failed for {messageId}.",
+                    ex);
+            }
+
+            // Outbox is Failed: ACK so MassTransit does not auto-retry the business error.
+            return;
+        }
+
+        try
+        {
             await _messageLogService.MarkSuccessAsync(log.Id, context.CancellationToken);
             if (message.MessageId != Guid.Empty)
             {
@@ -74,9 +94,10 @@ public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed handling ARUR case event {MessageId}", messageId);
-            await _messageLogService.MarkFailedAsync(log.Id, ex.Message, context.CancellationToken);
-            throw;
+            _logger.LogError(
+                ex,
+                "ARUR ILC write succeeded but ack failed for {MessageId}; leave Outbox unchanged so it is not marked Failed.",
+                messageId);
         }
     }
 }

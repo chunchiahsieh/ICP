@@ -672,6 +672,15 @@
   <data name="ShipInfo.ArurConfirmMessage" xml:space="preserve">
     <value>Header と Detail の内容を確認してから送信してください。</value>
   </data>
+  <data name="ShipInfo.ArurSubjectTooLong" xml:space="preserve">
+    <value>件名が 50 文字を超えています（発注番号 + 請求書）。ARUR を起案できません。</value>
+  </data>
+  <data name="ShipInfo.ArurWarehouseTooLong" xml:space="preserve">
+    <value>倉庫コードが 3 文字を超えています。ARUR を起案できません。</value>
+  </data>
+  <data name="ShipInfo.ArurTetPoTooLong" xml:space="preserve">
+    <value>発注番号が 30 文字を超えています。ARUR を起案できません。</value>
+  </data>
   <data name="ShipInfo.CaseCreateSuccess" xml:space="preserve">
     <value>起案が完了しました</value>
   </data>

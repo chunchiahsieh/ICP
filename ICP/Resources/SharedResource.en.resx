@@ -672,6 +672,15 @@
   <data name="ShipInfo.ArurConfirmMessage" xml:space="preserve">
     <value>Please verify header and detail data before submitting.</value>
   </data>
+  <data name="ShipInfo.ArurSubjectTooLong" xml:space="preserve">
+    <value>Subject exceeds 50 characters (PO + invoice). ARUR cannot be created.</value>
+  </data>
+  <data name="ShipInfo.ArurWarehouseTooLong" xml:space="preserve">
+    <value>Warehouse exceeds 3 characters. ARUR cannot be created.</value>
+  </data>
+  <data name="ShipInfo.ArurTetPoTooLong" xml:space="preserve">
+    <value>PO number exceeds 30 characters. ARUR cannot be created.</value>
+  </data>
   <data name="ShipInfo.CaseCreateSuccess" xml:space="preserve">
     <value>Case created successfully</value>
   </data>

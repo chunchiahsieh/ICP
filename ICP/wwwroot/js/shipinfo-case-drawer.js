@@ -124,6 +124,55 @@
         return $wrap;
     }
 
+    function headerText(header, names) {
+        var value = app.getRowValue(header, names);
+        if (value === undefined || value === null) {
+            return '';
+        }
+
+        return String(value).trim();
+    }
+
+    function getArurLengthMessages(header) {
+        var tetPo = headerText(header, ['TetPo', 'tetPo', 'TETPO']);
+        var invoiceNo = headerText(header, ['InvoiceNo', 'invoiceNo']);
+        var warehouse = headerText(header, ['Warehouse', 'warehouse']);
+        var subject = 'AR ' + tetPo + ' ' + invoiceNo;
+        var errors = [];
+
+        if (tetPo.length > 30) {
+            errors.push(messages.arurTetPoTooLong || '採購單超過 30 字，無法起案。');
+        }
+
+        if (warehouse.length > 3) {
+            errors.push(messages.arurWarehouseTooLong || '倉別超過 3 碼，無法起案。');
+        }
+
+        if (subject.length > 50) {
+            errors.push(messages.arurSubjectTooLong || '主旨超過 50 字（採購單 + 發票），無法起案。');
+        }
+
+        return errors;
+    }
+
+    function isArurDrawer() {
+        return (state.caseType || '').toUpperCase() === 'ARUR';
+    }
+
+    function canSubmitArurDrawer(data) {
+        var backendCanSubmit = !!(data && (data.canSubmit || data.CanSubmit));
+        if (!isArurDrawer()) {
+            return { canSubmit: backendCanSubmit, messages: [] };
+        }
+
+        var header = (data && data.header) || {};
+        var lengthMessages = getArurLengthMessages(header);
+        return {
+            canSubmit: backendCanSubmit && lengthMessages.length === 0,
+            messages: lengthMessages
+        };
+    }
+
     function renderSectionAccordion($container, title, $content, accordionId, defaultExpanded) {
         $container.empty();
         var collapseId = accordionId + 'Collapse';
@@ -178,10 +227,10 @@
             true
         );
 
-        var canSubmit = !!(data && (data.canSubmit || data.CanSubmit));
-        var validationMessages = (data && (data.validationMessages || data.ValidationMessages)) || [];
-        $('#btnShipInfoCaseSubmit').prop('disabled', !canSubmit || state.caseSubmitting);
-        if (!canSubmit && validationMessages.length) {
+        var arurCheck = canSubmitArurDrawer(data);
+        var validationMessages = ((data && (data.validationMessages || data.ValidationMessages)) || []).concat(arurCheck.messages);
+        $('#btnShipInfoCaseSubmit').prop('disabled', !arurCheck.canSubmit || state.caseSubmitting);
+        if (!arurCheck.canSubmit && validationMessages.length) {
             app.showToast(validationMessages[0], 'warning');
         }
     };
@@ -236,11 +285,24 @@
             app.showToast((xhr.responseJSON && xhr.responseJSON.message) || messages.caseCreateFailed, 'danger');
         }).always(function () {
             app.setCaseDrawerLoading(false);
+            if (state.caseDrawerData) {
+                var arurCheck = canSubmitArurDrawer(state.caseDrawerData);
+                $('#btnShipInfoCaseSubmit').prop('disabled', !arurCheck.canSubmit || state.caseSubmitting);
+            }
         });
     };
 
     app.showCaseSubmitConfirm = function () {
         if (!state.caseDrawerData || !state.caseHeaderRowKey) {
+            return;
+        }
+
+        var arurCheck = canSubmitArurDrawer(state.caseDrawerData);
+        if (!arurCheck.canSubmit) {
+            if (arurCheck.messages.length) {
+                app.showToast(arurCheck.messages[0], 'warning');
+            }
+            $('#btnShipInfoCaseSubmit').prop('disabled', true);
             return;
         }
 
@@ -255,6 +317,15 @@
 
     app.submitCase = function () {
         if (!state.caseHeaderRowKey || !state.caseType || state.caseSubmitting) {
+            return;
+        }
+
+        var arurCheck = canSubmitArurDrawer(state.caseDrawerData);
+        if (!arurCheck.canSubmit) {
+            if (arurCheck.messages.length) {
+                app.showToast(arurCheck.messages[0], 'warning');
+            }
+            $('#btnShipInfoCaseSubmit').prop('disabled', true);
             return;
         }
 
@@ -301,7 +372,8 @@
             app.setButtonLoading($('#btnShipInfoConfirmCaseSubmit'), false);
             $('#btnShipInfoCaseCancel, #btnShipInfoCaseDrawerClose').prop('disabled', false);
             if (state.caseDrawerData) {
-                $('#btnShipInfoCaseSubmit').prop('disabled', !(state.caseDrawerData.canSubmit || state.caseDrawerData.CanSubmit));
+                var arurCheck = canSubmitArurDrawer(state.caseDrawerData);
+                $('#btnShipInfoCaseSubmit').prop('disabled', !arurCheck.canSubmit);
             }
         });
     };

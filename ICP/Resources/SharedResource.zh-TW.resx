@@ -672,6 +672,15 @@
   <data name="ShipInfo.ArurConfirmMessage" xml:space="preserve">
     <value>請確認 Header 與 Detail 資料無誤後再送出。</value>
   </data>
+  <data name="ShipInfo.ArurSubjectTooLong" xml:space="preserve">
+    <value>主旨超過 50 字（採購單 + 發票），無法起案。</value>
+  </data>
+  <data name="ShipInfo.ArurWarehouseTooLong" xml:space="preserve">
+    <value>倉別超過 3 碼，無法起案。</value>
+  </data>
+  <data name="ShipInfo.ArurTetPoTooLong" xml:space="preserve">
+    <value>採購單超過 30 字，無法起案。</value>
+  </data>
   <data name="ShipInfo.CaseCreateSuccess" xml:space="preserve">
     <value>起案成功</value>
   </data>

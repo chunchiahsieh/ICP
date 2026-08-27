@@ -7,6 +7,9 @@ namespace TEL.IntegrationHub.Services;
 public interface IIcpOutboxCompletionService
 {
     Task MarkCompletedAsync(Guid messageId, CancellationToken cancellationToken = default);
+
+    /// <returns>True when Outbox is Failed (or already Failed/Completed). False when the row cannot be updated.</returns>
+    Task<bool> MarkArurFailedAsync(Guid messageId, string error, CancellationToken cancellationToken = default);
 }
 
 public sealed class IcpOutboxCompletionService : IIcpOutboxCompletionService
@@ -69,5 +72,41 @@ public sealed class IcpOutboxCompletionService : IIcpOutboxCompletionService
             // Do not fail Hub MessageLog Success if ICP DB ack fails; surface for ops.
             _logger.LogError(ex, "Failed to mark ICP Outbox Completed for messageId={MessageId}", messageId);
         }
+    }
+
+    public async Task<bool> MarkArurFailedAsync(Guid messageId, string error, CancellationToken cancellationToken = default)
+    {
+        if (messageId == Guid.Empty)
+        {
+            _logger.LogWarning("Skip Outbox Failed: empty messageId.");
+            return false;
+        }
+
+        var entry = await _db.OutboxEntries.FirstOrDefaultAsync(x => x.Id == messageId, cancellationToken);
+        if (entry is null)
+        {
+            _logger.LogWarning("ICP Outbox row not found for failed ARUR messageId={MessageId}", messageId);
+            return false;
+        }
+
+        if (string.Equals(entry.Status, IcpOutboxStatuses.Completed, StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogWarning(
+                "Skip Outbox Failed: messageId={MessageId} is already Completed.",
+                messageId);
+            return true;
+        }
+
+        if (string.Equals(entry.Status, IcpOutboxStatuses.Failed, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        entry.Status = IcpOutboxStatuses.Failed;
+        entry.LastError = error.Length > 4000 ? error[..4000] : error;
+        entry.UpdateTime = DateTime.Now;
+        entry.UpdateUser = "HUB";
+        await _db.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

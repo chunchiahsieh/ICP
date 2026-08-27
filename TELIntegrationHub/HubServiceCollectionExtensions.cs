@@ -27,6 +27,14 @@ public static class HubServiceCollectionExtensions
         }
 
         services.AddDbContext<IcpDbContext>(options => options.UseSqlServer(icpConnectionString));
+
+        var fiestaConnectionString = configuration.GetConnectionString("FIESTA_Connection");
+        if (string.IsNullOrWhiteSpace(fiestaConnectionString))
+        {
+            throw new InvalidOperationException("ConnectionStrings:FIESTA_Connection is required for Hub ARUR operator lookup.");
+        }
+
+        services.AddDbContext<FiestaDbContext>(options => options.UseSqlServer(fiestaConnectionString));
         services.AddScoped<IIcpOutboxCompletionService, IcpOutboxCompletionService>();
 
         services.AddScoped<IMessageLogService, MessageLogService>();

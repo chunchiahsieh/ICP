@@ -92,16 +92,16 @@ ICP 在押金或 ARUR 起案成功後，會將**標準 Event Envelope**（含業
 | `Pending` | 待發送或可重試 |
 | `Published` | 已成功發送至 RabbitMQ |
 | `Completed` | Hub 已成功消費並寫入 MessageLog（Hub 直接更新 ICP Outbox） |
-| `Failed` | 超過 `MaxRetryCount` 仍失敗（發送端） |
+| `Failed` | 超過 `MaxRetryCount` 仍失敗（發送端）；ARUR 由 Hub 寫入 ILC 失敗時也會標為 `Failed` |
 
-流程：`Pending` → `Published` → `Completed`。Hub 處理失敗時 Outbox 維持 `Published`，僅記 Hub `MESSAGE_LOG` Failed。
+流程：`Pending` → `Published` → `Completed`。押金 Hub 處理失敗時 Outbox 維持 `Published`，僅記 Hub `MESSAGE_LOG` Failed。ARUR Hub 處理失敗時 Outbox 改為 `Failed`，不自動重試；**若連 Outbox 都標不成 Failed，訊息會留在 Queue 直到標成功**。
 
 ### Failed 重送（ShipInfo）
 
-當業務 case 已是 `Initiated`，但 Worker 發送耗盡變成 Outbox `Failed` 時：
+當業務 case 已是 `Initiated`，但 Outbox 為 `Failed`（發送耗盡，或 ARUR 由 Hub 寫入 ILC 失敗）時：
 
 1. ShipInfo 押金／ARUR 按鈕會依 `DepositOutboxFailed`／`ArurOutboxFailed` 再次啟用。
-2. 再按同一按鈕會將該 `HeaderKey`+`CaseType` 最新 Failed 列重設為 `Pending`（`RetryCount=0`），**不重產案號**、不改 case 狀態。
+2. 再按同一按鈕會將該 `HeaderKey`+`CaseType` 最新 Failed 列重設為 `Pending`（`RetryCount=0`），**不重產 ICP 案號**、不改 case 狀態。ARUR 重送到 Hub 後會再取一個新的 ILC `PRT-yyyyMMdd-nnn`。
 3. 既有 `IntegrationEventOutboxPublisherWorker` 會再次發布。
 
 ## Hub 消費（押金起案 → ILC）
@@ -120,11 +120,14 @@ ICP 在押金或 ARUR 起案成功後，會將**標準 Event Envelope**（含業
 
 `ArurCaseInitiatedConsumer`（`caseType=ARUR`）會：
 
-1. 寫入 ILC `dbo.RT_ARUR_HEADER`（僅使用欄位；`CreateSys=I`、`Status=5`、`A1_Start=A8`、`ArrivalType=1`）
-2. MessageLog Success
-3. 將 ICP Outbox 標為 `Completed`
+1. 寫入 ILC `dbo.RT_ARUR_HEADER`（僅使用欄位；`CreateSys=ICP`、`Status=5`、`A1_Start=A8`、`ArrivalType=1`）
+2. ILC `RT_NO` 由 Hub 取每日流水號 `PRT-yyyyMMdd-001`～`999`（與 ICP 畫面的 `ARUR-{發票號}` 不同，這是預期行為）
+3. MessageLog Success
+4. 將 ICP Outbox 標為 `Completed`
 
-同一 `RT_NO` 已存在則略過 INSERT（冪等），仍標 Completed。
+操作者：`actor.userName` 取 Windows 帳號最後一段，對 FIESTA `MailGroup.EmpID` 取得工號／信箱。
+
+Hub 寫入失敗時將 Outbox 標為 `Failed` 並寫入 `LastError`，**不自動重試**。若連 Outbox 都標不成 Failed，訊息會留在 Queue 直到標成功。使用者於 ShipInfo 畫面重送時會再發布同一事件，Hub 會再取一個新的 PRT 號寫入 ILC。
 
 ## 相關程式
 

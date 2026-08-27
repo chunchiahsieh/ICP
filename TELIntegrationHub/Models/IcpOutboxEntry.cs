@@ -13,6 +13,10 @@ public class IcpOutboxEntry
     [MaxLength(20)]
     public string Status { get; set; } = string.Empty;
 
+    public int RetryCount { get; set; }
+
+    public string? LastError { get; set; }
+
     public DateTime? UpdateTime { get; set; }
 
     [MaxLength(100)]
@@ -23,4 +27,5 @@ public static class IcpOutboxStatuses
 {
     public const string Published = "Published";
     public const string Completed = "Completed";
+    public const string Failed = "Failed";
 }

@@ -11,6 +11,8 @@ public sealed class IlcRtArurHeader
 
     public string? EmailTo { get; set; }
 
+    public string? Subject { get; set; }
+
     public string? ShipToCode { get; set; }
 
     public string? ShipTo { get; set; }
@@ -26,6 +28,10 @@ public sealed class IlcRtArurHeader
     public string? InvoiceNo { get; set; }
 
     public string? Attachment { get; set; }
+
+    public string DocumentType { get; set; } = "AR";
+
+    public string IsDd { get; set; } = "N";
 
     public string? Mawb { get; set; }
 
@@ -51,5 +57,17 @@ public sealed class IlcRtArurHeader
 
     public string A1Start { get; set; } = "A8";
 
-    public string CreateSys { get; set; } = "I";
+    public string RIsPriority { get; set; } = "N";
+
+    public string RIsAdvance { get; set; } = "N";
+
+    public string DepId { get; set; } = "MM";
+
+    public string NowPage { get; set; } = "A4";
+
+    public string? EditBy { get; set; }
+
+    public DateTime EditDate { get; set; }
+
+    public string CreateSys { get; set; } = "ICP";
 }
