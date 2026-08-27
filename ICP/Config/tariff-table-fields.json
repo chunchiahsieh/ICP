@@ -1,5 +1,5 @@
 {
-  "tableUi": {"stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "600px"},
+  "tableUi": {"stickyHeader": true, "stickyLeftColumns": true},
   "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
   "list": {
     "fields": [

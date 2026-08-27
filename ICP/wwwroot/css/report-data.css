@@ -1,8 +1,81 @@
-.report-data-page .shipinfo-header-card,
-.report-data-page .shipinfo-detail-card {
+.report-data-page .shipinfo-table-wrap,
+.report-data-page .report-table-wrap {
+    overflow: visible;
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.report-split-page {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 7.5rem);
+}
+
+.report-split-toolbar {
+    flex-shrink: 0;
+}
+
+.report-split-panes {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 0.75rem;
+}
+
+.report-split-pane {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: var(--protable-body-min-height);
     overflow: hidden;
 }
 
-.report-data-page .report-table-wrap {
-    overflow: auto;
+.report-split-panes > .report-split-pane:first-child {
+    min-height: calc(var(--protable-body-min-height) + 6rem);
+}
+
+.report-split-panes > .report-split-pane:first-child .shipinfo-table-wrap,
+.report-split-panes > .report-split-pane:first-child .report-table-wrap {
+    overflow: hidden;
+}
+
+.report-pane-title {
+    flex-shrink: 0;
+}
+
+.report-split-table {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.report-split-pane .dataTables_wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.report-split-pane .dataTables_wrapper > .row:has(table) {
+    flex: 1 1 auto;
+}
+
+.report-split-panes > .report-split-pane:first-child .dataTables_wrapper > .row:has(table) {
+    min-height: 0;
+}
+
+.report-split-panes > .report-split-pane:last-child .dataTables_wrapper > .row:has(table) {
+    min-height: var(--protable-body-min-height);
+    max-height: max(var(--protable-body-min-height), calc((100vh - 10rem) / 2));
+}
+
+.report-data-page .shipinfo-pro-table {
+    width: max-content;
+    min-width: 100%;
+    white-space: nowrap;
+    height: auto;
 }

@@ -92,9 +92,39 @@ html {
   flex: 1;
 }
 
-/* DataTables + Bootstrap 5：分頁列與每頁筆數選單 */
+/* DataTables + Bootstrap 5：Show entries 在上、只有資料列可捲、分頁貼資料下 */
+:root {
+  --protable-header-height: 5.5rem;
+  --protable-row-height: 2.5rem;
+  --protable-visible-rows: 10;
+  --protable-body-min-height: calc(
+    var(--protable-header-height) + var(--protable-row-height) * var(--protable-visible-rows)
+  );
+  --protable-chrome-offset: 14rem;
+}
+
 div.dataTables_wrapper {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+div.dataTables_wrapper > .row:has(.dataTables_length) {
+  flex-shrink: 0;
+}
+
+div.dataTables_wrapper > .row:has(table) {
+  flex: 0 1 auto;
+  min-height: var(--protable-body-min-height);
+  max-height: max(var(--protable-body-min-height), calc(100vh - var(--protable-chrome-offset)));
+  overflow: auto;
+}
+
+div.dataTables_wrapper > .row:has(.dataTables_info),
+div.dataTables_wrapper > .row:has(.dataTables_paginate) {
+  flex-shrink: 0;
+  flex-wrap: nowrap;
 }
 
 div.dataTables_wrapper div.dataTables_length,
@@ -102,6 +132,10 @@ div.dataTables_wrapper div.dataTables_info,
 div.dataTables_wrapper div.dataTables_paginate {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+div.dataTables_wrapper div.dataTables_info {
+  white-space: nowrap;
 }
 
 div.dataTables_wrapper div.dataTables_length label {
@@ -127,14 +161,30 @@ div.dataTables_wrapper div.dataTables_length select {
 
 div.dataTables_wrapper div.dataTables_paginate {
   text-align: right;
+  white-space: nowrap;
 }
 
 div.dataTables_wrapper div.dataTables_paginate ul.pagination {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
   margin: 0;
   gap: 0.25rem;
+  white-space: nowrap;
+}
+
+@media (min-width: 576px) {
+  div.dataTables_wrapper > .row:has(.dataTables_paginate) > [class*="col-"]:has(.dataTables_info) {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: none;
+  }
+
+  div.dataTables_wrapper > .row:has(.dataTables_paginate) > [class*="col-"]:has(.dataTables_paginate) {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: none;
+  }
 }
 
 div.dataTables_wrapper div.dataTables_paginate ul.pagination li.paginate_button a {

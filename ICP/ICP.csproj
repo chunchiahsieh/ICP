@@ -64,6 +64,8 @@
     <Content Update="Config\forwarder-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\tariff-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\tariff-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\customs-data-download-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\customs-data-download-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\shipping-report-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\shipping-report-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\compare-icp-vs-arur-table-fields.json" CopyToOutputDirectory="PreserveNewest" />

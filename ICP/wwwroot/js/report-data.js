@@ -167,7 +167,7 @@
             filterFieldMap: buildFilterFieldMap(fields, tableId),
             filterOptionsUrl: kind === 'header' ? urls.headerFilterOptions : urls.detailFilterOptions,
             queryUrl: kind === 'header' ? urls.queryHeader : urls.queryDetail,
-            pageLength: 50,
+            pageLength: 10,
             preserveSort: false,
             initialSort: resolveInitialSort(kind, pageConfig),
             dataTableOptions: {
@@ -188,6 +188,8 @@
         }, buildFilterHooks());
 
         if (kind === 'detail') {
+            base.pageLength = -1;
+            base.dataTableOptions = $.extend(true, {}, base.dataTableOptions, global.ProDataTables.linkedDetailTableOptions);
             base.autoLoad = false;
             base.filterOptionsExtraParams = function () {
                 return { headerKey: app.state.selectedHeaderKey || '' };

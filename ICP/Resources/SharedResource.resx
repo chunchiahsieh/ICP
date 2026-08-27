@@ -1942,4 +1942,172 @@
   <data name="Setting.Customized.Title" xml:space="preserve">
     <value>自訂設定</value>
   </data>
+  <data name="Broker.CustomsDataDownload.LengthMenuAll" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.RunId" xml:space="preserve">
+    <value>RunId</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.FileCode" xml:space="preserve">
+    <value>FileCode</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SourceFileName" xml:space="preserve">
+    <value>SourceFileName</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SourceFileHash" xml:space="preserve">
+    <value>SourceFileHash</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SourceFileDate" xml:space="preserve">
+    <value>SourceFileDate</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.CreatedUtc" xml:space="preserve">
+    <value>CreatedUtc</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.InvoiceNo" xml:space="preserve">
+    <value>INVOICE_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Forwarder" xml:space="preserve">
+    <value>FORWARDER</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Etd" xml:space="preserve">
+    <value>ETD</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Eta" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.InvoiceDate" xml:space="preserve">
+    <value>INVOICE_DATE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Mawb" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Hawb" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Flt" xml:space="preserve">
+    <value>FLT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.DestinationPort" xml:space="preserve">
+    <value>DESTINATION_PORT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.DestinationCountry" xml:space="preserve">
+    <value>DESTINATION_COUNTRY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.InvoiceType" xml:space="preserve">
+    <value>INVOICE_TYPE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Incoterms" xml:space="preserve">
+    <value>INCOTERMS</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Bu" xml:space="preserve">
+    <value>BU</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.PoNo" xml:space="preserve">
+    <value>PO_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.PoLine" xml:space="preserve">
+    <value>PO_LINE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.OrderPriority" xml:space="preserve">
+    <value>ORDER_PRIORITY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.InvoiceSeq" xml:space="preserve">
+    <value>INVOICE_SEQ</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ItemNo" xml:space="preserve">
+    <value>ITEM_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Description" xml:space="preserve">
+    <value>DESCRIPTION</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Qty" xml:space="preserve">
+    <value>QTY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Uom" xml:space="preserve">
+    <value>UOM</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Coo" xml:space="preserve">
+    <value>COO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Price" xml:space="preserve">
+    <value>PRICE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Amount" xml:space="preserve">
+    <value>AMOUNT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Currency" xml:space="preserve">
+    <value>CURRENCY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.PackingType" xml:space="preserve">
+    <value>PACKING_TYPE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.CartonNo" xml:space="preserve">
+    <value>CARTON_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Length" xml:space="preserve">
+    <value>LENGTH</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Width" xml:space="preserve">
+    <value>WIDTH</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Hight" xml:space="preserve">
+    <value>HIGHT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.GrossWeight" xml:space="preserve">
+    <value>GROSS_WEIGHT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.TotalCartons" xml:space="preserve">
+    <value>TOTAL_CARTONS</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.NetWeightOfTheItem" xml:space="preserve">
+    <value>NET_WEIGHT_OF_THE_ITEM</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.NcdrNo" xml:space="preserve">
+    <value>NCDR_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.EndUserCode" xml:space="preserve">
+    <value>END_USER_CODE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.EndUser" xml:space="preserve">
+    <value>END_USER</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.MachineNo" xml:space="preserve">
+    <value>MACHINE_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.MachineType" xml:space="preserve">
+    <value>MACHINE_TYPE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ShipReason" xml:space="preserve">
+    <value>SHIP_REASON</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.DeliveryNo" xml:space="preserve">
+    <value>DELIVERY_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.DeliveryLineNo" xml:space="preserve">
+    <value>DELIVERY_LINE_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SoldToPartyCode" xml:space="preserve">
+    <value>SOLD_TO_PARTY_CODE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SoldToParty" xml:space="preserve">
+    <value>SOLD_TO_PARTY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ShipToPartyCode" xml:space="preserve">
+    <value>SHIP_TO_PARTY_CODE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ShipToParty" xml:space="preserve">
+    <value>SHIP_TO_PARTY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ShipToPartyAddress" xml:space="preserve">
+    <value>SHIP_TO_PARTY_ADDRESS</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Hazmat" xml:space="preserve">
+    <value>HAZMAT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.WbsElement" xml:space="preserve">
+    <value>WBS_ELEMENT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SapRemarks" xml:space="preserve">
+    <value>SAP_REMARKS</value>
+  </data>
 </root>

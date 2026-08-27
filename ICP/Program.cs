@@ -13,6 +13,7 @@ using ICP.Models.ShipInfo;
 using ICP.Models.Forwarder;
 using ICP.Models.Integration;
 using ICP.Models.Report;
+using ICP.Models.CustomsDataDownload;
 
 using ICP.Repositories;
 
@@ -111,6 +112,16 @@ builder.Services
     .Bind(tariffTableFieldsConfiguration)
     .ValidateOnStart();
 
+var customsDataDownloadTableFieldsConfiguration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("Config/customs-data-download-table-fields.json", optional: false, reloadOnChange: true)
+    .Build();
+
+builder.Services
+    .AddOptions<CustomsDataDownloadTableFieldsOptions>()
+    .Bind(customsDataDownloadTableFieldsConfiguration)
+    .ValidateOnStart();
+
 var shippingReportTableFieldsConfiguration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("Config/shipping-report-table-fields.json", optional: false, reloadOnChange: true)
@@ -201,6 +212,7 @@ builder.Services.AddScoped<ShipInfoMetadataProvider>();
 builder.Services.AddScoped<ReportMetadataProvider>();
 builder.Services.AddScoped<ForwarderTableMetadataProvider>();
 builder.Services.AddScoped<TariffTableMetadataProvider>();
+builder.Services.AddScoped<CustomsDataDownloadTableMetadataProvider>();
 builder.Services.AddScoped<ShipInfoLookupService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
 builder.Services.AddScoped<IReportDataService, ReportDataService>();

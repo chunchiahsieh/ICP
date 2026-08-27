@@ -1,11 +1,121 @@
 @{
     ViewData["Title"] = Localizer["Views.Shared._SidebarNav.Broker.CustomsDataDownload"];
+    var tableConfigJson = ViewData["CustomsDataDownloadTableConfigJson"] as string ?? "{}";
 }
 
-<div data-permissions="Views.Broker.CustomsDataDownload.View"
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pro-table-filters.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/customs-data-download.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+                collapse: false
+            }
+        };
+    </script>
+}
+
+<div class="container-fluid customs-download-page pro-datatables-page"
+     data-permissions="Views.Broker.CustomsDataDownload.View"
      data-i18n-key="Views.Broker.CustomsDataDownload.View">
-    <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3 gap-2 flex-wrap">
         <h4 class="mb-0">@Localizer["Views.Shared._SidebarNav.Broker.CustomsDataDownload"]</h4>
+        <button type="button"
+                class="btn btn-sm btn-outline-success"
+                id="btnCustomsDataDownloadExcel"
+                data-permissions="Views.Broker.CustomsDataDownload.View"
+                data-i18n-key="Report.DownloadExcel">
+            <i class="bi bi-file-earmark-excel me-1"></i>@Localizer["Report.DownloadExcel"]
+        </button>
     </div>
-    <p class="text-muted">@Localizer["Function.Placeholder"]</p>
+
+    <div id="DataDiv"></div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-table-filters.js" asp-append-version="true"></script>
+    <script src="~/js/customs-data-download-protable.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var tableConfig = @Html.Raw(tableConfigJson);
+            var filterFieldMap = window.CustomsDataDownloadProTable
+                ? CustomsDataDownloadProTable.buildFilterFieldMap(tableConfig.fields || [])
+                : {};
+            var filterHooks = window.CustomsDataDownloadProTable
+                ? CustomsDataDownloadProTable.buildFilterHooks(filterFieldMap)
+                : {};
+
+            function hasPermission(code) {
+                var config = window.IcpPermissions || { superUser: false, allowedCodes: [] };
+                if (config.superUser) {
+                    return true;
+                }
+
+                var normalized = (code || '').toLowerCase();
+                return (config.allowedCodes || []).some(function (allowed) {
+                    return (allowed || '').toLowerCase() === normalized;
+                });
+            }
+
+            function syncStickyHeaderOffset() {
+                if (!tableConfig.stickyHeader) {
+                    return;
+                }
+
+                $('#DataDiv .customs-download-pro-table').each(function () {
+                    var table = this;
+                    var $titleRow = $(table).find('thead.customs-download-sticky-header > tr').first();
+                    if (!$titleRow.length) {
+                        return;
+                    }
+
+                    var titleHeight = Math.ceil($titleRow[0].getBoundingClientRect().height);
+                    table.style.setProperty('--customs-download-header-row-height', titleHeight + 'px');
+                });
+            }
+
+            var tableInstance = null;
+
+            if (window.ProDataTables && ProDataTables.initUsers && hasPermission('Views.Broker.CustomsDataDownload.View')) {
+                var sortColumn = tableConfig.initialSortColumn ?? 0;
+                var sortDirection = tableConfig.initialSortDirection || 'desc';
+                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig($.extend({
+                    filterOptionsUrl: '@Url.Action("GetFilterOptions", "CustomsDataDownload")',
+                    queryUrl: '@Url.Action("Query", "CustomsDataDownload")',
+                    pageLength: 10,
+                    initialSort: [[sortColumn, sortDirection]],
+                    onDraw: function () {
+                        syncStickyHeaderOffset();
+                    },
+                    onAfterRender: function ($div) {
+                        if (window.ProTableFilters && ProTableFilters.updateAllProTableFilterCounts) {
+                            ProTableFilters.updateAllProTableFilterCounts($div, filterFieldMap);
+                        }
+                    }
+                }, filterHooks)));
+
+                if (window.CustomsDataDownloadProTable) {
+                    CustomsDataDownloadProTable.bindFilterActions(tableInstance);
+                }
+            }
+
+            $('#btnCustomsDataDownloadExcel').on('click', function () {
+                if (!window.CustomsDataDownloadProTable) {
+                    return;
+                }
+
+                CustomsDataDownloadProTable.downloadExcel({
+                    downloadUrl: '@Url.Action("DownloadExcel", "CustomsDataDownload")',
+                    filterFieldMap: filterFieldMap
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,87 @@
+@model ICP.Models.CustomsDataDownloadSearchListViewModel
+@using ICP.Helpers
+@using ICP.Models.CustomsDataDownload
+@{
+    var wrapClasses = "customs-download-table-wrap";
+    if (Model.TableUi.StickyHeader == true)
+    {
+        wrapClasses += " customs-download-sticky-enabled";
+    }
+
+    if (Model.TableUi.StickyLeftColumns == true)
+    {
+        wrapClasses += " customs-download-sticky-left-enabled";
+    }
+
+    var theadClasses = "table-light";
+    if (Model.TableUi.StickyHeader == true)
+    {
+        theadClasses += " customs-download-sticky-header";
+    }
+
+    string ResolveHeaderCellClass(CustomsDataDownloadTableFieldMetadata field, int index)
+    {
+        if (Model.TableUi.StickyLeftColumns == true && index == 0)
+        {
+            return "customs-download-sticky-col";
+        }
+
+        return string.Empty;
+    }
+}
+
+<div class="@wrapClasses">
+    <table id="datatable" class="table table-striped table-hover table-bordered align-middle mb-0 customs-download-pro-table w-100">
+        <thead class="@theadClasses">
+            <tr>
+                @{
+                    var headerIndex = 0;
+                }
+                @foreach (var field in Model.Fields)
+                {
+                    var headerClass = ResolveHeaderCellClass(field, headerIndex);
+                    <th class="@headerClass">@CustomsDataDownloadTableViewHelper.ResolveHeaderLabel(field, key => Localizer[key].Value)</th>
+                    headerIndex++;
+                }
+            </tr>
+            @if (Model.HasFilterRow)
+            {
+                <tr class="users-filter-row">
+                    @{
+                        var filterIndex = 0;
+                    }
+                    @foreach (var field in Model.Fields)
+                    {
+                        var filterClass = ResolveHeaderCellClass(field, filterIndex);
+                        var thClass = string.IsNullOrWhiteSpace(filterClass)
+                            ? "sorting_disabled"
+                            : $"{filterClass} sorting_disabled";
+                        <th class="@thClass">
+                            @if (field.Searchable)
+                            {
+                                @await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{field.FieldName}", field.FieldName, CustomsDataDownloadMetadataHelper.ResolveFilterType(field)))
+                            }
+                        </th>
+                        filterIndex++;
+                    }
+                </tr>
+            }
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ListData)
+            {
+                <tr>
+                    @{
+                        var cellIndex = 0;
+                    }
+                    @foreach (var field in Model.Fields)
+                    {
+                        var cellClass = ResolveHeaderCellClass(field, cellIndex);
+                        <td class="@cellClass">@CustomsDataDownloadTableViewHelper.FormatCellValue(item, field.FieldName)</td>
+                        cellIndex++;
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

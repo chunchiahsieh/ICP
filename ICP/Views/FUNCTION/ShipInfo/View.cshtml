@@ -10,37 +10,35 @@
     <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/pro-table-filters.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/shipinfo.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/report-data.css" asp-append-version="true" />
 }
 
-<div class="container-fluid shipinfo-page"
+<div class="container-fluid shipinfo-page report-data-page pro-datatables-page report-split-page"
      data-permissions="Views.Function.ShipInfo.View"
      data-i18n-key="Views.Function.ShipInfo.View">
-    <div class="d-flex align-items-center justify-content-between mt-3 mb-3 flex-wrap gap-2">
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-3 flex-wrap gap-2 report-split-toolbar">
         <h4 class="mb-0">@Localizer["Views.Function.ShipInfo.View"]</h4>
     </div>
 
-    <div class="card mb-3 shipinfo-header-card">
-        <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <span>@Localizer["ShipInfo.HeaderTitle"]</span>
-            <div class="d-flex flex-wrap gap-2 align-items-center shipinfo-header-toolbar">
-                <button type="button" class="btn btn-sm btn-success" id="btnShipInfoDeposit" data-permissions="Views.Function.ShipInfo.Deposit" disabled>
-                    <i class="bi bi-box-arrow-up me-1"></i>@Localizer["ShipInfo.Deposit"]
-                </button>
-                <button type="button" class="btn btn-sm btn-success" id="btnShipInfoArur" data-permissions="Views.Function.ShipInfo.ARUR" disabled>
-                    <i class="bi bi-plus-circle me-1"></i>@Localizer["ShipInfo.ARUR"]
-                </button>
+    <div class="report-split-panes">
+        <section class="report-split-pane">
+            <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                <h6 class="report-pane-title mb-0">@Localizer["ShipInfo.HeaderTitle"]</h6>
+                <div class="d-flex flex-wrap gap-2 align-items-center shipinfo-header-toolbar">
+                    <button type="button" class="btn btn-sm btn-success" id="btnShipInfoDeposit" data-permissions="Views.Function.ShipInfo.Deposit" disabled>
+                        <i class="bi bi-box-arrow-up me-1"></i>@Localizer["ShipInfo.Deposit"]
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success" id="btnShipInfoArur" data-permissions="Views.Function.ShipInfo.ARUR" disabled>
+                        <i class="bi bi-plus-circle me-1"></i>@Localizer["ShipInfo.ARUR"]
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="card-body p-0 position-relative shipinfo-table-card-body">
-            <div id="shipInfoHeaderDataDiv"></div>
-        </div>
-    </div>
-
-    <div class="card mb-3 shipinfo-detail-card">
-        <div class="card-header">@Localizer["ShipInfo.DetailTitle"]</div>
-        <div class="card-body p-0 position-relative shipinfo-table-card-body">
-            <div id="shipInfoDetailDataDiv"></div>
-        </div>
+            <div id="shipInfoHeaderDataDiv" class="report-split-table"></div>
+        </section>
+        <section class="report-split-pane">
+            <h6 class="report-pane-title mb-2">@Localizer["ShipInfo.DetailTitle"]</h6>
+            <div id="shipInfoDetailDataDiv" class="report-split-table"></div>
+        </section>
     </div>
 </div>
 

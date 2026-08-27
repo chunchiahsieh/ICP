@@ -1,6 +1,6 @@
 {
   "header": {
-    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "420px" },
+    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true },
     "initialSort": { "fieldName": "CreateTime", "direction": "desc" },
     "list": {
       "fields": [
@@ -28,7 +28,7 @@
     }
   },
   "detail": {
-    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true, "maxHeight": "420px" },
+    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true },
     "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
     "list": {
       "fields": [

@@ -75,6 +75,22 @@ public static class PermissionRequestResolver
             }
         }
 
+        if (controller.Equals("CustomsDataDownload", StringComparison.OrdinalIgnoreCase))
+        {
+            if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Views.Broker.CustomsDataDownload.View";
+            }
+
+            if (IsReadAction(action)
+                || action.Equals("GetFilterOptions", StringComparison.OrdinalIgnoreCase)
+                || action.Equals("DownloadExcel", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Views.Broker.CustomsDataDownload.View";
+            }
+        }
+
         if (controller.Equals("ForwarderDataUpload", StringComparison.OrdinalIgnoreCase))
         {
             if ((action.Equals("Upload", StringComparison.OrdinalIgnoreCase)

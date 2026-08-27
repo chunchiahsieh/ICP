@@ -4,7 +4,6 @@
     var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
     var maxSizeHint = string.Format(Localizer["Broker.TariffData.MaxSizeHint"].Value, maxSizeMb);
     var tariffTableConfigJson = ViewData["TariffTableConfigJson"] as string ?? "{}";
-    var lengthMenuAll = Localizer["Broker.TariffData.LengthMenuAll"].Value;
 }
 
 @section Styles {
@@ -54,12 +53,7 @@
         </div>
     </div>
 
-    <div class="card mb-3 tariff-table-card">
-        <div class="card-header">@Localizer["Broker.TariffData.Title"]</div>
-        <div class="card-body p-0 position-relative tariff-table-card-body">
-            <div id="DataDiv"></div>
-        </div>
-    </div>
+    <div id="DataDiv"></div>
 </div>
 
 <div class="d-none" aria-hidden="true">
@@ -87,7 +81,6 @@
             var maxSizeHint = @Html.Raw(JsonSerializer.Serialize(maxSizeHint));
             var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
             var tariffTableConfig = @Html.Raw(tariffTableConfigJson);
-            var lengthMenuAll = @Html.Raw(JsonSerializer.Serialize(lengthMenuAll));
             var tariffFilterFieldMap = window.TariffProTable
                 ? TariffProTable.buildTariffFilterFieldMap(tariffTableConfig.fields || [])
                 : {};
@@ -125,8 +118,14 @@
             }
 
             function renumberTariffRowNo() {
-                $('#DataDiv .tariff-pro-table tbody .tariff-rowno-col').each(function (index) {
-                    $(this).text(index + 1);
+                var $table = $('#DataDiv .tariff-pro-table');
+                if (!$table.length || !$.fn.dataTable.isDataTable($table[0])) {
+                    return;
+                }
+
+                var start = $table.DataTable().page.info().start;
+                $table.find('tbody .tariff-rowno-col').each(function (index) {
+                    $(this).text(start + index + 1);
                 });
             }
 
@@ -138,8 +137,7 @@
                 tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig($.extend({
                     filterOptionsUrl: '@Url.Action("GetFilterOptions", "TariffData")',
                     queryUrl: '@Url.Action("Query", "TariffData")',
-                    pageLength: -1,
-                    lengthMenu: [[-1], [lengthMenuAll]],
+                    pageLength: 10,
                     initialSort: [[sortColumn, sortDirection]],
                     onDraw: function () {
                         syncTariffStickyHeaderOffset();

@@ -12,6 +12,13 @@
     initialSort: [[0, 'desc']]
   };
 
+  global.ProDataTables.linkedDetailTableOptions = {
+    paging: false,
+    lengthChange: false,
+    info: false,
+    dom: "<'row'<'col-sm-12'tr>>"
+  };
+
   global.ProDataTables.resolveLengthMenu = function (config) {
     if (config && config.lengthMenu) {
       return config.lengthMenu;

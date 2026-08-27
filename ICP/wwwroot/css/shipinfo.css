@@ -1,20 +1,5 @@
-.shipinfo-page .shipinfo-header-card {
-    position: relative;
-    z-index: 1;
-    isolation: isolate;
-}
-
-.shipinfo-page .shipinfo-detail-card {
-    position: relative;
-    z-index: 2;
-}
-
-.shipinfo-page .shipinfo-table-card-body {
-    overflow: hidden;
-}
-
 .shipinfo-page .shipinfo-table-wrap {
-    overflow: auto;
+    overflow: visible;
     position: relative;
     isolation: isolate;
 }

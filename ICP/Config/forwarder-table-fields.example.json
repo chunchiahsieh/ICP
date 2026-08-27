@@ -1,8 +1,7 @@
 {
   "tableUi": {
     "stickyHeader": true,
-    "stickyLeftColumns": true,
-    "maxHeight": "65vh"
+    "stickyLeftColumns": true
   },
   "initialSort": { "fieldName": "Type", "direction": "asc" },
   "list": {

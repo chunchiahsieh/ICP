@@ -31,6 +31,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<TariffData> TariffDataRecords => Set<TariffData>();
 
+    public DbSet<StgRawShippingAdvice> StgRawShippingAdvice => Set<StgRawShippingAdvice>();
+
     public DbSet<IcpHeader> IcpHeaders => Set<IcpHeader>();
 
     public DbSet<IcpDetail> IcpDetails => Set<IcpDetail>();
@@ -182,6 +184,68 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => e.InvoiceNumber)
                 .IsUnique()
                 .HasDatabaseName("UQ_TariffData_InvoiceNumber");
+        });
+
+        modelBuilder.Entity<StgRawShippingAdvice>(entity =>
+        {
+            entity.ToTable("StgRaw_ShippingAdvice");
+            entity.HasNoKey();
+
+            entity.Property(e => e.RunId).HasColumnName("RunId");
+            entity.Property(e => e.FileCode).HasColumnName("FileCode").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.SourceFileName).HasColumnName("SourceFileName").HasMaxLength(260);
+            entity.Property(e => e.SourceFileHash).HasColumnName("SourceFileHash").HasMaxLength(32);
+            entity.Property(e => e.SourceFileDate).HasColumnName("SourceFileDate");
+            entity.Property(e => e.CreatedUtc).HasColumnName("CreatedUtc");
+            entity.Property(e => e.InvoiceNo).HasColumnName("INVOICE_NO").HasMaxLength(30);
+            entity.Property(e => e.Forwarder).HasColumnName("FORWARDER").HasMaxLength(50);
+            entity.Property(e => e.Etd).HasColumnName("ETD").HasMaxLength(10);
+            entity.Property(e => e.Eta).HasColumnName("ETA").HasMaxLength(10);
+            entity.Property(e => e.InvoiceDate).HasColumnName("INVOICE_DATE").HasMaxLength(10);
+            entity.Property(e => e.Mawb).HasColumnName("MAWB").HasMaxLength(20);
+            entity.Property(e => e.Hawb).HasColumnName("HAWB").HasMaxLength(20);
+            entity.Property(e => e.Flt).HasColumnName("FLT").HasMaxLength(20);
+            entity.Property(e => e.DestinationPort).HasColumnName("DESTINATION_PORT").HasMaxLength(10);
+            entity.Property(e => e.DestinationCountry).HasColumnName("DESTINATION_COUNTRY").HasMaxLength(3);
+            entity.Property(e => e.InvoiceType).HasColumnName("INVOICE_TYPE").HasMaxLength(10);
+            entity.Property(e => e.Incoterms).HasColumnName("INCOTERMS").HasMaxLength(20);
+            entity.Property(e => e.Bu).HasColumnName("BU").HasMaxLength(40);
+            entity.Property(e => e.PoNo).HasColumnName("PO_NO").HasMaxLength(35);
+            entity.Property(e => e.PoLine).HasColumnName("PO_LINE").HasMaxLength(35);
+            entity.Property(e => e.OrderPriority).HasColumnName("ORDER_PRIORITY");
+            entity.Property(e => e.InvoiceSeq).HasColumnName("INVOICE_SEQ");
+            entity.Property(e => e.ItemNo).HasColumnName("ITEM_NO").HasMaxLength(47);
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION").HasMaxLength(60);
+            entity.Property(e => e.Qty).HasColumnName("QTY").HasPrecision(13, 3);
+            entity.Property(e => e.Uom).HasColumnName("UOM").HasMaxLength(10);
+            entity.Property(e => e.Coo).HasColumnName("COO").HasMaxLength(50);
+            entity.Property(e => e.Price).HasColumnName("PRICE");
+            entity.Property(e => e.Amount).HasColumnName("AMOUNT");
+            entity.Property(e => e.Currency).HasColumnName("CURRENCY").HasMaxLength(3);
+            entity.Property(e => e.PackingType).HasColumnName("PACKING_TYPE").HasMaxLength(50);
+            entity.Property(e => e.CartonNo).HasColumnName("CARTON_NO");
+            entity.Property(e => e.Length).HasColumnName("LENGTH");
+            entity.Property(e => e.Width).HasColumnName("WIDTH");
+            entity.Property(e => e.Hight).HasColumnName("HIGHT");
+            entity.Property(e => e.GrossWeight).HasColumnName("GROSS_WEIGHT").HasPrecision(6, 3);
+            entity.Property(e => e.TotalCartons).HasColumnName("TOTAL_CARTONS");
+            entity.Property(e => e.NetWeightOfTheItem).HasColumnName("NET_WEIGHT_OF_THE_ITEM");
+            entity.Property(e => e.NcdrNo).HasColumnName("NCDR_NO").HasMaxLength(60);
+            entity.Property(e => e.EndUserCode).HasColumnName("END_USER_CODE").HasMaxLength(30);
+            entity.Property(e => e.EndUser).HasColumnName("END_USER").HasMaxLength(100);
+            entity.Property(e => e.MachineNo).HasColumnName("MACHINE_NO").HasMaxLength(50);
+            entity.Property(e => e.MachineType).HasColumnName("MACHINE_TYPE").HasMaxLength(50);
+            entity.Property(e => e.ShipReason).HasColumnName("SHIP_REASON").HasMaxLength(50);
+            entity.Property(e => e.DeliveryNo).HasColumnName("DELIVERY_NO").HasMaxLength(30);
+            entity.Property(e => e.DeliveryLineNo).HasColumnName("DELIVERY_LINE_NO");
+            entity.Property(e => e.SoldToPartyCode).HasColumnName("SOLD_TO_PARTY_CODE").HasMaxLength(30);
+            entity.Property(e => e.SoldToParty).HasColumnName("SOLD_TO_PARTY").HasMaxLength(100);
+            entity.Property(e => e.ShipToPartyCode).HasColumnName("SHIP_TO_PARTY_CODE").HasMaxLength(30);
+            entity.Property(e => e.ShipToParty).HasColumnName("SHIP_TO_PARTY").HasMaxLength(100);
+            entity.Property(e => e.ShipToPartyAddress).HasColumnName("SHIP_TO_PARTY_ADDRESS").HasMaxLength(200);
+            entity.Property(e => e.Hazmat).HasColumnName("HAZMAT").HasMaxLength(5);
+            entity.Property(e => e.WbsElement).HasColumnName("WBS_ELEMENT").HasMaxLength(30);
+            entity.Property(e => e.SapRemarks).HasColumnName("SAP_REMARKS").HasMaxLength(1000);
         });
 
         modelBuilder.Entity<IcpHeader>(entity =>

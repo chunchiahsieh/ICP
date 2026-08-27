@@ -2,10 +2,7 @@
 @using ICP.Helpers
 @using ICP.Models.Tariff
 @{
-    var wrapStyle = string.IsNullOrWhiteSpace(Model.TableUi.MaxHeight)
-        ? null
-        : $"max-height: {Model.TableUi.MaxHeight};";
-    var wrapClasses = "table-responsive tariff-table-wrap";
+    var wrapClasses = "tariff-table-wrap";
     if (Model.TableUi.StickyHeader == true)
     {
         wrapClasses += " tariff-sticky-enabled";
@@ -34,7 +31,7 @@
     }
 }
 
-<div class="@wrapClasses" @(wrapStyle is not null ? Html.Raw($"style=\"{wrapStyle}\"") : null)>
+<div class="@wrapClasses">
     <table id="datatable" class="table table-striped table-hover table-bordered align-middle mb-0 tariff-pro-table w-100">
         <thead class="@theadClasses">
             <tr>

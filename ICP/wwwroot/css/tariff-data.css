@@ -1,21 +1,16 @@
-.tariff-data-page .tariff-table-card {
-    position: relative;
-    z-index: 1;
-    isolation: isolate;
-}
-
-.tariff-data-page .tariff-table-card-body {
-    overflow: hidden;
+.tariff-data-page {
+    --protable-chrome-offset: 16rem;
 }
 
 .tariff-data-page .tariff-table-wrap {
-    overflow: auto;
     position: relative;
     isolation: isolate;
+    overflow: visible;
 }
 
 .tariff-data-page .tariff-pro-table {
     white-space: nowrap;
+    height: auto;
 }
 
 .tariff-data-page .tariff-rowno-col {

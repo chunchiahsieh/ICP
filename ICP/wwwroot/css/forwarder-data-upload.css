@@ -1,5 +1,5 @@
 .forwarder-data-upload-page .forwarder-table-wrap {
-    overflow: auto;
+    overflow: visible;
     position: relative;
     isolation: isolate;
 }

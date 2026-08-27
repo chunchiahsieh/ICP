@@ -6,7 +6,7 @@
     var visibleFields = ShipInfoTableViewHelper.GetVisibleFields(Model.Fields);
     var hasFilterRow = visibleFields.Any(field => field.Searchable);
     var tableUi = Model.TableUi ?? ShipInfoTableUiOptions.MergeDefaults(null);
-    var wrapClasses = "table-responsive shipinfo-table-wrap report-table-wrap";
+    var wrapClasses = "shipinfo-table-wrap report-table-wrap";
     if (tableUi.StickyHeader == true)
     {
         wrapClasses += " shipinfo-sticky-enabled";
@@ -17,9 +17,6 @@
         wrapClasses += " shipinfo-sticky-left-enabled";
     }
 
-    var wrapStyle = string.IsNullOrWhiteSpace(tableUi.MaxHeight)
-        ? null
-        : $"max-height: {tableUi.MaxHeight};";
     var tableClasses = "table table-striped table-hover table-bordered align-middle mb-0 shipinfo-pro-table w-100";
     var theadClasses = "table-light";
     if (tableUi.StickyHeader == true)
@@ -48,7 +45,7 @@
     }
 }
 
-<div class="@wrapClasses" @(wrapStyle is not null ? Html.Raw($"style=\"{wrapStyle}\"") : null)>
+<div class="@wrapClasses">
 <table id="@Model.TableId"
        class="@tableClasses"
        data-empty-table="@emptyTableMessage">
