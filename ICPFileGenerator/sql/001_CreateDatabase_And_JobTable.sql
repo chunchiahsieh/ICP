@@ -1,7 +1,7 @@
 -- Create table ICPFileGeneratorJob in the ICP database (shared with ICP app).
--- Local (AGA): USE [TEL-ICP]
--- TEL:        USE [ICP]
-USE [TEL-ICP];
+-- Default (host/TEL): USE [ICP]
+-- Local AGA only:     USE [TEL-ICP] if your local DB name differs
+USE [ICP];
 GO
 
 IF OBJECT_ID(N'dbo.ICPFileGeneratorJob', N'U') IS NULL

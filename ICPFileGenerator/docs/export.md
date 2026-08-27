@@ -43,6 +43,7 @@
 ```
 
 - Excel sheet：`to BE New Pick up notice`（依 Invoice No. → Carton No. 排序）
+- 提貨地點／Contact Person／Phone No.：以 Shipping Advice **欄位 C（SLOC）** 對照 ICP `SystemConfigs`（`Category=PickUpLocation`，`Key1`=SLOC → `Value1`／`Value2`／`Value3`）；找不到則空白
 - AH=`X` → NoCharge Case Mark PDF；否則 Charge
 - 不同 Invoice 各一份 PDF；每個 Carton No. 一頁
 

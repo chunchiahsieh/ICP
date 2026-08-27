@@ -7,19 +7,22 @@ public sealed class FileGenerationService : IFileGenerationService
 {
     private readonly FileGeneratorOptions _options;
     private readonly IHostEnvironment _env;
+    private readonly IPickUpLocationLookup _pickUpLocationLookup;
     private readonly ILogger<FileGenerationService> _logger;
 
     public FileGenerationService(
         IOptions<FileGeneratorOptions> options,
         IHostEnvironment env,
+        IPickUpLocationLookup pickUpLocationLookup,
         ILogger<FileGenerationService> logger)
     {
         _options = options.Value;
         _env = env;
+        _pickUpLocationLookup = pickUpLocationLookup;
         _logger = logger;
     }
 
-    public Task<FileGenerationResult> GenerateAsync(
+    public async Task<FileGenerationResult> GenerateAsync(
         FileGenerationJob job,
         CancellationToken cancellationToken = default)
     {
@@ -27,8 +30,8 @@ public sealed class FileGenerationService : IFileGenerationService
         {
             if (string.IsNullOrWhiteSpace(job.InputFilePath) || !File.Exists(job.InputFilePath))
             {
-                return Task.FromResult(FileGenerationResult.Fail(
-                    $"Input file not found: {job.InputFilePath}"));
+                return FileGenerationResult.Fail(
+                    $"Input file not found: {job.InputFilePath}");
             }
 
             var stampDate = DateTime.Now;
@@ -39,11 +42,12 @@ public sealed class FileGenerationService : IFileGenerationService
             var rows = ShippingAdviceSheetReader.Read(job.InputFilePath);
             if (rows.Count == 0)
             {
-                return Task.FromResult(FileGenerationResult.Fail(
-                    $"No data rows found in sheet '{ShippingAdviceSheetReader.SourceSheetName}' (from row {ShippingAdviceSheetReader.DataStartRow})."));
+                return FileGenerationResult.Fail(
+                    $"No data rows found in sheet '{ShippingAdviceSheetReader.SourceSheetName}' (from row {ShippingAdviceSheetReader.DataStartRow}).");
             }
 
-            var excelPath = PickupNoticeExcelGenerator.Generate(rows, requestFolder, stampDate);
+            var pickUpBySloc = await _pickUpLocationLookup.LoadAsync(cancellationToken);
+            var excelPath = PickupNoticeExcelGenerator.Generate(rows, requestFolder, stampDate, pickUpBySloc);
             var pdfPaths = CaseMarkPdfGenerator.GenerateAll(rows, requestFolder, stampDate);
 
             _logger.LogInformation(
@@ -53,12 +57,12 @@ public sealed class FileGenerationService : IFileGenerationService
                 pdfPaths.Count,
                 job.RequestId);
 
-            return Task.FromResult(FileGenerationResult.Ok(requestFolder));
+            return FileGenerationResult.Ok(requestFolder);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "File generation failed RequestId={RequestId}", job.RequestId);
-            return Task.FromResult(FileGenerationResult.Fail(ex.Message));
+            return FileGenerationResult.Fail(ex.Message);
         }
     }
 

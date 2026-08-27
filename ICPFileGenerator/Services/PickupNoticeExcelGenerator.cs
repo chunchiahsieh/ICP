@@ -30,7 +30,8 @@ public static class PickupNoticeExcelGenerator
     public static string Generate(
         IReadOnlyList<ShippingAdviceRow> rows,
         string outputDirectory,
-        DateTime stampDate)
+        DateTime stampDate,
+        IReadOnlyDictionary<string, PickUpLocationInfo>? pickUpBySloc = null)
     {
         Directory.CreateDirectory(outputDirectory);
         var datePart = stampDate.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
@@ -55,14 +56,16 @@ public static class PickupNoticeExcelGenerator
         {
             var row = ordered[i];
             var excelRow = i + 2;
+            ResolvePickUp(row.ColumnC, pickUpBySloc, out var location, out var contact, out var phone);
+
             sheet.Cell(excelRow, 1).Value = row.InvoiceNo;
             sheet.Cell(excelRow, 2).Value = row.ShipToAddress;
             sheet.Cell(excelRow, 3).Value = row.Customer;
             sheet.Cell(excelRow, 4).Value = row.ColumnK;
             sheet.Cell(excelRow, 5).Value = row.ColumnK;
-            sheet.Cell(excelRow, 6).Value = row.ColumnC;
-            sheet.Cell(excelRow, 7).Value = row.ColumnC;
-            sheet.Cell(excelRow, 8).Value = row.ColumnC;
+            sheet.Cell(excelRow, 6).Value = location;
+            sheet.Cell(excelRow, 7).Value = contact;
+            sheet.Cell(excelRow, 8).Value = phone;
             sheet.Cell(excelRow, 9).Value = row.TetDo;
             sheet.Cell(excelRow, 10).Value = row.CnoDisplay;
             sheet.Cell(excelRow, 11).Value = row.Length;
@@ -75,6 +78,30 @@ public static class PickupNoticeExcelGenerator
         sheet.Columns().AdjustToContents();
         workbook.SaveAs(filePath);
         return filePath;
+    }
+
+    private static void ResolvePickUp(
+        string sloc,
+        IReadOnlyDictionary<string, PickUpLocationInfo>? pickUpBySloc,
+        out string location,
+        out string contact,
+        out string phone)
+    {
+        location = string.Empty;
+        contact = string.Empty;
+        phone = string.Empty;
+
+        if (pickUpBySloc is null || string.IsNullOrWhiteSpace(sloc))
+        {
+            return;
+        }
+
+        if (pickUpBySloc.TryGetValue(sloc.Trim(), out var info))
+        {
+            location = info.Location;
+            contact = info.ContactPerson;
+            phone = info.PhoneNo;
+        }
     }
 
     private static int ParseCartonSortKey(string cartonNo)

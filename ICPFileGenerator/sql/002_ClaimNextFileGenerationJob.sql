@@ -1,4 +1,6 @@
-USE [TEL-ICP];
+-- Default (host/TEL): USE [ICP]
+-- Local AGA only:     USE [TEL-ICP] if your local DB name differs
+USE [ICP];
 GO
 
 CREATE OR ALTER PROCEDURE dbo.ClaimNextFileGenerationJob
