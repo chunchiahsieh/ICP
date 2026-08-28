@@ -67,7 +67,9 @@
 | `labelKey` | string | 否 | 不顯示標題 | 群組標題資源鍵。 |
 | `order` | number | 否 | JSON 原始順序 | 群組排序。 |
 | `columns` | number | 否 | `1` | 每列欄數，允許 `1`～`4`。 |
-| `fields` | array | 是 | 無 | 本群組欄位與模式覆寫。 |
+| `component` | string | 否 | 無 | 受控的非欄位元件。目前只支援 `fileUploader`。 |
+| `adapter` | string | component 是 | 無 | 受控元件的 Adapter 名稱。目前 `fileUploader` 只允許 `shipInfoHeaderAttachments`。 |
+| `fields` | array | 是 | 無 | 一般欄位群組的欄位與模式覆寫；元件群組必須是空陣列。 |
 
 空 `groups` 允許，代表該模式不顯示任何欄位。群組 `id` 不可重複；同一模式的欄位不可跨群組重複引用。
 
@@ -92,6 +94,29 @@ const effectiveField = {
 ```
 
 物件與陣列不深層合併。模式覆寫僅控制 UI，不能改變後端可更新欄位、權限或資料型別。
+
+## 附件群組：`component: "fileUploader"`
+
+附件不是 `ICP_HEADER.ATTACHED_FILE` 的文字輸入欄位，而是由既有附件 API 與 Adapter 管理的獨立 UI 區塊。將它宣告在 `groups` 可控制附件出現在表單的哪個位置，以及在哪些模式顯示。
+
+```json
+{
+  "id": "attachments",
+  "labelKey": "ShipInfo.Group.Attachments",
+  "order": 20,
+  "columns": 1,
+  "component": "fileUploader",
+  "adapter": "shipInfoHeaderAttachments",
+  "fields": []
+}
+```
+
+規則：
+
+- `component` 為 `fileUploader` 時，`adapter` 必須為 `shipInfoHeaderAttachments`，且 `fields` 必須為空陣列。
+- `view` 模式僅列出與下載附件；`edit` 模式才會顯示上傳與刪除。
+- JSON 不可指定附件 API URL、`AttachmentType`、Owner Id、儲存路徑、副檔名或檔案大小；這些均由 Adapter、Controller 與 Service 的既有權限及驗證規則決定。
+- 未知的 `component`／`adapter` 一律視為 Metadata 錯誤，採 Fail Closed。
 
 ## Select 與 Checkbox
 
@@ -143,7 +168,7 @@ Renderer 內部使用 Boolean；讀取與送出 Payload 使用 `Y/N`。兩個 ma
 
 ## 驗證與失敗行為
 
-Metadata 載入時驗證：必要屬性、欄位是否存在於 Header ViewModel、支援元件、模式名稱、重複群組／欄位、`columns`、`columnSpan`、Select 設定、Checkbox mapping，以及未文件化的 JSON 屬性。
+Metadata 載入時驗證：必要屬性、欄位是否存在於 Header ViewModel、支援欄位／群組元件、模式名稱、重複群組／欄位、`columns`、`columnSpan`、Select 設定、Checkbox mapping，以及未文件化的 JSON 屬性。
 
 任何未知模式、欄位、元件或設定錯誤都採 **Fail Closed**：停止表單渲染、顯示受控錯誤，且不回退成一般 Text input。
 
