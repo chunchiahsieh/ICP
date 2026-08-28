@@ -37,7 +37,9 @@
                     .appendTo($actions);
                 if (config.editable) {
                     $('<button type="button" class="btn btn-outline-danger">刪除</button>').on('click', function () {
-                        $.post(config.urls.delete, { headerKey: config.headerRowKey, id: item.id })
+                        // The ShipInfo endpoint intentionally binds both values from
+                        // the query string. Keep this aligned with list/upload/download.
+                        $.post(url(config.urls.delete, '&id=' + encodeURIComponent(item.id)))
                             .done(load).fail(fail);
                     }).appendTo($actions);
                 }
@@ -67,6 +69,7 @@
                 uploader = global.createUploader($host.find('[data-attachment-upload]'), {
                     title: 'Ship Info 附件上傳',
                     buttonText: '上傳附件',
+                    buttonClass: 'btn btn-primary',
                     uploadUrl: url(config.urls.upload),
                     fileTypes: '.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.zip,.png,.jpg,.jpeg',
                     multiple: true,

@@ -53,15 +53,9 @@
     function updateViewModalButtons() {
         var permission = app.getStatusPermission(app.getHeaderStatus(getStatusSource()));
         var canEdit = app.hasPermission('Views.Function.ShipInfo.Edit') && permission.edit;
-        var canDelete = app.hasPermission('Views.Function.ShipInfo.Delete') && permission.delete;
-        if (state.viewModalKind === 'detail') {
-            canDelete = canDelete && app.canDeleteDetail();
-        }
-
         var editing = !!state.viewModalEditing;
 
         $('#btnShipInfoViewEdit').toggleClass('d-none', editing || !canEdit);
-        $('#btnShipInfoViewDelete').toggleClass('d-none', editing || !canDelete);
         $('#btnShipInfoViewSave').toggleClass('d-none', !editing || !canEdit);
         $('#btnShipInfoViewCancelEdit').toggleClass('d-none', !editing || !canEdit);
         $('#shipInfoViewModalLabel').text(editing
@@ -77,12 +71,14 @@
                 }));
                 state.headerFormEffectiveFields = rendered.fields;
                 if (typeof app.renderHeaderAttachments === 'function') {
-                    app.renderHeaderAttachments(state.viewModalKey, state.viewModalEditing);
+                    app.renderHeaderAttachments(
+                        state.viewModalKey,
+                        state.viewModalEditing,
+                        $('#shipInfoViewForm').find('[data-form-adapter="shipInfoHeaderAttachments"]'));
                 }
             } catch (error) {
                 state.headerFormEffectiveFields = [];
                 if (typeof app.disposeHeaderAttachments === 'function') app.disposeHeaderAttachments();
-                $('#shipInfoHeaderAttachments').addClass('d-none');
                 $('#shipInfoViewForm').empty().append('<div class="alert alert-danger mb-0">表單設定載入失敗，請聯絡系統管理員。</div>');
                 app.showToast((error && error.message) || '表單設定載入失敗', 'danger');
             }
@@ -128,9 +124,6 @@
 
             state.viewModalData = response.data || {};
             renderViewForm(state.viewModalData);
-            if (state.viewModalKind === 'detail') {
-                app.getDetailRowCount();
-            }
             updateViewModalButtons();
         }).fail(function (xhr) {
             app.showToast((xhr.responseJSON && xhr.responseJSON.message) || messages.saveFailed, 'danger');
@@ -199,141 +192,6 @@
                 updateViewModalButtons();
             }
         );
-    };
-
-    app.deleteFromModal = function () {
-        if (!state.viewModalKey) {
-            return;
-        }
-
-        if (state.viewModalKind === 'header') {
-            state.pendingDeleteHeaderKey = state.viewModalKey;
-            app.showDeleteConfirm();
-            return;
-        }
-
-        app.showDetailDeleteConfirm(state.viewModalKey);
-    };
-
-    app.showDeleteConfirm = function () {
-        var headerKey = state.pendingDeleteHeaderKey || state.viewModalKey || state.selectedHeaderRowKey;
-        if (!headerKey || !app.hasPermission('Views.Function.ShipInfo.Delete')) {
-            app.showToast(messages.selectHeaderFirst, 'warning');
-            return;
-        }
-
-        state.pendingDeleteHeaderKey = headerKey;
-        if (global.bootstrap && global.bootstrap.Modal) {
-            global.bootstrap.Modal.getOrCreateInstance(document.getElementById('shipInfoDeleteConfirmModal')).show();
-        }
-    };
-
-    app.deleteSelectedHeader = function () {
-        var headerKey = state.pendingDeleteHeaderKey || state.viewModalKey || state.selectedHeaderRowKey;
-        if (!headerKey || !app.hasPermission('Views.Function.ShipInfo.Delete')) {
-            app.showToast(messages.selectHeaderFirst, 'warning');
-            return;
-        }
-
-        app.setActionBusy(true);
-        $.ajax({
-            url: urls.deleteHeader,
-            type: 'POST',
-            data: { headerKey: headerKey },
-            dataType: 'json'
-        }).done(function (response) {
-            if (response && response.success) {
-                app.showToast(messages.deleteSuccess, 'success');
-                state.selectedHeaderKey = null;
-                state.selectedHeaderRowKey = null;
-                state.selectedHeaderRow = null;
-                state.viewModalKey = null;
-                state.viewModalData = null;
-                state.pendingDeleteHeaderKey = null;
-                state.detailItems = [];
-
-                if (global.bootstrap && global.bootstrap.Modal) {
-                    var deleteModal = global.bootstrap.Modal.getInstance(document.getElementById('shipInfoDeleteConfirmModal'));
-                    if (deleteModal) {
-                        deleteModal.hide();
-                    }
-
-                    var viewModal = global.bootstrap.Modal.getInstance(document.getElementById('shipInfoViewModal'));
-                    if (viewModal) {
-                        viewModal.hide();
-                    }
-                }
-
-                app.reloadHeaderTable();
-                app.reloadDetailTable();
-                return;
-            }
-
-            app.showToast((response && response.message) || messages.deleteFailed, 'danger');
-        }).fail(function (xhr) {
-            app.showToast((xhr.responseJSON && xhr.responseJSON.message) || messages.deleteFailed, 'danger');
-        }).always(function () {
-            app.setActionBusy(false);
-        });
-    };
-
-    app.showDetailDeleteConfirm = function (detailId) {
-        if (!detailId || !app.hasPermission('Views.Function.ShipInfo.Delete')) {
-            return;
-        }
-
-        if (!app.canDeleteDetail()) {
-            app.showToast(messages.deleteLastDetailNotAllowed || messages.deleteFailed, 'warning');
-            return;
-        }
-
-        state.pendingDeleteDetailId = detailId;
-        if (global.bootstrap && global.bootstrap.Modal) {
-            global.bootstrap.Modal.getOrCreateInstance(document.getElementById('shipInfoDeleteDetailConfirmModal')).show();
-        }
-    };
-
-    app.deleteSelectedDetail = function () {
-        if (!state.pendingDeleteDetailId || !app.hasPermission('Views.Function.ShipInfo.Delete')) {
-            return;
-        }
-
-        app.setActionBusy(true);
-        $.ajax({
-            url: urls.deleteDetail,
-            type: 'POST',
-            data: { detailKey: state.pendingDeleteDetailId },
-            dataType: 'json'
-        }).done(function (response) {
-            if (response && response.success) {
-                app.showToast(messages.deleteSuccess, 'success');
-                state.pendingDeleteDetailId = null;
-
-                if (global.bootstrap && global.bootstrap.Modal) {
-                    var deleteModal = global.bootstrap.Modal.getInstance(document.getElementById('shipInfoDeleteDetailConfirmModal'));
-                    if (deleteModal) {
-                        deleteModal.hide();
-                    }
-
-                    var viewModal = global.bootstrap.Modal.getInstance(document.getElementById('shipInfoViewModal'));
-                    if (viewModal) {
-                        viewModal.hide();
-                    }
-                }
-
-                if (state.selectedHeaderKey) {
-                    app.reloadDetailTable();
-                }
-
-                return;
-            }
-
-            app.showToast((response && response.message) || messages.deleteFailed, 'danger');
-        }).fail(function (xhr) {
-            app.showToast((xhr.responseJSON && xhr.responseJSON.message) || messages.deleteFailed, 'danger');
-        }).always(function () {
-            app.setActionBusy(false);
-        });
     };
 
     app.saveEntity = function ($form, fields, saveUrl, entityId, successMessage, $saveButton, closeModalId, refreshMode, onSuccess) {

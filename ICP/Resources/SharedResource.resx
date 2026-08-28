@@ -2119,4 +2119,7 @@
   <data name="ShipInfo.Group.Basic" xml:space="preserve">
     <value>Basic Information</value>
   </data>
+  <data name="ShipInfo.Group.Attachments" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
 </root>

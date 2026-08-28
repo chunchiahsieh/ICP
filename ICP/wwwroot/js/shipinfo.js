@@ -10,7 +10,6 @@
         $('#btnShipInfoViewEdit').on('click', app.enterEditMode);
         $('#btnShipInfoViewSave').on('click', app.saveViewModal);
         $('#btnShipInfoViewCancelEdit').on('click', app.cancelViewEdit);
-        $('#btnShipInfoViewDelete').on('click', app.deleteFromModal);
         $('#btnShipInfoDeposit').on('click', function () {
             app.openCaseDrawer('Deposit');
         });
@@ -19,8 +18,6 @@
         });
         $('#btnShipInfoCaseSubmit').on('click', app.showCaseSubmitConfirm);
         $('#btnShipInfoConfirmCaseSubmit').on('click', app.submitCase);
-        $('#btnShipInfoConfirmDelete').on('click', app.deleteSelectedHeader);
-        $('#btnShipInfoConfirmDeleteDetail').on('click', app.deleteSelectedDetail);
 
         $('#shipInfoViewModal').on('hidden.bs.modal', function () {
             app.state.viewModalEditing = false;

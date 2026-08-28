@@ -12,6 +12,18 @@
     <link rel="stylesheet" href="~/css/shipinfo.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/report-data.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Uploader/uploader.css" asp-append-version="true" />
+    @* Uploader/index.js uses Tailwind utility classes for its nested upload modal.
+       Keep this configuration aligned with Add DI/SA and disable preflight so the
+       Ship Info Bootstrap layout is not reset. *@
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+                collapse: false
+            }
+        };
+    </script>
 }
 
 <div class="container-fluid shipinfo-page report-data-page pro-datatables-page report-split-page"
@@ -58,9 +70,6 @@
                     <button type="button" class="btn btn-sm btn-outline-primary" id="btnShipInfoViewEdit" data-permissions="Views.Function.ShipInfo.Edit">
                         <i class="bi bi-pencil-square me-1"></i>@Localizer["ShipInfo.Edit"]
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger" id="btnShipInfoViewDelete" data-permissions="Views.Function.ShipInfo.Delete">
-                        <i class="bi bi-trash me-1"></i>@Localizer["ShipInfo.Delete"]
-                    </button>
                     <button type="button" class="btn btn-sm btn-primary d-none" id="btnShipInfoViewSave" data-permissions="Views.Function.ShipInfo.Edit">
                         <i class="bi bi-save me-1"></i>@Localizer["ShipInfo.Save"]
                     </button>
@@ -77,51 +86,6 @@
                     </div>
                 </div>
                 <form id="shipInfoViewForm" class="row g-3" novalidate></form>
-                <section id="shipInfoHeaderAttachments" class="d-none border-top mt-3 pt-3">
-                    <h6 class="mb-3">附件</h6>
-                    <div id="shipInfoHeaderAttachmentsBody"></div>
-                </section>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="shipInfoDeleteConfirmModal" tabindex="-1" aria-labelledby="shipInfoDeleteConfirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="shipInfoDeleteConfirmModalLabel">@Localizer["ShipInfo.DeleteConfirmTitle"]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["ShipInfo.Cancel"]"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-2">@Localizer["ShipInfo.DeleteConfirmMessage"]</p>
-                <p class="mb-0 text-danger">@Localizer["ShipInfo.DeleteConfirmIrreversible"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Localizer["ShipInfo.Cancel"]</button>
-                <button type="button" class="btn btn-danger" id="btnShipInfoConfirmDelete">
-                    <i class="bi bi-trash me-1"></i>@Localizer["ShipInfo.Confirm"]
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="shipInfoDeleteDetailConfirmModal" tabindex="-1" aria-labelledby="shipInfoDeleteDetailConfirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="shipInfoDeleteDetailConfirmModalLabel">@Localizer["ShipInfo.DeleteDetailConfirmTitle"]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["ShipInfo.Cancel"]"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-0">@Localizer["ShipInfo.DeleteDetailConfirmMessage"]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Localizer["ShipInfo.Cancel"]</button>
-                <button type="button" class="btn btn-danger" id="btnShipInfoConfirmDeleteDetail">
-                    <i class="bi bi-trash me-1"></i>@Localizer["ShipInfo.Confirm"]
-                </button>
             </div>
         </div>
     </div>
@@ -187,8 +151,6 @@
                 getHeader: '@Url.Action("GetHeader", "ShipInfo")',
                 getDetail: '@Url.Action("GetDetail", "ShipInfo")',
                 getDetails: '@Url.Action("GetDetails", "ShipInfo")',
-                deleteHeader: '@Url.Action("DeleteHeader", "ShipInfo")',
-                deleteDetail: '@Url.Action("DeleteDetail", "ShipInfo")',
                 saveHeader: '@Url.Action("SaveHeader", "ShipInfo")',
                 saveDetail: '@Url.Action("SaveDetail", "ShipInfo")',
                 validateHeader: '@Url.Action("ValidateHeader", "ShipInfo")',
@@ -209,13 +171,9 @@
                 selectHeaderFirst = Localizer["ShipInfo.SelectHeaderFirst"].Value,
                 saveSuccess = Localizer["ShipInfo.SaveSuccess"].Value,
                 saveFailed = Localizer["ShipInfo.SaveFailed"].Value,
-                deleteSuccess = Localizer["ShipInfo.DeleteSuccess"].Value,
-                deleteFailed = Localizer["ShipInfo.DeleteFailed"].Value,
-                deleteLastDetailNotAllowed = Localizer["ShipInfo.DeleteLastDetailNotAllowed"].Value,
                 validationFailed = Localizer["ShipInfo.ValidationFailed"].Value,
                 requiredMark = Localizer["ShipInfo.RequiredMark"].Value,
                 edit = Localizer["ShipInfo.Edit"].Value,
-                delete = Localizer["ShipInfo.Delete"].Value,
                 deposit = Localizer["ShipInfo.Deposit"].Value,
                 arur = Localizer["ShipInfo.ARUR"].Value,
                 view = Localizer["ShipInfo.View"].Value,

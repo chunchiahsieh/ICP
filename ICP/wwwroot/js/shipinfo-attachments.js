@@ -7,16 +7,14 @@
         if (adapter) adapter.destroy();
         adapter = null;
     };
-    app.renderHeaderAttachments = function (headerRowKey, editable) {
+    app.renderHeaderAttachments = function (headerRowKey, editable, host) {
         app.disposeHeaderAttachments();
-        var $section = $('#shipInfoHeaderAttachments');
-        if (!headerRowKey || !$section.length || !global.ShipInfoFileUploaderAdapter) {
-            $section.addClass('d-none');
+        var $host = $(host);
+        if (!headerRowKey || !$host.length || !global.ShipInfoFileUploaderAdapter) {
             return;
         }
-        $section.removeClass('d-none');
         adapter = global.ShipInfoFileUploaderAdapter({
-            host: '#shipInfoHeaderAttachmentsBody',
+            host: $host,
             headerRowKey: headerRowKey,
             editable: !!editable,
             urls: {

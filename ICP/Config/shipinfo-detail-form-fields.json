@@ -1,0 +1,86 @@
+{
+  "formId": "shipinfo-detail",
+  "metadataVersion": "1.0-draft",
+  "fields": {
+    "CreateDate": { "labelKey": "ShipInfo.Field.CreateDate", "type": "text", "maxLength": 20 },
+    "SaDate": { "labelKey": "ShipInfo.Field.SaDate", "type": "date" },
+    "InvoiceNo": { "labelKey": "ShipInfo.Field.InvoiceNo", "type": "text", "maxLength": 30 },
+    "Forwarder": { "labelKey": "ShipInfo.Field.Forwarder", "type": "text", "maxLength": 50 },
+    "Broker": { "labelKey": "ShipInfo.Field.Broker", "type": "select", "optionsSource": "broker" },
+    "Etd": { "labelKey": "ShipInfo.Field.Etd", "type": "date" },
+    "Eta": { "labelKey": "ShipInfo.Field.Eta", "type": "date" },
+    "InvoiceDate": { "labelKey": "ShipInfo.Field.InvoiceDate", "type": "date" },
+    "Mawb": { "labelKey": "ShipInfo.Field.Mawb", "type": "text", "maxLength": 20 },
+    "Hawb": { "labelKey": "ShipInfo.Field.Hawb", "type": "text", "maxLength": 20 },
+    "Flt": { "labelKey": "ShipInfo.Field.Flt", "type": "text", "maxLength": 20 },
+    "Freight": { "labelKey": "ShipInfo.Field.Freight", "type": "text", "maxLength": 10 },
+    "DestinationPort": { "labelKey": "ShipInfo.Field.DestinationPort", "type": "text", "maxLength": 10 },
+    "DestinationCountry": { "labelKey": "ShipInfo.Field.DestinationCountry", "type": "text", "maxLength": 3 },
+    "Warehouse": { "labelKey": "ShipInfo.Field.Warehouse", "type": "select", "optionsSource": "warehouse" },
+    "InvoiceType": { "labelKey": "ShipInfo.Field.InvoiceType", "type": "select", "optionsSource": "invoiceType" },
+    "Incoterms": { "labelKey": "ShipInfo.Field.Incoterms", "type": "text", "maxLength": 20 },
+    "OrderType": { "labelKey": "ShipInfo.Field.OrderType", "type": "select", "optionsSource": "orderType" }
+  },
+  "modes": {
+    "view": {
+      "groups": [
+        {
+          "id": "shipment",
+          "labelKey": "ShipInfo.Group.Shipping",
+          "order": 10,
+          "columns": 3,
+          "fields": [
+            { "name": "CreateDate", "order": 10, "readOnly": true },
+            { "name": "SaDate", "order": 20, "readOnly": true },
+            { "name": "InvoiceNo", "order": 30, "readOnly": true },
+            { "name": "Forwarder", "order": 40, "readOnly": true },
+            { "name": "Broker", "order": 50, "readOnly": true },
+            { "name": "Etd", "order": 60, "readOnly": true },
+            { "name": "Eta", "order": 70, "readOnly": true },
+            { "name": "InvoiceDate", "order": 80, "readOnly": true },
+            { "name": "Mawb", "order": 90, "readOnly": true },
+            { "name": "Hawb", "order": 100, "readOnly": true },
+            { "name": "Flt", "order": 110, "readOnly": true },
+            { "name": "Freight", "order": 120, "readOnly": true },
+            { "name": "DestinationPort", "order": 130, "readOnly": true },
+            { "name": "DestinationCountry", "order": 140, "readOnly": true },
+            { "name": "Warehouse", "order": 150, "readOnly": true },
+            { "name": "InvoiceType", "order": 160, "readOnly": true },
+            { "name": "Incoterms", "order": 170, "readOnly": true },
+            { "name": "OrderType", "order": 180, "readOnly": true }
+          ]
+        }
+      ]
+    },
+    "edit": {
+      "groups": [
+        {
+          "id": "shipment",
+          "labelKey": "ShipInfo.Group.Shipping",
+          "order": 10,
+          "columns": 3,
+          "fields": [
+            { "name": "CreateDate", "order": 10, "readOnly": true },
+            { "name": "SaDate", "order": 20, "readOnly": false, "required": true },
+            { "name": "InvoiceNo", "order": 30, "readOnly": true },
+            { "name": "Forwarder", "order": 40, "readOnly": true },
+            { "name": "Broker", "order": 50, "readOnly": false },
+            { "name": "Etd", "order": 60, "readOnly": true },
+            { "name": "Eta", "order": 70, "readOnly": false, "required": true },
+            { "name": "InvoiceDate", "order": 80, "readOnly": false, "required": true },
+            { "name": "Mawb", "order": 90, "readOnly": false, "required": true },
+            { "name": "Hawb", "order": 100, "readOnly": false, "required": true },
+            { "name": "Flt", "order": 110, "readOnly": false, "required": true },
+            { "name": "Freight", "order": 120, "readOnly": true },
+            { "name": "DestinationPort", "order": 130, "readOnly": true },
+            { "name": "DestinationCountry", "order": 140, "readOnly": true },
+            { "name": "Warehouse", "order": 150, "readOnly": false, "required": true },
+            { "name": "InvoiceType", "order": 160, "readOnly": false, "required": true },
+            { "name": "Incoterms", "order": 170, "readOnly": true },
+            { "name": "OrderType", "order": 180, "readOnly": false, "required": true }
+          ]
+        }
+      ]
+    }
+  }
+}

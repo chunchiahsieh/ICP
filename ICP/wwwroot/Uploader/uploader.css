@@ -4,6 +4,13 @@
   z-index: 1060;
 }
 
+/* Do not depend on a page loading Tailwind's .hidden utility. Without this
+   rule the transparent nested uploader can sit over its launch button and
+   send the first click directly to the file input. */
+.uploader-modal-root.hidden {
+  display: none !important;
+}
+
 .uploader-modal-root .uploader-backdrop {
   position: fixed;
   inset: 0;

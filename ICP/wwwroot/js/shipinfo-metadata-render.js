@@ -322,6 +322,10 @@
         var inputType = 'text';
         if (controlType === 'Number' || controlType === 'Decimal' || controlType === 'Currency') {
             inputType = 'number';
+        } else if (controlType === 'Date') {
+            // A Date metadata field must provide the browser date picker while
+            // retaining the existing yyyy-MM-dd value contract.
+            inputType = 'date';
         }
 
         var displayValue = value == null ? '' : value;
@@ -780,6 +784,28 @@
                 failMetadata('Group ' + groupId + ' fields must be an array.');
             }
 
+            var component = metadataValue(group, 'component');
+            var adapter = metadataValue(group, 'adapter');
+            if (component) {
+                if (component !== 'fileUploader' || adapter !== 'shipInfoHeaderAttachments' || modeFields.length !== 0) {
+                    failMetadata('Invalid component definition for group ' + groupId + '.');
+                }
+
+                return {
+                    id: groupId,
+                    label: metadataValue(group, 'label'),
+                    columns: columns,
+                    order: Number(metadataValue(group, 'order') || ((groupIndex + 1) * 10)),
+                    component: component,
+                    adapter: adapter,
+                    fields: []
+                };
+            }
+
+            if (adapter) {
+                failMetadata('Adapter requires a component for group ' + groupId + '.');
+            }
+
             var effectiveFields = modeFields.slice().sort(function (a, b) {
                 return Number(metadataValue(a, 'order') || 0) - Number(metadataValue(b, 'order') || 0);
             }).map(function (modeField, fieldIndex) {
@@ -849,6 +875,11 @@
             var $section = $('<section class="mb-3 shipinfo-form-group"></section>').attr('data-group', group.id);
             if (group.label) {
                 $section.append('<h6 class="text-muted border-bottom pb-2 mb-3">' + escapeHtml(group.label) + '</h6>');
+            }
+            if (group.component === 'fileUploader') {
+                $section.append('<div data-form-component="fileUploader" data-form-adapter="' + escapeHtml(group.adapter) + '"></div>');
+                $container.append($section);
+                return;
             }
             var $row = $('<div class="row g-3"></div>');
             group.fields.forEach(function (field) {

@@ -29,8 +29,6 @@
         totalCount: 0,
         detailItems: [],
         detailRowCount: 0,
-        pendingDeleteDetailId: null,
-        pendingDeleteHeaderKey: null,
         viewModalKind: null,
         viewModalKey: null,
         viewModalData: null,
@@ -278,10 +276,6 @@
         var count = $root.find('#shipInfoDetailTable tbody tr[data-detail-id]').length;
         app.state.detailRowCount = count;
         return count;
-    };
-
-    app.canDeleteDetail = function () {
-        return app.getDetailRowCount() > 1;
     };
 
     app.updateHeaderActionState = function () {

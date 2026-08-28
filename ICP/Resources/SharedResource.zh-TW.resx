@@ -1924,4 +1924,7 @@
   <data name="ShipInfo.Group.Basic" xml:space="preserve">
     <value>基本資訊</value>
   </data>
+  <data name="ShipInfo.Group.Attachments" xml:space="preserve">
+    <value>附件</value>
+  </data>
 </root>

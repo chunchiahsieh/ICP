@@ -36,18 +36,57 @@
     "view": {
       "groups": [
         {
-          "id": "summary",
-          "labelKey": "ShipInfo.Group.Summary",
+          "id": "shipping",
+          "labelKey": "ShipInfo.Group.Shipping",
           "order": 10,
           "columns": 3,
           "fields": [
-            { "name": "InvoiceNo", "order": 10, "readOnly": true, "columnSpan": 1 },
-            { "name": "SaDate", "order": 20, "readOnly": true, "columnSpan": 1 },
-            { "name": "Eta", "order": 30, "readOnly": true, "columnSpan": 1 },
-            { "name": "Broker", "order": 40, "readOnly": true, "columnSpan": 1 },
-            { "name": "Receiver", "order": 50, "readOnly": true, "columnSpan": 1 },
-            { "name": "DriverDetails", "order": 60, "readOnly": true, "columnSpan": 1 }
+            {
+              "name": "InvoiceNo",
+              "order": 10,
+              "readOnly": true,
+              "columnSpan": 1
+            },
+            {
+              "name": "SaDate",
+              "order": 20,
+              "readOnly": true,
+              "columnSpan": 1
+            },
+            {
+              "name": "Eta",
+              "order": 30,
+              "readOnly": true,
+              "columnSpan": 1
+            },
+            {
+              "name": "Broker",
+              "order": 40,
+              "readOnly": true,
+              "columnSpan": 1
+            },
+            {
+              "name": "Receiver",
+              "order": 50,
+              "readOnly": true,
+              "columnSpan": 1
+            },
+            {
+              "name": "DriverDetails",
+              "order": 60,
+              "readOnly": true,
+              "columnSpan": 1
+            }
           ]
+        },
+        {
+          "id": "attachments",
+          "labelKey": "ShipInfo.Group.Attachments",
+          "order": 20,
+          "columns": 1,
+          "component": "fileUploader",
+          "adapter": "shipInfoHeaderAttachments",
+          "fields": []
         }
       ]
     },
@@ -66,6 +105,15 @@
             { "name": "Receiver", "order": 50, "readOnly": false, "columnSpan": 1 },
             { "name": "DriverDetails", "order": 60, "readOnly": false, "columnSpan": 1 }
           ]
+        },
+        {
+          "id": "attachments",
+          "labelKey": "ShipInfo.Group.Attachments",
+          "order": 20,
+          "columns": 1,
+          "component": "fileUploader",
+          "adapter": "shipInfoHeaderAttachments",
+          "fields": []
         }
       ]
     },

@@ -79,7 +79,7 @@ window.createUploader = function (selector, options) {
             <div class="bg-white px-5 pb-5 pt-6">
               <div class="w-full space-y-6">
                 <!-- Dropzone -->
-                <label id="${dropzoneId}" class="relative block overflow-hidden border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400 group">
+                <div id="${dropzoneId}" class="relative block overflow-hidden border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400 group" role="button" tabindex="0">
                   <input type="file" id="${fileInputId}" class="uploader-file-input" ${config.multiple ? 'multiple' : ''} accept="${escapeHtml(config.fileTypes)}" />
                   <div class="flex flex-col items-center justify-center space-y-3 pointer-events-none">
                     <div class="dropzone-icon p-3 rounded-full transition-colors bg-white text-slate-500 shadow-sm group-hover:text-blue-500 group-hover:scale-110">
@@ -91,7 +91,7 @@ window.createUploader = function (selector, options) {
                       <p class="text-xs text-slate-500">${escapeHtml(config.maxSizeHint || ('單檔上限 ' + config.maxSize + 'MB'))}</p>
                     </div>
                   </div>
-                </label>
+                </div>
 
                 <!-- File List -->
                 <div id="${fileListContainerId}" class="space-y-3 mt-6 hidden">
@@ -159,7 +159,24 @@ window.createUploader = function (selector, options) {
     $modal.find('.close-modal').on('click', closeModal);
     $backdrop.on('click', closeModal);
 
-    // Dropzone Events（label 內嵌 file input，點擊拖曳區會原生開啟檔案選擇視窗）
+    // Keep the file input separate from the clickable area. Using a wrapping
+    // <label> made some browsers treat clicks elsewhere in the overlay as a
+    // label activation.
+    $dropzone.on('click', function (e) {
+        if (destroyed || e.target === $fileInput[0]) return;
+        e.preventDefault();
+        $fileInput[0].click();
+    });
+
+    $dropzone.on('keydown', function (e) {
+        if (destroyed || (e.key !== 'Enter' && e.key !== ' ')) return;
+        e.preventDefault();
+        $fileInput[0].click();
+    });
+
+    $fileInput.on('click', function (e) { e.stopPropagation(); });
+
+    // Dropzone drag-and-drop events
 
     $dropzone.on('dragenter dragover dragleave drop', function (e) {
         e.preventDefault();

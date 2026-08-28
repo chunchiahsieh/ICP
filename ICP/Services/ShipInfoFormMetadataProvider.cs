@@ -21,6 +21,8 @@ public sealed class ShipInfoFormMetadataProvider
         {
             ["broker"] = "Broker"
         };
+    private const string FileUploaderComponent = "fileUploader";
+    private const string HeaderAttachmentsAdapter = "shipInfoHeaderAttachments";
 
     private readonly string _filePath;
     private readonly bool _isDevelopment;
@@ -170,6 +172,24 @@ public sealed class ShipInfoFormMetadataProvider
                     throw new InvalidOperationException($"modes.{mode}.groups.{group.Id}.columns must be between 1 and 4.");
                 }
 
+                var isComponent = !string.IsNullOrWhiteSpace(group.Component);
+                if (isComponent)
+                {
+                    if (!string.Equals(group.Component, FileUploaderComponent, StringComparison.Ordinal)
+                        || !string.Equals(group.Adapter, HeaderAttachmentsAdapter, StringComparison.Ordinal)
+                        || group.Fields.Count != 0)
+                    {
+                        throw new InvalidOperationException($"modes.{mode}.groups.{group.Id} has an invalid component definition.");
+                    }
+
+                    continue;
+                }
+
+                if (!string.IsNullOrWhiteSpace(group.Adapter))
+                {
+                    throw new InvalidOperationException($"modes.{mode}.groups.{group.Id}.adapter requires a component.");
+                }
+
                 foreach (var field in group.Fields)
                 {
                     if (string.IsNullOrWhiteSpace(field.Name) || !metadata.Fields.ContainsKey(field.Name))
@@ -223,7 +243,7 @@ public sealed class ShipInfoFormMetadataProvider
             foreach (var group in mode.Value.GetProperty("groups").EnumerateArray())
             {
                 RequireObject(group, "$.modes." + mode.Name + ".groups[]", "id", "fields");
-                ValidateProperties(group, "$.modes." + mode.Name + ".groups[]", ["id", "labelKey", "order", "columns", "fields"]);
+                ValidateProperties(group, "$.modes." + mode.Name + ".groups[]", ["id", "labelKey", "order", "columns", "component", "adapter", "fields"]);
                 foreach (var field in group.GetProperty("fields").EnumerateArray())
                 {
                     RequireObject(field, "$.modes." + mode.Name + ".groups[].fields[]", "name");

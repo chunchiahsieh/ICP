@@ -98,6 +98,12 @@ public sealed class ShipInfoFormGroupDefinition
     [JsonPropertyName("columns")]
     public int? Columns { get; set; }
 
+    [JsonPropertyName("component")]
+    public string? Component { get; set; }
+
+    [JsonPropertyName("adapter")]
+    public string? Adapter { get; set; }
+
     [JsonPropertyName("fields")]
     public List<ShipInfoFormModeFieldDefinition> Fields { get; set; } = [];
 }
