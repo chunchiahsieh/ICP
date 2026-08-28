@@ -26,6 +26,8 @@
             app.state.viewModalEditing = false;
             app.state.viewModalKey = null;
             app.state.viewModalData = null;
+            app.state.headerFormEffectiveFields = [];
+            app.renderApi.destroyForm($('#shipInfoViewForm'));
             $('#shipInfoViewForm').empty();
         });
 

@@ -9,15 +9,18 @@ public class ShipInfoMetadataProvider
 {
     private readonly IOptionsMonitor<ShipInfoTableFieldsOptions> _tableFieldsOptions;
     private readonly IStringLocalizerFactory _localizerFactory;
+    private readonly ShipInfoFormMetadataProvider _formMetadataProvider;
     private readonly ILogger<ShipInfoMetadataProvider> _logger;
 
     public ShipInfoMetadataProvider(
         IOptionsMonitor<ShipInfoTableFieldsOptions> tableFieldsOptions,
         IStringLocalizerFactory localizerFactory,
+        ShipInfoFormMetadataProvider formMetadataProvider,
         ILogger<ShipInfoMetadataProvider> logger)
     {
         _tableFieldsOptions = tableFieldsOptions;
         _localizerFactory = localizerFactory;
+        _formMetadataProvider = formMetadataProvider;
         _logger = logger;
     }
 
@@ -38,6 +41,7 @@ public class ShipInfoMetadataProvider
             HeaderFields = headerListFields,
             DetailFields = detailListFields,
             HeaderEditFields = headerEditFields,
+            HeaderFormMetadata = _formMetadataProvider.GetHeaderFormMetadata(normalizedCulture),
             DetailEditFields = detailEditFields,
             SearchFields = ShipInfoMetadataHelper.GetSearchFields(headerListFields),
             StatusRules = ShipInfoStatusRules.BuildMatrix(),

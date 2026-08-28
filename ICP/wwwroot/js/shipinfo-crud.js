@@ -31,6 +31,11 @@
     }
 
     function getEditableFieldNames() {
+        if (state.viewModalKind === 'header') {
+            return (state.headerFormEffectiveFields || []).filter(function (field) {
+                return field.editable !== false && field.Editable !== false;
+            }).map(function (field) { return field.fieldName || field.FieldName; });
+        }
         var editFields = state.viewModalKind === 'header'
             ? app.getHeaderEditFields()
             : app.getDetailEditFields();
@@ -65,6 +70,19 @@
     }
 
     function renderViewForm(values) {
+        if (state.viewModalKind === 'header') {
+            try {
+                var rendered = renderApi.renderMetadataForm($('#shipInfoViewForm'), app.getHeaderFormMetadata(), $.extend({}, app.getRenderOptions(values), {
+                    mode: state.viewModalEditing ? 'edit' : 'view'
+                }));
+                state.headerFormEffectiveFields = rendered.fields;
+            } catch (error) {
+                state.headerFormEffectiveFields = [];
+                $('#shipInfoViewForm').empty().append('<div class="alert alert-danger mb-0">表單設定載入失敗，請聯絡系統管理員。</div>');
+                app.showToast((error && error.message) || '表單設定載入失敗', 'danger');
+            }
+            return;
+        }
         var fields = getModalFields();
         var renderValues = renderApi.enrichDateRangeValues(values);
         renderApi.renderFormFields($('#shipInfoViewForm'), fields, $.extend({}, app.getRenderOptions(renderValues), {
@@ -83,6 +101,7 @@
         state.viewModalKey = key;
         state.viewModalEditing = false;
         state.viewModalData = null;
+        state.headerFormEffectiveFields = [];
         $('#shipInfoViewForm').empty();
         updateViewModalButtons();
 
@@ -131,9 +150,7 @@
         }
 
         state.viewModalEditing = true;
-        renderApi.setFieldsEditable($('#shipInfoViewForm'), getEditableFieldNames(), {
-            fields: getModalFields()
-        });
+        renderViewForm(state.viewModalData);
         updateViewModalButtons();
     };
 
@@ -153,7 +170,11 @@
         }
 
         var isHeader = state.viewModalKind === 'header';
-        var fields = isHeader ? app.getHeaderEditFields() : app.getDetailEditFields();
+        var fields = isHeader ? getEditableFieldNames().map(function (name) {
+            return (state.headerFormEffectiveFields || []).filter(function (field) {
+                return String(field.fieldName || field.FieldName).toLowerCase() === String(name).toLowerCase();
+            })[0];
+        }).filter(Boolean) : app.getDetailEditFields();
         var saveUrl = isHeader ? urls.saveHeader : urls.saveDetail;
         var refreshMode = isHeader ? 'header' : 'detail';
 

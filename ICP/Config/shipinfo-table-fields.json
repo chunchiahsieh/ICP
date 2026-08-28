@@ -74,12 +74,12 @@
       ]
     },
     "edit": {
-      "includeAllExceptSystem": true,
       "fields": [
         {"fieldName": "SaDate", "editable": true, "controlType": "Date"},
-        {"fieldName": "InvoiceNo", "editable": true, "controlType": "Text"},
         {"fieldName": "Eta", "editable": true, "controlType": "Date"},
         {"fieldName": "Broker", "editable": true},
+        {"fieldName": "Receiver", "editable": true, "controlType": "Text"},
+        {"fieldName": "DriverDetails", "editable": true, "controlType": "Text"},
         {"fieldName": "DepositCaseStatus", "readOnly": true},
         {
           "fieldName": "ArurCaseStatus",

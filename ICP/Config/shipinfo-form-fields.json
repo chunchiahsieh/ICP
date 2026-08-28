@@ -1,0 +1,89 @@
+{
+  "formId": "shipinfo-header",
+  "metadataVersion": "1.0",
+  "fields": {
+    "InvoiceNo": {
+      "labelKey": "ShipInfo.Field.InvoiceNo",
+      "type": "text",
+      "maxLength": 30
+    },
+    "SaDate": {
+      "labelKey": "ShipInfo.Field.SaDate",
+      "type": "date"
+    },
+    "Eta": {
+      "labelKey": "ShipInfo.Field.Eta",
+      "type": "date"
+    },
+    "Broker": {
+      "labelKey": "ShipInfo.Field.Broker",
+      "type": "select",
+      "optionsSource": "broker"
+    },
+    "Receiver": {
+      "labelKey": "ShipInfo.Field.Receiver",
+      "type": "text",
+      "maxLength": 200
+    },
+    "DriverDetails": {
+      "labelKey": "ShipInfo.Field.DriverDetails",
+      "type": "checkbox",
+      "checkedValue": "Y",
+      "uncheckedValue": "N"
+    }
+  },
+  "modes": {
+    "view": {
+      "groups": [
+        {
+          "id": "summary",
+          "labelKey": "ShipInfo.Group.Summary",
+          "order": 10,
+          "columns": 3,
+          "fields": [
+            { "name": "InvoiceNo", "order": 10, "readOnly": true, "columnSpan": 1 },
+            { "name": "SaDate", "order": 20, "readOnly": true, "columnSpan": 1 },
+            { "name": "Eta", "order": 30, "readOnly": true, "columnSpan": 1 },
+            { "name": "Broker", "order": 40, "readOnly": true, "columnSpan": 1 },
+            { "name": "Receiver", "order": 50, "readOnly": true, "columnSpan": 1 },
+            { "name": "DriverDetails", "order": 60, "readOnly": true, "columnSpan": 1 }
+          ]
+        }
+      ]
+    },
+    "edit": {
+      "groups": [
+        {
+          "id": "shipping",
+          "labelKey": "ShipInfo.Group.Shipping",
+          "order": 10,
+          "columns": 2,
+          "fields": [
+            { "name": "InvoiceNo", "order": 10, "readOnly": true, "columnSpan": 1 },
+            { "name": "SaDate", "order": 20, "readOnly": false, "required": true, "columnSpan": 1 },
+            { "name": "Eta", "order": 30, "readOnly": false, "columnSpan": 1 },
+            { "name": "Broker", "order": 40, "readOnly": false, "required": true, "columnSpan": 1 },
+            { "name": "Receiver", "order": 50, "readOnly": false, "columnSpan": 1 },
+            { "name": "DriverDetails", "order": 60, "readOnly": false, "columnSpan": 1 }
+          ]
+        }
+      ]
+    },
+    "create": {
+      "groups": [
+        {
+          "id": "basic",
+          "labelKey": "ShipInfo.Group.Basic",
+          "order": 10,
+          "columns": 2,
+          "fields": [
+            { "name": "InvoiceNo", "order": 10, "readOnly": false, "required": true, "columnSpan": 1 },
+            { "name": "SaDate", "order": 20, "readOnly": false, "required": true, "columnSpan": 1 },
+            { "name": "Eta", "order": 30, "readOnly": false, "columnSpan": 1 },
+            { "name": "Broker", "order": 40, "readOnly": false, "required": true, "columnSpan": 1 }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -16,6 +16,10 @@ public class ShipInfoPageConfig
     [JsonPropertyName("headerEditFields")]
     public IReadOnlyList<ShipInfoFieldMetadata> HeaderEditFields { get; init; } = [];
 
+    /// <summary>Dedicated Header UI metadata for the view/edit/create form modes.</summary>
+    [JsonPropertyName("headerFormMetadata")]
+    public ShipInfoFormMetadata? HeaderFormMetadata { get; init; }
+
     [JsonPropertyName("detailEditFields")]
     public IReadOnlyList<ShipInfoFieldMetadata> DetailEditFields { get; init; } = [];
 

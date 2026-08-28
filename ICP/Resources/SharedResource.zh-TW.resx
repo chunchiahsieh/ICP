@@ -1915,4 +1915,13 @@
   <data name="Broker.CustomsDataDownload.Column.SapRemarks" xml:space="preserve">
     <value>SAP_REMARKS</value>
   </data>
+  <data name="ShipInfo.Group.Summary" xml:space="preserve">
+    <value>摘要</value>
+  </data>
+  <data name="ShipInfo.Group.Shipping" xml:space="preserve">
+    <value>運輸資訊</value>
+  </data>
+  <data name="ShipInfo.Group.Basic" xml:space="preserve">
+    <value>基本資訊</value>
+  </data>
 </root>

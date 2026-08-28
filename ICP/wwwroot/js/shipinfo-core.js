@@ -35,6 +35,7 @@
         viewModalKey: null,
         viewModalData: null,
         viewModalEditing: false,
+        headerFormEffectiveFields: [],
         caseType: null,
         caseDrawerData: null,
         caseSubmitting: false,
@@ -318,11 +319,21 @@
     };
 
     app.getHeaderEditFormFields = function () {
+        if (app.state.headerFormEffectiveFields && app.state.headerFormEffectiveFields.length) {
+            return app.state.headerFormEffectiveFields;
+        }
         var state = app.state;
         var fields = state.pageConfig
             ? (state.pageConfig.headerEditFields || state.pageConfig.HeaderEditFields || [])
             : [];
         return app.renderApi.getAllFields(fields);
+    };
+
+    app.getHeaderFormMetadata = function () {
+        var state = app.state;
+        return state.pageConfig
+            ? (state.pageConfig.headerFormMetadata || state.pageConfig.HeaderFormMetadata || null)
+            : null;
     };
 
     app.getHeaderEditFields = function () {

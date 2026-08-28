@@ -214,7 +214,7 @@
         $select.append('<option value=""></option>');
         (options || []).forEach(function (option) {
             var value = option.value || option.Value || '';
-            var text = option.text || option.Text || value;
+            var text = option.text || option.Text || option.label || option.Label || value;
             var selected = String(selectedValue || '') === String(value) ? ' selected' : '';
             $select.append('<option value="' + escapeHtml(value) + '"' + selected + '>' + escapeHtml(text) + '</option>');
         });
@@ -279,8 +279,11 @@
                 $select.prop('disabled', true);
             }
 
+            var staticOptions = getField(field, 'Options') || getField(field, 'options');
             var category = getField(field, 'LookupCategory') || getField(field, 'lookupCategory');
-            if (category && options.lookupUrl) {
+            if (Array.isArray(staticOptions)) {
+                renderSelect($select, staticOptions, value);
+            } else if (category && options.lookupUrl) {
                 $select.append('<option value="">' + escapeHtml(options.loadingText || '...') + '</option>');
                 loadLookupOptions(category, options.lookupUrl).done(function (lookupItems) {
                     renderSelect($select, lookupItems, value);
@@ -303,7 +306,10 @@
         }
 
         if (controlType === 'Checkbox') {
-            var checked = value === true || value === 'true' || value === '1' || value === 'on';
+            var checkedValue = getField(field, 'CheckedValue') || getField(field, 'checkedValue');
+            var checked = checkedValue !== undefined && checkedValue !== null
+                ? String(value == null ? '' : value) === String(checkedValue)
+                : (value === true || value === 'true' || value === '1' || value === 'on');
             return $('<div class="form-check"></div>').append(
                 $('<input type="checkbox" class="form-check-input shipinfo-control" />')
                     .attr('data-field', fieldName)
@@ -506,7 +512,12 @@
             }
 
             if ($control.attr('type') === 'checkbox') {
-                values[fieldName] = $control.is(':checked') ? 'true' : 'false';
+                var field = ($control.data('field-metadata') || {});
+                var checkedValue = getField(field, 'CheckedValue') || getField(field, 'checkedValue');
+                var uncheckedValue = getField(field, 'UncheckedValue') || getField(field, 'uncheckedValue');
+                values[fieldName] = checkedValue !== undefined && uncheckedValue !== undefined
+                    ? ($control.is(':checked') ? checkedValue : uncheckedValue)
+                    : ($control.is(':checked') ? 'true' : 'false');
                 return;
             }
 
@@ -716,6 +727,161 @@
         });
     }
 
+    function metadataValue(object, key) {
+        return object ? (object[key] !== undefined ? object[key] : object[key.charAt(0).toUpperCase() + key.slice(1)]) : undefined;
+    }
+
+    function failMetadata(message) {
+        throw new Error('FORM_METADATA_INVALID: ' + message);
+    }
+
+    function normalizeMetadataType(type) {
+        var normalized = String(type || '').toLowerCase();
+        var map = { text: 'Text', date: 'Date', select: 'Select', checkbox: 'Checkbox' };
+        if (!map[normalized]) {
+            failMetadata('Unsupported component type: ' + type);
+        }
+        return map[normalized];
+    }
+
+    function getModeDefinition(metadata, mode) {
+        var modes = metadataValue(metadata, 'modes') || {};
+        var definition = modes[mode] || modes[mode.charAt(0).toUpperCase() + mode.slice(1)];
+        if (!definition) {
+            failMetadata('Unsupported or missing mode: ' + mode);
+        }
+        return definition;
+    }
+
+    function getEffectiveMetadataGroups(metadata, mode) {
+        if (!metadata) {
+            failMetadata('Metadata is missing.');
+        }
+
+        var fields = metadataValue(metadata, 'fields') || {};
+        var definition = getModeDefinition(metadata, mode);
+        var groups = metadataValue(definition, 'groups');
+        if (!Array.isArray(groups)) {
+            failMetadata('Mode groups must be an array.');
+        }
+
+        var usedNames = {};
+        return groups.slice().sort(function (a, b) {
+            return Number(metadataValue(a, 'order') || 0) - Number(metadataValue(b, 'order') || 0);
+        }).map(function (group, groupIndex) {
+            var columns = Number(metadataValue(group, 'columns') || 1);
+            var groupId = metadataValue(group, 'id');
+            if (!groupId || columns < 1 || columns > 4) {
+                failMetadata('Invalid group definition.');
+            }
+
+            var modeFields = metadataValue(group, 'fields');
+            if (!Array.isArray(modeFields)) {
+                failMetadata('Group ' + groupId + ' fields must be an array.');
+            }
+
+            var effectiveFields = modeFields.slice().sort(function (a, b) {
+                return Number(metadataValue(a, 'order') || 0) - Number(metadataValue(b, 'order') || 0);
+            }).map(function (modeField, fieldIndex) {
+                var name = metadataValue(modeField, 'name');
+                var baseField = fields[name] || fields[String(name || '').charAt(0).toUpperCase() + String(name || '').slice(1)];
+                if (!name || !baseField || usedNames[String(name).toLowerCase()]) {
+                    failMetadata('Unknown or duplicate field: ' + name);
+                }
+                usedNames[String(name).toLowerCase()] = true;
+
+                var span = Number(metadataValue(modeField, 'columnSpan') || 1);
+                if (span < 1 || span > columns) {
+                    failMetadata('Invalid columnSpan for ' + name);
+                }
+
+                var effective = $.extend({}, baseField, modeField, {
+                    name: name,
+                    fieldName: name,
+                    FieldName: name,
+                    controlType: normalizeMetadataType(metadataValue(baseField, 'type')),
+                    ControlType: normalizeMetadataType(metadataValue(baseField, 'type')),
+                    displayOrder: Number(metadataValue(modeField, 'order') || ((fieldIndex + 1) * 10)),
+                    DisplayOrder: Number(metadataValue(modeField, 'order') || ((fieldIndex + 1) * 10)),
+                    editable: mode !== 'view' && metadataValue(modeField, 'readOnly') === false,
+                    Editable: mode !== 'view' && metadataValue(modeField, 'readOnly') === false,
+                    readOnly: mode === 'view' || metadataValue(modeField, 'readOnly') !== false,
+                    ReadOnly: mode === 'view' || metadataValue(modeField, 'readOnly') !== false,
+                    required: metadataValue(modeField, 'required') === true,
+                    Required: metadataValue(modeField, 'required') === true,
+                    columnSpan: span,
+                    ColumnSpan: span,
+                    group: groupId,
+                    Group: groupId
+                });
+                return effective;
+            });
+
+            return {
+                id: groupId,
+                label: metadataValue(group, 'label'),
+                columns: columns,
+                order: Number(metadataValue(group, 'order') || ((groupIndex + 1) * 10)),
+                fields: effectiveFields
+            };
+        });
+    }
+
+    function destroyForm($container) {
+        if (!$container || !$container.length) {
+            return;
+        }
+        $container.find('.shipinfo-control').off();
+        $container.removeData('shipinfo-form-fields').empty();
+    }
+
+    function renderMetadataForm($container, metadata, options) {
+        options = options || {};
+        var mode = String(options.mode || 'view').toLowerCase();
+        if (['view', 'edit', 'create'].indexOf(mode) < 0) {
+            failMetadata('Unsupported mode: ' + mode);
+        }
+
+        destroyForm($container);
+        var groups = getEffectiveMetadataGroups(metadata, mode);
+        var renderValues = options.values || {};
+        groups.forEach(function (group) {
+            var $section = $('<section class="mb-3 shipinfo-form-group"></section>').attr('data-group', group.id);
+            if (group.label) {
+                $section.append('<h6 class="text-muted border-bottom pb-2 mb-3">' + escapeHtml(group.label) + '</h6>');
+            }
+            var $row = $('<div class="row g-3"></div>');
+            group.fields.forEach(function (field) {
+                var colSize = 12 / group.columns * Number(field.columnSpan || 1);
+                var $group = $('<div></div>').addClass('col-12 col-md-' + colSize);
+                $group.append(buildLabelHtml(field, options.culture, options.requiredMark));
+                var $control = createInputControl(field, {
+                    mode: mode,
+                    culture: options.culture,
+                    lookupUrl: options.lookupUrl,
+                    loadingText: options.loadingText,
+                    values: renderValues
+                });
+                $control.find('.shipinfo-control').addBack('.shipinfo-control').data('field-metadata', field);
+                $group.append($control);
+                if (field.helpText) {
+                    $group.append('<div class="form-text">' + escapeHtml(field.helpText) + '</div>');
+                }
+                $row.append($group);
+            });
+            $section.append($row);
+            $container.append($section);
+        });
+
+        appendConcurrencyFields($container, renderValues);
+        $container.data('shipinfo-form-fields', groups.reduce(function (all, group) { return all.concat(group.fields); }, []));
+        var $first = $container.find('.shipinfo-control:not([disabled])').first();
+        if ($first.length && mode !== 'view') {
+            $first.trigger('focus');
+        }
+        return { groups: groups, fields: $container.data('shipinfo-form-fields') };
+    }
+
     global.ShipInfoRender = {
         getVisibleFields: getVisibleFields,
         getAllFields: getAllFields,
@@ -726,6 +892,8 @@
         canUseField: canUseField,
         renderSearchFields: renderSearchFields,
         renderFormFields: renderFormFields,
+        renderMetadataForm: renderMetadataForm,
+        destroyForm: destroyForm,
         renderTableHead: renderTableHead,
         appendTableCells: appendTableCells,
         collectControlValues: collectControlValues,

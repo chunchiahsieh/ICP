@@ -91,6 +91,10 @@ builder.Services
     .Bind(shipInfoTableFieldsConfiguration)
     .ValidateOnStart();
 
+// Metadata controls the Ship Info Header UI only. Validate it at startup so an
+// invalid configuration cannot silently fall back to unrestricted text inputs.
+ShipInfoFormMetadataProvider.ValidateAtStartup(builder.Environment.ContentRootPath);
+
 var forwarderTableFieldsConfiguration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("Config/forwarder-table-fields.json", optional: false, reloadOnChange: true)
@@ -210,6 +214,7 @@ builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 builder.Services.AddSingleton<IShipInfoCaseEventFactory, ShipInfoCaseEventFactory>();
 builder.Services.AddHostedService<IntegrationEventOutboxPublisherWorker>();
 builder.Services.AddScoped<ShipInfoMetadataProvider>();
+builder.Services.AddScoped<ShipInfoFormMetadataProvider>();
 builder.Services.AddScoped<ReportMetadataProvider>();
 builder.Services.AddScoped<ForwarderTableMetadataProvider>();
 builder.Services.AddScoped<TariffTableMetadataProvider>();
