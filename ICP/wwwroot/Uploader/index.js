@@ -135,8 +135,11 @@ window.createUploader = function (selector, options) {
     let fileCount = 0;
     let successCount = 0;
     let errorCount = 0;
+    let destroyed = false;
+    const activeRequests = new Set();
 
     function openModal() {
+        if (destroyed) return;
         $modal.removeClass('hidden');
         void $modal[0].offsetWidth; // trigger reflow
         $backdrop.removeClass('opacity-0').addClass('opacity-100');
@@ -144,6 +147,7 @@ window.createUploader = function (selector, options) {
     }
 
     function closeModal() {
+        if (destroyed) return;
         $backdrop.removeClass('opacity-100').addClass('opacity-0');
         $panel.removeClass('opacity-100 translate-y-0 sm:scale-100').addClass('opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95');
         setTimeout(() => {
@@ -219,6 +223,7 @@ window.createUploader = function (selector, options) {
     }
 
     function handleFiles(files) {
+        if (destroyed) return;
         if (files.length === 0) return;
 
         // Check multiple handling
@@ -276,6 +281,7 @@ window.createUploader = function (selector, options) {
     }
 
     function uploadFile(file, clientError) {
+        if (destroyed) return Promise.resolve();
         const id = Math.random().toString(36).substring(2, 9);
         const fileSizeStr = formatBytes(file.size);
         const safeFileName = escapeHtml(file.name);
@@ -328,7 +334,7 @@ window.createUploader = function (selector, options) {
             if (status === 'error') errorCount--;
 
             const pendingPath = $fileItem.attr('data-file-path') || '';
-            if (status === 'success' && pendingPath && typeof config.onRemove === 'function') {
+            if (!destroyed && status === 'success' && pendingPath && typeof config.onRemove === 'function') {
                 config.onRemove(pendingPath);
             }
 
@@ -372,6 +378,8 @@ window.createUploader = function (selector, options) {
                 return xhr;
             },
             success: function (response) {
+                activeRequests.delete(jqXHR);
+                if (destroyed) { resolve(); return; }
                 $fileItem.find('.progress-bar').css('width', '100%');
                 if (response.success) {
                     $fileItem.attr('data-status', 'success');
@@ -404,6 +412,8 @@ window.createUploader = function (selector, options) {
                 resolve();
             },
             error: function (xhr, status, error) {
+                activeRequests.delete(jqXHR);
+                if (destroyed) { resolve(); return; }
                 if (status === 'abort') {
                     resolve();
                     return;
@@ -424,6 +434,7 @@ window.createUploader = function (selector, options) {
                 resolve();
             }
         });
+        activeRequests.add(jqXHR);
         });
 
         function markError(errorMsg) {
@@ -439,6 +450,24 @@ window.createUploader = function (selector, options) {
         `);
         }
     }
+
+    return {
+        destroy: function () {
+            if (destroyed) return;
+            destroyed = true;
+            activeRequests.forEach(function (request) {
+                if (request && request.readyState !== 4) request.abort();
+            });
+            activeRequests.clear();
+            $(`#${buttonId}`).off();
+            $dropzone.off();
+            $fileInput.off();
+            $modal.find('.close-modal').off();
+            $backdrop.off();
+            $modal.remove();
+            $container.empty();
+        }
+    };
 };
 
 })(window, window.jQuery);

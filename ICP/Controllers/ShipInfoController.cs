@@ -195,33 +195,33 @@ public class ShipInfoController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAttachments(string headerKey, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAttachments([FromQuery(Name = "headerKey")] string headerRowKey, CancellationToken cancellationToken = default)
     {
-        var header = await RequireHeaderAsync(headerKey, cancellationToken);
+        var header = await RequireHeaderAsync(headerRowKey, cancellationToken);
         return Json(ApiResponse<IReadOnlyList<ShipInfoAttachmentDto>>.Ok(await _attachments.ListAsync(header.Id, cancellationToken)));
     }
 
     [HttpPost]
-    public async Task<IActionResult> UploadAttachment(string headerKey, IFormFile file, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UploadAttachment([FromQuery(Name = "headerKey")] string headerRowKey, IFormFile file, CancellationToken cancellationToken = default)
     {
-        var header = await RequireHeaderAsync(headerKey, cancellationToken);
-        var item = await _attachments.UploadAsync(header.Id, header.InvoiceNo, file, User.Identity?.Name, cancellationToken);
+        var header = await RequireHeaderAsync(headerRowKey, cancellationToken);
+        var item = await _attachments.UploadAsync(header.Id, file, User.Identity?.Name, cancellationToken);
         return Json(ApiResponse<ShipInfoAttachmentDto>.Ok(item, "Uploaded"));
     }
 
     [HttpGet]
-    public async Task<IActionResult> DownloadAttachment(string headerKey, Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> DownloadAttachment([FromQuery(Name = "headerKey")] string headerRowKey, Guid id, CancellationToken cancellationToken = default)
     {
-        var header = await RequireHeaderAsync(headerKey, cancellationToken);
+        var header = await RequireHeaderAsync(headerRowKey, cancellationToken);
         var (item, path) = await _attachments.RequireActiveAsync(header.Id, id, cancellationToken);
         if (!System.IO.File.Exists(path)) return NotFound(ApiResponse<object>.Fail($"Attachment file is missing: {item.OriginalFileName}"));
         return PhysicalFile(path, item.ContentType ?? "application/octet-stream", item.OriginalFileName);
     }
 
     [HttpPost]
-    public async Task<IActionResult> DeleteAttachment(string headerKey, Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> DeleteAttachment([FromQuery(Name = "headerKey")] string headerRowKey, Guid id, CancellationToken cancellationToken = default)
     {
-        var header = await RequireHeaderAsync(headerKey, cancellationToken);
+        var header = await RequireHeaderAsync(headerRowKey, cancellationToken);
         await _attachments.DeleteAsync(header.Id, id, User.Identity?.Name, cancellationToken);
         return Json(ApiResponse<object>.Ok(new { id }));
     }

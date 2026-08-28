@@ -76,8 +76,13 @@
                     mode: state.viewModalEditing ? 'edit' : 'view'
                 }));
                 state.headerFormEffectiveFields = rendered.fields;
+                if (typeof app.renderHeaderAttachments === 'function') {
+                    app.renderHeaderAttachments(state.viewModalKey, state.viewModalEditing);
+                }
             } catch (error) {
                 state.headerFormEffectiveFields = [];
+                if (typeof app.disposeHeaderAttachments === 'function') app.disposeHeaderAttachments();
+                $('#shipInfoHeaderAttachments').addClass('d-none');
                 $('#shipInfoViewForm').empty().append('<div class="alert alert-danger mb-0">表單設定載入失敗，請聯絡系統管理員。</div>');
                 app.showToast((error && error.message) || '表單設定載入失敗', 'danger');
             }

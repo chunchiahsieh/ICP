@@ -32,9 +32,6 @@
                     <button type="button" class="btn btn-sm btn-success" id="btnShipInfoArur" data-permissions="Views.Function.ShipInfo.ARUR" disabled>
                         <i class="bi bi-plus-circle me-1"></i>@Localizer["ShipInfo.ARUR"]
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnShipInfoAttachments" disabled>
-                        <i class="bi bi-paperclip me-1"></i>附件
-                    </button>
                 </div>
             </div>
             <div id="shipInfoHeaderDataDiv" class="report-split-table"></div>
@@ -44,13 +41,6 @@
             <div id="shipInfoDetailDataDiv" class="report-split-table"></div>
         </section>
     </div>
-</div>
-
-<div class="modal fade" id="shipInfoAttachmentsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
-        <div class="modal-header"><h5 class="modal-title">Ship Info 附件</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body"><div id="shipInfoAttachmentUploader" class="mb-3"></div><div id="shipInfoAttachmentsList" class="list-group"></div></div>
-    </div></div>
 </div>
 
 <div class="d-none" aria-hidden="true">
@@ -87,6 +77,10 @@
                     </div>
                 </div>
                 <form id="shipInfoViewForm" class="row g-3" novalidate></form>
+                <section id="shipInfoHeaderAttachments" class="d-none border-top mt-3 pt-3">
+                    <h6 class="mb-3">附件</h6>
+                    <div id="shipInfoHeaderAttachmentsBody"></div>
+                </section>
             </div>
         </div>
     </div>
@@ -275,6 +269,7 @@
     <script src="~/js/shipinfo-crud.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-case-drawer.js" asp-append-version="true"></script>
     <script src="~/Uploader/index.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-file-uploader-adapter.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-attachments.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo.js" asp-append-version="true"></script>
 }

@@ -28,6 +28,8 @@
             app.state.viewModalData = null;
             app.state.headerFormEffectiveFields = [];
             app.renderApi.destroyForm($('#shipInfoViewForm'));
+            if (typeof app.disposeHeaderAttachments === 'function') app.disposeHeaderAttachments();
+            $('#shipInfoHeaderAttachments').addClass('d-none');
             $('#shipInfoViewForm').empty();
         });
 
