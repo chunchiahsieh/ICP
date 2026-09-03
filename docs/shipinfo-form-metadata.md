@@ -143,7 +143,35 @@ const effectiveField = {
 }
 ```
 
-`options` 與 `optionsSource` 必須擇一。第一版已註冊來源只有 `broker`；JSON 不可指定 URL、SQL 或 JavaScript。
+`options` 與 `optionsSource` 必須擇一。`optionsSource` 是受控的 UI 來源代號，不可直接填資料庫 Category、URL、SQL 或 JavaScript。後端會將代號對應到 `SystemConfigs.Category`，選項的儲存值為 `Key1`，顯示文字為 `Value1`（空白時回退 `Key1`）。
+
+目前已註冊來源：
+
+| `optionsSource` | `SystemConfigs.Category` | 對應設定頁 |
+|---|---|---|
+| `airSea` | `AirSea` | Air/Sea |
+| `broker` | `Broker` | Broker |
+| `buCode` | `BuCode` | BU Code |
+| `customized` | `Customized` | Customized |
+| `defaultDeliveryWh` | `DefaultDeliveryWh` | Default Delivery W/H |
+| `deliveryTo` | `DeliveryToList` | Delivery To List |
+| `etaDelDateTable` | `EtaDelDateTable` | ETA-Del Date Table |
+| `invoiceType` | `InvoiceType` | Invoice Type |
+| `orderPriority` | `OrderPriority` | Order Priority |
+| `orderType` | `OrderType` | Order Type |
+| `pickUpLocation` | `PickUpLocation` | Pick Up Location |
+| `warehouse` | `WhCode` | W/H Code |
+
+範例：
+
+```json
+"Warehouse": {
+  "type": "select",
+  "optionsSource": "warehouse"
+}
+```
+
+註冊來源只代表可在 JSON 使用；不會自動將既有欄位改為下拉選單，也不會改變後端儲存欄位白名單。
 
 Checkbox：
 

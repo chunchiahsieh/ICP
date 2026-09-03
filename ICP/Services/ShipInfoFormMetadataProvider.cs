@@ -19,7 +19,18 @@ public sealed class ShipInfoFormMetadataProvider
     private static readonly IReadOnlyDictionary<string, string> OptionsSources =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["broker"] = "Broker"
+            ["airSea"] = "AirSea",
+            ["broker"] = "Broker",
+            ["buCode"] = "BuCode",
+            ["customized"] = "Customized",
+            ["defaultDeliveryWh"] = "DefaultDeliveryWh",
+            ["deliveryTo"] = "DeliveryToList",
+            ["etaDelDateTable"] = "EtaDelDateTable",
+            ["invoiceType"] = "InvoiceType",
+            ["orderPriority"] = "OrderPriority",
+            ["orderType"] = "OrderType",
+            ["pickUpLocation"] = "PickUpLocation",
+            ["warehouse"] = "WhCode"
         };
     private const string FileUploaderComponent = "fileUploader";
     private const string HeaderAttachmentsAdapter = "shipInfoHeaderAttachments";
