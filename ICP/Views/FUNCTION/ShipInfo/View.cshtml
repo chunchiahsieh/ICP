@@ -104,10 +104,14 @@
                 <span class="visually-hidden">@Localizer["ShipInfo.Loading"]</span>
             </div>
         </div>
-        <div class="shipinfo-case-drawer-scroll flex-grow-1 overflow-auto shipinfo-case-drawer-report">
-            <div class="p-3 border-bottom" id="shipInfoCaseHeaderAccordionWrap"></div>
-            <div class="p-3" id="shipInfoCaseDetailAccordionWrap"></div>
-        </div>
+        <section class="shipinfo-case-drawer-header-summary flex-shrink-0 border-bottom p-3" aria-labelledby="shipInfoCaseHeaderSummaryTitle">
+            <h6 class="mb-3" id="shipInfoCaseHeaderSummaryTitle">@Localizer["ShipInfo.HeaderInformation"]</h6>
+            <div id="shipInfoCaseHeaderSummaryWrap"></div>
+        </section>
+        <section class="shipinfo-case-drawer-detail-section d-flex flex-column flex-grow-1 min-h-0" aria-labelledby="shipInfoCaseDetailTitle">
+            <h6 class="flex-shrink-0 border-bottom mb-0 p-3" id="shipInfoCaseDetailTitle">@Localizer["ShipInfo.DetailInformation"]</h6>
+            <div class="shipinfo-case-drawer-detail-scroll flex-grow-1 overflow-auto p-3" id="shipInfoCaseDetailTableWrap"></div>
+        </section>
         <div class="shipinfo-case-drawer-footer border-top p-3 d-flex gap-2">
             <button type="button" class="btn btn-outline-secondary flex-grow-1" id="btnShipInfoCaseCancel" data-bs-dismiss="offcanvas">@Localizer["ShipInfo.Cancel"]</button>
             <button type="button" class="btn btn-primary flex-grow-1" id="btnShipInfoCaseSubmit">

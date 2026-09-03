@@ -259,6 +259,19 @@
     background-color: var(--bs-body-bg);
 }
 
+.shipinfo-case-drawer-header-summary {
+    max-height: 38vh;
+    overflow: auto;
+}
+
+.shipinfo-case-drawer-detail-section {
+    min-height: 0;
+}
+
+.shipinfo-case-drawer-detail-scroll {
+    min-height: 0;
+}
+
 .shipinfo-drawer-report-table {
     font-size: 0.875rem;
     table-layout: auto;
@@ -298,8 +311,4 @@
 .shipinfo-drawer-detail-report td {
     white-space: nowrap;
     vertical-align: middle;
-}
-
-.shipinfo-case-drawer .accordion-button {
-    font-weight: 600;
 }

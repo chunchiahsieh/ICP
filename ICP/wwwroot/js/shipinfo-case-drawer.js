@@ -173,44 +173,15 @@
         };
     }
 
-    function renderSectionAccordion($container, title, $content, accordionId, defaultExpanded) {
-        $container.empty();
-        var collapseId = accordionId + 'Collapse';
-        var headingId = accordionId + 'Heading';
-        var expanded = defaultExpanded ? 'true' : 'false';
-        var showClass = defaultExpanded ? ' show' : '';
-        var collapsedClass = defaultExpanded ? '' : ' collapsed';
-        var $accordion = $('<div class="accordion" id="' + accordionId + '"></div>');
-        var $accordionItem = $('<div class="accordion-item"></div>');
-        var $header = $('<h2 class="accordion-header" id="' + headingId + '"></h2>');
-
-        $header.append(
-            $('<button class="accordion-button' + collapsedClass + '" type="button" data-bs-toggle="collapse" data-bs-target="#' + collapseId + '" aria-expanded="' + expanded + '" aria-controls="' + collapseId + '"></button>')
-                .text(title)
-        );
-
-        var $collapse = $('<div id="' + collapseId + '" class="accordion-collapse collapse' + showClass + '" aria-labelledby="' + headingId + '"></div>');
-        var $body = $('<div class="accordion-body p-0"></div>');
-
-        $body.append($content);
-        $collapse.append($body);
-        $accordionItem.append($header).append($collapse);
-        $accordion.append($accordionItem);
-        $container.append($accordion);
-    }
-
     app.renderCaseDrawer = function (data) {
         state.caseDrawerData = data || null;
         var header = (data && data.header) || {};
         var details = (data && data.details) || [];
 
-        renderSectionAccordion(
-            $('#shipInfoCaseHeaderAccordionWrap'),
-            messages.headerInformation || messages.drawerHeader || 'Header Information',
-            $('<div class="p-3"></div>').append(renderHeaderReportTable(app.getAllHeaderFields(), header)),
-            'shipInfoCaseHeaderAccordion',
-            true
-        );
+        $('#shipInfoCaseHeaderSummaryTitle').text(messages.headerInformation || messages.drawerHeader || 'Header Information');
+        $('#shipInfoCaseHeaderSummaryWrap')
+            .empty()
+            .append(renderHeaderReportTable(app.getAllHeaderFields(), header));
 
         var $detailContent;
         if (!details.length) {
@@ -219,13 +190,8 @@
             $detailContent = renderDetailReportTable(app.getDetailFields(), details);
         }
 
-        renderSectionAccordion(
-            $('#shipInfoCaseDetailAccordionWrap'),
-            messages.detailInformation || messages.drawerDetail || 'Detail Information',
-            $detailContent,
-            'shipInfoCaseDetailAccordion',
-            true
-        );
+        $('#shipInfoCaseDetailTitle').text(messages.detailInformation || messages.drawerDetail || 'Detail Information');
+        $('#shipInfoCaseDetailTableWrap').empty().append($detailContent);
 
         var arurCheck = canSubmitArurDrawer(data);
         var validationMessages = ((data && (data.validationMessages || data.ValidationMessages)) || []).concat(arurCheck.messages);
@@ -264,7 +230,7 @@
                 : (messages.caseDrawerArurTitle || messages.arur || 'ARUR')
         );
 
-        $('#shipInfoCaseHeaderAccordionWrap, #shipInfoCaseDetailAccordionWrap').empty();
+        $('#shipInfoCaseHeaderSummaryWrap, #shipInfoCaseDetailTableWrap').empty();
         var drawerElement = document.getElementById('shipInfoCaseDrawer');
         if (global.bootstrap && global.bootstrap.Offcanvas) {
             global.bootstrap.Offcanvas.getOrCreateInstance(drawerElement).show();
