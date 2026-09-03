@@ -1,6 +1,12 @@
 @using System.Globalization
 @{
-    var returnUrl = string.IsNullOrEmpty(Context.Request.Path.Value) ? "/" : $"{Context.Request.Path}{Context.Request.QueryString}";
+    var returnUrl = $"{Context.Request.PathBase}{Context.Request.Path}{Context.Request.QueryString}";
+    if (string.IsNullOrWhiteSpace(returnUrl))
+    {
+        returnUrl = string.IsNullOrEmpty(Context.Request.PathBase.Value)
+            ? "/"
+            : $"{Context.Request.PathBase}/";
+    }
     var current = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
     var isZhTw = CultureInfo.CurrentUICulture.Name.Equals("zh-TW", StringComparison.OrdinalIgnoreCase)
         || CultureInfo.CurrentUICulture.Name.Equals("zh-Hant", StringComparison.OrdinalIgnoreCase);
