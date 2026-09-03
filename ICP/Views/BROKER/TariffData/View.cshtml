@@ -32,6 +32,13 @@
     <p class="text-muted small mb-3">@maxSizeHint</p>
 
     <div class="d-flex align-items-start gap-2 flex-wrap mb-3">
+        <button type="button"
+                class="btn btn-outline-success align-self-center"
+                id="btnTariffDataDownloadExcel"
+                data-permissions="Views.Broker.TariffData.Export"
+                data-i18n-key="Views.Broker.TariffData.Export">
+            <i class="bi bi-file-earmark-excel me-1"></i>@Localizer["Report.DownloadExcel"]
+        </button>
         <div data-permissions="Views.Broker.TariffData.UploadCustomsData"
              data-i18n-key="Views.Broker.TariffData.UploadCustomsData">
             <div id="customsDataUploader"></div>
@@ -203,6 +210,18 @@
                     fileTypes: '.xlsx,.xls'
                 });
             }
+
+            $('#btnTariffDataDownloadExcel').on('click', function () {
+                if (!window.TariffProTable || !TariffProTable.downloadExcel) {
+                    return;
+                }
+
+                TariffProTable.downloadExcel({
+                    downloadUrl: '@Url.Action("DownloadExcel", "TariffData")',
+                    filterFieldMap: tariffFilterFieldMap,
+                    confirmAllMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.ExportAllConfirm"].Value))
+                });
+            });
         });
     </script>
 }

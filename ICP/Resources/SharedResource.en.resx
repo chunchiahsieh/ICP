@@ -1111,6 +1111,18 @@
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
     <value>Tariff Data View</value>
   </data>
+  <data name="Views.Broker.TariffData.Export" xml:space="preserve">
+    <value>Download tariff data</value>
+  </data>
+  <data name="Broker.TariffData.ExportAllConfirm" xml:space="preserve">
+    <value>No filters are selected. Download all tariff data?</value>
+  </data>
+  <data name="Broker.TariffData.Export.Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Broker.TariffData.Export.No" xml:space="preserve">
+    <value>No</value>
+  </data>
   <data name="Views.Broker.TariffData.UploadCustomsData" xml:space="preserve">
     <value>Upload Customs Data</value>
   </data>

@@ -66,9 +66,46 @@
         });
     }
 
+    function hasFilterValues(payload) {
+        return Object.keys(payload || {}).some(function (key) {
+            return payload[key] != null && String(payload[key]).trim() !== '';
+        });
+    }
+
+    function downloadExcel(options) {
+        var filtersApi = global.ProTableFilters;
+        var payload = {};
+        if (filtersApi && filtersApi.getProTableFilterValues && filtersApi.buildProTableQueryPayload) {
+            var saved = filtersApi.getProTableFilterValues($('#DataDiv'), options.filterFieldMap || {});
+            payload = filtersApi.buildProTableQueryPayload(saved, options.filterFieldMap || {}) || {};
+        }
+
+        if (!hasFilterValues(payload) && options.confirmAllMessage && !global.confirm(options.confirmAllMessage)) {
+            return;
+        }
+
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = options.downloadUrl;
+        form.style.display = 'none';
+
+        Object.keys(payload).forEach(function (key) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = payload[key] == null ? '' : String(payload[key]);
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
+
     global.TariffProTable = {
         buildTariffFilterFieldMap: buildTariffFilterFieldMap,
         buildTariffFilterHooks: buildTariffFilterHooks,
-        bindTariffFilterActions: bindTariffFilterActions
+        bindTariffFilterActions: bindTariffFilterActions,
+        downloadExcel: downloadExcel
     };
 })(window, window.jQuery);

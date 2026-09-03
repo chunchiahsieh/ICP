@@ -1111,6 +1111,18 @@
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
     <value>関税データ照会</value>
   </data>
+  <data name="Views.Broker.TariffData.Export" xml:space="preserve">
+    <value>関税データをダウンロード</value>
+  </data>
+  <data name="Broker.TariffData.ExportAllConfirm" xml:space="preserve">
+    <value>フィルターが未設定です。すべての関税データをダウンロードしますか？</value>
+  </data>
+  <data name="Broker.TariffData.Export.Yes" xml:space="preserve">
+    <value>あり</value>
+  </data>
+  <data name="Broker.TariffData.Export.No" xml:space="preserve">
+    <value>なし</value>
+  </data>
   <data name="Views.Broker.TariffData.UploadCustomsData" xml:space="preserve">
     <value>通関データをアップロード</value>
   </data>

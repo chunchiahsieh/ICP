@@ -5,6 +5,8 @@ using ICP.Models.Icp;
 using ICP.Models.Tariff;
 using ICP.Services;
 using System.Text.Json;
+using System.Globalization;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -97,6 +99,69 @@ public class TariffDataController : Controller
     {
         var list = await QueryTariffDataAsync(criteria, cancellationToken);
         return PartialView("~/Views/BROKER/TariffData/View.List.cshtml", CreateListViewModel(list));
+    }
+
+    [HttpPost]
+    [IgnoreAntiforgeryToken]
+    public async Task<IActionResult> DownloadExcel(
+        [FromForm] TariffDataQueryModel criteria,
+        CancellationToken cancellationToken = default)
+    {
+        var tableConfig = _tableMetadataProvider.GetPageConfig();
+        var list = await QueryTariffDataAsync(criteria, cancellationToken);
+        var storageRoot = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options);
+
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("TariffData");
+
+        for (var columnIndex = 0; columnIndex < tableConfig.Fields.Count; columnIndex++)
+        {
+            var field = tableConfig.Fields[columnIndex];
+            worksheet.Cell(1, columnIndex + 1).Value = TariffTableViewHelper.ResolveHeaderLabel(
+                field,
+                key => _localizer[key].Value);
+        }
+
+        var rowIndex = 2;
+        foreach (var item in list)
+        {
+            for (var columnIndex = 0; columnIndex < tableConfig.Fields.Count; columnIndex++)
+            {
+                var fieldName = tableConfig.Fields[columnIndex].FieldName;
+                worksheet.Cell(rowIndex, columnIndex + 1).Value = ResolveExportCellValue(
+                    item,
+                    fieldName,
+                    rowIndex - 1,
+                    storageRoot);
+            }
+
+            rowIndex++;
+        }
+
+        var usedRange = worksheet.RangeUsed();
+        if (usedRange is not null)
+        {
+            var header = worksheet.Range(1, 1, 1, tableConfig.Fields.Count);
+            header.Style.Font.Bold = true;
+            header.Style.Fill.BackgroundColor = XLColor.LightGray;
+            usedRange.SetAutoFilter();
+            worksheet.Columns().AdjustToContents(1, 50);
+        }
+
+        worksheet.SheetView.FreezeRows(1);
+
+        _logger.LogInformation(
+            "Tariff data exported by {User}: {Count} record(s)",
+            CrudAuditHelper.ResolveUserName(User.Identity?.Name),
+            list.Count);
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        var fileName = $"TariffData_{DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture)}.xlsx";
+        return File(
+            stream.ToArray(),
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            fileName);
     }
 
     [HttpGet]
@@ -268,6 +333,34 @@ public class TariffDataController : Controller
     private IQueryable<TariffData> BaseQuery()
     {
         return _db.TariffDataRecords.AsNoTracking();
+    }
+
+    private string ResolveExportCellValue(
+        TariffData item,
+        string fieldName,
+        int rowNumber,
+        string storageRoot)
+    {
+        if (string.Equals(fieldName, "RowNo", StringComparison.OrdinalIgnoreCase))
+        {
+            return rowNumber.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (string.Equals(fieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase))
+        {
+            return TariffAttachmentHelper.FindDeclarationPdfPath(storageRoot, item) is null
+                ? _localizer["Broker.TariffData.Export.No"].Value
+                : _localizer["Broker.TariffData.Export.Yes"].Value;
+        }
+
+        if (string.Equals(fieldName, "CostFile", StringComparison.OrdinalIgnoreCase))
+        {
+            return TariffAttachmentHelper.FindCostFilePath(storageRoot, item) is null
+                ? _localizer["Broker.TariffData.Export.No"].Value
+                : _localizer["Broker.TariffData.Export.Yes"].Value;
+        }
+
+        return TariffTableViewHelper.FormatCellValue(item, fieldName);
     }
 
     private async Task<List<TariffData>> QueryTariffDataAsync(

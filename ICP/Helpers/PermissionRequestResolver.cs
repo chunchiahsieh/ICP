@@ -63,6 +63,12 @@ public static class PermissionRequestResolver
                 return "Views.Broker.TariffData.View";
             }
 
+            if (action.Equals("DownloadExcel", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.Export");
+            }
+
             if (IsReadAction(action))
             {
                 return "Views.Broker.TariffData.View";

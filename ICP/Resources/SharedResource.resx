@@ -1111,6 +1111,18 @@
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
     <value>關稅資料查詢</value>
   </data>
+  <data name="Views.Broker.TariffData.Export" xml:space="preserve">
+    <value>下載關稅資料</value>
+  </data>
+  <data name="Broker.TariffData.ExportAllConfirm" xml:space="preserve">
+    <value>尚未設定篩選條件，確定要下載全部關稅資料嗎？</value>
+  </data>
+  <data name="Broker.TariffData.Export.Yes" xml:space="preserve">
+    <value>有</value>
+  </data>
+  <data name="Broker.TariffData.Export.No" xml:space="preserve">
+    <value>無</value>
+  </data>
   <data name="Views.Broker.TariffData.UploadCustomsData" xml:space="preserve">
     <value>上傳報關資料</value>
   </data>
