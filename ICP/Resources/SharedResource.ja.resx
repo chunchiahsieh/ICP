@@ -199,7 +199,28 @@
     <value>編集</value>
   </data>
   <data name="ShipInfo.Delete" xml:space="preserve">
-    <value>削除</value>
+    <value>廃棄</value>
+  </data>
+  <data name="ShipInfo.Discard" xml:space="preserve">
+    <value>廃棄</value>
+  </data>
+  <data name="ShipInfo.DiscardConfirmTitle" xml:space="preserve">
+    <value>このレコードを廃棄しますか？</value>
+  </data>
+  <data name="ShipInfo.DiscardConfirmMessage" xml:space="preserve">
+    <value>Header と Detail のデータは保持されますが、編集および起案はできなくなります。</value>
+  </data>
+  <data name="ShipInfo.DiscardReason" xml:space="preserve">
+    <value>廃棄理由</value>
+  </data>
+  <data name="ShipInfo.DiscardReasonRequired" xml:space="preserve">
+    <value>廃棄理由を入力してください。</value>
+  </data>
+  <data name="ShipInfo.DiscardSuccess" xml:space="preserve">
+    <value>廃棄しました</value>
+  </data>
+  <data name="ShipInfo.DiscardFailed" xml:space="preserve">
+    <value>廃棄に失敗しました</value>
   </data>
   <data name="ShipInfo.Deposit" xml:space="preserve">
     <value>デポジット起案</value>
@@ -251,6 +272,9 @@
   </data>
   <data name="ShipInfo.RequiredMark" xml:space="preserve">
     <value>*</value>
+  </data>
+  <data name="ShipInfo.TotalCartonsInteger" xml:space="preserve">
+    <value>総箱数は 0 以上の整数で入力してください。</value>
   </data>
   <data name="ShipInfo.ValidationFailed" xml:space="preserve">
     <value>検証に失敗しました</value>
@@ -712,7 +736,7 @@
     <value>Ship Info 編集</value>
   </data>
   <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
-    <value>Ship Info 削除</value>
+    <value>Ship Info 廃棄</value>
   </data>
   <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">
     <value>Ship Info デポジット起案</value>
@@ -1939,4 +1963,18 @@
   <data name="ShipInfo.Group.Attachments" xml:space="preserve">
     <value>添付ファイル</value>
   </data>
+  <data name="ShipInfo.Group.BasicOrder" xml:space="preserve"><value>基本／注文情報</value></data>
+  <data name="ShipInfo.Group.ShippingCustoms" xml:space="preserve"><value>船積／通関情報</value></data>
+  <data name="ShipInfo.Group.Delivery" xml:space="preserve"><value>配送情報</value></data>
+  <data name="ShipInfo.Group.PackingServices" xml:space="preserve"><value>梱包／設備／サービス</value></data>
+  <data name="ShipInfo.Group.Customer" xml:space="preserve"><value>顧客情報</value></data>
+  <data name="ShipInfo.Group.CaseProject" xml:space="preserve"><value>案件／プロジェクト情報</value></data>
+  <data name="ShipInfo.Group.Notifications" xml:space="preserve"><value>通知／遅延情報</value></data>
+  <data name="ShipInfo.Group.Remarks" xml:space="preserve"><value>備考</value></data>
+  <data name="ShipInfo.Group.Discard" xml:space="preserve"><value>廃棄情報</value></data>
+  <data name="ShipInfo.Group.Audit" xml:space="preserve"><value>システム記録</value></data>
+  <data name="ShipInfo.Group.DetailLine" xml:space="preserve"><value>明細／品目情報</value></data>
+  <data name="ShipInfo.Group.QuantityPrice" xml:space="preserve"><value>数量／金額情報</value></data>
+  <data name="ShipInfo.Group.Packing" xml:space="preserve"><value>梱包／寸法／重量</value></data>
+  <data name="ShipInfo.Group.Compliance" xml:space="preserve"><value>配送／法規情報</value></data>
 </root>

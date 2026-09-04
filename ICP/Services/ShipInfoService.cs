@@ -198,8 +198,12 @@ public class ShipInfoService : IShipInfoService
         return await _repository.GetDetailsByHeaderKeyAsync(headerKey, cancellationToken);
     }
 
-    public IReadOnlyList<string> ValidateHeaderValues(IReadOnlyDictionary<string, string?> values) =>
-        ValidateEditableValues(_metadataProvider.GetPageConfig().HeaderEditFields, values);
+    public IReadOnlyList<string> ValidateHeaderValues(IReadOnlyDictionary<string, string?> values)
+    {
+        var errors = ValidateEditableValues(_metadataProvider.GetPageConfig().HeaderEditFields, values).ToList();
+        errors.AddRange(ValidateHeaderBusinessRules(values));
+        return errors;
+    }
 
     public IReadOnlyList<string> ValidateDetailValues(IReadOnlyDictionary<string, string?> values) =>
         ValidateEditableValues(_metadataProvider.GetPageConfig().DetailEditFields, values);
@@ -226,7 +230,8 @@ public class ShipInfoService : IShipInfoService
 
         var currentValues = ShipInfoEntityMapper.MapEntity(header)
             .ToDictionary(x => x.Key, x => x.Value?.ToString(), StringComparer.OrdinalIgnoreCase);
-        var validationErrors = CollectValidationErrors(fields, values, currentValues);
+        var validationErrors = CollectValidationErrors(fields, values, currentValues).ToList();
+        validationErrors.AddRange(ValidateHeaderBusinessRules(values));
         if (validationErrors.Count > 0)
         {
             throw new ShipInfoBusinessException(string.Join(' ', validationErrors));
@@ -288,50 +293,35 @@ public class ShipInfoService : IShipInfoService
         return ShipInfoEntityMapper.MapEntity(detail);
     }
 
-    public async Task DeleteHeaderAsync(string headerRowKey, string? userName, CancellationToken cancellationToken = default)
+    public async Task DiscardHeaderAsync(string headerRowKey, string? reason, string? userName, CancellationToken cancellationToken = default)
     {
         EnsurePermission(ShipInfoPermissionCodes.Delete);
-        var header = await RequireHeaderByRowKeyAsync(headerRowKey, cancellationToken);
-        EnsureStatusAllows(header, permission => permission.Delete, "Header cannot be deleted in current status.");
+        if (string.IsNullOrWhiteSpace(headerRowKey)) throw new ShipInfoBusinessException("Header row key is required.");
+        var normalizedReason = reason?.Trim();
+        if (string.IsNullOrWhiteSpace(normalizedReason)) throw new ShipInfoBusinessException("Discard reason is required.");
+        if (normalizedReason.Length > 200) throw new ShipInfoBusinessException("Discard reason cannot exceed 200 characters.");
+
+        var header = await _repository.GetHeaderForUpdateByRowKeyAsync(headerRowKey, cancellationToken)
+            ?? throw new ShipInfoNotFoundException("Header not found.");
+        EnsureStatusAllows(header, permission => permission.Delete, "Header cannot be discarded in current status.");
 
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
-        var auditLog = CreateAuditLog("Header", headerRowKey, invoiceKey, "Delete", userName);
+        var oldStatus = ShipInfoStatusResolver.Resolve(header);
+        header.Cancellation = "Y";
+        header.ReasonForCancellation = normalizedReason;
+        CrudAuditHelper.ApplyUpdateAudit(header, userName);
+        var auditLog = CreateAuditLog("Header", headerRowKey, invoiceKey, "Discard", userName,
+            oldStatus: oldStatus, newStatus: ShipInfoStatuses.Cancelled);
+        auditLog.FieldName = nameof(IcpHeader.ReasonForCancellation);
+        auditLog.NewValue = normalizedReason;
 
         await _repository.ExecuteInTransactionAsync(async () =>
         {
+            await _repository.UpdateHeaderAsync(header, cancellationToken);
             await _repository.AddAuditLogsAsync([auditLog], cancellationToken);
-            await _repository.DeleteHeaderWithDetailsAsync(headerRowKey, cancellationToken);
         }, cancellationToken);
 
-        LogOperation("DeleteHeader", headerKey: invoiceKey);
-    }
-
-    public async Task DeleteDetailAsync(string detailKey, string? userName, CancellationToken cancellationToken = default)
-    {
-        EnsurePermission(ShipInfoPermissionCodes.Delete);
-        var detail = await RequireDetailAsync(detailKey, cancellationToken);
-        var headerRowKey = ShipInfoKeyHelper.BuildHeaderRowKey(detail.InvoiceNo, detail.TetPo);
-        var headerKey = ShipInfoKeyHelper.BuildHeaderKey(detail.InvoiceNo);
-        var header = await RequireHeaderByRowKeyAsync(headerRowKey, cancellationToken);
-        EnsureStatusAllows(header, permission => permission.Delete, "Detail cannot be deleted in current status.");
-
-        var detailCount = await _repository.CountDetailsByInvoiceNoAsync(detail.InvoiceNo, cancellationToken);
-        if (detailCount <= 1)
-        {
-            throw new ShipInfoBusinessException("At least one detail row must remain.");
-        }
-
-        await _repository.ExecuteInTransactionAsync(async () =>
-        {
-            await _repository.AddAuditLogsAsync(
-            [
-                CreateAuditLog("Detail", detailKey, headerKey, "Delete", userName)
-            ], cancellationToken);
-
-            await _repository.DeleteDetailAsync(detailKey, cancellationToken);
-        }, cancellationToken);
-
-        LogOperation("DeleteDetail", headerKey: headerKey, detailKey: detailKey);
+        LogOperation("DiscardHeader", headerKey: invoiceKey);
     }
 
     public async Task<ShipInfoCaseDrawerData> GetCaseDrawerDataAsync(
@@ -677,9 +667,57 @@ public class ShipInfoService : IShipInfoService
             errors.Add("Invoice No is required.");
         }
 
+        AddRequiredCaseFieldErrors(header, errors);
+
+        if (caseType == ShipInfoCaseTypes.Deposit)
+        {
+            AddRequiredValueError(header.Mawb, "MAWB", errors);
+            AddRequiredValueError(header.Hawb, "HAWB", errors);
+            AddRequiredValueError(header.Flt, "FLT", errors);
+        }
+
         if (!previewOnly && errors.Count > 0)
         {
             return errors;
+        }
+
+        return errors;
+    }
+
+    private static void AddRequiredCaseFieldErrors(IcpHeader header, ICollection<string> errors)
+    {
+        AddRequiredValueError(header.Receiver, "Receiver", errors);
+        AddRequiredValueError(header.Forklift, "Forklift", errors);
+        AddRequiredValueError(header.MovingLabor, "Moving Labor", errors);
+        AddRequiredValueError(header.WasteDisposal, "Waste Disposal", errors);
+        AddRequiredValueError(header.DriverDetails, "Driver Details", errors);
+    }
+
+    private static void AddRequiredValueError(string? value, string label, ICollection<string> errors)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            errors.Add($"{label} is required for Ship Plan creation.");
+        }
+    }
+
+    private static IReadOnlyList<string> ValidateHeaderBusinessRules(IReadOnlyDictionary<string, string?> values)
+    {
+        var errors = new List<string>();
+        values.TryGetValue("ReasonForDeliveryDelay", out var delayReason);
+        values.TryGetValue("DelayNotificationDate", out var delayNotificationDate);
+        if (!string.IsNullOrWhiteSpace(delayReason) && string.IsNullOrWhiteSpace(delayNotificationDate))
+        {
+            errors.Add("Delay Notification Date is required when Reason for Delivery Delay is provided.");
+        }
+
+        values.TryGetValue("TotalCartons", out var totalCartons);
+        if (!string.IsNullOrWhiteSpace(totalCartons)
+            && (!decimal.TryParse(totalCartons, NumberStyles.Number, CultureInfo.InvariantCulture, out var cartons)
+                || cartons < 0
+                || cartons != decimal.Truncate(cartons)))
+        {
+            errors.Add("Total Cartons must be a non-negative integer.");
         }
 
         return errors;

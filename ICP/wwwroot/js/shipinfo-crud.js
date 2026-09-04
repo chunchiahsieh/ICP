@@ -53,11 +53,16 @@
     function updateViewModalButtons() {
         var permission = app.getStatusPermission(app.getHeaderStatus(getStatusSource()));
         var canEdit = app.hasPermission('Views.Function.ShipInfo.Edit') && permission.edit;
+        var canDiscard = state.viewModalKind === 'header'
+            && app.hasPermission('Views.Function.ShipInfo.Delete')
+            && permission.delete;
         var editing = !!state.viewModalEditing;
 
         $('#btnShipInfoViewEdit').toggleClass('d-none', editing || !canEdit);
         $('#btnShipInfoViewSave').toggleClass('d-none', !editing || !canEdit);
         $('#btnShipInfoViewCancelEdit').toggleClass('d-none', !editing || !canEdit);
+        $('#btnShipInfoViewDiscard').toggleClass('d-none', editing || !canDiscard)
+            .prop('disabled', !!state.actionBusy);
         $('#shipInfoViewModalLabel').text(editing
             ? (messages.editMode || messages.edit || 'Edit')
             : (messages.view || 'View'));
@@ -84,12 +89,16 @@
             }
             return;
         }
-        var fields = getModalFields();
-        var renderValues = renderApi.enrichDateRangeValues(values);
-        renderApi.renderFormFields($('#shipInfoViewForm'), fields, $.extend({}, app.getRenderOptions(renderValues), {
-            mode: 'view',
-            includeHidden: state.viewModalKind === 'header'
-        }));
+        try {
+            var rendered = renderApi.renderMetadataForm($('#shipInfoViewForm'), app.getDetailFormMetadata(), $.extend({}, app.getRenderOptions(values), {
+                mode: state.viewModalEditing ? 'edit' : 'view'
+            }));
+            state.detailFormEffectiveFields = rendered.fields;
+        } catch (error) {
+            state.detailFormEffectiveFields = [];
+            $('#shipInfoViewForm').empty().append('<div class="alert alert-danger mb-0">明細表單設定載入失敗，請聯絡系統管理員。</div>');
+            app.showToast((error && error.message) || '明細表單設定載入失敗', 'danger');
+        }
         app.initTooltips($('#shipInfoViewForm'));
     }
 
@@ -103,6 +112,7 @@
         state.viewModalEditing = false;
         state.viewModalData = null;
         state.headerFormEffectiveFields = [];
+        state.detailFormEffectiveFields = [];
         $('#shipInfoViewForm').empty();
         updateViewModalButtons();
 
@@ -202,6 +212,11 @@
         }
 
         var values = renderApi.collectControlValues($form);
+        if (Object.prototype.hasOwnProperty.call(values, 'TotalCartons')
+            && !/^\d+$/.test(String(values.TotalCartons || '').trim())) {
+            app.showToast(messages.totalCartonsInteger || 'Total Cartons must be a non-negative integer.', 'warning');
+            return;
+        }
         var meta = renderApi.collectSaveMeta($form);
         app.setButtonLoading($saveButton, true);
         app.setActionBusy(true);

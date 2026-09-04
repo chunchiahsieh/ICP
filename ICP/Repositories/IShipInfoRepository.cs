@@ -57,12 +57,6 @@ public interface IShipInfoRepository
         IReadOnlyList<IcpDetail> details,
         CancellationToken cancellationToken = default);
 
-    Task DeleteHeaderWithDetailsAsync(string headerRowKey, CancellationToken cancellationToken = default);
-
-    Task<int> CountDetailsByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default);
-
-    Task DeleteDetailAsync(string detailKey, CancellationToken cancellationToken = default);
-
     Task AddAuditLogsAsync(IEnumerable<ShipInfoAuditLog> logs, CancellationToken cancellationToken = default);
 
     Task ExecuteInTransactionAsync(Func<Task> action, CancellationToken cancellationToken = default);

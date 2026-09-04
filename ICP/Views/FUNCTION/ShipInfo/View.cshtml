@@ -70,6 +70,9 @@
                     <button type="button" class="btn btn-sm btn-outline-primary" id="btnShipInfoViewEdit" data-permissions="Views.Function.ShipInfo.Edit">
                         <i class="bi bi-pencil-square me-1"></i>@Localizer["ShipInfo.Edit"]
                     </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" id="btnShipInfoViewDiscard" data-permissions="Views.Function.ShipInfo.Delete">
+                        <i class="bi bi-trash3 me-1"></i>@Localizer["ShipInfo.Discard"]
+                    </button>
                     <button type="button" class="btn btn-sm btn-primary d-none" id="btnShipInfoViewSave" data-permissions="Views.Function.ShipInfo.Edit">
                         <i class="bi bi-save me-1"></i>@Localizer["ShipInfo.Save"]
                     </button>
@@ -93,6 +96,27 @@
 
 <div class="toast-container position-fixed bottom-0 end-0 p-3" id="shipInfoToastContainer"></div>
 
+<div class="modal fade" id="shipInfoDiscardModal" tabindex="-1" aria-labelledby="shipInfoDiscardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shipInfoDiscardModalLabel">@Localizer["ShipInfo.DiscardConfirmTitle"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["ShipInfo.Close"]"></button>
+            </div>
+            <div class="modal-body">
+                <p>@Localizer["ShipInfo.DiscardConfirmMessage"]</p>
+                <label for="shipInfoDiscardReason" class="form-label">@Localizer["ShipInfo.DiscardReason"] <span class="text-danger">*</span></label>
+                <textarea id="shipInfoDiscardReason" class="form-control" rows="3" maxlength="200" required></textarea>
+                <div class="invalid-feedback">@Localizer["ShipInfo.DiscardReasonRequired"]</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Localizer["ShipInfo.Cancel"]</button>
+                <button type="button" class="btn btn-danger" id="btnShipInfoConfirmDiscard">@Localizer["ShipInfo.Discard"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="offcanvas offcanvas-end shipinfo-case-drawer" tabindex="-1" id="shipInfoCaseDrawer" aria-labelledby="shipInfoCaseDrawerLabel" data-bs-backdrop="static">
     <div class="offcanvas-header border-bottom">
         <h5 class="offcanvas-title" id="shipInfoCaseDrawerLabel">@Localizer["ShipInfo.CaseDrawerDepositTitle"]</h5>
@@ -106,6 +130,7 @@
         </div>
         <section class="shipinfo-case-drawer-header-summary flex-shrink-0 border-bottom p-3" aria-labelledby="shipInfoCaseHeaderSummaryTitle">
             <h6 class="mb-3" id="shipInfoCaseHeaderSummaryTitle">@Localizer["ShipInfo.HeaderInformation"]</h6>
+            <div class="text-danger fw-semibold mb-3 d-none" id="shipInfoCaseValidationMessages" role="alert"></div>
             <div id="shipInfoCaseHeaderSummaryWrap"></div>
         </section>
         <section class="shipinfo-case-drawer-detail-section d-flex flex-column flex-grow-1 min-h-0" aria-labelledby="shipInfoCaseDetailTitle">
@@ -161,7 +186,8 @@
                 validateDetail: '@Url.Action("ValidateDetail", "ShipInfo")',
                 getCaseDrawerData: '@Url.Action("GetCaseDrawerData", "ShipInfo")',
                 createDeposit: '@Url.Action("CreateDeposit", "ShipInfo")',
-                createArur: '@Url.Action("CreateArur", "ShipInfo")'
+                createArur: '@Url.Action("CreateArur", "ShipInfo")',
+                discardHeader: '@Url.Action("DiscardHeader", "ShipInfo")'
                 ,getAttachments: '@Url.Action("GetAttachments", "ShipInfo")'
                 ,uploadAttachment: '@Url.Action("UploadAttachment", "ShipInfo")'
                 ,downloadAttachment: '@Url.Action("DownloadAttachment", "ShipInfo")'
@@ -180,6 +206,11 @@
                 edit = Localizer["ShipInfo.Edit"].Value,
                 deposit = Localizer["ShipInfo.Deposit"].Value,
                 arur = Localizer["ShipInfo.ARUR"].Value,
+                discard = Localizer["ShipInfo.Discard"].Value,
+                discardSuccess = Localizer["ShipInfo.DiscardSuccess"].Value,
+                discardFailed = Localizer["ShipInfo.DiscardFailed"].Value,
+                discardReasonRequired = Localizer["ShipInfo.DiscardReasonRequired"].Value,
+                totalCartonsInteger = Localizer["ShipInfo.TotalCartonsInteger"].Value,
                 view = Localizer["ShipInfo.View"].Value,
                 editMode = Localizer["ShipInfo.EditMode"].Value,
                 close = Localizer["ShipInfo.Close"].Value,
@@ -230,6 +261,7 @@
     <script src="~/js/shipinfo-browse.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-crud.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-case-drawer.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-discard.js" asp-append-version="true"></script>
     <script src="~/Uploader/index.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-file-uploader-adapter.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-attachments.js" asp-append-version="true"></script>

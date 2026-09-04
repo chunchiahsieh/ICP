@@ -1,137 +1,44 @@
 {
   "formId": "shipinfo-header",
-  "metadataVersion": "1.0",
+  "metadataVersion": "2.0",
   "fields": {
-    "InvoiceNo": {
-      "labelKey": "ShipInfo.Field.InvoiceNo",
-      "type": "text",
-      "maxLength": 30
-    },
-    "SaDate": {
-      "labelKey": "ShipInfo.Field.SaDate",
-      "type": "date"
-    },
-    "Eta": {
-      "labelKey": "ShipInfo.Field.Eta",
-      "type": "date"
-    },
-    "Broker": {
-      "labelKey": "ShipInfo.Field.Broker",
-      "type": "select",
-      "optionsSource": "broker"
-    },
-    "Receiver": {
-      "labelKey": "ShipInfo.Field.Receiver",
-      "type": "text",
-      "maxLength": 200
-    },
-    "DriverDetails": {
-      "labelKey": "ShipInfo.Field.DriverDetails",
-      "type": "checkbox",
-      "checkedValue": "Y",
-      "uncheckedValue": "N"
-    }
+    "Id": { "labelKey": "ShipInfo.Field.Id", "type": "text" }, "CreateTime": { "labelKey": "ShipInfo.Field.CreateTime", "type": "text" }, "CreateUser": { "labelKey": "ShipInfo.Field.CreateUser", "type": "text" }, "UpdateTime": { "labelKey": "ShipInfo.Field.UpdateTime", "type": "text" }, "UpdateUser": { "labelKey": "ShipInfo.Field.UpdateUser", "type": "text" },
+    "CreateDate": { "labelKey": "ShipInfo.Field.CreateDate", "type": "text", "maxLength": 20 }, "SaDate": { "labelKey": "ShipInfo.Field.SaDate", "type": "date" }, "InvoiceNo": { "labelKey": "ShipInfo.Field.InvoiceNo", "type": "text", "maxLength": 30 }, "Forwarder": { "labelKey": "ShipInfo.Field.Forwarder", "type": "text", "maxLength": 50 }, "Broker": { "labelKey": "ShipInfo.Field.Broker", "type": "select", "optionsSource": "broker" }, "Etd": { "labelKey": "ShipInfo.Field.Etd", "type": "date" }, "Eta": { "labelKey": "ShipInfo.Field.Eta", "type": "date" }, "InvoiceDate": { "labelKey": "ShipInfo.Field.InvoiceDate", "type": "date" }, "Mawb": { "labelKey": "ShipInfo.Field.Mawb", "type": "text", "maxLength": 20 }, "Hawb": { "labelKey": "ShipInfo.Field.Hawb", "type": "text", "maxLength": 20 }, "Flt": { "labelKey": "ShipInfo.Field.Flt", "type": "text", "maxLength": 20 }, "Freight": { "labelKey": "ShipInfo.Field.Freight", "type": "text", "maxLength": 10 }, "DestinationPort": { "labelKey": "ShipInfo.Field.DestinationPort", "type": "text", "maxLength": 10 }, "DestinationCountry": { "labelKey": "ShipInfo.Field.DestinationCountry", "type": "text", "maxLength": 3 }, "Incoterms": { "labelKey": "ShipInfo.Field.Incoterms", "type": "text", "maxLength": 20 },
+    "Warehouse": { "labelKey": "ShipInfo.Field.Warehouse", "type": "select", "optionsSource": "warehouse" }, "DeliveryDate": { "labelKey": "ShipInfo.Field.DeliveryDate", "type": "date" }, "DeliveryTo": { "labelKey": "ShipInfo.Field.DeliveryTo", "type": "select", "optionsSource": "deliveryTo" }, "DeliveryNo": { "labelKey": "ShipInfo.Field.DeliveryNo", "type": "text", "maxLength": 30 }, "Receiver": { "labelKey": "ShipInfo.Field.Receiver", "type": "text", "maxLength": 200 }, "CarMethod": { "labelKey": "ShipInfo.Field.CarMethod", "type": "text", "maxLength": 50 }, "ArriveTime": { "labelKey": "ShipInfo.Field.ArriveTime", "type": "text", "maxLength": 50 }, "DriverDetails": { "labelKey": "ShipInfo.Field.DriverDetails", "type": "text", "maxLength": 50 },
+    "InvoiceType": { "labelKey": "ShipInfo.Field.InvoiceType", "type": "select", "optionsSource": "invoiceType" }, "OrderType": { "labelKey": "ShipInfo.Field.OrderType", "type": "select", "optionsSource": "orderType" }, "Bu": { "labelKey": "ShipInfo.Field.Bu", "type": "select", "optionsSource": "buCode" }, "TetPo": { "labelKey": "ShipInfo.Field.TetPo", "type": "text", "maxLength": 35 }, "OrderPriority": { "labelKey": "ShipInfo.Field.OrderPriority", "type": "select", "optionsSource": "orderPriority" }, "MdpFlag": { "labelKey": "ShipInfo.Field.MdpFlag", "type": "checkbox", "checkedValue": "Y", "uncheckedValue": "N" }, "OrderReason": { "labelKey": "ShipInfo.Field.OrderReason", "type": "text", "maxLength": 50 },
+    "TotalCartons": { "labelKey": "ShipInfo.Field.TotalCartons", "type": "number" }, "MachineNo": { "labelKey": "ShipInfo.Field.MachineNo", "type": "text", "maxLength": 50 }, "MachineType": { "labelKey": "ShipInfo.Field.MachineType", "type": "text", "maxLength": 50 }, "Forklift": { "labelKey": "ShipInfo.Field.Forklift", "type": "text", "maxLength": 50 }, "MovingLabor": { "labelKey": "ShipInfo.Field.MovingLabor", "type": "text", "maxLength": 50 }, "WasteDisposal": { "labelKey": "ShipInfo.Field.WasteDisposal", "type": "text", "maxLength": 50 }, "ShipReason": { "labelKey": "ShipInfo.Field.ShipReason", "type": "text", "maxLength": 50 },
+    "EndUserCode": { "labelKey": "ShipInfo.Field.EndUserCode", "type": "text", "maxLength": 30 }, "EndUser": { "labelKey": "ShipInfo.Field.EndUser", "type": "text", "maxLength": 100 }, "Owner": { "labelKey": "ShipInfo.Field.Owner", "type": "text", "maxLength": 50 }, "SoldToPartyCode": { "labelKey": "ShipInfo.Field.SoldToPartyCode", "type": "text", "maxLength": 30 }, "SoldToParty": { "labelKey": "ShipInfo.Field.SoldToParty", "type": "text", "maxLength": 100 }, "ShipToPartyCode": { "labelKey": "ShipInfo.Field.ShipToPartyCode", "type": "text", "maxLength": 30 }, "ShipToParty": { "labelKey": "ShipInfo.Field.ShipToParty", "type": "text", "maxLength": 100 }, "ShipToPartyAddress": { "labelKey": "ShipInfo.Field.ShipToPartyAddress", "type": "text", "maxLength": 200 },
+    "NcdrNo": { "labelKey": "ShipInfo.Field.NcdrNo", "type": "text", "maxLength": 60 }, "NcdrRequestor": { "labelKey": "ShipInfo.Field.NcdrRequestor", "type": "text", "maxLength": 40 }, "RtNo": { "labelKey": "ShipInfo.Field.RtNo", "type": "text", "maxLength": 30 }, "WbsElement": { "labelKey": "ShipInfo.Field.WbsElement", "type": "text", "maxLength": 30 }, "EmgFlight": { "labelKey": "ShipInfo.Field.EmgFlight", "type": "text", "maxLength": 5 }, "Deposit": { "labelKey": "ShipInfo.Field.Deposit", "type": "text", "maxLength": 30 }, "DepositCaseStatus": { "labelKey": "ShipInfo.Field.DepositCaseStatus", "type": "text" }, "ArurCaseStatus": { "labelKey": "ShipInfo.Field.ArurCaseStatus", "type": "text" },
+    "ArrivalNoticeFlag": { "labelKey": "ShipInfo.Field.ArrivalNoticeFlag", "type": "text", "maxLength": 5 }, "ArrivalNotice": { "labelKey": "ShipInfo.Field.ArrivalNotice", "type": "text", "maxLength": 100 }, "ReasonForDeliveryDelay": { "labelKey": "ShipInfo.Field.ReasonForDeliveryDelay", "type": "text", "maxLength": 200 }, "DelayNotificationDate": { "labelKey": "ShipInfo.Field.DelayNotificationDate", "type": "date" },
+    "SapRemarks": { "labelKey": "ShipInfo.Field.SapRemarks", "type": "text", "maxLength": 1000 }, "Notes": { "labelKey": "ShipInfo.Field.Notes", "type": "text", "maxLength": 1000 }, "Cancellation": { "labelKey": "ShipInfo.Field.Cancellation", "type": "text", "maxLength": 10 }, "ReasonForCancellation": { "labelKey": "ShipInfo.Field.ReasonForCancellation", "type": "text", "maxLength": 200 }, "AttachedFile": { "labelKey": "ShipInfo.Field.AttachedFile", "type": "text", "maxLength": 1000 }
   },
   "modes": {
-    "view": {
-      "groups": [
-        {
-          "id": "shipping",
-          "labelKey": "ShipInfo.Group.Shipping",
-          "order": 10,
-          "columns": 3,
-          "fields": [
-            {
-              "name": "InvoiceNo",
-              "order": 10,
-              "readOnly": true,
-              "columnSpan": 1
-            },
-            {
-              "name": "SaDate",
-              "order": 20,
-              "readOnly": true,
-              "columnSpan": 1
-            },
-            {
-              "name": "Eta",
-              "order": 30,
-              "readOnly": true,
-              "columnSpan": 1
-            },
-            {
-              "name": "Broker",
-              "order": 40,
-              "readOnly": true,
-              "columnSpan": 1
-            },
-            {
-              "name": "Receiver",
-              "order": 50,
-              "readOnly": true,
-              "columnSpan": 1
-            },
-            {
-              "name": "DriverDetails",
-              "order": 60,
-              "readOnly": true,
-              "columnSpan": 1
-            }
-          ]
-        },
-        {
-          "id": "attachments",
-          "labelKey": "ShipInfo.Group.Attachments",
-          "order": 20,
-          "columns": 1,
-          "component": "fileUploader",
-          "adapter": "shipInfoHeaderAttachments",
-          "fields": []
-        }
-      ]
-    },
-    "edit": {
-      "groups": [
-        {
-          "id": "shipping",
-          "labelKey": "ShipInfo.Group.Shipping",
-          "order": 10,
-          "columns": 2,
-          "fields": [
-            { "name": "InvoiceNo", "order": 10, "readOnly": true, "columnSpan": 1 },
-            { "name": "SaDate", "order": 20, "readOnly": false, "required": true, "columnSpan": 1 },
-            { "name": "Eta", "order": 30, "readOnly": false, "columnSpan": 1 },
-            { "name": "Broker", "order": 40, "readOnly": false, "required": true, "columnSpan": 1 },
-            { "name": "Receiver", "order": 50, "readOnly": false, "columnSpan": 1 },
-            { "name": "DriverDetails", "order": 60, "readOnly": false, "columnSpan": 1 }
-          ]
-        },
-        {
-          "id": "attachments",
-          "labelKey": "ShipInfo.Group.Attachments",
-          "order": 20,
-          "columns": 1,
-          "component": "fileUploader",
-          "adapter": "shipInfoHeaderAttachments",
-          "fields": []
-        }
-      ]
-    },
-    "create": {
-      "groups": [
-        {
-          "id": "basic",
-          "labelKey": "ShipInfo.Group.Basic",
-          "order": 10,
-          "columns": 2,
-          "fields": [
-            { "name": "InvoiceNo", "order": 10, "readOnly": false, "required": true, "columnSpan": 1 },
-            { "name": "SaDate", "order": 20, "readOnly": false, "required": true, "columnSpan": 1 },
-            { "name": "Eta", "order": 30, "readOnly": false, "columnSpan": 1 },
-            { "name": "Broker", "order": 40, "readOnly": false, "required": true, "columnSpan": 1 }
-          ]
-        }
-      ]
-    }
+    "view": { "groups": [
+      { "id": "basic-order", "labelKey": "ShipInfo.Group.BasicOrder", "order": 10, "columns": 3, "fields": [ {"name":"CreateDate"},{"name":"SaDate"},{"name":"InvoiceNo"},{"name":"InvoiceDate"},{"name":"Bu"},{"name":"TetPo"},{"name":"InvoiceType"},{"name":"OrderType"},{"name":"OrderPriority"},{"name":"MdpFlag"},{"name":"OrderReason"} ] },
+      { "id": "shipping-customs", "labelKey": "ShipInfo.Group.ShippingCustoms", "order": 20, "columns": 3, "fields": [ {"name":"Forwarder"},{"name":"Broker"},{"name":"Etd"},{"name":"Eta"},{"name":"Mawb"},{"name":"Hawb"},{"name":"Flt"},{"name":"Freight"},{"name":"DestinationPort"},{"name":"DestinationCountry"},{"name":"Incoterms"} ] },
+      { "id": "delivery", "labelKey": "ShipInfo.Group.Delivery", "order": 30, "columns": 3, "fields": [ {"name":"Warehouse"},{"name":"DeliveryDate"},{"name":"DeliveryTo"},{"name":"DeliveryNo"},{"name":"Receiver"},{"name":"CarMethod"},{"name":"ArriveTime"},{"name":"DriverDetails"} ] },
+      { "id": "packing-services", "labelKey": "ShipInfo.Group.PackingServices", "order": 40, "columns": 3, "fields": [ {"name":"TotalCartons"},{"name":"MachineNo"},{"name":"MachineType"},{"name":"Forklift"},{"name":"MovingLabor"},{"name":"WasteDisposal"},{"name":"ShipReason"} ] },
+      { "id": "customer", "labelKey": "ShipInfo.Group.Customer", "order": 50, "columns": 3, "fields": [ {"name":"EndUserCode"},{"name":"EndUser"},{"name":"Owner"},{"name":"SoldToPartyCode"},{"name":"SoldToParty"},{"name":"ShipToPartyCode"},{"name":"ShipToParty"},{"name":"ShipToPartyAddress","columnSpan":2} ] },
+      { "id": "case-project", "labelKey": "ShipInfo.Group.CaseProject", "order": 60, "columns": 3, "fields": [ {"name":"NcdrNo"},{"name":"NcdrRequestor"},{"name":"RtNo"},{"name":"WbsElement"},{"name":"EmgFlight"},{"name":"Deposit"},{"name":"DepositCaseStatus"},{"name":"ArurCaseStatus"} ] },
+      { "id": "notifications", "labelKey": "ShipInfo.Group.Notifications", "order": 70, "columns": 3, "fields": [ {"name":"ArrivalNoticeFlag"},{"name":"ArrivalNotice"},{"name":"ReasonForDeliveryDelay","columnSpan":2},{"name":"DelayNotificationDate"} ] },
+      { "id": "remarks", "labelKey": "ShipInfo.Group.Remarks", "order": 80, "columns": 1, "fields": [ {"name":"SapRemarks"},{"name":"Notes"} ] },
+      { "id": "discard", "labelKey": "ShipInfo.Group.Discard", "order": 90, "columns": 2, "fields": [ {"name":"Cancellation"},{"name":"ReasonForCancellation"} ] },
+      { "id": "attachments", "labelKey": "ShipInfo.Group.Attachments", "order": 100, "columns": 1, "component": "fileUploader", "adapter": "shipInfoHeaderAttachments", "fields": [] },
+      { "id": "audit", "labelKey": "ShipInfo.Group.Audit", "order": 110, "columns": 3, "fields": [ {"name":"Id"},{"name":"CreateTime"},{"name":"CreateUser"},{"name":"UpdateTime"},{"name":"UpdateUser"} ] }
+    ] },
+    "edit": { "groups": [
+      { "id": "basic-order", "labelKey": "ShipInfo.Group.BasicOrder", "order": 10, "columns": 3, "fields": [ {"name":"CreateDate","readOnly":true},{"name":"SaDate","readOnly":false,"required":true},{"name":"InvoiceNo","readOnly":true},{"name":"InvoiceDate","readOnly":false,"required":true},{"name":"Bu","readOnly":false,"required":true},{"name":"TetPo","readOnly":false,"required":true},{"name":"InvoiceType","readOnly":false,"required":true},{"name":"OrderType","readOnly":false,"required":true},{"name":"OrderPriority","readOnly":true},{"name":"MdpFlag","readOnly":false},{"name":"OrderReason","readOnly":true} ] },
+      { "id": "shipping-customs", "labelKey": "ShipInfo.Group.ShippingCustoms", "order": 20, "columns": 3, "fields": [ {"name":"Forwarder","readOnly":true},{"name":"Broker","readOnly":false},{"name":"Etd","readOnly":true},{"name":"Eta","readOnly":false,"required":true},{"name":"Mawb","readOnly":false,"required":true},{"name":"Hawb","readOnly":false,"required":true},{"name":"Flt","readOnly":false,"required":true},{"name":"Freight","readOnly":false},{"name":"DestinationPort","readOnly":true},{"name":"DestinationCountry","readOnly":true},{"name":"Incoterms","readOnly":true} ] },
+      { "id": "delivery", "labelKey": "ShipInfo.Group.Delivery", "order": 30, "columns": 3, "fields": [ {"name":"Warehouse","readOnly":false,"required":true},{"name":"DeliveryDate","readOnly":false,"required":true},{"name":"DeliveryTo","readOnly":false,"required":true},{"name":"DeliveryNo","readOnly":true},{"name":"Receiver","readOnly":false},{"name":"CarMethod","readOnly":false},{"name":"ArriveTime","readOnly":false},{"name":"DriverDetails","readOnly":false} ] },
+      { "id": "packing-services", "labelKey": "ShipInfo.Group.PackingServices", "order": 40, "columns": 3, "fields": [ {"name":"TotalCartons","readOnly":false,"required":true},{"name":"MachineNo","readOnly":false},{"name":"MachineType","readOnly":false},{"name":"Forklift","readOnly":false},{"name":"MovingLabor","readOnly":false},{"name":"WasteDisposal","readOnly":false},{"name":"ShipReason","readOnly":false} ] },
+      { "id": "customer", "labelKey": "ShipInfo.Group.Customer", "order": 50, "columns": 3, "fields": [ {"name":"EndUserCode","readOnly":true},{"name":"EndUser","readOnly":false},{"name":"Owner","readOnly":false},{"name":"SoldToPartyCode","readOnly":true},{"name":"SoldToParty","readOnly":true},{"name":"ShipToPartyCode","readOnly":true},{"name":"ShipToParty","readOnly":true},{"name":"ShipToPartyAddress","readOnly":true,"columnSpan":2} ] },
+      { "id": "case-project", "labelKey": "ShipInfo.Group.CaseProject", "order": 60, "columns": 3, "fields": [ {"name":"NcdrNo","readOnly":true},{"name":"NcdrRequestor","readOnly":true},{"name":"RtNo","readOnly":true},{"name":"WbsElement","readOnly":true},{"name":"EmgFlight","readOnly":true},{"name":"Deposit","readOnly":true},{"name":"DepositCaseStatus","readOnly":true},{"name":"ArurCaseStatus","readOnly":true} ] },
+      { "id": "notifications", "labelKey": "ShipInfo.Group.Notifications", "order": 70, "columns": 3, "fields": [ {"name":"ArrivalNoticeFlag","readOnly":true},{"name":"ArrivalNotice","readOnly":false},{"name":"ReasonForDeliveryDelay","readOnly":false,"columnSpan":2},{"name":"DelayNotificationDate","readOnly":false} ] },
+      { "id": "remarks", "labelKey": "ShipInfo.Group.Remarks", "order": 80, "columns": 1, "fields": [ {"name":"SapRemarks","readOnly":true},{"name":"Notes","readOnly":false} ] },
+      { "id": "discard", "labelKey": "ShipInfo.Group.Discard", "order": 90, "columns": 2, "fields": [ {"name":"Cancellation","readOnly":true},{"name":"ReasonForCancellation","readOnly":true} ] },
+      { "id": "attachments", "labelKey": "ShipInfo.Group.Attachments", "order": 100, "columns": 1, "component": "fileUploader", "adapter": "shipInfoHeaderAttachments", "fields": [] },
+      { "id": "audit", "labelKey": "ShipInfo.Group.Audit", "order": 110, "columns": 3, "fields": [ {"name":"Id","readOnly":true},{"name":"CreateTime","readOnly":true},{"name":"CreateUser","readOnly":true},{"name":"UpdateTime","readOnly":true},{"name":"UpdateUser","readOnly":true} ] }
+    ] },
+    "create": { "groups": [ { "id": "basic", "labelKey": "ShipInfo.Group.Basic", "order": 10, "columns": 2, "fields": [ {"name":"InvoiceNo","required":true},{"name":"SaDate","required":true},{"name":"Eta"},{"name":"Broker","required":true} ] } ] }
   }
 }

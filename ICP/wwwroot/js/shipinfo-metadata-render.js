@@ -741,7 +741,7 @@
 
     function normalizeMetadataType(type) {
         var normalized = String(type || '').toLowerCase();
-        var map = { text: 'Text', date: 'Date', select: 'Select', checkbox: 'Checkbox' };
+        var map = { text: 'Text', number: 'Number', date: 'Date', select: 'Select', checkbox: 'Checkbox' };
         if (!map[normalized]) {
             failMetadata('Unsupported component type: ' + type);
         }

@@ -31,7 +31,7 @@
 | 參數 | 型別 | 必填 | 預設值 | 用途 |
 |---|---|---:|---|---|
 | `labelKey` | string | 否 | 既有 DisplayName／欄位名稱 | 多國語言資源鍵。 |
-| `type` | string | 是 | 無 | `text`、`date`、`select`、`checkbox`。 |
+| `type` | string | 是 | 無 | `text`、`number`、`date`、`select`、`checkbox`。 |
 | `maxLength` | number | 否 | 既有資料規則 | 最大輸入長度；必須大於 0。 |
 | `placeholderKey` | string | 否 | 無 | Placeholder 資源鍵。 |
 | `helpTextKey` | string | 否 | 無 | 說明文字資源鍵。 |

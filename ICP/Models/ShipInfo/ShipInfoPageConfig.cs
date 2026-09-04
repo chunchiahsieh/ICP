@@ -20,6 +20,8 @@ public class ShipInfoPageConfig
     [JsonPropertyName("headerFormMetadata")]
     public ShipInfoFormMetadata? HeaderFormMetadata { get; init; }
 
+    public ShipInfoFormMetadata? DetailFormMetadata { get; init; }
+
     [JsonPropertyName("detailEditFields")]
     public IReadOnlyList<ShipInfoFieldMetadata> DetailEditFields { get; init; } = [];
 

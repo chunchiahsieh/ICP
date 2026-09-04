@@ -42,6 +42,7 @@ public class ShipInfoMetadataProvider
             DetailFields = detailListFields,
             HeaderEditFields = headerEditFields,
             HeaderFormMetadata = _formMetadataProvider.GetHeaderFormMetadata(normalizedCulture),
+            DetailFormMetadata = _formMetadataProvider.GetDetailFormMetadata(normalizedCulture),
             DetailEditFields = detailEditFields,
             SearchFields = ShipInfoMetadataHelper.GetSearchFields(headerListFields),
             StatusRules = ShipInfoStatusRules.BuildMatrix(),

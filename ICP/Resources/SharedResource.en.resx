@@ -199,7 +199,28 @@
     <value>Edit</value>
   </data>
   <data name="ShipInfo.Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Discard</value>
+  </data>
+  <data name="ShipInfo.Discard" xml:space="preserve">
+    <value>Discard</value>
+  </data>
+  <data name="ShipInfo.DiscardConfirmTitle" xml:space="preserve">
+    <value>Discard this record?</value>
+  </data>
+  <data name="ShipInfo.DiscardConfirmMessage" xml:space="preserve">
+    <value>The Header and Detail data will be retained, but the record can no longer be edited or used to create cases.</value>
+  </data>
+  <data name="ShipInfo.DiscardReason" xml:space="preserve">
+    <value>Discard reason</value>
+  </data>
+  <data name="ShipInfo.DiscardReasonRequired" xml:space="preserve">
+    <value>Please enter a discard reason.</value>
+  </data>
+  <data name="ShipInfo.DiscardSuccess" xml:space="preserve">
+    <value>Record discarded successfully</value>
+  </data>
+  <data name="ShipInfo.DiscardFailed" xml:space="preserve">
+    <value>Failed to discard the record</value>
   </data>
   <data name="ShipInfo.Deposit" xml:space="preserve">
     <value>Deposit</value>
@@ -251,6 +272,9 @@
   </data>
   <data name="ShipInfo.RequiredMark" xml:space="preserve">
     <value>*</value>
+  </data>
+  <data name="ShipInfo.TotalCartonsInteger" xml:space="preserve">
+    <value>Total Cartons must be a non-negative integer.</value>
   </data>
   <data name="ShipInfo.ValidationFailed" xml:space="preserve">
     <value>Validation failed</value>
@@ -712,7 +736,7 @@
     <value>Ship Info Edit</value>
   </data>
   <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
-    <value>Ship Info Delete</value>
+    <value>Ship Info Discard</value>
   </data>
   <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">
     <value>Ship Info Deposit</value>
@@ -1939,4 +1963,18 @@
   <data name="ShipInfo.Group.Attachments" xml:space="preserve">
     <value>Attachments</value>
   </data>
+  <data name="ShipInfo.Group.BasicOrder" xml:space="preserve"><value>Basic / Order Information</value></data>
+  <data name="ShipInfo.Group.ShippingCustoms" xml:space="preserve"><value>Shipping / Customs Information</value></data>
+  <data name="ShipInfo.Group.Delivery" xml:space="preserve"><value>Delivery Information</value></data>
+  <data name="ShipInfo.Group.PackingServices" xml:space="preserve"><value>Packing / Equipment / Services</value></data>
+  <data name="ShipInfo.Group.Customer" xml:space="preserve"><value>Customer Information</value></data>
+  <data name="ShipInfo.Group.CaseProject" xml:space="preserve"><value>Case / Project Information</value></data>
+  <data name="ShipInfo.Group.Notifications" xml:space="preserve"><value>Notification / Delay Information</value></data>
+  <data name="ShipInfo.Group.Remarks" xml:space="preserve"><value>Remarks</value></data>
+  <data name="ShipInfo.Group.Discard" xml:space="preserve"><value>Discard Information</value></data>
+  <data name="ShipInfo.Group.Audit" xml:space="preserve"><value>System Records</value></data>
+  <data name="ShipInfo.Group.DetailLine" xml:space="preserve"><value>Detail / Item Information</value></data>
+  <data name="ShipInfo.Group.QuantityPrice" xml:space="preserve"><value>Quantity / Price Information</value></data>
+  <data name="ShipInfo.Group.Packing" xml:space="preserve"><value>Packing / Dimensions / Weight</value></data>
+  <data name="ShipInfo.Group.Compliance" xml:space="preserve"><value>Delivery / Compliance Information</value></data>
 </root>

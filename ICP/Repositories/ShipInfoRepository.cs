@@ -197,37 +197,6 @@ public class ShipInfoRepository : IShipInfoRepository
         await _db.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteHeaderWithDetailsAsync(string headerRowKey, CancellationToken cancellationToken = default)
-    {
-        var (invoiceNo, tetPo) = ShipInfoKeyHelper.ParseHeaderRowKey(headerRowKey);
-        var header = await _db.IcpHeaders
-            .Include(x => x.Details)
-            .FirstOrDefaultAsync(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo, cancellationToken);
-
-        if (header is null)
-        {
-            return;
-        }
-
-        _db.IcpHeaders.Remove(header);
-        await _db.SaveChangesAsync(cancellationToken);
-    }
-
-    public Task<int> CountDetailsByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default) =>
-        _db.IcpDetails.AsNoTracking().CountAsync(x => x.InvoiceNo == invoiceNo, cancellationToken);
-
-    public async Task DeleteDetailAsync(string detailKey, CancellationToken cancellationToken = default)
-    {
-        var detail = await GetDetailForUpdateAsync(detailKey, cancellationToken);
-        if (detail is null)
-        {
-            return;
-        }
-
-        _db.IcpDetails.Remove(detail);
-        await _db.SaveChangesAsync(cancellationToken);
-    }
-
     public async Task AddAuditLogsAsync(IEnumerable<ShipInfoAuditLog> logs, CancellationToken cancellationToken = default)
     {
         var entries = logs.ToList();

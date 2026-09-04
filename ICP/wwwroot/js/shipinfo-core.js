@@ -34,6 +34,7 @@
         viewModalData: null,
         viewModalEditing: false,
         headerFormEffectiveFields: [],
+        detailFormEffectiveFields: [],
         caseType: null,
         caseDrawerData: null,
         caseSubmitting: false,
@@ -297,7 +298,6 @@
             || !app.canEnableCaseAction(arurCaseStatus, hasSelection ? app.getArurOutboxFailed(row) : false)
             || !statusPermission.arur
             || !app.hasPermission('Views.Function.ShipInfo.ARUR');
-
         $('#btnShipInfoDeposit').prop('disabled', depositDisabled);
         $('#btnShipInfoArur').prop('disabled', arurDisabled);
     };
@@ -336,11 +336,21 @@
     };
 
     app.getDetailEditFormFields = function () {
+        if (app.state.detailFormEffectiveFields && app.state.detailFormEffectiveFields.length) {
+            return app.state.detailFormEffectiveFields;
+        }
         var state = app.state;
         var fields = state.pageConfig
             ? (state.pageConfig.detailEditFields || state.pageConfig.DetailEditFields || [])
             : [];
         return app.renderApi.getAllFields(fields);
+    };
+
+    app.getDetailFormMetadata = function () {
+        var state = app.state;
+        return state.pageConfig
+            ? (state.pageConfig.detailFormMetadata || state.pageConfig.DetailFormMetadata || null)
+            : null;
     };
 
     app.getDetailEditFields = function () {

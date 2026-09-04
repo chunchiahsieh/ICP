@@ -16,6 +16,8 @@
         $('#btnShipInfoArur').on('click', function () {
             app.openCaseDrawer('ARUR');
         });
+        $('#btnShipInfoViewDiscard').on('click', app.openDiscardModal);
+        $('#btnShipInfoConfirmDiscard').on('click', app.submitDiscard);
         $('#btnShipInfoCaseSubmit').on('click', app.showCaseSubmitConfirm);
         $('#btnShipInfoConfirmCaseSubmit').on('click', app.submitCase);
 
@@ -24,6 +26,7 @@
             app.state.viewModalKey = null;
             app.state.viewModalData = null;
             app.state.headerFormEffectiveFields = [];
+            app.state.detailFormEffectiveFields = [];
             app.renderApi.destroyForm($('#shipInfoViewForm'));
             if (typeof app.disposeHeaderAttachments === 'function') app.disposeHeaderAttachments();
             $('#shipInfoHeaderAttachments').addClass('d-none');

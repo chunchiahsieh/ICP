@@ -199,7 +199,28 @@
     <value>編輯</value>
   </data>
   <data name="ShipInfo.Delete" xml:space="preserve">
-    <value>刪除</value>
+    <value>報廢</value>
+  </data>
+  <data name="ShipInfo.Discard" xml:space="preserve">
+    <value>報廢</value>
+  </data>
+  <data name="ShipInfo.DiscardConfirmTitle" xml:space="preserve">
+    <value>確定要報廢嗎？</value>
+  </data>
+  <data name="ShipInfo.DiscardConfirmMessage" xml:space="preserve">
+    <value>報廢後將保留 Header 與 Detail 資料，且無法再編輯或起案。</value>
+  </data>
+  <data name="ShipInfo.DiscardReason" xml:space="preserve">
+    <value>報廢原因</value>
+  </data>
+  <data name="ShipInfo.DiscardReasonRequired" xml:space="preserve">
+    <value>請填寫報廢原因。</value>
+  </data>
+  <data name="ShipInfo.DiscardSuccess" xml:space="preserve">
+    <value>報廢成功</value>
+  </data>
+  <data name="ShipInfo.DiscardFailed" xml:space="preserve">
+    <value>報廢失敗</value>
   </data>
   <data name="ShipInfo.Deposit" xml:space="preserve">
     <value>押金起案</value>
@@ -251,6 +272,9 @@
   </data>
   <data name="ShipInfo.RequiredMark" xml:space="preserve">
     <value>*</value>
+  </data>
+  <data name="ShipInfo.TotalCartonsInteger" xml:space="preserve">
+    <value>總箱數必須為非負整數。</value>
   </data>
   <data name="ShipInfo.ValidationFailed" xml:space="preserve">
     <value>驗證失敗</value>
@@ -712,7 +736,7 @@
     <value>Ship Info 編輯</value>
   </data>
   <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
-    <value>Ship Info 刪除</value>
+    <value>Ship Info 報廢</value>
   </data>
   <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">
     <value>Ship Info 押金起案</value>
@@ -1939,4 +1963,18 @@
   <data name="ShipInfo.Group.Attachments" xml:space="preserve">
     <value>附件</value>
   </data>
+  <data name="ShipInfo.Group.BasicOrder" xml:space="preserve"><value>基本／訂單資訊</value></data>
+  <data name="ShipInfo.Group.ShippingCustoms" xml:space="preserve"><value>航運／報關資訊</value></data>
+  <data name="ShipInfo.Group.Delivery" xml:space="preserve"><value>配送資訊</value></data>
+  <data name="ShipInfo.Group.PackingServices" xml:space="preserve"><value>包裝／設備／服務</value></data>
+  <data name="ShipInfo.Group.Customer" xml:space="preserve"><value>客戶資訊</value></data>
+  <data name="ShipInfo.Group.CaseProject" xml:space="preserve"><value>案件／專案資訊</value></data>
+  <data name="ShipInfo.Group.Notifications" xml:space="preserve"><value>通知／延遲資訊</value></data>
+  <data name="ShipInfo.Group.Remarks" xml:space="preserve"><value>備註</value></data>
+  <data name="ShipInfo.Group.Discard" xml:space="preserve"><value>報廢資訊</value></data>
+  <data name="ShipInfo.Group.Audit" xml:space="preserve"><value>系統紀錄</value></data>
+  <data name="ShipInfo.Group.DetailLine" xml:space="preserve"><value>明細／品項資訊</value></data>
+  <data name="ShipInfo.Group.QuantityPrice" xml:space="preserve"><value>數量／金額資訊</value></data>
+  <data name="ShipInfo.Group.Packing" xml:space="preserve"><value>包裝／尺寸／重量</value></data>
+  <data name="ShipInfo.Group.Compliance" xml:space="preserve"><value>配送／法規資訊</value></data>
 </root>

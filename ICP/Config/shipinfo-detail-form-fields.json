@@ -1,86 +1,28 @@
 {
-  "formId": "shipinfo-detail",
-  "metadataVersion": "1.0-draft",
+  "formId": "shipinfo-detail", "metadataVersion": "2.0",
   "fields": {
-    "CreateDate": { "labelKey": "ShipInfo.Field.CreateDate", "type": "text", "maxLength": 20 },
-    "SaDate": { "labelKey": "ShipInfo.Field.SaDate", "type": "date" },
-    "InvoiceNo": { "labelKey": "ShipInfo.Field.InvoiceNo", "type": "text", "maxLength": 30 },
-    "Forwarder": { "labelKey": "ShipInfo.Field.Forwarder", "type": "text", "maxLength": 50 },
-    "Broker": { "labelKey": "ShipInfo.Field.Broker", "type": "select", "optionsSource": "broker" },
-    "Etd": { "labelKey": "ShipInfo.Field.Etd", "type": "date" },
-    "Eta": { "labelKey": "ShipInfo.Field.Eta", "type": "date" },
-    "InvoiceDate": { "labelKey": "ShipInfo.Field.InvoiceDate", "type": "date" },
-    "Mawb": { "labelKey": "ShipInfo.Field.Mawb", "type": "text", "maxLength": 20 },
-    "Hawb": { "labelKey": "ShipInfo.Field.Hawb", "type": "text", "maxLength": 20 },
-    "Flt": { "labelKey": "ShipInfo.Field.Flt", "type": "text", "maxLength": 20 },
-    "Freight": { "labelKey": "ShipInfo.Field.Freight", "type": "text", "maxLength": 10 },
-    "DestinationPort": { "labelKey": "ShipInfo.Field.DestinationPort", "type": "text", "maxLength": 10 },
-    "DestinationCountry": { "labelKey": "ShipInfo.Field.DestinationCountry", "type": "text", "maxLength": 3 },
-    "Warehouse": { "labelKey": "ShipInfo.Field.Warehouse", "type": "select", "optionsSource": "warehouse" },
-    "InvoiceType": { "labelKey": "ShipInfo.Field.InvoiceType", "type": "select", "optionsSource": "invoiceType" },
-    "Incoterms": { "labelKey": "ShipInfo.Field.Incoterms", "type": "text", "maxLength": 20 },
-    "OrderType": { "labelKey": "ShipInfo.Field.OrderType", "type": "select", "optionsSource": "orderType" }
+    "Id":{"labelKey":"ShipInfo.Field.Id","type":"text"}, "CreateTime":{"labelKey":"ShipInfo.Field.CreateTime","type":"text"}, "CreateUser":{"labelKey":"ShipInfo.Field.CreateUser","type":"text"}, "UpdateTime":{"labelKey":"ShipInfo.Field.UpdateTime","type":"text"}, "UpdateUser":{"labelKey":"ShipInfo.Field.UpdateUser","type":"text"},
+    "InvoiceNo":{"labelKey":"ShipInfo.Field.InvoiceNo","type":"text","maxLength":30}, "TetPo":{"labelKey":"ShipInfo.Field.TetPo","type":"text","maxLength":35}, "TetPoLine":{"labelKey":"ShipInfo.Field.TetPoLine","type":"text"}, "InvoiceSeq":{"labelKey":"ShipInfo.Field.InvoiceSeq","type":"number"}, "ItemNo":{"labelKey":"ShipInfo.Field.ItemNo","type":"text"}, "Description":{"labelKey":"ShipInfo.Field.Description","type":"text","maxLength":60},
+    "Qty":{"labelKey":"ShipInfo.Field.Qty","type":"number"}, "Uom":{"labelKey":"ShipInfo.Field.Uom","type":"text","maxLength":10}, "Coo":{"labelKey":"ShipInfo.Field.Coo","type":"text","maxLength":50}, "Price":{"labelKey":"ShipInfo.Field.Price","type":"number"}, "Amount":{"labelKey":"ShipInfo.Field.Amount","type":"number"}, "Currency":{"labelKey":"ShipInfo.Field.Currency","type":"text"}, "Rate":{"labelKey":"ShipInfo.Field.Rate","type":"number"},
+    "PackingType":{"labelKey":"ShipInfo.Field.PackingType","type":"text"}, "CartonNo":{"labelKey":"ShipInfo.Field.CartonNo","type":"number"}, "Length":{"labelKey":"ShipInfo.Field.Length","type":"number"}, "Width":{"labelKey":"ShipInfo.Field.Width","type":"number"}, "Hight":{"labelKey":"ShipInfo.Field.Hight","type":"number"}, "GrossWeight":{"labelKey":"ShipInfo.Field.GrossWeight","type":"number"}, "NetWeightOfTheItem":{"labelKey":"ShipInfo.Field.NetWeightOfTheItem","type":"number"},
+    "DeliveryLineNo":{"labelKey":"ShipInfo.Field.DeliveryLineNo","type":"number"}, "Eccn":{"labelKey":"ShipInfo.Field.Eccn","type":"text"}, "ElFlag":{"labelKey":"ShipInfo.Field.ElFlag","type":"text"}, "SdsFlag":{"labelKey":"ShipInfo.Field.SdsFlag","type":"text"}, "Hazmat":{"labelKey":"ShipInfo.Field.Hazmat","type":"text"}, "DepositCaseStatus":{"labelKey":"ShipInfo.Field.DepositCaseStatus","type":"text"}, "ArurCaseStatus":{"labelKey":"ShipInfo.Field.ArurCaseStatus","type":"text"}
   },
   "modes": {
-    "view": {
-      "groups": [
-        {
-          "id": "shipment",
-          "labelKey": "ShipInfo.Group.Shipping",
-          "order": 10,
-          "columns": 3,
-          "fields": [
-            { "name": "CreateDate", "order": 10, "readOnly": true },
-            { "name": "SaDate", "order": 20, "readOnly": true },
-            { "name": "InvoiceNo", "order": 30, "readOnly": true },
-            { "name": "Forwarder", "order": 40, "readOnly": true },
-            { "name": "Broker", "order": 50, "readOnly": true },
-            { "name": "Etd", "order": 60, "readOnly": true },
-            { "name": "Eta", "order": 70, "readOnly": true },
-            { "name": "InvoiceDate", "order": 80, "readOnly": true },
-            { "name": "Mawb", "order": 90, "readOnly": true },
-            { "name": "Hawb", "order": 100, "readOnly": true },
-            { "name": "Flt", "order": 110, "readOnly": true },
-            { "name": "Freight", "order": 120, "readOnly": true },
-            { "name": "DestinationPort", "order": 130, "readOnly": true },
-            { "name": "DestinationCountry", "order": 140, "readOnly": true },
-            { "name": "Warehouse", "order": 150, "readOnly": true },
-            { "name": "InvoiceType", "order": 160, "readOnly": true },
-            { "name": "Incoterms", "order": 170, "readOnly": true },
-            { "name": "OrderType", "order": 180, "readOnly": true }
-          ]
-        }
-      ]
-    },
-    "edit": {
-      "groups": [
-        {
-          "id": "shipment",
-          "labelKey": "ShipInfo.Group.Shipping",
-          "order": 10,
-          "columns": 3,
-          "fields": [
-            { "name": "CreateDate", "order": 10, "readOnly": true },
-            { "name": "SaDate", "order": 20, "readOnly": false, "required": true },
-            { "name": "InvoiceNo", "order": 30, "readOnly": true },
-            { "name": "Forwarder", "order": 40, "readOnly": true },
-            { "name": "Broker", "order": 50, "readOnly": false },
-            { "name": "Etd", "order": 60, "readOnly": true },
-            { "name": "Eta", "order": 70, "readOnly": false, "required": true },
-            { "name": "InvoiceDate", "order": 80, "readOnly": false, "required": true },
-            { "name": "Mawb", "order": 90, "readOnly": false, "required": true },
-            { "name": "Hawb", "order": 100, "readOnly": false, "required": true },
-            { "name": "Flt", "order": 110, "readOnly": false, "required": true },
-            { "name": "Freight", "order": 120, "readOnly": true },
-            { "name": "DestinationPort", "order": 130, "readOnly": true },
-            { "name": "DestinationCountry", "order": 140, "readOnly": true },
-            { "name": "Warehouse", "order": 150, "readOnly": false, "required": true },
-            { "name": "InvoiceType", "order": 160, "readOnly": false, "required": true },
-            { "name": "Incoterms", "order": 170, "readOnly": true },
-            { "name": "OrderType", "order": 180, "readOnly": false, "required": true }
-          ]
-        }
-      ]
-    }
+    "view":{"groups":[
+      {"id":"detail-line","labelKey":"ShipInfo.Group.DetailLine","order":10,"columns":3,"fields":[{"name":"InvoiceNo"},{"name":"TetPo"},{"name":"TetPoLine"},{"name":"InvoiceSeq"},{"name":"ItemNo"},{"name":"Description"}]},
+      {"id":"quantity-price","labelKey":"ShipInfo.Group.QuantityPrice","order":20,"columns":3,"fields":[{"name":"Qty"},{"name":"Uom"},{"name":"Coo"},{"name":"Price"},{"name":"Amount"},{"name":"Currency"},{"name":"Rate"}]},
+      {"id":"packing","labelKey":"ShipInfo.Group.Packing","order":30,"columns":3,"fields":[{"name":"PackingType"},{"name":"CartonNo"},{"name":"Length"},{"name":"Width"},{"name":"Hight"},{"name":"GrossWeight"},{"name":"NetWeightOfTheItem"}]},
+      {"id":"compliance","labelKey":"ShipInfo.Group.Compliance","order":40,"columns":3,"fields":[{"name":"DeliveryLineNo"},{"name":"Eccn"},{"name":"ElFlag"},{"name":"SdsFlag"},{"name":"Hazmat"}]},
+      {"id":"case","labelKey":"ShipInfo.Group.CaseProject","order":50,"columns":2,"fields":[{"name":"DepositCaseStatus"},{"name":"ArurCaseStatus"}]},
+      {"id":"audit","labelKey":"ShipInfo.Group.Audit","order":60,"columns":3,"fields":[{"name":"Id"},{"name":"CreateTime"},{"name":"CreateUser"},{"name":"UpdateTime"},{"name":"UpdateUser"}]}
+    ]},
+    "edit":{"groups":[
+      {"id":"detail-line","labelKey":"ShipInfo.Group.DetailLine","order":10,"columns":3,"fields":[{"name":"InvoiceNo","readOnly":true},{"name":"TetPo","readOnly":true},{"name":"TetPoLine","readOnly":true},{"name":"InvoiceSeq","readOnly":true},{"name":"ItemNo","readOnly":true},{"name":"Description","readOnly":false}]},
+      {"id":"quantity-price","labelKey":"ShipInfo.Group.QuantityPrice","order":20,"columns":3,"fields":[{"name":"Qty","readOnly":false},{"name":"Uom","readOnly":false},{"name":"Coo","readOnly":false},{"name":"Price","readOnly":true},{"name":"Amount","readOnly":true},{"name":"Currency","readOnly":true},{"name":"Rate","readOnly":true}]},
+      {"id":"packing","labelKey":"ShipInfo.Group.Packing","order":30,"columns":3,"fields":[{"name":"PackingType","readOnly":true},{"name":"CartonNo","readOnly":false},{"name":"Length","readOnly":true},{"name":"Width","readOnly":true},{"name":"Hight","readOnly":true},{"name":"GrossWeight","readOnly":false},{"name":"NetWeightOfTheItem","readOnly":true}]},
+      {"id":"compliance","labelKey":"ShipInfo.Group.Compliance","order":40,"columns":3,"fields":[{"name":"DeliveryLineNo","readOnly":true},{"name":"Eccn","readOnly":true},{"name":"ElFlag","readOnly":true},{"name":"SdsFlag","readOnly":true},{"name":"Hazmat","readOnly":true}]},
+      {"id":"case","labelKey":"ShipInfo.Group.CaseProject","order":50,"columns":2,"fields":[{"name":"DepositCaseStatus","readOnly":true},{"name":"ArurCaseStatus","readOnly":true}]},
+      {"id":"audit","labelKey":"ShipInfo.Group.Audit","order":60,"columns":3,"fields":[{"name":"Id","readOnly":true},{"name":"CreateTime","readOnly":true},{"name":"CreateUser","readOnly":true},{"name":"UpdateTime","readOnly":true},{"name":"UpdateUser","readOnly":true}]}
+    ]}
   }
 }

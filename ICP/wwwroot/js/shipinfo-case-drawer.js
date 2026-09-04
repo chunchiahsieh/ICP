@@ -173,6 +173,20 @@
         };
     }
 
+    function renderCaseValidationMessages(messages) {
+        var $container = $('#shipInfoCaseValidationMessages').empty();
+        if (!messages || !messages.length) {
+            $container.addClass('d-none');
+            return;
+        }
+
+        var $list = $('<ul class="mb-0 ps-3"></ul>');
+        messages.forEach(function (message) {
+            $list.append($('<li></li>').text(message));
+        });
+        $container.removeClass('d-none').append($list);
+    }
+
     app.renderCaseDrawer = function (data) {
         state.caseDrawerData = data || null;
         var header = (data && data.header) || {};
@@ -195,6 +209,7 @@
 
         var arurCheck = canSubmitArurDrawer(data);
         var validationMessages = ((data && (data.validationMessages || data.ValidationMessages)) || []).concat(arurCheck.messages);
+        renderCaseValidationMessages(validationMessages);
         $('#btnShipInfoCaseSubmit').prop('disabled', !arurCheck.canSubmit || state.caseSubmitting);
         if (!arurCheck.canSubmit && validationMessages.length) {
             app.showToast(validationMessages[0], 'warning');
@@ -230,7 +245,8 @@
                 : (messages.caseDrawerArurTitle || messages.arur || 'ARUR')
         );
 
-        $('#shipInfoCaseHeaderSummaryWrap, #shipInfoCaseDetailTableWrap').empty();
+        $('#shipInfoCaseHeaderSummaryWrap, #shipInfoCaseDetailTableWrap, #shipInfoCaseValidationMessages').empty();
+        $('#shipInfoCaseValidationMessages').addClass('d-none');
         var drawerElement = document.getElementById('shipInfoCaseDrawer');
         if (global.bootstrap && global.bootstrap.Offcanvas) {
             global.bootstrap.Offcanvas.getOrCreateInstance(drawerElement).show();

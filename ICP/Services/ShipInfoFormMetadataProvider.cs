@@ -9,12 +9,13 @@ namespace ICP.Services;
 public sealed class ShipInfoFormMetadataProvider
 {
     public const string HeaderFormId = "shipinfo-header";
+    public const string DetailFormId = "shipinfo-detail";
     private const string ViewMode = "view";
     private const string EditMode = "edit";
     private const string CreateMode = "create";
     private static readonly HashSet<string> SupportedTypes = new(StringComparer.OrdinalIgnoreCase)
     {
-        "text", "date", "select", "checkbox"
+        "text", "number", "date", "select", "checkbox"
     };
     private static readonly IReadOnlyDictionary<string, string> OptionsSources =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -35,7 +36,8 @@ public sealed class ShipInfoFormMetadataProvider
     private const string FileUploaderComponent = "fileUploader";
     private const string HeaderAttachmentsAdapter = "shipInfoHeaderAttachments";
 
-    private readonly string _filePath;
+    private readonly string _headerFilePath;
+    private readonly string _detailFilePath;
     private readonly bool _isDevelopment;
     private readonly IStringLocalizerFactory _localizerFactory;
     private readonly ILogger<ShipInfoFormMetadataProvider> _logger;
@@ -45,7 +47,8 @@ public sealed class ShipInfoFormMetadataProvider
         IStringLocalizerFactory localizerFactory,
         ILogger<ShipInfoFormMetadataProvider> logger)
     {
-        _filePath = Path.Combine(environment.ContentRootPath, "Config", "shipinfo-form-fields.json");
+        _headerFilePath = Path.Combine(environment.ContentRootPath, "Config", "shipinfo-form-fields.json");
+        _detailFilePath = Path.Combine(environment.ContentRootPath, "Config", "shipinfo-detail-form-fields.json");
         _isDevelopment = environment.IsDevelopment();
         _localizerFactory = localizerFactory;
         _logger = logger;
@@ -53,15 +56,25 @@ public sealed class ShipInfoFormMetadataProvider
 
     public ShipInfoFormMetadata GetHeaderFormMetadata(string? culture = null)
     {
-        var metadata = LoadAndValidate(_filePath);
-        ApplyLocalizedText(metadata, culture ?? "zh-TW");
+        var metadata = LoadAndValidate(_headerFilePath, HeaderFormId, ShipInfoFieldCatalog.BuildHeaderCatalog());
+        ApplyLocalizedText(metadata, ShipInfoFieldCatalog.BuildHeaderCatalog(), culture ?? "zh-TW");
         return metadata;
     }
 
-    public static void ValidateAtStartup(string contentRootPath) =>
-        _ = LoadAndValidate(Path.Combine(contentRootPath, "Config", "shipinfo-form-fields.json"));
+    public ShipInfoFormMetadata GetDetailFormMetadata(string? culture = null)
+    {
+        var metadata = LoadAndValidate(_detailFilePath, DetailFormId, ShipInfoFieldCatalog.BuildDetailCatalog());
+        ApplyLocalizedText(metadata, ShipInfoFieldCatalog.BuildDetailCatalog(), culture ?? "zh-TW");
+        return metadata;
+    }
 
-    private static ShipInfoFormMetadata LoadAndValidate(string path)
+    public static void ValidateAtStartup(string contentRootPath)
+    {
+        _ = LoadAndValidate(Path.Combine(contentRootPath, "Config", "shipinfo-form-fields.json"), HeaderFormId, ShipInfoFieldCatalog.BuildHeaderCatalog());
+        _ = LoadAndValidate(Path.Combine(contentRootPath, "Config", "shipinfo-detail-form-fields.json"), DetailFormId, ShipInfoFieldCatalog.BuildDetailCatalog());
+    }
+
+    private static ShipInfoFormMetadata LoadAndValidate(string path, string formId, IReadOnlyList<ShipInfoFieldMetadata> catalog)
     {
         if (!File.Exists(path))
         {
@@ -75,15 +88,15 @@ public sealed class ShipInfoFormMetadataProvider
             PropertyNameCaseInsensitive = true
         }) ?? throw new InvalidOperationException("Ship Info form metadata is invalid.");
 
-        ValidateMetadata(metadata);
+        ValidateMetadata(metadata, formId, catalog);
         return metadata;
     }
 
-    private static void ValidateMetadata(ShipInfoFormMetadata metadata)
+    private static void ValidateMetadata(ShipInfoFormMetadata metadata, string formId, IReadOnlyList<ShipInfoFieldMetadata> catalogFields)
     {
-        if (!string.Equals(metadata.FormId, HeaderFormId, StringComparison.Ordinal))
+        if (!string.Equals(metadata.FormId, formId, StringComparison.Ordinal))
         {
-            throw new InvalidOperationException($"formId must be '{HeaderFormId}'.");
+            throw new InvalidOperationException($"formId must be '{formId}'.");
         }
 
         if (string.IsNullOrWhiteSpace(metadata.MetadataVersion))
@@ -96,7 +109,7 @@ public sealed class ShipInfoFormMetadataProvider
             throw new InvalidOperationException("fields must contain at least one field.");
         }
 
-        var catalog = ShipInfoFieldCatalog.BuildHeaderCatalog()
+        var catalog = catalogFields
             .ToDictionary(x => x.FieldName, StringComparer.OrdinalIgnoreCase);
         foreach (var (name, field) in metadata.Fields)
         {
@@ -284,9 +297,9 @@ public sealed class ShipInfoFormMetadataProvider
         }
     }
 
-    private void ApplyLocalizedText(ShipInfoFormMetadata metadata, string culture)
+    private void ApplyLocalizedText(ShipInfoFormMetadata metadata, IReadOnlyList<ShipInfoFieldMetadata> catalogFields, string culture)
     {
-        var catalog = ShipInfoFieldCatalog.BuildHeaderCatalog()
+        var catalog = catalogFields
             .ToDictionary(x => x.FieldName, StringComparer.OrdinalIgnoreCase);
         var localizer = _localizerFactory.Create(typeof(SharedResource));
         var previousUiCulture = CultureInfo.CurrentUICulture;

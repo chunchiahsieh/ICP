@@ -61,6 +61,7 @@
     <Content Update="Config\shipinfo-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\shipinfo-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\shipinfo-form-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\shipinfo-detail-form-fields.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Update="Config\forwarder-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\forwarder-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\tariff-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
