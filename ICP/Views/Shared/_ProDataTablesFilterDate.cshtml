@@ -8,9 +8,13 @@
         @Localizer["Common.Filter"] <span class="filter-count">(0)</span>
     </button>
     <div class="dropdown-menu users-filter-menu p-2">
-        <input type="date"
-               class="form-control form-control-sm pro-table-filter-date-input"
-               aria-label="@Model.Column" />
+        <div class="input-group input-group-sm pro-table-date-picker">
+            <input type="text" inputmode="numeric" pattern="\d{4}-\d{2}-\d{2}" placeholder="yyyy-MM-dd"
+                   class="form-control pro-table-filter-date-input"
+                   aria-label="@Model.Column" />
+            <input type="date" class="visually-hidden pro-table-filter-date-native" tabindex="-1" aria-hidden="true" />
+            <button type="button" class="btn btn-outline-secondary pro-table-filter-date-picker" aria-label="@($"{Model.Column} calendar")">&#128197;</button>
+        </div>
         <div class="pro-table-filter-actions d-flex gap-1 mt-2">
             <button type="button" class="btn btn-primary btn-sm pro-table-filter-confirm flex-fill">@Localizer["Common.Confirm"]</button>
             <button type="button" class="btn btn-outline-secondary btn-sm pro-table-filter-reset">@Localizer["Common.Reset"]</button>

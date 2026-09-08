@@ -66,7 +66,9 @@ public static class HubServiceCollectionExtensions
                     });
 
                     cfg.ClearSerialization();
-                    cfg.UseRawJsonSerializer();
+                    // ICP publishes plain RabbitMQ JSON without MassTransit message-type headers.
+                    cfg.UseRawJsonSerializer(RawSerializerOptions.All, isDefault: true);
+                    cfg.UseRawJsonDeserializer(RawSerializerOptions.All, isDefault: true);
 
                     // ShipInfo case initiated (Deposit / ARUR via caseType — one consumer per event)
                     cfg.ReceiveEndpoint(options.QueueName, e =>

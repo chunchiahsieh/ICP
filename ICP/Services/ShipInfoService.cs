@@ -7,6 +7,7 @@ using ICP.Models.Integration;
 using ICP.Models.ShipInfo;
 using ICP.Repositories;
 using ICP.Services.Integration;
+using Microsoft.Extensions.Options;
 
 namespace ICP.Services;
 
@@ -26,6 +27,7 @@ public class ShipInfoService : IShipInfoService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<ShipInfoService> _logger;
     private readonly ShipInfoAttachmentService _attachmentService;
+    private readonly IOptionsMonitor<IntegrationOptions> _integrationOptions;
 
     public ShipInfoService(
         IShipInfoRepository repository,
@@ -36,7 +38,8 @@ public class ShipInfoService : IShipInfoService
         UserResourcePermissionService permissionService,
         IHttpContextAccessor httpContextAccessor,
         ILogger<ShipInfoService> logger,
-        ShipInfoAttachmentService attachmentService)
+        ShipInfoAttachmentService attachmentService,
+        IOptionsMonitor<IntegrationOptions> integrationOptions)
     {
         _repository = repository;
         _outboxRepository = outboxRepository;
@@ -47,6 +50,7 @@ public class ShipInfoService : IShipInfoService
         _httpContextAccessor = httpContextAccessor;
         _logger = logger;
         _attachmentService = attachmentService;
+        _integrationOptions = integrationOptions;
     }
 
     public ShipInfoPageConfig GetPageConfig() =>
@@ -421,6 +425,10 @@ public class ShipInfoService : IShipInfoService
         CancellationToken cancellationToken)
     {
         EnsureCasePermission(caseType);
+        if (!_integrationOptions.CurrentValue.RabbitMq.Enabled)
+        {
+            throw new ShipInfoBusinessException("RabbitMQ is disabled. Case creation is unavailable.");
+        }
         var header = await _repository.GetHeaderForUpdateByRowKeyAsync(headerRowKey, cancellationToken)
             ?? throw new ShipInfoNotFoundException("Header not found.");
 
@@ -452,16 +460,8 @@ public class ShipInfoService : IShipInfoService
             }, cancellationToken);
 
             var caseNo = GenerateCaseNo(caseType, header.InvoiceNo, header.TetPo);
-            if (caseType == ShipInfoCaseTypes.Deposit)
-            {
-                header.Deposit = caseNo;
-            }
-            else
-            {
-                header.RtNo = caseNo;
-            }
-
-            ApplyCaseStatus(header, details, caseType, ShipInfoCaseStatuses.Initiated, userName);
+            // A case is not initiated until Hub has persisted it in ILC and acknowledged ICP.
+            // Keep the Header/Detail status at Processing while the Outbox event is in transit.
             CrudAuditHelper.ApplyUpdateAudit(header, userName);
             foreach (var detail in details)
             {
@@ -724,6 +724,10 @@ public class ShipInfoService : IShipInfoService
         else
         {
             AddRequiredCaseFieldErrors(header, errors);
+            if (header.Warehouse?.Trim().Length > 3)
+            {
+                errors.Add("Warehouse exceeds 3 characters. ARUR cannot be created.");
+            }
         }
 
         if (!previewOnly && errors.Count > 0)

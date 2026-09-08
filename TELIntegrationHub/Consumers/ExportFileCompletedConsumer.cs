@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using MassTransit;
 using TEL.IntegrationHub.Models;
 using TEL.IntegrationHub.Services;
@@ -6,7 +7,7 @@ using TEL.IntegrationHub.Services;
 namespace TEL.IntegrationHub.Consumers;
 
 /// <summary>Consumes reserved routing key icp.export.completed (Envelope).</summary>
-public sealed class ExportFileCompletedConsumer : IConsumer<JsonDocument>
+public sealed class ExportFileCompletedConsumer : IConsumer<JsonObject>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -28,9 +29,9 @@ public sealed class ExportFileCompletedConsumer : IConsumer<JsonDocument>
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<JsonDocument> context)
+    public async Task Consume(ConsumeContext<JsonObject> context)
     {
-        var raw = context.Message.RootElement.GetRawText();
+        var raw = context.Message.ToJsonString();
         ExportFileCompletedMessage? message;
         try
         {
@@ -83,7 +84,7 @@ public sealed class ExportFileCompletedConsumer : IConsumer<JsonDocument>
             await _messageLogService.MarkSuccessAsync(log.Id, context.CancellationToken);
             if (message.MessageId != Guid.Empty)
             {
-                await _outboxCompletion.MarkCompletedAsync(message.MessageId, context.CancellationToken);
+                await _outboxCompletion.MarkCompletedAsync(message.MessageId, cancellationToken: context.CancellationToken);
             }
         }
         catch (Exception ex)

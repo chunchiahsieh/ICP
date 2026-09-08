@@ -2175,4 +2175,27 @@
   <data name="ShipInfo.Group.QuantityPrice" xml:space="preserve"><value>數量／金額資訊</value></data>
   <data name="ShipInfo.Group.Packing" xml:space="preserve"><value>包裝／尺寸／重量</value></data>
   <data name="ShipInfo.Group.Compliance" xml:space="preserve"><value>配送／法規資訊</value></data>
+  <data name="Compare.Number" xml:space="preserve"><value>編號</value></data>
+  <data name="Compare.Result" xml:space="preserve"><value>比對結果</value></data>
+  <data name="Compare.RtNo" xml:space="preserve"><value>RT_NO</value></data>
+  <data name="Compare.InvoiceNo" xml:space="preserve"><value>Invoice No</value></data>
+  <data name="Compare.Field" xml:space="preserve"><value>欄位說明</value></data>
+  <data name="Compare.IcpValue" xml:space="preserve"><value>ICP 目前資料值</value></data>
+  <data name="Compare.IlcValue" xml:space="preserve"><value>ILC 目前資料值</value></data>
+  <data name="Compare.All" xml:space="preserve"><value>全部</value></data>
+  <data name="Compare.Equal" xml:space="preserve"><value>一致</value></data>
+  <data name="Compare.Different" xml:space="preserve"><value>不一致</value></data>
+  <data name="Compare.Missing" xml:space="preserve"><value>ILC 查無案件</value></data>
+  <data name="Compare.Ambiguous" xml:space="preserve"><value>ILC 案號重複</value></data>
+  <data name="Compare.Search" xml:space="preserve"><value>查詢</value></data>
+  <data name="Compare.Export" xml:space="preserve"><value>匯出 Excel</value></data>
+  <data name="Compare.Error" xml:space="preserve"><value>查詢失敗，請確認 ILC 連線或聯絡管理員。</value></data>
+  <data name="Compare.Empty" xml:space="preserve"><value>沒有符合條件的比對資料。</value></data>
+  <data name="Compare.Description" xml:space="preserve"><value>以 RT_NO 比對已起案資料。ICP 值依起案轉換規則顯示；備註包含搬運等資訊，附件比較相對路徑。</value></data>
+  <data name="Compare.Field.Notes" xml:space="preserve"><value>備註及搬運需求（組合值）</value></data>
+  <data name="Compare.Field.ShipTo" xml:space="preserve"><value>Delivery To 設定地址</value></data>
+  <data name="Compare.DataSourceUnavailable" xml:space="preserve"><value>設定的 ILC 資料庫找不到 dbo.RT_ARUR_HEADER。請將 ICP 的 ILC_Connection 指向 AR/UR 起案寫入的 ILC 資料庫。</value></data>
+  <data name="ShipInfo.CaseRequirement.Deposit" xml:space="preserve"><value>押金起案必填</value></data>
+  <data name="ShipInfo.CaseRequirement.Arur" xml:space="preserve"><value>ARUR 起案必填</value></data>
+  <data name="ShipInfo.CaseRequirement.ArurWarehouse" xml:space="preserve"><value>ARUR 起案：最多 3 碼</value></data>
 </root>

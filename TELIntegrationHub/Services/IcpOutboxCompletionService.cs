@@ -6,7 +6,7 @@ namespace TEL.IntegrationHub.Services;
 
 public interface IIcpOutboxCompletionService
 {
-    Task MarkCompletedAsync(Guid messageId, CancellationToken cancellationToken = default);
+    Task MarkCompletedAsync(Guid messageId, string? actualCaseNo = null, CancellationToken cancellationToken = default);
 
     /// <returns>True when Outbox is Failed (or already Failed/Completed). False when the row cannot be updated.</returns>
     Task<bool> MarkArurFailedAsync(Guid messageId, string error, CancellationToken cancellationToken = default);
@@ -25,7 +25,7 @@ public sealed class IcpOutboxCompletionService : IIcpOutboxCompletionService
         _logger = logger;
     }
 
-    public async Task MarkCompletedAsync(Guid messageId, CancellationToken cancellationToken = default)
+    public async Task MarkCompletedAsync(Guid messageId, string? actualCaseNo = null, CancellationToken cancellationToken = default)
     {
         if (messageId == Guid.Empty)
         {
@@ -63,6 +63,7 @@ public sealed class IcpOutboxCompletionService : IIcpOutboxCompletionService
             entry.Status = IcpOutboxStatuses.Completed;
             entry.UpdateTime = DateTime.Now;
             entry.UpdateUser = "HUB";
+            await UpdateCaseStatusAsync(entry, "Initiated", actualCaseNo ?? entry.CaseNo, cancellationToken);
             await _db.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Marked ICP Outbox Completed for messageId={MessageId}", messageId);
@@ -106,7 +107,41 @@ public sealed class IcpOutboxCompletionService : IIcpOutboxCompletionService
         entry.LastError = error.Length > 4000 ? error[..4000] : error;
         entry.UpdateTime = DateTime.Now;
         entry.UpdateUser = "HUB";
+        await UpdateCaseStatusAsync(entry, "Failed", null, cancellationToken);
         await _db.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    private async Task UpdateCaseStatusAsync(IcpOutboxEntry entry, string status, string? caseNo, CancellationToken cancellationToken)
+    {
+        var parts = (entry.HeaderKey ?? string.Empty).Split('\u001f', 2);
+        if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]))
+        {
+            _logger.LogWarning("Cannot update ICP case status: invalid HeaderKey for outbox {MessageId}.", entry.Id);
+            return;
+        }
+
+        var isArur = string.Equals(entry.CaseType, "ARUR", StringComparison.OrdinalIgnoreCase);
+        var headerStatusColumn = isArur ? "ARUR_CASE_STATUS" : "DEPOSIT_CASE_STATUS";
+        var detailStatusColumn = isArur ? "ARUR_CASE_STATUS" : "DEPOSIT_CASE_STATUS";
+        var caseColumn = isArur ? "RT_NO" : "DEPOSIT";
+        var caseValue = status == "Initiated" ? caseNo : null;
+        var connection = _db.Database.GetDbConnection();
+        var mustClose = connection.State != System.Data.ConnectionState.Open;
+        if (mustClose) await connection.OpenAsync(cancellationToken);
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = $"UPDATE dbo.ICP_HEADER SET {headerStatusColumn}=@status, {caseColumn}=@caseNo, UpdateTime=GETDATE(), UpdateUser=N'HUB' WHERE INVOICE_NO=@invoiceNo AND ISNULL(TET_PO,N'')=@tetPo; UPDATE dbo.ICP_DETAIL SET {detailStatusColumn}=@status, UpdateTime=GETDATE(), UpdateUser=N'HUB' WHERE INVOICE_NO=@invoiceNo AND ISNULL(TET_PO,N'')=@tetPo;";
+            var statusParameter = command.CreateParameter(); statusParameter.ParameterName = "@status"; statusParameter.Value = status; command.Parameters.Add(statusParameter);
+            var caseParameter = command.CreateParameter(); caseParameter.ParameterName = "@caseNo"; caseParameter.Value = (object?)caseValue ?? DBNull.Value; command.Parameters.Add(caseParameter);
+            var invoiceParameter = command.CreateParameter(); invoiceParameter.ParameterName = "@invoiceNo"; invoiceParameter.Value = parts[0]; command.Parameters.Add(invoiceParameter);
+            var poParameter = command.CreateParameter(); poParameter.ParameterName = "@tetPo"; poParameter.Value = parts[1]; command.Parameters.Add(poParameter);
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        finally
+        {
+            if (mustClose) await connection.CloseAsync();
+        }
     }
 }

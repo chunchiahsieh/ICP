@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using MassTransit;
 using TEL.IntegrationHub.Models;
 using TEL.IntegrationHub.Services;
@@ -6,7 +7,7 @@ using TEL.IntegrationHub.Services;
 namespace TEL.IntegrationHub.Consumers;
 
 /// <summary>Consumes icp.shipinfo.case.initiated when payload.caseType = ARUR; writes ILC RT_ARUR_HEADER.</summary>
-public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
+public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonObject>
 {
     private readonly IMessageLogService _messageLogService;
     private readonly IIcpOutboxCompletionService _outboxCompletion;
@@ -25,9 +26,9 @@ public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<JsonDocument> context)
+    public async Task Consume(ConsumeContext<JsonObject> context)
     {
-        var raw = context.Message.RootElement.GetRawText();
+        var raw = context.Message.ToJsonString();
         if (!IntegrationEventEnvelopeNormalizer.TryNormalizeShipInfoCase(raw, out var message, out var normalizedJson)
             || message is null)
         {
@@ -56,9 +57,10 @@ public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
             IcpIntegrationBusinessTypes.Arur,
             context.CancellationToken);
 
+        IlcArurWriteResult? writeResult = null;
         try
         {
-            var writeResult = await _ilcArurWrite.WriteFromShipInfoCaseAsync(message, context.CancellationToken);
+            writeResult = await _ilcArurWrite.WriteFromShipInfoCaseAsync(message, context.CancellationToken);
             _logger.LogInformation(
                 "Handled ARUR case event {MessageId} caseNo={CaseNo} RT_NO={RtNo} skippedDuplicate={Skipped}",
                 messageId,
@@ -89,7 +91,7 @@ public sealed class ArurCaseInitiatedConsumer : IConsumer<JsonDocument>
             await _messageLogService.MarkSuccessAsync(log.Id, context.CancellationToken);
             if (message.MessageId != Guid.Empty)
             {
-                await _outboxCompletion.MarkCompletedAsync(message.MessageId, context.CancellationToken);
+                await _outboxCompletion.MarkCompletedAsync(message.MessageId, writeResult?.RtNo, context.CancellationToken);
             }
         }
         catch (Exception ex)

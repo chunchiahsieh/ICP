@@ -11,6 +11,15 @@ public class IcpOutboxEntry
     public Guid Id { get; set; }
 
     [MaxLength(20)]
+    public string CaseType { get; set; } = string.Empty;
+
+    [MaxLength(200)]
+    public string HeaderKey { get; set; } = string.Empty;
+
+    [MaxLength(50)]
+    public string CaseNo { get; set; } = string.Empty;
+
+    [MaxLength(20)]
     public string Status { get; set; } = string.Empty;
 
     public int RetryCount { get; set; }

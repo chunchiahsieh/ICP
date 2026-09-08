@@ -27,33 +27,53 @@
         return window.matchMedia('(max-width: 767.98px)').matches ? 1 : 3;
     }
 
-    function getFieldEntries(fields, item) {
+    function getFieldName(field) {
+        return field.FieldName || field.fieldName || '';
+    }
+
+    function isDrawerInternalField(field) {
+        return getFieldName(field).toLowerCase() === 'id';
+    }
+
+    function formatDrawerValue(fieldName, value) {
+        var normalizedFieldName = (fieldName || '').toLowerCase();
+        if (normalizedFieldName === 'status') {
+            return app.formatStatusLabel(value);
+        }
+
+        if (normalizedFieldName === 'depositcasestatus' || normalizedFieldName === 'arurcasestatus') {
+            return app.formatCaseStatusLabel(value);
+        }
+
+        return value;
+    }
+
+    function getFieldEntries(fields, item, invalidFields) {
         var entries = [];
 
         renderApi.getAllFields(fields).forEach(function (field) {
-            if (!renderApi.canUseField(field, app.hasPermission)) {
+            if (isDrawerInternalField(field) || !renderApi.canUseField(field, app.hasPermission)) {
                 return;
             }
 
-            var fieldName = field.FieldName || field.fieldName;
+            var fieldName = getFieldName(field);
             var rawValue = app.getRowValue(item, [
                 fieldName,
                 fieldName.charAt(0).toLowerCase() + fieldName.slice(1)
             ]);
-            var displayValue = fieldName === 'Status' || fieldName === 'status'
-                ? app.formatStatusLabel(rawValue)
-                : rawValue;
+            var displayValue = formatDrawerValue(fieldName, rawValue);
             entries.push({
                 label: renderApi.resolveLabel(field, app.getCulture()),
-                value: formatSummaryValue(displayValue)
+                value: formatSummaryValue(displayValue),
+                invalid: invalidFields.has(fieldName.toLowerCase())
             });
         });
 
         return entries;
     }
 
-    function renderHeaderReportTable(fields, item) {
-        var entries = getFieldEntries(fields, item);
+    function renderHeaderReportTable(fields, item, invalidFields) {
+        var entries = getFieldEntries(fields, item, invalidFields);
         var pairsPerRow = getPairsPerRow();
         var $table = $('<table class="table table-sm table-bordered mb-0 shipinfo-drawer-report-table shipinfo-drawer-header-report"></table>');
         var $tbody = $('<tbody></tbody>');
@@ -65,12 +85,14 @@
                 var entry = entries[i + j];
                 if (entry) {
                     $tr.append(
-                        '<th scope="row" class="shipinfo-drawer-report-label">'
+                        '<th scope="row" class="shipinfo-drawer-report-label'
+                        + (entry.invalid ? ' shipinfo-drawer-report-invalid' : '') + '">'
                         + $('<span>').text(entry.label).html()
                         + '</th>'
                     );
                     $tr.append(
-                        '<td class="shipinfo-drawer-report-value">'
+                        '<td class="shipinfo-drawer-report-value'
+                        + (entry.invalid ? ' shipinfo-drawer-report-invalid' : '') + '">'
                         + $('<span>').text(entry.value).html()
                         + '</td>'
                     );
@@ -89,7 +111,7 @@
 
     function renderDetailReportTable(fields, details) {
         var visibleFields = renderApi.getAllFields(fields).filter(function (field) {
-            return renderApi.canUseField(field, app.hasPermission);
+            return !isDrawerInternalField(field) && renderApi.canUseField(field, app.hasPermission);
         });
         var $wrap = $('<div class="table-responsive shipinfo-drawer-detail-table-wrap"></div>');
         var $table = $('<table class="table table-sm table-bordered table-striped mb-0 shipinfo-drawer-report-table shipinfo-drawer-detail-report"></table>');
@@ -108,12 +130,12 @@
             var $tr = $('<tr></tr>');
 
             visibleFields.forEach(function (field) {
-                var fieldName = field.FieldName || field.fieldName;
+                var fieldName = getFieldName(field);
                 var value = app.getRowValue(item, [
                     fieldName,
                     fieldName.charAt(0).toLowerCase() + fieldName.slice(1)
                 ]);
-                $tr.append('<td>' + $('<span>').text(formatSummaryValue(value)).html() + '</td>');
+                $tr.append('<td>' + $('<span>').text(formatSummaryValue(formatDrawerValue(fieldName, value))).html() + '</td>');
             });
 
             $tbody.append($tr);
@@ -155,6 +177,21 @@
         return errors;
     }
 
+    function getArurInvalidFieldNames(header) {
+        var invalid = new Set();
+        ['Receiver', 'Forklift', 'MovingLabor', 'WasteDisposal', 'DriverDetails'].forEach(function (fieldName) {
+            if (!headerText(header, [fieldName, fieldName.charAt(0).toLowerCase() + fieldName.slice(1)])) {
+                invalid.add(fieldName.toLowerCase());
+            }
+        });
+
+        if (headerText(header, ['Warehouse', 'warehouse']).length > 3) {
+            invalid.add('warehouse');
+        }
+
+        return invalid;
+    }
+
     function isArurDrawer() {
         return (state.caseType || '').toUpperCase() === 'ARUR';
     }
@@ -191,11 +228,12 @@
         state.caseDrawerData = data || null;
         var header = (data && data.header) || {};
         var details = (data && data.details) || [];
+        var invalidHeaderFields = isArurDrawer() ? getArurInvalidFieldNames(header) : new Set();
 
         $('#shipInfoCaseHeaderSummaryTitle').text(messages.headerInformation || messages.drawerHeader || 'Header Information');
         $('#shipInfoCaseHeaderSummaryWrap')
             .empty()
-            .append(renderHeaderReportTable(app.getAllHeaderFields(), header));
+            .append(renderHeaderReportTable(app.getCaseDrawerHeaderFields(), header, invalidHeaderFields));
 
         var $detailContent;
         if (!details.length) {

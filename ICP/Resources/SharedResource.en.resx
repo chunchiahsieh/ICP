@@ -1980,4 +1980,27 @@
   <data name="ShipInfo.Group.QuantityPrice" xml:space="preserve"><value>Quantity / Price Information</value></data>
   <data name="ShipInfo.Group.Packing" xml:space="preserve"><value>Packing / Dimensions / Weight</value></data>
   <data name="ShipInfo.Group.Compliance" xml:space="preserve"><value>Delivery / Compliance Information</value></data>
+  <data name="Compare.Number" xml:space="preserve"><value>No.</value></data>
+  <data name="Compare.Result" xml:space="preserve"><value>Comparison Result</value></data>
+  <data name="Compare.RtNo" xml:space="preserve"><value>RT_NO</value></data>
+  <data name="Compare.InvoiceNo" xml:space="preserve"><value>Invoice No</value></data>
+  <data name="Compare.Field" xml:space="preserve"><value>Field Description</value></data>
+  <data name="Compare.IcpValue" xml:space="preserve"><value>Current ICP Value</value></data>
+  <data name="Compare.IlcValue" xml:space="preserve"><value>Current ILC Value</value></data>
+  <data name="Compare.All" xml:space="preserve"><value>All</value></data>
+  <data name="Compare.Equal" xml:space="preserve"><value>Equal</value></data>
+  <data name="Compare.Different" xml:space="preserve"><value>Different</value></data>
+  <data name="Compare.Missing" xml:space="preserve"><value>ILC case not found</value></data>
+  <data name="Compare.Ambiguous" xml:space="preserve"><value>Duplicate ILC case number</value></data>
+  <data name="Compare.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Compare.Export" xml:space="preserve"><value>Export Excel</value></data>
+  <data name="Compare.Error" xml:space="preserve"><value>Query failed. Check the ILC connection or contact your administrator.</value></data>
+  <data name="Compare.Empty" xml:space="preserve"><value>No matching comparison data.</value></data>
+  <data name="Compare.Description" xml:space="preserve"><value>Compare initiated cases by RT_NO. ICP values follow initiation conversions; remarks include handling requirements and attachments are compared by relative path.</value></data>
+  <data name="Compare.Field.Notes" xml:space="preserve"><value>Notes and handling requirements (combined)</value></data>
+  <data name="Compare.Field.ShipTo" xml:space="preserve"><value>Delivery To configured address</value></data>
+  <data name="Compare.DataSourceUnavailable" xml:space="preserve"><value>The configured ILC database does not contain dbo.RT_ARUR_HEADER. Point ICP ILC_Connection to the ILC database used by AR/UR initiation.</value></data>
+  <data name="ShipInfo.CaseRequirement.Deposit" xml:space="preserve"><value>Required for Deposit case creation</value></data>
+  <data name="ShipInfo.CaseRequirement.Arur" xml:space="preserve"><value>Required for ARUR case creation</value></data>
+  <data name="ShipInfo.CaseRequirement.ArurWarehouse" xml:space="preserve"><value>For ARUR case creation: maximum 3 characters</value></data>
 </root>

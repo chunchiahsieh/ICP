@@ -324,10 +324,18 @@
       $size.val(String(tablePageLengthState));
       var $previous = $('<button type="button" class="btn btn-sm btn-outline-secondary pro-server-page-prev">‹</button>')
         .prop('disabled', pageState <= 1);
-      var $current = $('<span class="small text-nowrap"></span>').text(pageState + ' / ' + pageCount);
+      var $page = $('<select class="form-select form-select-sm pro-server-page-jump" style="width:auto"></select>')
+        .attr('aria-label', (global.IcpI18n && global.IcpI18n.pageLabel) || 'Page')
+        .prop('disabled', pageCount <= 1);
+      var pageOptions = document.createDocumentFragment();
+      for (var page = 1; page <= pageCount; page++) {
+        pageOptions.appendChild(new Option(String(page), String(page)));
+      }
+      $page.append(pageOptions).val(String(pageState));
+      var $current = $('<span class="small text-nowrap"></span>').text('/ ' + pageCount);
       var $next = $('<button type="button" class="btn btn-sm btn-outline-secondary pro-server-page-next">›</button>')
         .prop('disabled', pageState >= pageCount);
-      $controls.append($size, $previous, $current, $next);
+      $controls.append($size, $previous, $page, $current, $next);
       $pager.append($summary, $controls);
       $root.append($pager);
     }
@@ -396,6 +404,7 @@
       .off('hidden.bs.dropdown.' + instanceNs, config.dataDivSelector + ' .column-filter-dropdown')
       .off('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-prev')
       .off('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-next')
+      .off('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-jump')
       .off('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-size');
 
     $(document).on('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-prev', function () {
@@ -405,6 +414,14 @@
     $(document).on('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-next', function () {
       var pageCount = Math.max(1, Math.ceil(totalRecordCount / tablePageLengthState));
       if (pageState < pageCount) Query({ page: pageState + 1, keepPage: true });
+    });
+
+    $(document).on('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-jump', function () {
+      var page = Number($(this).val());
+      var pageCount = Math.max(1, Math.ceil(totalRecordCount / tablePageLengthState));
+      if (Number.isInteger(page) && page >= 1 && page <= pageCount && page !== pageState) {
+        Query({ page: page, keepPage: true });
+      }
     });
 
     $(document).on('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-size', function () {

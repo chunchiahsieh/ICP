@@ -322,10 +322,6 @@
         var inputType = 'text';
         if (controlType === 'Number' || controlType === 'Decimal' || controlType === 'Currency') {
             inputType = 'number';
-        } else if (controlType === 'Date') {
-            // A Date metadata field must provide the browser date picker while
-            // retaining the existing yyyy-MM-dd value contract.
-            inputType = 'date';
         }
 
         var displayValue = value == null ? '' : value;
@@ -344,6 +340,14 @@
 
         if (controlType === 'Date') {
             $input.attr('inputmode', 'numeric').attr('pattern', '\\d{4}-\\d{2}-\\d{2}');
+            // Native date inputs localize their displayed text (for example yyyy/MM/dd)
+            // even when their value is yyyy-MM-dd. Keep the display format consistent.
+            $input.on('blur', function () {
+                var normalized = normalizeDateInputValue($(this).val());
+                if (normalized) {
+                    $(this).val(normalized);
+                }
+            });
         }
 
         if (maxLength) {

@@ -9,12 +9,20 @@
     </button>
     <div class="dropdown-menu users-filter-menu p-2">
         <div class="d-flex flex-column gap-1">
-            <input type="date"
-                   class="form-control form-control-sm pro-table-filter-date-from"
-                   aria-label="@($"{Model.Column} from")" />
-            <input type="date"
-                   class="form-control form-control-sm pro-table-filter-date-to"
-                   aria-label="@($"{Model.Column} to")" />
+            <div class="input-group input-group-sm pro-table-date-picker">
+                <input type="text" inputmode="numeric" pattern="\d{4}-\d{2}-\d{2}" placeholder="yyyy-MM-dd"
+                       class="form-control pro-table-filter-date-from"
+                       aria-label="@($"{Model.Column} from")" />
+                <input type="date" class="visually-hidden pro-table-filter-date-native" tabindex="-1" aria-hidden="true" />
+                <button type="button" class="btn btn-outline-secondary pro-table-filter-date-picker" aria-label="@($"{Model.Column} from calendar")">&#128197;</button>
+            </div>
+            <div class="input-group input-group-sm pro-table-date-picker">
+                <input type="text" inputmode="numeric" pattern="\d{4}-\d{2}-\d{2}" placeholder="yyyy-MM-dd"
+                       class="form-control pro-table-filter-date-to"
+                       aria-label="@($"{Model.Column} to")" />
+                <input type="date" class="visually-hidden pro-table-filter-date-native" tabindex="-1" aria-hidden="true" />
+                <button type="button" class="btn btn-outline-secondary pro-table-filter-date-picker" aria-label="@($"{Model.Column} to calendar")">&#128197;</button>
+            </div>
         </div>
         <div class="pro-table-filter-actions d-flex gap-1 mt-2">
             <button type="button" class="btn btn-primary btn-sm pro-table-filter-confirm flex-fill">@Localizer["Common.Confirm"]</button>

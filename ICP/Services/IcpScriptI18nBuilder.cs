@@ -8,6 +8,7 @@ public static class IcpScriptI18nBuilder
         new(StringComparer.Ordinal)
         {
             ["selectedCount"] = localizer["Js.SelectedCount"],
+            ["pageLabel"] = localizer["ShipInfo.PageLabel"],
             ["none"] = localizer["Common.None"],
             ["selectAtLeastOneRole"] = localizer["Validation.SelectAtLeastOneRole"],
             ["selectAtLeastOneResource"] = localizer["Validation.SelectAtLeastOneResource"],

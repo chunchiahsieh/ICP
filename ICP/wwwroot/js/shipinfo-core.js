@@ -311,6 +311,54 @@
         return app.renderApi.getAllFields(app.getHeaderFields());
     };
 
+    // Case initiation is a verification view, so it must show every Header field
+    // defined for the normal view form rather than only the columns on the list page.
+    app.getCaseDrawerHeaderFields = function () {
+        var state = app.state;
+        var metadata = app.getHeaderFormMetadata();
+        var modes = metadata && (metadata.modes || metadata.Modes);
+        var viewMode = modes && (modes.view || modes.View);
+        var groups = viewMode && (viewMode.groups || viewMode.Groups);
+        if (!groups || !groups.length) {
+            return app.getAllHeaderFields();
+        }
+
+        var definitions = (metadata && (metadata.fields || metadata.Fields)) || {};
+        var catalog = {};
+        app.getHeaderFields().concat(
+            (state.pageConfig && (state.pageConfig.headerEditFields || state.pageConfig.HeaderEditFields)) || []
+        ).forEach(function (field) {
+            var name = field.fieldName || field.FieldName;
+            if (name && !catalog[name.toLowerCase()]) catalog[name.toLowerCase()] = field;
+        });
+
+        var fields = [];
+        var used = {};
+        groups.forEach(function (group) {
+            var groupFields = group.fields || group.Fields || [];
+            groupFields.forEach(function (modeField) {
+                var name = modeField.name || modeField.Name;
+                if (!name || name.toLowerCase() === 'id' || used[name.toLowerCase()]) return;
+                used[name.toLowerCase()] = true;
+                var configured = catalog[name.toLowerCase()];
+                if (configured) {
+                    fields.push(configured);
+                    return;
+                }
+
+                var definition = definitions[name] || definitions[name.charAt(0).toLowerCase() + name.slice(1)] || {};
+                fields.push({
+                    fieldName: name,
+                    label: definition.label || definition.Label || name,
+                    displayOrder: fields.length + 1,
+                    visible: true
+                });
+            });
+        });
+
+        return fields;
+    };
+
     app.getHeaderEditFormFields = function () {
         if (app.state.headerFormEffectiveFields && app.state.headerFormEffectiveFields.length) {
             return app.state.headerFormEffectiveFields;

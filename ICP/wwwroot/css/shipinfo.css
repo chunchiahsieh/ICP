@@ -339,3 +339,7 @@
     white-space: nowrap;
     vertical-align: middle;
 }
+
+.shipinfo-drawer-header-report .shipinfo-drawer-report-invalid {
+    color: var(--bs-danger, #dc3545);
+}

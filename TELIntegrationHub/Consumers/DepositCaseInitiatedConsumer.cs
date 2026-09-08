@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using MassTransit;
 using TEL.IntegrationHub.Models;
 using TEL.IntegrationHub.Services;
@@ -6,7 +7,7 @@ using TEL.IntegrationHub.Services;
 namespace TEL.IntegrationHub.Consumers;
 
 /// <summary>Consumes icp.shipinfo.case.initiated when payload.caseType = Deposit; writes ILC Deposit tables.</summary>
-public sealed class DepositCaseInitiatedConsumer : IConsumer<JsonDocument>
+public sealed class DepositCaseInitiatedConsumer : IConsumer<JsonObject>
 {
     private readonly IMessageLogService _messageLogService;
     private readonly IIcpOutboxCompletionService _outboxCompletion;
@@ -25,9 +26,9 @@ public sealed class DepositCaseInitiatedConsumer : IConsumer<JsonDocument>
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<JsonDocument> context)
+    public async Task Consume(ConsumeContext<JsonObject> context)
     {
-        var raw = context.Message.RootElement.GetRawText();
+        var raw = context.Message.ToJsonString();
         if (!IntegrationEventEnvelopeNormalizer.TryNormalizeShipInfoCase(raw, out var message, out var normalizedJson)
             || message is null)
         {
@@ -112,7 +113,7 @@ public sealed class DepositCaseInitiatedConsumer : IConsumer<JsonDocument>
             await _messageLogService.MarkSuccessAsync(log.Id, cancellationToken);
             if (message.MessageId != Guid.Empty)
             {
-                await _outboxCompletion.MarkCompletedAsync(message.MessageId, cancellationToken);
+                await _outboxCompletion.MarkCompletedAsync(message.MessageId, message.Payload?.CaseNo, cancellationToken);
             }
         }
         catch (Exception ex)

@@ -17,6 +17,29 @@
         return FILTER_TYPES.Checkbox;
     }
 
+    function normalizeDateValue(value) {
+        var text = String(value || '').trim();
+        if (!text) return '';
+        var match = /^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/.exec(text);
+        if (!match) return text;
+        return match[1] + '-' + String(Number(match[2])).padStart(2, '0') + '-' + String(Number(match[3])).padStart(2, '0');
+    }
+
+    function normalizeDateInputs($filter) {
+        $filter.find('.pro-table-filter-date-from, .pro-table-filter-date-to, .pro-table-filter-date-input').each(function () {
+            var normalized = normalizeDateValue($(this).val());
+            if (normalized) $(this).val(normalized);
+        });
+    }
+
+    function syncNativeDatePicker($picker) {
+        var $visible = $picker.find('.pro-table-filter-date-from, .pro-table-filter-date-to, .pro-table-filter-date-input');
+        var $native = $picker.find('.pro-table-filter-date-native');
+        var normalized = normalizeDateValue($visible.val());
+        $visible.val(normalized);
+        $native.val(/^\d{4}-\d{2}-\d{2}$/.test(normalized) ? normalized : '');
+    }
+
     function resolveFieldFilterType(field) {
         return normalizeFilterType(field.filterType || field.FilterType);
     }
@@ -94,15 +117,15 @@
 
             if (filterType === FILTER_TYPES.DateRange) {
                 values[filterId] = {
-                    from: ($filter.find('.pro-table-filter-date-from').val() || '').trim(),
-                    to: ($filter.find('.pro-table-filter-date-to').val() || '').trim()
+                    from: normalizeDateValue($filter.find('.pro-table-filter-date-from').val()),
+                    to: normalizeDateValue($filter.find('.pro-table-filter-date-to').val())
                 };
                 return;
             }
 
             if (filterType === FILTER_TYPES.Date) {
                 values[filterId] = {
-                    date: ($filter.find('.pro-table-filter-date-input').val() || '').trim()
+                    date: normalizeDateValue($filter.find('.pro-table-filter-date-input').val())
                 };
             }
         });
@@ -186,14 +209,14 @@
             }
 
             if (filterType === FILTER_TYPES.DateRange) {
-                $filter.find('.pro-table-filter-date-from').val(entry.from || '');
-                $filter.find('.pro-table-filter-date-to').val(entry.to || '');
+                $filter.find('.pro-table-filter-date-from').val(normalizeDateValue(entry.from));
+                $filter.find('.pro-table-filter-date-to').val(normalizeDateValue(entry.to));
                 updateProTableFilterCount($filter, filterType);
                 return;
             }
 
             if (filterType === FILTER_TYPES.Date) {
-                $filter.find('.pro-table-filter-date-input').val(entry.date || '');
+                $filter.find('.pro-table-filter-date-input').val(normalizeDateValue(entry.date));
                 updateProTableFilterCount($filter, filterType);
             }
         });
@@ -210,6 +233,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 var $filter = $(this).closest('.pro-table-filter');
+                normalizeDateInputs($filter);
                 var filterType = normalizeFilterType($filter.data('filter-type'));
                 updateProTableFilterCount($filter, filterType);
                 closeProTableFilterDropdown($filter);
@@ -233,6 +257,31 @@
                 if (typeof reload === 'function') {
                     reload();
                 }
+            });
+
+        $(document)
+            .off('blur.proTableFilterDate', pageSelector + ' .pro-table-filter-date-from, ' + pageSelector + ' .pro-table-filter-date-to, ' + pageSelector + ' .pro-table-filter-date-input')
+            .on('blur.proTableFilterDate', pageSelector + ' .pro-table-filter-date-from, ' + pageSelector + ' .pro-table-filter-date-to, ' + pageSelector + ' .pro-table-filter-date-input', function () {
+                var normalized = normalizeDateValue($(this).val());
+                if (normalized) $(this).val(normalized);
+            });
+
+        $(document)
+            .off('click.proTableFilterDatePicker', pageSelector + ' .pro-table-filter-date-picker')
+            .on('click.proTableFilterDatePicker', pageSelector + ' .pro-table-filter-date-picker', function () {
+                var $picker = $(this).closest('.pro-table-date-picker');
+                syncNativeDatePicker($picker);
+                var nativeInput = $picker.find('.pro-table-filter-date-native')[0];
+                if (!nativeInput) return;
+                if (typeof nativeInput.showPicker === 'function') nativeInput.showPicker();
+                else nativeInput.click();
+            });
+
+        $(document)
+            .off('change.proTableFilterDatePicker', pageSelector + ' .pro-table-filter-date-native')
+            .on('change.proTableFilterDatePicker', pageSelector + ' .pro-table-filter-date-native', function () {
+                var $picker = $(this).closest('.pro-table-date-picker');
+                $picker.find('.pro-table-filter-date-from, .pro-table-filter-date-to, .pro-table-filter-date-input').val(normalizeDateValue($(this).val()));
             });
     }
 
