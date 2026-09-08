@@ -451,10 +451,10 @@
     <value>保証金</value>
   </data>
   <data name="ShipInfo.Field.DepositCaseStatus" xml:space="preserve">
-    <value>保証金起案</value>
+    <value>Deposit</value>
   </data>
   <data name="ShipInfo.Field.ArurCaseStatus" xml:space="preserve">
-    <value>ARUR 起案</value>
+    <value>ARUR Status</value>
   </data>
   <data name="ShipInfo.Field.RtNo" xml:space="preserve">
     <value>RT 番号</value>
@@ -712,16 +712,16 @@
     <value>起案に失敗しました</value>
   </data>
   <data name="ShipInfo.CaseStatus.NotInitiated" xml:space="preserve">
-    <value>未起案</value>
+    <value>NotInitiated</value>
   </data>
   <data name="ShipInfo.CaseStatus.Initiated" xml:space="preserve">
-    <value>起案済み</value>
+    <value>Initiated</value>
   </data>
   <data name="ShipInfo.CaseStatus.Failed" xml:space="preserve">
-    <value>起案失敗</value>
+    <value>Failed</value>
   </data>
   <data name="ShipInfo.CaseStatus.Processing" xml:space="preserve">
-    <value>処理中</value>
+    <value>Processing</value>
   </data>
   <data name="ShipInfo.DepositCaseStatus" xml:space="preserve">
     <value>デポジット起案</value>

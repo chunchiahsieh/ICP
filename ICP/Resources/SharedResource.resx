@@ -451,10 +451,10 @@
     <value>Deposit</value>
   </data>
   <data name="ShipInfo.Field.DepositCaseStatus" xml:space="preserve">
-    <value>Deposit Case Status</value>
+    <value>Deposit</value>
   </data>
   <data name="ShipInfo.Field.ArurCaseStatus" xml:space="preserve">
-    <value>ARUR Case Status</value>
+    <value>ARUR Status</value>
   </data>
   <data name="ShipInfo.Field.RtNo" xml:space="preserve">
     <value>RT No</value>
@@ -721,7 +721,7 @@
     <value>起案失敗</value>
   </data>
   <data name="ShipInfo.CaseStatus.Processing" xml:space="preserve">
-    <value>起案中</value>
+    <value>起案處理中</value>
   </data>
   <data name="ShipInfo.DepositCaseStatus" xml:space="preserve">
     <value>押金起案</value>

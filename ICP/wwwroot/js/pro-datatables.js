@@ -42,7 +42,9 @@
 
   function ProDataTablesInitUsers(config) {
     var tableSortState = config.initialSort || [[0, 'desc']];
-    var tablePageLengthState = config.pageLength;
+    var tablePageLengthState = config.pageLength > 0 ? config.pageLength : global.ProDataTables.defaults.pageLength;
+    var pageState = 1;
+    var totalRecordCount = 0;
     var filterSearchDebounceTimers = {};
     var instanceNs = 'ProDT' + (config.dataDivSelector || '#DataDiv').replace(/[^a-zA-Z0-9]/g, '_');
 
@@ -69,7 +71,8 @@
       if (!$.fn.dataTable.isDataTable(tableEl)) return;
       var dt = $table.DataTable();
       tableSortState = dt.order();
-      tablePageLengthState = dt.page.len();
+      // Paging is rendered by the server pager below. DataTables remains responsible
+      // only for table presentation, not for retaining a full client-side result set.
     }
 
     function getFilterValuesForDropdown($dropdown) {
@@ -266,10 +269,9 @@
         orderCellsTop: true,
         order: order,
         searching: false,
-        paging: true,
-        lengthChange: true,
-        pageLength: tablePageLengthState,
-        lengthMenu: global.ProDataTables.resolveLengthMenu(config)
+        paging: false,
+        lengthChange: false,
+        info: false
       };
 
       if (global.IcpDataTablesLanguage) {
@@ -305,9 +307,41 @@
       $table.DataTable(dtOptions);
     }
 
-    function Query() {
+    function renderServerPager() {
+      var $root = $(config.dataDivSelector);
+      $root.find('.pro-server-pager').remove();
+
+      var pageCount = Math.max(1, Math.ceil(totalRecordCount / tablePageLengthState));
+      var start = totalRecordCount === 0 ? 0 : ((pageState - 1) * tablePageLengthState) + 1;
+      var end = Math.min(pageState * tablePageLengthState, totalRecordCount);
+      var $pager = $('<div class="pro-server-pager d-flex align-items-center justify-content-between flex-wrap gap-2 mt-2"></div>');
+      var $summary = $('<div class="small text-muted"></div>').text(start + '-' + end + ' / ' + totalRecordCount);
+      var $controls = $('<div class="d-flex align-items-center gap-2"></div>');
+      var $size = $('<select class="form-select form-select-sm pro-server-page-size" style="width:auto"></select>');
+      $.each(global.ProDataTables.resolveLengthMenu(config)[0], function (_, value) {
+        $size.append($('<option></option>').val(value).text(value));
+      });
+      $size.val(String(tablePageLengthState));
+      var $previous = $('<button type="button" class="btn btn-sm btn-outline-secondary pro-server-page-prev">‹</button>')
+        .prop('disabled', pageState <= 1);
+      var $current = $('<span class="small text-nowrap"></span>').text(pageState + ' / ' + pageCount);
+      var $next = $('<button type="button" class="btn btn-sm btn-outline-secondary pro-server-page-next">›</button>')
+        .prop('disabled', pageState >= pageCount);
+      $controls.append($size, $previous, $current, $next);
+      $pager.append($summary, $controls);
+      $root.append($pager);
+    }
+
+    function Query(options) {
+      options = options || {};
       if (config.preserveSort === false) {
         tableSortState = config.initialSort || [[0, 'desc']];
+      }
+
+      if (options.page) {
+        pageState = options.page;
+      } else if (!options.keepPage) {
+        pageState = 1;
       }
 
       saveTableState();
@@ -315,6 +349,8 @@
       $(config.dataDivSelector).empty();
 
       var requestData = buildQueryPayload(saved);
+      requestData.Page = pageState;
+      requestData.PageSize = tablePageLengthState;
       if (config.extraQueryParams) {
         var extra = typeof config.extraQueryParams === 'function'
           ? config.extraQueryParams()
@@ -329,12 +365,16 @@
         type: 'POST',
         traditional: true,
         data: requestData,
-        success: function (data) {
+        success: function (data, _status, xhr) {
+          totalRecordCount = parseInt(xhr.getResponseHeader('X-ICP-Total-Count'), 10) || 0;
+          pageState = parseInt(xhr.getResponseHeader('X-ICP-Page'), 10) || pageState;
+          tablePageLengthState = parseInt(xhr.getResponseHeader('X-ICP-Page-Size'), 10) || tablePageLengthState;
           $(config.dataDivSelector).html(data);
           loadFilterOptions(function () {
             restoreFilterValues(saved);
             initColumnFilters();
             initDataTable();
+            renderServerPager();
             if (typeof config.onAfterRender === 'function') {
               config.onAfterRender($(config.dataDivSelector));
             }
@@ -353,7 +393,24 @@
       .off('keydown.' + instanceNs, config.dataDivSelector + ' .filter-search-input')
       .off('input.' + instanceNs, config.dataDivSelector + ' .filter-search-input')
       .off('shown.bs.dropdown.' + instanceNs, config.dataDivSelector + ' .column-filter-dropdown')
-      .off('hidden.bs.dropdown.' + instanceNs, config.dataDivSelector + ' .column-filter-dropdown');
+      .off('hidden.bs.dropdown.' + instanceNs, config.dataDivSelector + ' .column-filter-dropdown')
+      .off('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-prev')
+      .off('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-next')
+      .off('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-size');
+
+    $(document).on('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-prev', function () {
+      if (pageState > 1) Query({ page: pageState - 1, keepPage: true });
+    });
+
+    $(document).on('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-next', function () {
+      var pageCount = Math.max(1, Math.ceil(totalRecordCount / tablePageLengthState));
+      if (pageState < pageCount) Query({ page: pageState + 1, keepPage: true });
+    });
+
+    $(document).on('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-size', function () {
+      tablePageLengthState = parseInt($(this).val(), 10) || global.ProDataTables.defaults.pageLength;
+      Query();
+    });
 
     $(document).on('change.' + instanceNs, config.dataDivSelector + ' .column-filter-cb', function () {
       updateFilterCount($(this).closest('.column-filter-dropdown'));

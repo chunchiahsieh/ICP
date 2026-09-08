@@ -713,13 +713,17 @@ public class ShipInfoService : IShipInfoService
             errors.Add("Invoice No is required.");
         }
 
-        AddRequiredCaseFieldErrors(header, errors);
-
         if (caseType == ShipInfoCaseTypes.Deposit)
         {
+            // 押金起案與 Ship Plan（AR/UR）起案的卡控不同：
+            // 押金案只需要確認運單／航班資訊已完成。
             AddRequiredValueError(header.Mawb, "MAWB", errors);
             AddRequiredValueError(header.Hawb, "HAWB", errors);
             AddRequiredValueError(header.Flt, "FLT", errors);
+        }
+        else
+        {
+            AddRequiredCaseFieldErrors(header, errors);
         }
 
         if (!previewOnly && errors.Count > 0)

@@ -532,14 +532,14 @@ public class ForwarderDataImportService
 
         if (value is DateTime dateTime)
         {
-            return dateTime.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            return dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
 
         if (value is double number && number is > 0 and < 100000)
         {
             try
             {
-                return DateTime.FromOADate(number).ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                return DateTime.FromOADate(number).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
             catch (ArgumentException)
             {

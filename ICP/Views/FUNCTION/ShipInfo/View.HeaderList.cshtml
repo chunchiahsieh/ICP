@@ -4,6 +4,9 @@
 @{
     var isHeader = string.Equals(Model.TableKind, "Header", StringComparison.OrdinalIgnoreCase);
     var visibleFields = ShipInfoTableViewHelper.GetVisibleFields(Model.Fields);
+    var frozenHeaderFields = isHeader
+        ? new HashSet<string>(["SaDate", "InvoiceNo", "Hawb", "MdpFlag"], StringComparer.OrdinalIgnoreCase)
+        : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     var hasFilterRow = visibleFields.Any(field => field.Searchable);
     var tableUi = Model.TableUi ?? ShipInfoTableUiOptions.MergeDefaults(null);
     var wrapClasses = "shipinfo-table-wrap";
@@ -67,7 +70,8 @@
             <th class="shipinfo-action-col sorting_disabled">@Localizer["ShipInfo.Action"]</th>
             @foreach (var field in visibleFields)
             {
-                <th>@ShipInfoTableViewHelper.ResolveLabel(field, Model.Culture)</th>
+                var freezeClass = frozenHeaderFields.Contains(field.FieldName) ? " shipinfo-header-freeze-col" : string.Empty;
+                <th class="@freezeClass" data-freeze-field="@field.FieldName">@ShipInfoTableViewHelper.ResolveLabel(field, Model.Culture)</th>
             }
         </tr>
         @if (hasFilterRow)
@@ -80,7 +84,8 @@
                 <th class="shipinfo-action-col sorting_disabled"></th>
                 @foreach (var field in visibleFields)
                 {
-                    <th class="sorting_disabled pro-table-filter-cell">
+                    var freezeClass = frozenHeaderFields.Contains(field.FieldName) ? " shipinfo-header-freeze-col" : string.Empty;
+                    <th class="@("sorting_disabled pro-table-filter-cell" + freezeClass)" data-freeze-field="@field.FieldName">
                         @if (field.Searchable)
                         {
                             var filterId = $"filter-{Model.TableId}-{field.FieldName}";
@@ -134,13 +139,14 @@
                 {
                     var value = ShipInfoTableViewHelper.GetItemValue(item, field.FieldName);
                     var formatted = FormatCell(item, field);
+                    var freezeClass = frozenHeaderFields.Contains(field.FieldName) ? " shipinfo-header-freeze-col" : string.Empty;
                     if (string.Equals(field.FieldName, "InvoiceSeq", StringComparison.OrdinalIgnoreCase) && value is not null)
                     {
-                        <td data-order="@Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)">@formatted</td>
+                        <td class="@freezeClass" data-freeze-field="@field.FieldName" data-order="@Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)">@formatted</td>
                     }
                     else
                     {
-                        <td>@formatted</td>
+                        <td class="@freezeClass" data-freeze-field="@field.FieldName">@formatted</td>
                     }
                 }
             </tr>

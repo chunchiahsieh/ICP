@@ -231,6 +231,7 @@ builder.Services.AddHttpClient("IntegrationHub", (sp, client) =>
     client.Timeout = TimeSpan.FromSeconds(60);
 });
 builder.Services.AddScoped<ShipInfoApiExceptionFilter>();
+builder.Services.AddScoped<BackendPagingResultFilter>();
 builder.Services.AddScoped<TariffDataImportService>();
 builder.Services.AddScoped<RequireLoginFilter>();
 builder.Services.AddScoped<RequireResourcePermissionFilter>();
@@ -240,6 +241,7 @@ builder.Services
     {
         options.Filters.Add<RequireLoginFilter>();
         options.Filters.Add<RequireResourcePermissionFilter>();
+        options.Filters.Add<BackendPagingResultFilter>();
     })
     .AddDataAnnotationsLocalization(options =>
         options.DataAnnotationLocalizerProvider = (_, factory) =>

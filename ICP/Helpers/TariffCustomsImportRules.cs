@@ -350,7 +350,7 @@ public static class TariffCustomsImportRules
 
         if (value is DateTime dateTime)
         {
-            return dateTime.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+            return dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
 
         if (value is double doubleValue)

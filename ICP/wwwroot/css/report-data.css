@@ -79,3 +79,107 @@
     white-space: nowrap;
     height: auto;
 }
+
+/* ShipInfo: one scroll owner per table, with no Bootstrap row gutters.
+   Keep a short Detail table's scrollbar immediately below its last row. */
+.shipinfo-page.report-split-page .report-split-pane,
+.shipinfo-page.report-split-page .report-split-table,
+.shipinfo-page.report-split-page .shipinfo-table-wrap,
+.shipinfo-page.report-split-page .dataTables_wrapper {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.shipinfo-page.report-split-page .shipinfo-table-wrap {
+    overflow: visible;
+}
+
+.shipinfo-page.report-split-page .dataTables_wrapper > .row:has(table) {
+    display: block;
+    flex: 0 0 auto;
+    margin: 0;
+    min-height: 0;
+    max-height: 420px;
+    overflow: auto;
+}
+
+.shipinfo-page.report-split-page .dataTables_wrapper > .row:has(table) > [class*="col-"] {
+    padding: 0;
+    width: max-content;
+    min-width: 100%;
+}
+
+.shipinfo-page #shipInfoHeaderTable {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.shipinfo-page #shipInfoHeaderTable thead .shipinfo-header-freeze-col {
+    background: #f8f9fa;
+    background-clip: border-box;
+}
+
+.shipinfo-page #shipInfoHeaderTable tbody .shipinfo-header-freeze-col {
+    background: #fff;
+    background-clip: border-box;
+}
+
+.shipinfo-page #shipInfoHeaderTable tbody tr.table-primary .shipinfo-header-freeze-col {
+    background: #cfe2ff;
+}
+
+/* IDs deliberately outrank the shared first/last-pane minimum-height rules. */
+#shipInfoHeaderDataDiv,
+#shipInfoDetailDataDiv,
+#shipInfoHeaderDataDiv .shipinfo-table-wrap,
+#shipInfoDetailDataDiv .shipinfo-table-wrap,
+#shipInfoHeaderDataDiv .dataTables_wrapper,
+#shipInfoDetailDataDiv .dataTables_wrapper {
+    flex: 0 0 auto;
+    min-height: 0;
+    height: auto;
+    min-width: 0;
+}
+
+#shipInfoHeaderDataDiv .dataTables_wrapper > .row:has(table),
+#shipInfoDetailDataDiv .dataTables_wrapper > .row:has(table) {
+    min-height: 0;
+    height: auto;
+    max-height: min(420px, 50vh);
+    flex: 0 0 auto;
+    overflow: auto;
+}
+
+.shipinfo-page.report-split-page .report-split-pane {
+    flex: 0 0 auto;
+    min-height: 0;
+    overflow: visible;
+}
+
+/* Use one explicit layer for frozen cells, including the filter row.
+   Non-frozen filters must pass underneath it when scrolling horizontally. */
+#shipInfoHeaderTable > thead > tr > th.shipinfo-frozen-cell,
+#shipInfoHeaderTable > tbody > tr > td.shipinfo-frozen-cell {
+    position: sticky;
+    background-color: #fff;
+    background-clip: border-box;
+    z-index: 8;
+}
+
+#shipInfoHeaderTable > thead > tr > th.shipinfo-frozen-cell {
+    background-color: #f8f9fa;
+    z-index: 12;
+}
+
+#shipInfoHeaderTable > thead > tr.users-filter-row > th.shipinfo-frozen-cell {
+    top: var(--shipinfo-header-row-height, 2.5rem);
+    z-index: 13;
+}
+
+#shipInfoHeaderTable > tbody > tr.table-primary > td.shipinfo-frozen-cell {
+    background-color: #cfe2ff;
+}
+
+#shipInfoHeaderTable > thead > tr.users-filter-row > th.shipinfo-frozen-cell:has(.dropdown-menu.show) {
+    z-index: 14;
+}

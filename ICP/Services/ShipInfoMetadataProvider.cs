@@ -31,6 +31,12 @@ public class ShipInfoMetadataProvider
         var headerCatalog = ShipInfoFieldCatalog.BuildHeaderCatalog();
         var detailCatalog = ShipInfoFieldCatalog.BuildDetailCatalog();
         var headerListFields = MergeAndLabelFields(headerCatalog, tableFields.Header, ShipInfoFieldConfigMerger.MergeList, normalizedCulture);
+        var configuredHeaderNames = tableFields.Header.ResolveListFieldEntries()
+            .Select(x => x.FieldName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (configuredHeaderNames.Count > 0)
+        {
+            headerListFields = headerListFields.Where(x => configuredHeaderNames.Contains(x.FieldName)).ToList();
+        }
         var detailListFields = MergeAndLabelFields(detailCatalog, tableFields.Detail, ShipInfoFieldConfigMerger.MergeList, normalizedCulture);
         var headerEditFields = MergeAndLabelFields(headerCatalog, tableFields.Header, ShipInfoFieldConfigMerger.MergeEdit, normalizedCulture);
         var detailEditFields = MergeAndLabelFields(detailCatalog, tableFields.Detail, ShipInfoFieldConfigMerger.MergeEdit, normalizedCulture);

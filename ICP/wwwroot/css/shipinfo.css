@@ -1,7 +1,15 @@
 .shipinfo-page .shipinfo-table-wrap {
-    overflow: visible;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
     position: relative;
     isolation: isolate;
+}
+
+.shipinfo-page .shipinfo-pro-table {
+    width: max-content !important;
+    min-width: 100%;
+    white-space: nowrap;
 }
 
 .shipinfo-page .shipinfo-sticky-enabled .shipinfo-sticky-header tr:first-child th {
@@ -196,6 +204,25 @@
 .shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable .shipinfo-action-col {
     left: 2.5rem;
     box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
+}
+
+.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable .shipinfo-header-freeze-col {
+    position: sticky;
+    left: var(--shipinfo-freeze-left, auto);
+    z-index: 2;
+    background-color: var(--bs-body-bg, #fff);
+    background-clip: padding-box;
+}
+
+.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable thead .shipinfo-header-freeze-col {
+    z-index: 6;
+    background-color: #f8f9fa;
+}
+
+.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable .shipinfo-header-freeze-col[data-freeze-field="MdpFlag"] {
+    /* Bootstrap paints striped/hover rows using an inset box-shadow.
+       Preserve that layer and draw the frozen boundary with a border. */
+    border-right: 1px solid var(--bs-border-color, #dee2e6);
 }
 
 .shipinfo-page .shipinfo-sticky-left-enabled #shipInfoDetailTable .shipinfo-action-col {

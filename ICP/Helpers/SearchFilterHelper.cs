@@ -93,7 +93,7 @@ public static class SearchFilterHelper
         string? search,
         CancellationToken cancellationToken)
     {
-        const string format = "yyyy/MM/dd";
+        const string format = "yyyy-MM-dd";
 
         var values = await selector
             .Distinct()

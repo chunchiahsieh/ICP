@@ -712,7 +712,7 @@
     <value>Failed to create case</value>
   </data>
   <data name="ShipInfo.CaseStatus.NotInitiated" xml:space="preserve">
-    <value>Not initiated</value>
+    <value>NotInitiated</value>
   </data>
   <data name="ShipInfo.CaseStatus.Initiated" xml:space="preserve">
     <value>Initiated</value>

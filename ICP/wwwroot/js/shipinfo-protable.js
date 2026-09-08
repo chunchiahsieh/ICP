@@ -84,6 +84,7 @@
             },
             onDraw: function ($div) {
                 syncStickyHeaderOffset($div);
+                syncFrozenHeaderColumns($div);
             },
             formatFilterOptionLabel: function (column, value) {
                 if (!column || value == null) {
@@ -187,7 +188,36 @@
 
     function bindHeaderTableEvents($scope) {
         syncStickyHeaderOffset($scope);
+        syncFrozenHeaderColumns($scope);
         app.restoreHeaderSelection($scope);
+    }
+
+    function syncFrozenHeaderColumns($scope) {
+        var $table = $scope.find('#shipInfoHeaderTable');
+        var $headerRow = $table.find('thead tr').first();
+        if (!$headerRow.length) {
+            return;
+        }
+
+        // Do not use offsetLeft here. Once a cell becomes sticky, browser layout can
+        // report its visual (already shifted) position and columns then overlap on
+        // horizontal scrolling. Build each left offset from the real preceding widths.
+        var left = 0;
+        var frozenFields = ['SaDate', 'InvoiceNo', 'Hawb', 'MdpFlag'];
+        $headerRow.children().each(function (index) {
+            var fieldName = $(this).attr('data-freeze-field');
+            var frozen = index < 2 || frozenFields.indexOf(fieldName) >= 0;
+            var width = this.getBoundingClientRect().width;
+            // Apply the same column contract to both header rows and every data
+            // row after DataTables draws. Filter cells must also own a sticky
+            // stacking layer; a left value alone does not freeze their controls.
+            $table.children('thead, tbody').children('tr').each(function () {
+                $(this).children().eq(index)
+                    .toggleClass('shipinfo-frozen-cell', frozen)
+                    .css('left', frozen ? left + 'px' : '');
+            });
+            if (frozen) left += width;
+        });
     }
 
     $(document)
@@ -332,6 +362,7 @@
 
         $(window).off('resize.shipinfoStickyHeader').on('resize.shipinfoStickyHeader', function () {
             syncStickyHeaderOffset();
+            syncFrozenHeaderColumns($('#shipInfoHeaderDataDiv'));
         });
     };
 
