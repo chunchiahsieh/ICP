@@ -199,7 +199,7 @@
     <value>Edit</value>
   </data>
   <data name="ShipInfo.Delete" xml:space="preserve">
-    <value>Discard</value>
+    <value>Delete</value>
   </data>
   <data name="ShipInfo.Discard" xml:space="preserve">
     <value>Discard</value>
@@ -292,7 +292,7 @@
     <value>Are you sure you want to delete?</value>
   </data>
   <data name="ShipInfo.DeleteConfirmMessage" xml:space="preserve">
-    <value>This operation will delete all related details.</value>
+    <value>This action deletes the Header and all Detail records. If Deposit or AR/UR was created in ILC, cancel it in ILC yourself.</value>
   </data>
   <data name="ShipInfo.DeleteConfirmIrreversible" xml:space="preserve">
     <value>This action cannot be undone.</value>
@@ -736,6 +736,9 @@
     <value>Ship Info Edit</value>
   </data>
   <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
+    <value>Ship Info Delete</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Discard" xml:space="preserve">
     <value>Ship Info Discard</value>
   </data>
   <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">

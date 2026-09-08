@@ -199,7 +199,7 @@
     <value>編集</value>
   </data>
   <data name="ShipInfo.Delete" xml:space="preserve">
-    <value>廃棄</value>
+    <value>削除</value>
   </data>
   <data name="ShipInfo.Discard" xml:space="preserve">
     <value>廃棄</value>
@@ -292,7 +292,7 @@
     <value>削除してもよろしいですか？</value>
   </data>
   <data name="ShipInfo.DeleteConfirmMessage" xml:space="preserve">
-    <value>この操作ですべての Detail が削除されます。</value>
+    <value>この操作で Header とすべての Detail が削除されます。ILC で押金または AR/UR を作成済みの場合は、利用者自身で ILC 上の取消を行ってください。</value>
   </data>
   <data name="ShipInfo.DeleteConfirmIrreversible" xml:space="preserve">
     <value>この操作は元に戻せません。</value>
@@ -736,6 +736,9 @@
     <value>Ship Info 編集</value>
   </data>
   <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
+    <value>Ship Info 削除</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Discard" xml:space="preserve">
     <value>Ship Info 廃棄</value>
   </data>
   <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">

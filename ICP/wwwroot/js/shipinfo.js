@@ -18,6 +18,8 @@
         });
         $('#btnShipInfoViewDiscard').on('click', app.openDiscardModal);
         $('#btnShipInfoConfirmDiscard').on('click', app.submitDiscard);
+        $('#btnShipInfoViewDelete').on('click', app.openDeleteConfirmModal);
+        $('#btnShipInfoConfirmDelete').on('click', app.submitDelete);
         $('#btnShipInfoCaseSubmit').on('click', app.showCaseSubmitConfirm);
         $('#btnShipInfoConfirmCaseSubmit').on('click', app.submitCase);
 

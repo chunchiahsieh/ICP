@@ -146,6 +146,12 @@ public class ShipInfoRepository : IShipInfoRepository
         return await _db.IcpHeaders.FirstOrDefaultAsync(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo, cancellationToken);
     }
 
+    public async Task<IReadOnlyList<IcpHeader>> GetHeaderEntitiesByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default) =>
+        await _db.IcpHeaders.AsNoTracking()
+            .Where(x => x.InvoiceNo == invoiceNo)
+            .OrderBy(x => x.TetPo)
+            .ToListAsync(cancellationToken);
+
     public async Task<IcpDetail?> GetDetailByKeyAsync(string detailKey, CancellationToken cancellationToken = default)
     {
         var key = ShipInfoKeyHelper.ParseDetailKey(detailKey);
@@ -206,6 +212,29 @@ public class ShipInfoRepository : IShipInfoRepository
         }
 
         _db.ShipInfoAuditLogs.AddRange(entries);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteHeadersByInvoiceAsync(
+        IReadOnlyList<IcpHeader> headers,
+        IReadOnlyList<IcpDetail> details,
+        IReadOnlyList<DeleteLog> logs,
+        string invoiceKey,
+        CancellationToken cancellationToken = default)
+    {
+        _db.DeleteLogs.AddRange(logs);
+        _db.IcpDetails.RemoveRange(details);
+        _db.IcpHeaders.RemoveRange(headers);
+        await _db.IntegrationEventOutboxes
+            .Where(x => x.HeaderKey == invoiceKey)
+            .ExecuteDeleteAsync(cancellationToken);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteDetailAsync(IcpDetail detail, DeleteLog log, CancellationToken cancellationToken = default)
+    {
+        _db.DeleteLogs.Add(log);
+        _db.IcpDetails.Remove(detail);
         await _db.SaveChangesAsync(cancellationToken);
     }
 

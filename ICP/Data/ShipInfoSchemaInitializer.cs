@@ -35,6 +35,25 @@ public static class ShipInfoSchemaInitializer
         END
         """;
 
+    private const string EnsureDeleteLogTableSql = """
+        IF OBJECT_ID(N'dbo.DELETE_LOG', N'U') IS NULL
+        BEGIN
+            CREATE TABLE dbo.DELETE_LOG (
+                Id BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_DELETE_LOG PRIMARY KEY,
+                Module NVARCHAR(100) NOT NULL,
+                SourceTable NVARCHAR(128) NOT NULL,
+                Action NVARCHAR(50) NOT NULL,
+                DataJson NVARCHAR(MAX) NOT NULL,
+                CreateTime DATETIME2(7) NOT NULL CONSTRAINT DF_DELETE_LOG_CreateTime DEFAULT SYSDATETIME(),
+                CreateUser NVARCHAR(100) NULL,
+                UpdateTime DATETIME2(7) NULL,
+                UpdateUser NVARCHAR(100) NULL
+            );
+            CREATE INDEX IX_DELETE_LOG_Module_SourceTable_CreateTime
+                ON dbo.DELETE_LOG(Module, SourceTable, CreateTime DESC);
+        END
+        """;
+
     private const string EnsureAttachmentsTableSql = """
         IF OBJECT_ID(N'dbo.Attachments', N'U') IS NULL
         BEGIN
@@ -126,6 +145,7 @@ public static class ShipInfoSchemaInitializer
         try
         {
             await db.Database.ExecuteSqlRawAsync(EnsureAuditLogTableSql, cancellationToken);
+            await db.Database.ExecuteSqlRawAsync(EnsureDeleteLogTableSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(EnsureAttachmentsTableSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(EnsureDepositColumnLengthSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(EnsureCaseStatusColumnsSql, cancellationToken);

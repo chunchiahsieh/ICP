@@ -38,6 +38,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<IcpDetail> IcpDetails => Set<IcpDetail>();
 
+    public DbSet<DeleteLog> DeleteLogs => Set<DeleteLog>();
+
     public DbSet<ShipInfoAuditLog> ShipInfoAuditLogs => Set<ShipInfoAuditLog>();
 
     public DbSet<IntegrationEventOutbox> IntegrationEventOutboxes => Set<IntegrationEventOutbox>();
@@ -389,6 +391,19 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.NewStatus).HasMaxLength(50);
             entity.Property(e => e.ActionTime).HasColumnType("datetime2(7)").IsRequired();
             entity.Property(e => e.CreateTime).HasDefaultValueSql("getdate()").IsRequired();
+            entity.Property(e => e.CreateUser).HasMaxLength(100);
+            entity.Property(e => e.UpdateUser).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<DeleteLog>(entity =>
+        {
+            entity.ToTable("DELETE_LOG");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Module).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.SourceTable).HasMaxLength(128).IsRequired();
+            entity.Property(e => e.Action).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.DataJson).HasColumnType("nvarchar(max)").IsRequired();
+            entity.Property(e => e.CreateTime).HasDefaultValueSql("sysdatetime()").IsRequired();
             entity.Property(e => e.CreateUser).HasMaxLength(100);
             entity.Property(e => e.UpdateUser).HasMaxLength(100);
         });

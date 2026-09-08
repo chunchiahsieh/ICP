@@ -168,6 +168,20 @@ public class ShipInfoController : Controller
         return Json(ApiResponse<object>.Ok(new { headerKey = request?.HeaderKey }));
     }
 
+    [HttpPost]
+    public async Task<IActionResult> DeleteHeader(string headerKey, CancellationToken cancellationToken = default)
+    {
+        await _shipInfoService.DeleteHeaderAsync(headerKey, User.Identity?.Name, cancellationToken);
+        return Json(ApiResponse<object>.Ok(new { headerKey }));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteDetail(string detailKey, CancellationToken cancellationToken = default)
+    {
+        await _shipInfoService.DeleteDetailAsync(detailKey, User.Identity?.Name, cancellationToken);
+        return Json(ApiResponse<object>.Ok(new { detailKey }));
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetCaseDrawerData(string headerKey, string caseType, CancellationToken cancellationToken = default)
     {

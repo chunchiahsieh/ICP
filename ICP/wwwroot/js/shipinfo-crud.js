@@ -54,14 +54,17 @@
         var permission = app.getStatusPermission(app.getHeaderStatus(getStatusSource()));
         var canEdit = app.hasPermission('Views.Function.ShipInfo.Edit') && permission.edit;
         var canDiscard = state.viewModalKind === 'header'
-            && app.hasPermission('Views.Function.ShipInfo.Delete')
+            && app.hasPermission('Views.Function.ShipInfo.Discard')
             && permission.delete;
+        var canDelete = app.hasPermission('Views.Function.ShipInfo.Delete') && permission.delete;
         var editing = !!state.viewModalEditing;
 
         $('#btnShipInfoViewEdit').toggleClass('d-none', editing || !canEdit);
         $('#btnShipInfoViewSave').toggleClass('d-none', !editing || !canEdit);
         $('#btnShipInfoViewCancelEdit').toggleClass('d-none', !editing || !canEdit);
         $('#btnShipInfoViewDiscard').toggleClass('d-none', editing || !canDiscard)
+            .prop('disabled', !!state.actionBusy);
+        $('#btnShipInfoViewDelete').toggleClass('d-none', editing || !canDelete)
             .prop('disabled', !!state.actionBusy);
         $('#shipInfoViewModalLabel').text(editing
             ? (messages.editMode || messages.edit || 'Edit')

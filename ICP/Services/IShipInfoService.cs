@@ -61,6 +61,10 @@ public interface IShipInfoService
 
     Task DiscardHeaderAsync(string headerKey, string? reason, string? userName, CancellationToken cancellationToken = default);
 
+    Task DeleteHeaderAsync(string headerKey, string? userName, CancellationToken cancellationToken = default);
+
+    Task DeleteDetailAsync(string detailKey, string? userName, CancellationToken cancellationToken = default);
+
     Task<ShipInfoCaseDrawerData> GetCaseDrawerDataAsync(
         string headerKey,
         string caseType,

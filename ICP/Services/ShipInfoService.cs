@@ -295,7 +295,7 @@ public class ShipInfoService : IShipInfoService
 
     public async Task DiscardHeaderAsync(string headerRowKey, string? reason, string? userName, CancellationToken cancellationToken = default)
     {
-        EnsurePermission(ShipInfoPermissionCodes.Delete);
+        EnsurePermission(ShipInfoPermissionCodes.Discard);
         if (string.IsNullOrWhiteSpace(headerRowKey)) throw new ShipInfoBusinessException("Header row key is required.");
         var normalizedReason = reason?.Trim();
         if (string.IsNullOrWhiteSpace(normalizedReason)) throw new ShipInfoBusinessException("Discard reason is required.");
@@ -322,6 +322,52 @@ public class ShipInfoService : IShipInfoService
         }, cancellationToken);
 
         LogOperation("DiscardHeader", headerKey: invoiceKey);
+    }
+
+    public async Task DeleteHeaderAsync(string headerRowKey, string? userName, CancellationToken cancellationToken = default)
+    {
+        EnsurePermission(ShipInfoPermissionCodes.Delete);
+        var selectedHeader = await _repository.GetHeaderByRowKeyAsync(headerRowKey, cancellationToken)
+            ?? throw new ShipInfoNotFoundException("Header not found.");
+        var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(selectedHeader);
+        var headers = await _repository.GetHeaderEntitiesByInvoiceNoAsync(invoiceKey, cancellationToken);
+        foreach (var header in headers)
+        {
+            EnsureStatusAllows(header, permission => permission.Delete, "Header cannot be deleted in current status.");
+        }
+        var details = await _repository.GetDetailEntitiesByHeaderKeyAsync(invoiceKey, cancellationToken);
+        var actor = CrudAuditHelper.ResolveUserName(userName);
+        var logs = headers.Select(header => CreateDeleteLog("ICP_HEADER", header, actor)).ToList();
+        logs.AddRange(details.Select(detail => CreateDeleteLog("ICP_DETAIL", detail, actor)));
+
+        await _repository.ExecuteInTransactionAsync(
+            () => _repository.DeleteHeadersByInvoiceAsync(headers, details, logs, invoiceKey, cancellationToken),
+            cancellationToken);
+        LogOperation("DeleteHeader", headerKey: invoiceKey, extra: $"HeaderCount={headers.Count};DetailCount={details.Count}");
+    }
+
+    public async Task DeleteDetailAsync(string detailKey, string? userName, CancellationToken cancellationToken = default)
+    {
+        EnsurePermission(ShipInfoPermissionCodes.Delete);
+        var detail = await _repository.GetDetailForUpdateAsync(detailKey, cancellationToken)
+            ?? throw new ShipInfoNotFoundException("Detail not found.");
+        var headerRowKey = ShipInfoKeyHelper.BuildHeaderRowKey(detail.InvoiceNo, detail.TetPo);
+        var header = await _repository.GetHeaderByRowKeyAsync(headerRowKey, cancellationToken)
+            ?? throw new ShipInfoNotFoundException("Header not found.");
+        EnsureStatusAllows(header, permission => permission.Delete, "Detail cannot be deleted in current status.");
+
+        var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
+        var details = await _repository.GetDetailEntitiesByHeaderKeyAsync(invoiceKey, cancellationToken);
+        if (details.Count <= 1)
+        {
+            throw new ShipInfoBusinessException("At least one detail row must remain and cannot be deleted.");
+        }
+
+        var actor = CrudAuditHelper.ResolveUserName(userName);
+        await _repository.ExecuteInTransactionAsync(
+            () => _repository.DeleteDetailAsync(detail, CreateDeleteLog("ICP_DETAIL", detail, actor), cancellationToken),
+            cancellationToken);
+        LogOperation("DeleteDetail", headerKey: invoiceKey, detailKey: detailKey);
     }
 
     public async Task<ShipInfoCaseDrawerData> GetCaseDrawerDataAsync(
@@ -853,6 +899,17 @@ public class ShipInfoService : IShipInfoService
         CrudAuditHelper.ApplyCreateAudit(log, userName);
         return log;
     }
+
+    private static DeleteLog CreateDeleteLog(string sourceTable, object entity, string userName) =>
+        new()
+        {
+            Module = "ShipInfoController",
+            SourceTable = sourceTable,
+            Action = "Delete",
+            DataJson = JsonSerializer.Serialize(entity),
+            CreateTime = DateTime.Now,
+            CreateUser = userName
+        };
 
     private async Task<IcpHeader> RequireHeaderByRowKeyAsync(string headerRowKey, CancellationToken cancellationToken)
     {
