@@ -53,6 +53,8 @@ public class UserResourceItem
     public string ActionCode { get; set; } = string.Empty;
 
     public bool IsAllowed { get; set; }
+
+    public List<string?> DataScopes { get; set; } = [];
 }
 
 public class UserRoleTelIdPermissionItem

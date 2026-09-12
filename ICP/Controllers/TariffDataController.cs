@@ -28,6 +28,7 @@ public class TariffDataController : Controller
     }
 
     private readonly ApplicationDbContext _db;
+    private readonly PageDataScopeService _scope;
     private readonly IWebHostEnvironment _environment;
     private readonly TariffDataOptions _options;
     private readonly TariffDataImportService _importService;
@@ -42,9 +43,10 @@ public class TariffDataController : Controller
         TariffDataImportService importService,
         TariffTableMetadataProvider tableMetadataProvider,
         IStringLocalizer<SharedResource> localizer,
-        ILogger<TariffDataController> logger)
+        ILogger<TariffDataController> logger, PageDataScopeService scope)
     {
         _db = db;
+        _scope = scope;
         _environment = environment;
         _options = options.Value;
         _importService = importService;
@@ -290,7 +292,7 @@ public class TariffDataController : Controller
         }
 
         var hawbKey = hawb.Trim();
-        var item = await _db.TariffDataRecords
+        var item = await _scope.Apply(_db.TariffDataRecords)
             .AsNoTracking()
             .Where(e => e.HAWB.ToLower() == hawbKey.ToLower())
             .FirstOrDefaultAsync(cancellationToken);
@@ -332,7 +334,7 @@ public class TariffDataController : Controller
 
     private IQueryable<TariffData> BaseQuery()
     {
-        return _db.TariffDataRecords.AsNoTracking();
+        return _scope.Apply(_db.TariffDataRecords).AsNoTracking();
     }
 
     private string ResolveExportCellValue(
@@ -386,7 +388,7 @@ public class TariffDataController : Controller
 
         if (TryGetAttachmentCheckboxValues(criteria, fields, "DeclarationPdf", out var pdfValues))
         {
-            var dbRows = await _db.TariffDataRecords
+            var dbRows = await _scope.Apply(_db.TariffDataRecords)
                 .AsNoTracking()
                 .Where(e => e.DeclarationFile != null && e.DeclarationFile != "")
                 .Select(e => new { e.HAWB, e.DeclarationFile })
@@ -402,7 +404,7 @@ public class TariffDataController : Controller
 
         if (TryGetAttachmentCheckboxValues(criteria, fields, "CostFile", out var costValues))
         {
-            var dbRows = await _db.TariffDataRecords
+            var dbRows = await _scope.Apply(_db.TariffDataRecords)
                 .AsNoTracking()
                 .Where(e => e.Cost != null && e.Cost != "")
                 .Select(e => new { e.HAWB, e.Cost })
@@ -547,7 +549,7 @@ public class TariffDataController : Controller
             return Json(new { success = false, message = _localizer["Broker.TariffData.InvalidFileName"].Value });
         }
 
-        var matchingRows = await _db.TariffDataRecords
+        var matchingRows = await _scope.Apply(_db.TariffDataRecords)
             .Where(e => e.HAWB.ToLower() == hawbKey.ToLower())
             .ToListAsync(cancellationToken);
 

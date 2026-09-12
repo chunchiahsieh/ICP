@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -1277,7 +1277,10 @@
     <value>Remove</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.DuplicateInvoiceConfirm" xml:space="preserve">
-    <value>This file contains invoices that already exist in the system. Existing data may already be in use. Confirming will fully replace old data; removed records are archived with removal time.&#xA;&#xA;[Yes] Upload and overwrite&#xA;[No] Cancel this file upload</value>
+    <value>This file contains invoices that already exist in the system. Existing data may already be in use. Confirming will fully replace old data; removed records are archived with removal time.
+
+[Yes] Upload and overwrite
+[No] Cancel this file upload</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.DuplicateInvoicePreview" xml:space="preserve">
     <value>This file contains invoices that already exist in the system. Check the Duplicate column in the table; you will be asked to confirm overwrite on save.</value>
@@ -1747,6 +1750,39 @@
   <data name="Wizard.Step3Confirm" xml:space="preserve">
     <value>3 Confirm</value>
   </data>
+  <data name="Wizard.Step3DataScope" xml:space="preserve"><value>3 Set data scope</value></data>
+  <data name="Wizard.Step4Confirm" xml:space="preserve"><value>4 Confirm</value></data>
+  <data name="Wizard.DataScopeTitle" xml:space="preserve"><value>Data scope</value></data>
+  <data name="Wizard.DataScopeHint" xml:space="preserve"><value>This setting applies to every role and resource combination created in this batch.</value></data>
+  <data name="Wizard.SelectedDataScope" xml:space="preserve"><value>Data scope</value></data>
+  <data name="DataScope.All" xml:space="preserve"><value>All data</value></data>
+  <data name="DataScope.AllHint" xml:space="preserve"><value>Access all data covered by this permission.</value></data>
+  <data name="DataScope.Department" xml:space="preserve"><value>Department data</value></data>
+  <data name="DataScope.DepartmentHint" xml:space="preserve"><value>Access data for the user's department only.</value></data>
+  <data name="DataScope.Self" xml:space="preserve"><value>Own data only</value></data>
+  <data name="DataScope.SelfHint" xml:space="preserve"><value>Access data created or requested by the user only.</value></data>
+  <data name="Message.InvalidDataScope" xml:space="preserve"><value>The data scope is invalid.</value></data>
+  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>Custom data scopes can only be applied to Customs Data Download.</value></data>
+  <data name="Message.DataScopeValueRequired" xml:space="preserve"><value>Enter at least one value for each data scope condition.</value></data>
+  <data name="DataScope.RestrictData" xml:space="preserve"><value>Restrict visible data</value></data>
+  <data name="DataScope.ConditionHint" xml:space="preserve"><value>Separate multiple values in one condition with commas. All conditions must match.</value></data>
+  <data name="DataScope.AddCondition" xml:space="preserve"><value>Add condition</value></data>
+  <data name="DataScope.Field" xml:space="preserve"><value>Field</value></data>
+  <data name="DataScope.Table" xml:space="preserve"><value>Table</value></data>
+  <data name="DataScope.SelectTable" xml:space="preserve"><value>-- Select table --</value></data>
+  <data name="DataScope.SelectField" xml:space="preserve"><value>-- Select field --</value></data>
+  <data name="DataScope.Operator" xml:space="preserve"><value>Operator</value></data>
+  <data name="DataScope.Contains" xml:space="preserve"><value>Contains</value></data>
+  <data name="DataScope.Values" xml:space="preserve"><value>Values</value></data>
+  <data name="DataScope.ValuesPlaceholder" xml:space="preserve"><value>Enter one or more comma-separated values</value></data>
+  <data name="DataScope.Unrestricted" xml:space="preserve"><value>All data</value></data>
+  <data name="DataScope.ConditionSeparator" xml:space="preserve"><value> AND </value></data>
+  <data name="DataScope.CustomConditions" xml:space="preserve"><value>Custom conditions</value></data>
+  <data name="DataScope.ExampleTitle" xml:space="preserve"><value>Examples</value></data>
+  <data name="DataScope.ExampleEquals" xml:space="preserve"><value>enter</value></data>
+  <data name="DataScope.ExampleIn" xml:space="preserve"><value>enter</value></data>
+  <data name="DataScope.ExampleContains" xml:space="preserve"><value>enter</value></data>
+  <data name="DataScope.ValuesNoQuotes" xml:space="preserve"><value>Enter values without single quotes. Separate IN values with commas.</value></data>
   <data name="Message.ValidRoleUserNotFound" xml:space="preserve">
     <value>No valid role or user found</value>
   </data>

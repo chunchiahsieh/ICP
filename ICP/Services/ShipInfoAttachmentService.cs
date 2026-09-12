@@ -10,15 +10,17 @@ public sealed class ShipInfoAttachmentService
 {
     public const string AttachmentType = "ICP_HEADER";
     private readonly ApplicationDbContext _db;
+    private readonly PageDataScopeService _scope;
     private readonly IConfiguration _configuration;
     private readonly UserResourcePermissionService _permissionService;
 
     public ShipInfoAttachmentService(
         ApplicationDbContext db,
         IConfiguration configuration,
-        UserResourcePermissionService permissionService)
+        UserResourcePermissionService permissionService, PageDataScopeService scope)
     {
         _db = db;
+        _scope = scope;
         _configuration = configuration;
         _permissionService = permissionService;
     }
@@ -104,7 +106,7 @@ public sealed class ShipInfoAttachmentService
     {
         var permission = canModify ? ShipInfoPermissionCodes.Edit : ShipInfoPermissionCodes.View;
         if (!_permissionService.HasPermission(permission)) throw new ShipInfoForbiddenException("Permission denied.");
-        var header = await _db.IcpHeaders.AsNoTracking().FirstOrDefaultAsync(x => x.Id == headerId, ct)
+        var header = await _scope.Apply(_db.IcpHeaders.AsNoTracking()).FirstOrDefaultAsync(x => x.Id == headerId, ct)
             ?? throw new ShipInfoNotFoundException("Header not found.");
         if (canModify && !ShipInfoStatusRules.Resolve(ShipInfoStatusResolver.Resolve(header)).Edit)
         {

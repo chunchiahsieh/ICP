@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -1277,7 +1277,10 @@
     <value>移除</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.DuplicateInvoiceConfirm" xml:space="preserve">
-    <value>此檔案含有已存在於系統的 Invoice。舊資料可能已被取用過，確認上傳將完全覆蓋舊資料並備份備查、記錄移除時間。&#xA;&#xA;【是】確認上傳並覆蓋&#xA;【否】取消此檔案上傳</value>
+    <value>此檔案含有已存在於系統的 Invoice。舊資料可能已被取用過，確認上傳將完全覆蓋舊資料並備份備查、記錄移除時間。
+
+【是】確認上傳並覆蓋
+【否】取消此檔案上傳</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.DuplicateInvoicePreview" xml:space="preserve">
     <value>此檔案含有已存在於系統的 Invoice，請於表格「重複」欄確認；儲存時將提示是否覆蓋。</value>
@@ -1747,6 +1750,39 @@
   <data name="Wizard.Step3Confirm" xml:space="preserve">
     <value>3 確認建立</value>
   </data>
+  <data name="Wizard.Step3DataScope" xml:space="preserve"><value>3 設定資料範圍</value></data>
+  <data name="Wizard.Step4Confirm" xml:space="preserve"><value>4 確認建立</value></data>
+  <data name="Wizard.DataScopeTitle" xml:space="preserve"><value>資料範圍</value></data>
+  <data name="Wizard.DataScopeHint" xml:space="preserve"><value>此設定將套用至本次建立的所有角色與資源組合。</value></data>
+  <data name="Wizard.SelectedDataScope" xml:space="preserve"><value>資料範圍</value></data>
+  <data name="DataScope.All" xml:space="preserve"><value>全部資料</value></data>
+  <data name="DataScope.AllHint" xml:space="preserve"><value>可存取所有符合此權限的資料。</value></data>
+  <data name="DataScope.Department" xml:space="preserve"><value>所屬部門資料</value></data>
+  <data name="DataScope.DepartmentHint" xml:space="preserve"><value>僅可存取使用者所屬部門的資料。</value></data>
+  <data name="DataScope.Self" xml:space="preserve"><value>僅本人資料</value></data>
+  <data name="DataScope.SelfHint" xml:space="preserve"><value>僅可存取使用者本人建立或申請的資料。</value></data>
+  <data name="Message.InvalidDataScope" xml:space="preserve"><value>資料範圍無效。</value></data>
+  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>自訂資料範圍僅能套用至 Customs Data Download 資源。</value></data>
+  <data name="Message.DataScopeValueRequired" xml:space="preserve"><value>每個資料範圍條件至少要輸入一個值。</value></data>
+  <data name="DataScope.RestrictData" xml:space="preserve"><value>限制可查看資料</value></data>
+  <data name="DataScope.ConditionHint" xml:space="preserve"><value>同一條件中的多個值以逗號分隔；多個條件需同時符合。</value></data>
+  <data name="DataScope.AddCondition" xml:space="preserve"><value>新增條件</value></data>
+  <data name="DataScope.Field" xml:space="preserve"><value>欄位</value></data>
+  <data name="DataScope.Table" xml:space="preserve"><value>資料表</value></data>
+  <data name="DataScope.SelectTable" xml:space="preserve"><value>-- 選擇資料表 --</value></data>
+  <data name="DataScope.SelectField" xml:space="preserve"><value>-- 選擇欄位 --</value></data>
+  <data name="DataScope.Operator" xml:space="preserve"><value>運算子</value></data>
+  <data name="DataScope.Contains" xml:space="preserve"><value>包含</value></data>
+  <data name="DataScope.Values" xml:space="preserve"><value>值</value></data>
+  <data name="DataScope.ValuesPlaceholder" xml:space="preserve"><value>輸入一個或多個值，以逗號分隔</value></data>
+  <data name="DataScope.Unrestricted" xml:space="preserve"><value>全部資料</value></data>
+  <data name="DataScope.ConditionSeparator" xml:space="preserve"><value> 且 </value></data>
+  <data name="DataScope.CustomConditions" xml:space="preserve"><value>自訂條件</value></data>
+  <data name="DataScope.ExampleTitle" xml:space="preserve"><value>設定範例</value></data>
+  <data name="DataScope.ExampleEquals" xml:space="preserve"><value>值輸入</value></data>
+  <data name="DataScope.ExampleIn" xml:space="preserve"><value>值輸入</value></data>
+  <data name="DataScope.ExampleContains" xml:space="preserve"><value>值輸入</value></data>
+  <data name="DataScope.ValuesNoQuotes" xml:space="preserve"><value>值請直接輸入，不需要加單引號；IN 的多個值以英文逗號分隔。</value></data>
   <data name="Message.ValidRoleUserNotFound" xml:space="preserve">
     <value>找不到有效的角色或使用者</value>
   </data>

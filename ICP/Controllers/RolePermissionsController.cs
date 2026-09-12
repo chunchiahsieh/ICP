@@ -3,6 +3,7 @@ using ICP.Helpers;
 using ICP.Infrastructure;
 using ICP.Models;
 using ICP.Models.Icp;
+using ICP.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -19,7 +20,8 @@ public class RolePermissionsController : Controller
         "ResourceCode",
         "ResourceName",
         "ResourceType",
-        "ActionCode"
+        "ActionCode",
+        "DataScope"
     };
 
     private static readonly HashSet<string> AllowedRolePickFilterColumns = new(StringComparer.OrdinalIgnoreCase)
@@ -64,6 +66,11 @@ public class RolePermissionsController : Controller
             return CrudJsonHelper.Failure(_localizer["Message.SelectRoleAndResource"]);
         }
 
+        if (!CustomsDataDownloadDataScopeService.TrySerialize(model.DataScope, out var dataScope, out _))
+        {
+            return CrudJsonHelper.Failure(_localizer["Message.InvalidDataScope"]);
+        }
+
         var roleIds = model.RoleIds.Distinct().ToList();
         var resourceIds = model.ResourceIds.Distinct().ToList();
 
@@ -83,17 +90,16 @@ public class RolePermissionsController : Controller
         }
 
         var validRoleIds = roles.Select(r => r.Id).ToHashSet();
-        var existingKeys = await _icpDb.RolePermissions
-            .AsNoTracking()
+        var existingPermissions = await _icpDb.RolePermissions
             .Where(rp => validRoleIds.Contains(rp.RoleId) && resourceIds.Contains(rp.ResourceId))
-            .Select(rp => new { rp.RoleId, rp.ResourceId, rp.ActionCode })
             .ToListAsync(cancellationToken);
 
-        var existingSet = existingKeys
-            .Select(k => $"{k.RoleId}|{k.ResourceId}|{k.ActionCode}")
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var existingByKey = existingPermissions.ToDictionary(
+            permission => $"{permission.RoleId}|{permission.ResourceId}|{permission.ActionCode}",
+            StringComparer.OrdinalIgnoreCase);
 
         var inserted = 0;
+        var updated = 0;
         var skipped = 0;
         var actor = User.Identity?.Name;
 
@@ -103,9 +109,18 @@ public class RolePermissionsController : Controller
             {
                 var actionCode = RolePermissionActionCodes.Resolve(resource);
                 var key = $"{role.Id}|{resource.Id}|{actionCode}";
-                if (existingSet.Contains(key))
+                if (existingByKey.TryGetValue(key, out var existingPermission))
                 {
-                    skipped++;
+                    if (string.Equals(existingPermission.DataScope, dataScope, StringComparison.Ordinal))
+                    {
+                        skipped++;
+                    }
+                    else
+                    {
+                        existingPermission.DataScope = dataScope;
+                        CrudAuditHelper.ApplyUpdateAudit(existingPermission, actor);
+                        updated++;
+                    }
                     continue;
                 }
 
@@ -115,16 +130,17 @@ public class RolePermissionsController : Controller
                     RoleId = role.Id,
                     ResourceId = resource.Id,
                     ActionCode = actionCode,
-                    IsAllowed = true
+                    IsAllowed = true,
+                    DataScope = dataScope
                 };
                 CrudAuditHelper.ApplyCreateAudit(entity, actor);
                 _icpDb.RolePermissions.Add(entity);
-                existingSet.Add(key);
+                existingByKey.Add(key, entity);
                 inserted++;
             }
         }
 
-        if (inserted > 0)
+        if (inserted > 0 || updated > 0)
         {
             await _icpDb.SaveChangesAsync(cancellationToken);
         }
@@ -133,6 +149,7 @@ public class RolePermissionsController : Controller
         {
             success = true,
             insertedCount = inserted,
+            updatedCount = updated,
             skippedCount = skipped
         });
     }
@@ -253,6 +270,37 @@ public class RolePermissionsController : Controller
         return Json(options);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetDataScopeTables(CancellationToken cancellationToken = default)
+    {
+        var tables = await _icpDb.Database.SqlQueryRaw<string>("""
+            SELECT TABLE_NAME AS Value
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA = 'dbo' AND TABLE_TYPE = 'BASE TABLE'
+            ORDER BY TABLE_NAME
+            """)
+            .ToListAsync(cancellationToken);
+        return Json(tables);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDataScopeColumns(string? table, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(table))
+        {
+            return Json(Array.Empty<string>());
+        }
+
+        var columns = await _icpDb.Database.SqlQueryRaw<string>("""
+            SELECT COLUMN_NAME AS Value
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = {0}
+            ORDER BY ORDINAL_POSITION
+            """, table.Trim())
+            .ToListAsync(cancellationToken);
+        return Json(columns);
+    }
+
     private async Task<List<Role>> QueryRolesPickAsync(RolesSearchModel criteria, CancellationToken cancellationToken)
     {
         var query = _icpDb.Roles.AsNoTracking().Where(r => r.IsEnabled);
@@ -330,6 +378,7 @@ public class RolePermissionsController : Controller
             "ResourceName" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.Resource.ResourceName), search, cancellationToken),
             "ResourceType" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.Resource.ResourceType), search, cancellationToken),
             "ActionCode" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.ActionCode), search, cancellationToken),
+            "DataScope" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(r => r.DataScope), search, cancellationToken),
             _ => []
         };
     }
@@ -368,6 +417,11 @@ public class RolePermissionsController : Controller
         if (criteria.ActionCodes.Count > 0)
         {
             query = query.Where(r => criteria.ActionCodes.Contains(r.ActionCode));
+        }
+
+        if (criteria.DataScopes.Count > 0)
+        {
+            query = query.Where(r => r.DataScope != null && criteria.DataScopes.Contains(r.DataScope));
         }
 
         return await query

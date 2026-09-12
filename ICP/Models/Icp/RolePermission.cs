@@ -27,7 +27,6 @@ public class RolePermission
     public bool IsAllowed { get; set; } = true;
 
     /// <summary>資料範圍（例如 ALL / DEPARTMENT / SELF）</summary>
-    [MaxLength(50)]
     public string? DataScope { get; set; }
 
     /// <summary>備註</summary>

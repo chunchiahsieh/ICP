@@ -75,12 +75,19 @@
                     'filter-result-ResourceCode': 'ResourceCodes',
                     'filter-result-ResourceName': 'ResourceNames',
                     'filter-result-ResourceType': 'ResourceTypes',
-                    'filter-result-ActionCode': 'ActionCodes'
+                    'filter-result-ActionCode': 'ActionCodes',
+                    'filter-result-DataScope': 'DataScopes'
                 },
                 resultQueryUrl: '@Url.Action("Query", "RolePermissions")',
                 resultFilterOptionsUrl: '@Url.Action("GetFilterOptions", "RolePermissions")',
                 batchCreateUrl: '@Url.Action("BatchCreate", "RolePermissions")',
                 batchDeleteUrl: '@Url.Action("BatchDelete", "RolePermissions")',
+                dataScopeTablesUrl: '@Url.Action("GetDataScopeTables", "RolePermissions")',
+                dataScopeColumnsUrl: '@Url.Action("GetDataScopeColumns", "RolePermissions")',
+                dataScopeUnrestrictedLabel: @Html.Raw(JsonSerializer.Serialize(Localizer["DataScope.Unrestricted"].Value)),
+                dataScopeConditionSeparator: @Html.Raw(JsonSerializer.Serialize(Localizer["DataScope.ConditionSeparator"].Value)),
+                dataScopeOnlyForCustomsMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Message.DataScopeOnlyForCustomsDownload"].Value)),
+                dataScopeValueRequiredMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["Message.DataScopeValueRequired"].Value)),
                 batchDeleteConfirmMessage: @Html.Raw(JsonSerializer.Serialize(Localizer["RolePermissions.BatchDeleteConfirm"].Value))
             });
         });

@@ -16,7 +16,10 @@
                     <span class="nav-link disabled" data-wizard-step="2">@Localizer["Wizard.Step2Resources"]</span>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <span class="nav-link disabled" data-wizard-step="3">@Localizer["Wizard.Step3Confirm"]</span>
+                    <span class="nav-link disabled" data-wizard-step="3">@Localizer["Wizard.Step3DataScope"]</span>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <span class="nav-link disabled" data-wizard-step="4">@Localizer["Wizard.Step4Confirm"]</span>
                 </li>
             </ul>
 
@@ -38,6 +41,44 @@
                 <div id="ResourcesPickDiv"></div>
             </div>
 
+            <div id="wizardStepDataScope" class="wizard-step-pane d-none">
+                <h6 class="mb-2">@Localizer["Wizard.DataScopeTitle"]</h6>
+                <p class="text-muted small mb-3">@Localizer["Wizard.DataScopeHint"]</p>
+                <div class="alert alert-light border small py-2 mb-3" role="note">
+                    <div class="fw-semibold mb-1">@Localizer["DataScope.ExampleTitle"]</div>
+                    <div><code>Forwarder =</code> @Localizer["DataScope.ExampleEquals"] <code>LOG YUANFAN</code></div>
+                    <div><code>Forwarder IN</code> @Localizer["DataScope.ExampleIn"] <code>LOG YUANFAN, LOG KWE</code></div>
+                    <div><code>Forwarder @Localizer["DataScope.Contains"]</code> @Localizer["DataScope.ExampleContains"] <code>YUAN</code></div>
+                    <div class="text-muted mt-1">@Localizer["DataScope.ValuesNoQuotes"]</div>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="dataScopeEnabled" />
+                    <label class="form-check-label fw-semibold" for="dataScopeEnabled">@Localizer["DataScope.RestrictData"]</label>
+                </div>
+                <div id="dataScopeConditions" class="d-none">
+                    <p class="small text-muted">@Localizer["DataScope.ConditionHint"]</p>
+                    <div id="dataScopeConditionRows" class="vstack gap-2"></div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2" id="btnAddDataScopeCondition">@Localizer["DataScope.AddCondition"]</button>
+                </div>
+                <template id="dataScopeConditionTemplate">
+                    <div class="border rounded p-2 d-flex gap-2 align-items-start data-scope-condition-row">
+                        <select class="form-select form-select-sm scope-table" aria-label="@Localizer["DataScope.Table"]">
+                            <option value="">@Localizer["DataScope.SelectTable"]</option>
+                        </select>
+                        <select class="form-select form-select-sm scope-field" aria-label="@Localizer["DataScope.Field"]">
+                            <option value="">@Localizer["DataScope.SelectField"]</option>
+                        </select>
+                        <select class="form-select form-select-sm scope-operator" aria-label="@Localizer["DataScope.Operator"]">
+                            <option value="In">IN</option>
+                            <option value="Equal">=</option>
+                            <option value="Contains">@Localizer["DataScope.Contains"]</option>
+                        </select>
+                        <input class="form-control form-control-sm scope-values" type="text" placeholder="@Localizer["DataScope.ValuesPlaceholder"]" aria-label="@Localizer["DataScope.Values"]" />
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-remove-data-scope-condition" aria-label="@Localizer["Common.Delete"]">×</button>
+                    </div>
+                </template>
+            </div>
+
             <div id="wizardStepPreview" class="wizard-step-pane d-none">
                 <p class="text-muted small mb-3">@Localizer["Wizard.PreviewIntro"]</p>
                 <div class="row g-3">
@@ -49,6 +90,10 @@
                         <h6 class="mb-2">@Localizer["Wizard.SelectedResources"] <span class="badge text-bg-secondary" id="previewResourceCount">0</span></h6>
                         <ul class="list-group list-group-flush border rounded small preview-list" id="previewResourceList" style="max-height: 200px; overflow-y: auto;"></ul>
                     </div>
+                </div>
+                <div class="mt-3">
+                    <h6 class="mb-1">@Localizer["Wizard.SelectedDataScope"]</h6>
+                    <span class="badge text-bg-secondary" id="previewDataScope"></span>
                 </div>
                 <div class="alert alert-info mt-3 mb-0 py-2" role="status">
                     @Localizer["Wizard.EstimatedCreateCount"]<strong id="previewEstimatedCount">0</strong>

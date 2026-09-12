@@ -1,5 +1,6 @@
 ﻿using ICP.Data;
 using ICP.Helpers;
+using ICP.Services;
 using ICP.Models.Icp;
 using ICP.Models.ShipInfo;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,14 @@ public class ShipInfoRepository : IShipInfoRepository
 {
     private readonly ApplicationDbContext _db;
 
-    public ShipInfoRepository(ApplicationDbContext db)
+    private readonly PageDataScopeService _scope;
+    private IQueryable<IcpHeader> Headers() => _scope.Apply(_db.IcpHeaders);
+    private IQueryable<IcpDetail> Details() => _scope.ApplyDetails(_db.IcpDetails);
+
+    public ShipInfoRepository(ApplicationDbContext db, PageDataScopeService scope)
     {
         _db = db;
+        _scope = scope;
     }
 
     public async Task<ShipInfoHeaderListResult> SearchHeadersAsync(
@@ -22,7 +28,7 @@ public class ShipInfoRepository : IShipInfoRepository
         var page = criteria.Page < 1 ? 1 : criteria.Page;
         var pageSize = criteria.PageSize < 1 ? 50 : Math.Min(criteria.PageSize, 200);
 
-        var query = _db.IcpHeaders.AsNoTracking();
+        var query = Headers().AsNoTracking();
         query = ApplyHeaderFilters(query, criteria.Filters);
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -45,7 +51,7 @@ public class ShipInfoRepository : IShipInfoRepository
         IReadOnlyList<ShipInfoFieldMetadata> fields,
         CancellationToken cancellationToken = default)
     {
-        var query = _db.IcpHeaders.AsNoTracking();
+        var query = Headers().AsNoTracking();
         query = ShipInfoQueryFilterApplier.ApplyHeaderFilters(query, criteria, fields);
 
         var headers = await query
@@ -67,7 +73,7 @@ public class ShipInfoRepository : IShipInfoRepository
         }
 
         var invoiceNo = ShipInfoKeyHelper.ParseInvoiceNo(criteria.HeaderKey);
-        var query = _db.IcpDetails.AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
+        var query = Details().AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
         query = ShipInfoQueryFilterApplier.ApplyDetailFilters(query, criteria, fields);
 
         var details = await query
@@ -84,7 +90,7 @@ public class ShipInfoRepository : IShipInfoRepository
         string? search,
         CancellationToken cancellationToken = default)
     {
-        var query = _db.IcpHeaders.AsNoTracking();
+        var query = Headers().AsNoTracking();
         return await ShipInfoDistinctValuesHelper.GetHeaderDistinctValuesAsync(query, column, search, cancellationToken);
     }
 
@@ -100,7 +106,7 @@ public class ShipInfoRepository : IShipInfoRepository
         }
 
         var invoiceNo = ShipInfoKeyHelper.ParseInvoiceNo(headerKey);
-        var query = _db.IcpDetails.AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
+        var query = Details().AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
         return await ShipInfoDistinctValuesHelper.GetDetailDistinctValuesAsync(query, column, search, cancellationToken);
     }
 
@@ -121,7 +127,7 @@ public class ShipInfoRepository : IShipInfoRepository
         CancellationToken cancellationToken = default)
     {
         var invoiceNo = ShipInfoKeyHelper.ParseInvoiceNo(headerKey);
-        return await _db.IcpDetails
+        return await Details()
             .AsNoTracking()
             .Where(x => x.InvoiceNo == invoiceNo)
             .OrderBy(x => x.InvoiceSeq)
@@ -134,18 +140,18 @@ public class ShipInfoRepository : IShipInfoRepository
         string invoiceNo,
         string tetPo,
         CancellationToken cancellationToken = default) =>
-        await _db.IcpDetails
+        await Details()
             .Where(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo)
             .ToListAsync(cancellationToken);
 
     public async Task<bool> ExistsHeaderByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default) =>
-        await _db.IcpHeaders.AsNoTracking().AnyAsync(x => x.InvoiceNo == invoiceNo, cancellationToken);
+        await Headers().AsNoTracking().AnyAsync(x => x.InvoiceNo == invoiceNo, cancellationToken);
 
     public Task<IcpHeader?> GetHeaderByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
-        _db.IcpHeaders.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        Headers().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
     public Task<IcpHeader?> GetHeaderForUpdateByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
-        _db.IcpHeaders.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        Headers().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
     public Task<IcpHeader?> GetHeaderByInvoiceNoAndTetPoAsync(
         string invoiceNo,
@@ -153,7 +159,7 @@ public class ShipInfoRepository : IShipInfoRepository
         CancellationToken cancellationToken = default)
     {
         var normalizedTetPo = tetPo?.Trim();
-        var query = _db.IcpHeaders.AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
+        var query = Headers().AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
         query = string.IsNullOrWhiteSpace(normalizedTetPo)
             ? query.Where(x => string.IsNullOrWhiteSpace(x.TetPo))
             : query.Where(x => x.TetPo == normalizedTetPo);
@@ -161,7 +167,7 @@ public class ShipInfoRepository : IShipInfoRepository
     }
 
     public async Task<IReadOnlyList<IcpHeader>> GetHeaderEntitiesByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default) =>
-        await _db.IcpHeaders.AsNoTracking()
+        await Headers().AsNoTracking()
             .Where(x => x.InvoiceNo == invoiceNo)
             .OrderBy(x => x.TetPo)
             .ToListAsync(cancellationToken);
@@ -169,7 +175,7 @@ public class ShipInfoRepository : IShipInfoRepository
     public async Task<IcpDetail?> GetDetailByKeyAsync(string detailKey, CancellationToken cancellationToken = default)
     {
         var key = ShipInfoKeyHelper.ParseDetailKey(detailKey);
-        return await _db.IcpDetails.AsNoTracking()
+        return await Details().AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.InvoiceNo == key.InvoiceNo
                     && x.TetPo == key.TetPo
@@ -182,7 +188,7 @@ public class ShipInfoRepository : IShipInfoRepository
     public async Task<IcpDetail?> GetDetailForUpdateAsync(string detailKey, CancellationToken cancellationToken = default)
     {
         var key = ShipInfoKeyHelper.ParseDetailKey(detailKey);
-        return await _db.IcpDetails.FirstOrDefaultAsync(
+        return await Details().FirstOrDefaultAsync(
             x => x.InvoiceNo == key.InvoiceNo
                 && x.TetPo == key.TetPo
                 && (x.TetPoLine ?? string.Empty) == key.TetPoLine

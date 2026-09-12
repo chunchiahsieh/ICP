@@ -18,7 +18,6 @@ public class RolePermissionEditModel
 
     public bool IsAllowed { get; set; } = true;
 
-    [MaxLength(50)]
     public string? DataScope { get; set; }
 
     [MaxLength(500)]

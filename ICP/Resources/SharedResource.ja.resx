@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -1277,7 +1277,10 @@
     <value>削除</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.DuplicateInvoiceConfirm" xml:space="preserve">
-    <value>このファイルにはシステムに既存の Invoice が含まれます。既存データは使用済みの可能性があります。上書きすると旧データは完全に置き換えられ、削除時刻付きでバックアップされます。&#xA;&#xA;【はい】アップロードして上書き&#xA;【いいえ】このファイルのアップロードをキャンセル</value>
+    <value>このファイルにはシステムに既存の Invoice が含まれます。既存データは使用済みの可能性があります。上書きすると旧データは完全に置き換えられ、削除時刻付きでバックアップされます。
+
+【はい】アップロードして上書き
+【いいえ】このファイルのアップロードをキャンセル</value>
   </data>
   <data name="Forwarder.ForwarderDataUpload.DuplicateInvoicePreview" xml:space="preserve">
     <value>このファイルにはシステムに既存の Invoice が含まれます。表の「重複」列で確認してください。保存時に上書き確認が表示されます。</value>
@@ -1747,6 +1750,39 @@
   <data name="Wizard.Step3Confirm" xml:space="preserve">
     <value>3 確認</value>
   </data>
+  <data name="Wizard.Step3DataScope" xml:space="preserve"><value>3 データ範囲設定</value></data>
+  <data name="Wizard.Step4Confirm" xml:space="preserve"><value>4 確認</value></data>
+  <data name="Wizard.DataScopeTitle" xml:space="preserve"><value>データ範囲</value></data>
+  <data name="Wizard.DataScopeHint" xml:space="preserve"><value>この設定は、今回作成するすべてのロールとリソースの組み合わせに適用されます。</value></data>
+  <data name="Wizard.SelectedDataScope" xml:space="preserve"><value>データ範囲</value></data>
+  <data name="DataScope.All" xml:space="preserve"><value>すべてのデータ</value></data>
+  <data name="DataScope.AllHint" xml:space="preserve"><value>この権限に該当するすべてのデータにアクセスできます。</value></data>
+  <data name="DataScope.Department" xml:space="preserve"><value>所属部門のデータ</value></data>
+  <data name="DataScope.DepartmentHint" xml:space="preserve"><value>ユーザーの所属部門のデータのみアクセスできます。</value></data>
+  <data name="DataScope.Self" xml:space="preserve"><value>本人のデータのみ</value></data>
+  <data name="DataScope.SelfHint" xml:space="preserve"><value>ユーザー本人が作成または申請したデータのみアクセスできます。</value></data>
+  <data name="Message.InvalidDataScope" xml:space="preserve"><value>データ範囲が無効です。</value></data>
+  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>カスタムデータ範囲は Customs Data Download リソースにのみ適用できます。</value></data>
+  <data name="Message.DataScopeValueRequired" xml:space="preserve"><value>各データ範囲条件に少なくとも1つの値を入力してください。</value></data>
+  <data name="DataScope.RestrictData" xml:space="preserve"><value>表示データを制限する</value></data>
+  <data name="DataScope.ConditionHint" xml:space="preserve"><value>同じ条件の複数の値はカンマで区切ります。すべての条件が一致する必要があります。</value></data>
+  <data name="DataScope.AddCondition" xml:space="preserve"><value>条件を追加</value></data>
+  <data name="DataScope.Field" xml:space="preserve"><value>フィールド</value></data>
+  <data name="DataScope.Table" xml:space="preserve"><value>テーブル</value></data>
+  <data name="DataScope.SelectTable" xml:space="preserve"><value>-- テーブルを選択 --</value></data>
+  <data name="DataScope.SelectField" xml:space="preserve"><value>-- フィールドを選択 --</value></data>
+  <data name="DataScope.Operator" xml:space="preserve"><value>演算子</value></data>
+  <data name="DataScope.Contains" xml:space="preserve"><value>含む</value></data>
+  <data name="DataScope.Values" xml:space="preserve"><value>値</value></data>
+  <data name="DataScope.ValuesPlaceholder" xml:space="preserve"><value>1つ以上の値をカンマで区切って入力</value></data>
+  <data name="DataScope.Unrestricted" xml:space="preserve"><value>すべてのデータ</value></data>
+  <data name="DataScope.ConditionSeparator" xml:space="preserve"><value> かつ </value></data>
+  <data name="DataScope.CustomConditions" xml:space="preserve"><value>カスタム条件</value></data>
+  <data name="DataScope.ExampleTitle" xml:space="preserve"><value>設定例</value></data>
+  <data name="DataScope.ExampleEquals" xml:space="preserve"><value>値を入力</value></data>
+  <data name="DataScope.ExampleIn" xml:space="preserve"><value>値を入力</value></data>
+  <data name="DataScope.ExampleContains" xml:space="preserve"><value>値を入力</value></data>
+  <data name="DataScope.ValuesNoQuotes" xml:space="preserve"><value>値はシングルクォートなしで入力してください。IN の複数値はカンマで区切ります。</value></data>
   <data name="Message.ValidRoleUserNotFound" xml:space="preserve">
     <value>有効なロールまたはユーザーが見つかりません</value>
   </data>

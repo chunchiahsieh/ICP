@@ -19,15 +19,17 @@ public class ReportDataService : IReportDataService
     private readonly ReportMetadataProvider _metadataProvider;
     private readonly IShipInfoRepository _repository;
     private readonly ApplicationDbContext _db;
+    private readonly PageDataScopeService _scope;
 
     public ReportDataService(
         ReportMetadataProvider metadataProvider,
         IShipInfoRepository repository,
-        ApplicationDbContext db)
+        ApplicationDbContext db, PageDataScopeService scope)
     {
         _metadataProvider = metadataProvider;
         _repository = repository;
         _db = db;
+        _scope = scope;
     }
 
     public ShipInfoPageConfig GetPageConfig(string reportKey) =>
@@ -132,7 +134,7 @@ public class ReportDataService : IReportDataService
 
         var detailEntities = invoiceNos.Count == 0
             ? []
-            : await _db.IcpDetails
+            : await _scope.ApplyDetails(_db.IcpDetails)
                 .AsNoTracking()
                 .Where(detail => invoiceNos.Contains(detail.InvoiceNo))
                 .OrderBy(detail => detail.InvoiceSeq)

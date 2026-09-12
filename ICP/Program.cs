@@ -213,6 +213,7 @@ builder.Services.AddScoped<PermissionResourceSyncService>();
 builder.Services.AddSingleton<ResourceRouteRegistryService>();
 builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<UserResourcePermissionService>();
+builder.Services.AddScoped<PageDataScopeService>();
 builder.Services.AddScoped<ForwarderDataImportService>();
 builder.Services.AddScoped<AddDiSaImportService>();
 builder.Services.AddScoped<MassUpdateImportService>();

@@ -360,18 +360,24 @@ public class UserResourcePermissionService
             foreach (var rolePermission in rolePermissions)
             {
                 var resource = rolePermission.Resource;
-                resourceMap[resource.Id] = new UserResourceItem
+                if (!resourceMap.TryGetValue(resource.Id, out var userResource))
                 {
-                    ResourceId = resource.Id,
-                    ResourceCode = resource.ResourceCode,
-                    ResourceName = resource.ResourceName,
-                    ResourceType = resource.ResourceType,
-                    SystemCode = resource.SystemCode,
-                    ModuleCode = resource.ModuleCode,
-                    Route = resource.Route,
-                    ActionCode = rolePermission.ActionCode,
-                    IsAllowed = rolePermission.IsAllowed
-                };
+                    userResource = new UserResourceItem
+                    {
+                        ResourceId = resource.Id,
+                        ResourceCode = resource.ResourceCode,
+                        ResourceName = resource.ResourceName,
+                        ResourceType = resource.ResourceType,
+                        SystemCode = resource.SystemCode,
+                        ModuleCode = resource.ModuleCode,
+                        Route = resource.Route,
+                        ActionCode = rolePermission.ActionCode,
+                        IsAllowed = rolePermission.IsAllowed
+                    };
+                    resourceMap[resource.Id] = userResource;
+                }
+
+                userResource.DataScopes.Add(rolePermission.DataScope);
             }
         }
 

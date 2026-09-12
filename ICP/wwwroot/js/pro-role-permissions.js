@@ -104,6 +104,95 @@
     var $btnWizardBack = $('#btnWizardBack');
     var $btnWizardNext = $('#btnWizardNext');
     var $btnWizardSubmit = $('#btnWizardSubmit');
+    var dataScopeTables = null;
+
+    function populateSelect($select, values) {
+      var placeholder = $select.find('option:first').text();
+      $select.empty().append($('<option>').val('').text(placeholder));
+      (values || []).forEach(function (value) {
+        $select.append($('<option>').val(value).text(value));
+      });
+    }
+
+    function loadDataScopeColumns($row) {
+      var table = $row.find('.scope-table').val();
+      var $field = $row.find('.scope-field');
+      if (!table || !config.dataScopeColumnsUrl) {
+        populateSelect($field, []);
+        return;
+      }
+      $.get(config.dataScopeColumnsUrl, { table: table }, function (columns) {
+        populateSelect($field, columns);
+      });
+    }
+
+    function loadDataScopeTables($row) {
+      var $table = $row.find('.scope-table');
+      if (dataScopeTables) {
+        populateSelect($table, dataScopeTables);
+        return;
+      }
+      $.get(config.dataScopeTablesUrl, function (tables) {
+        dataScopeTables = tables || [];
+        $('.scope-table').each(function () {
+          populateSelect($(this), dataScopeTables);
+        });
+      });
+    }
+
+    function addDataScopeCondition() {
+      var template = document.getElementById('dataScopeConditionTemplate');
+      if (!template) {
+        return;
+      }
+      var $row = $(template.content.cloneNode(true)).children().first();
+      $('#dataScopeConditionRows').append($row);
+      loadDataScopeTables($row);
+    }
+
+    function getDataScope() {
+      if (!$('#dataScopeEnabled').is(':checked')) {
+        return null;
+      }
+
+      var conditions = [];
+      $('#dataScopeConditionRows .data-scope-condition-row').each(function () {
+        var values = String($(this).find('.scope-values').val() || '')
+          .split(',')
+          .map(function (value) { return value.trim(); })
+          .filter(function (value) { return value.length > 0; });
+        conditions.push({
+          table: String($(this).find('.scope-table').val() || ''),
+          field: String($(this).find('.scope-field').val() || ''),
+          operator: String($(this).find('.scope-operator').val() || ''),
+          values: values
+        });
+      });
+
+      return { version: 1, conditions: conditions };
+    }
+
+    function formatDataScope(scope) {
+      if (!scope || !scope.conditions || scope.conditions.length === 0) {
+        return config.dataScopeUnrestrictedLabel || 'Unrestricted';
+      }
+      return scope.conditions.map(function (condition) {
+        return condition.table + '.' + condition.field + ' ' + condition.operator + ' ' + condition.values.join(', ');
+      }).join(config.dataScopeConditionSeparator || ' AND ');
+    }
+
+    function validateDataScope(scope) {
+      if (!scope) {
+        return null;
+      }
+      if (scope.conditions.length === 0 || scope.conditions.some(function (condition) {
+        return !condition.table || !condition.field || !condition.operator || !condition.values || condition.values.length === 0
+          || (condition.operator === 'Equal' && condition.values.length !== 1);
+      })) {
+        return config.dataScopeValueRequiredMessage || 'Enter at least one value for every data scope condition.';
+      }
+      return null;
+    }
 
     function hideWizardAlert() {
       $wizardAlert.addClass('d-none').text('');
@@ -130,8 +219,8 @@
 
     function updateFooterButtons(step) {
       $btnWizardBack.toggleClass('d-none', step === 1);
-      $btnWizardNext.toggleClass('d-none', step === 3);
-      $btnWizardSubmit.toggleClass('d-none', step !== 3);
+      $btnWizardNext.toggleClass('d-none', step === 4);
+      $btnWizardSubmit.toggleClass('d-none', step !== 4);
     }
 
     function restoreRolePicks($container) {
@@ -199,11 +288,13 @@
     function renderPreview() {
       var roleCount = selectedRoles.size;
       var resourceCount = selectedResources.size;
+      var dataScope = getDataScope();
 
       $('#previewRoleCount').text(roleCount);
       $('#previewResourceCount').text(resourceCount);
       $('#previewEstimatedCount').text(roleCount * resourceCount);
       $('#previewFormula').text(roleCount + ' × ' + resourceCount);
+      $('#previewDataScope').text(formatDataScope(dataScope));
 
       var $roleList = $('#previewRoleList').empty();
       selectedRoles.forEach(function (item) {
@@ -236,7 +327,8 @@
 
       $('#wizardStepRoles').toggleClass('d-none', step !== 1);
       $('#wizardStepResources').toggleClass('d-none', step !== 2);
-      $('#wizardStepPreview').toggleClass('d-none', step !== 3);
+      $('#wizardStepDataScope').toggleClass('d-none', step !== 3);
+      $('#wizardStepPreview').toggleClass('d-none', step !== 4);
 
       updateStepIndicator(step);
       updateFooterButtons(step);
@@ -252,7 +344,7 @@
         setTimeout(function () {
           adjustDataTable(config.resourcesTableSelector);
         }, 50);
-      } else if (step === 3) {
+      } else if (step === 4) {
         renderPreview();
       }
     }
@@ -261,10 +353,14 @@
       currentStep = 1;
       selectedRoles.clear();
       selectedResources.clear();
+      $('#dataScopeEnabled').prop('checked', false);
+      $('#dataScopeConditions').addClass('d-none');
+      $('#dataScopeConditionRows').empty();
       hideWizardAlert();
       setSubmitLoading(false);
       $('#wizardStepRoles').removeClass('d-none');
       $('#wizardStepResources').addClass('d-none');
+      $('#wizardStepDataScope').addClass('d-none');
       $('#wizardStepPreview').addClass('d-none');
       updateStepIndicator(1);
       updateFooterButtons(1);
@@ -331,6 +427,13 @@
           return;
         }
         showStep(3);
+      } else if (currentStep === 3) {
+        var dataScopeError = validateDataScope(getDataScope());
+        if (dataScopeError) {
+          showWizardAlert(dataScopeError);
+          return;
+        }
+        showStep(4);
       }
     });
 
@@ -397,9 +500,15 @@
     $btnWizardSubmit.on('click', function () {
       var roleIds = Array.from(selectedRoles.keys());
       var resourceIds = Array.from(selectedResources.keys());
+      var dataScope = getDataScope();
+      var dataScopeError = validateDataScope(dataScope);
 
       if (roleIds.length === 0 || resourceIds.length === 0) {
         showWizardAlert('請至少選擇一筆角色與一筆資源');
+        return;
+      }
+      if (dataScopeError) {
+        showWizardAlert(dataScopeError);
         return;
       }
 
@@ -410,7 +519,7 @@
         url: config.batchCreateUrl,
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ roleIds: roleIds, resourceIds: resourceIds }),
+        data: JSON.stringify({ roleIds: roleIds, resourceIds: resourceIds, dataScope: dataScope }),
         success: function (result) {
           if (result.success) {
             if (wizardDrawerInstance) {
@@ -421,7 +530,7 @@
             }
             showPageMessage(
               'success',
-              '建立完成：新增 ' + result.insertedCount + ' 筆，略過 ' + result.skippedCount + ' 筆。'
+              '設定完成：新增 ' + result.insertedCount + ' 筆，更新 ' + (result.updatedCount || 0) + ' 筆，略過 ' + result.skippedCount + ' 筆。'
             );
           } else {
             showWizardAlert(result.message || '建立失敗');
@@ -434,6 +543,24 @@
           setSubmitLoading(false);
         }
       });
+    });
+
+    $('#dataScopeEnabled').on('change', function () {
+      var enabled = $(this).is(':checked');
+      $('#dataScopeConditions').toggleClass('d-none', !enabled);
+      if (enabled && $('#dataScopeConditionRows .data-scope-condition-row').length === 0) {
+        addDataScopeCondition();
+      }
+    });
+
+    $('#btnAddDataScopeCondition').on('click', addDataScopeCondition);
+
+    $(document).on('change', '.scope-table', function () {
+      loadDataScopeColumns($(this).closest('.data-scope-condition-row'));
+    });
+
+    $(document).on('click', '.btn-remove-data-scope-condition', function () {
+      $(this).closest('.data-scope-condition-row').remove();
     });
 
     $(document).on('change', config.resultDivSelector + ' .row-list-cb', function () {

@@ -553,7 +553,7 @@ public class ApplicationDbContext : DbContext
 
             entity.Property(e => e.ActionCode).HasMaxLength(50).IsRequired();
             entity.Property(e => e.IsAllowed).HasDefaultValue(true);
-            entity.Property(e => e.DataScope).HasMaxLength(50);
+            entity.Property(e => e.DataScope).HasColumnType("nvarchar(max)");
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.CreateTime).HasDefaultValueSql("GETDATE()").IsRequired();
             entity.Property(e => e.CreateUser).HasMaxLength(100);

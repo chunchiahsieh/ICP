@@ -18,15 +18,18 @@ public class CustomsDataDownloadController : Controller
     private readonly ApplicationDbContext _db;
     private readonly CustomsDataDownloadTableMetadataProvider _tableMetadataProvider;
     private readonly IStringLocalizer<SharedResource> _localizer;
+    private readonly UserResourcePermissionService _permissionService;
 
     public CustomsDataDownloadController(
         ApplicationDbContext db,
         CustomsDataDownloadTableMetadataProvider tableMetadataProvider,
-        IStringLocalizer<SharedResource> localizer)
+        IStringLocalizer<SharedResource> localizer,
+        UserResourcePermissionService permissionService)
     {
         _db = db;
         _tableMetadataProvider = tableMetadataProvider;
         _localizer = localizer;
+        _permissionService = permissionService;
     }
 
     [HttpGet]
@@ -139,6 +142,7 @@ public class CustomsDataDownloadController : Controller
     {
         var tableConfig = _tableMetadataProvider.GetPageConfig();
         var query = CustomsDataDownloadQueryFilterApplier.ApplyFilters(BaseQuery(), criteria, tableConfig.Fields);
+        query = CustomsDataDownloadDataScopeService.Apply(query, GetDataScopes());
         return await query
             .OrderByDescending(e => e.CreatedUtc)
             .ToListAsync(cancellationToken);
@@ -149,7 +153,7 @@ public class CustomsDataDownloadController : Controller
         string? search,
         CancellationToken cancellationToken)
     {
-        var query = BaseQuery();
+        var query = CustomsDataDownloadDataScopeService.Apply(BaseQuery(), GetDataScopes());
         return column switch
         {
             nameof(StgRawShippingAdvice.FileCode) => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => (string?)e.FileCode), search, cancellationToken),
@@ -186,4 +190,10 @@ public class CustomsDataDownloadController : Controller
             _ => []
         };
     }
+
+    private IReadOnlyList<string?> GetDataScopes() => _permissionService.GetSessionResources()
+        .Where(resource => resource.IsAllowed
+            && resource.ResourceCode.Equals(CustomsDataDownloadDataScopeService.ResourceCode, StringComparison.OrdinalIgnoreCase))
+        .SelectMany(resource => resource.DataScopes)
+        .ToList();
 }
