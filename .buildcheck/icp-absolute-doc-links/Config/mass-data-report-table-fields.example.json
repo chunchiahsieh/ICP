@@ -1,0 +1,20 @@
+{
+  "header": {
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Checkbox" }
+      ]
+    }
+  },
+  "detail": {
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "InvoiceSeq", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Description", "visible": true, "searchable": true, "filterType": "Text" }
+      ]
+    }
+  }
+}
