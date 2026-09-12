@@ -25,6 +25,12 @@
     <EmbeddedResource Update="Resources\SharedResource.zh-TW.resx">
       <DependentUpon>SharedResource.resx</DependentUpon>
     </EmbeddedResource>
+    <!-- Localization management edits the source .resx files at runtime, so they must
+         be present alongside the deployed application as well as embedded in the DLL. -->
+    <Content Include="Resources\SharedResource.resx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Resources\SharedResource.zh-TW.resx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Resources\SharedResource.en.resx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Resources\SharedResource.ja.resx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
