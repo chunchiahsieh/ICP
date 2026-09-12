@@ -172,11 +172,11 @@ public class ShipInfoService : IShipInfoService
     }
 
     public async Task<Dictionary<string, object?>> GetHeaderDataAsync(
-        string headerRowKey,
+        string headerId,
         CancellationToken cancellationToken = default)
     {
         EnsurePermission(ShipInfoPermissionCodes.View);
-        var header = await RequireHeaderByRowKeyAsync(headerRowKey, cancellationToken);
+        var header = await RequireHeaderByIdAsync(headerId, cancellationToken);
         LogOperation("QueryHeader", headerKey: ShipInfoKeyHelper.BuildHeaderKey(header));
         return ShipInfoEntityMapper.MapEntity(header);
     }
@@ -222,16 +222,15 @@ public class ShipInfoService : IShipInfoService
         CancellationToken cancellationToken = default)
     {
         EnsurePermission(ShipInfoPermissionCodes.Edit);
-        var headerRowKey = request.Id;
-        if (string.IsNullOrWhiteSpace(headerRowKey))
+        var headerId = request.Id;
+        if (string.IsNullOrWhiteSpace(headerId))
         {
             throw new ShipInfoBusinessException("Header key is required.");
         }
 
         var fields = _metadataProvider.GetHeaderEditFields();
         var values = NormalizeHeaderSaveValues(request.Values);
-        var header = await _repository.GetHeaderForUpdateByRowKeyAsync(headerRowKey, cancellationToken)
-            ?? throw new ShipInfoNotFoundException("Header not found.");
+        var header = await RequireHeaderForUpdateByIdAsync(headerId, cancellationToken);
 
         EnsureStatusAllows(header, permission => permission.Edit, "Header cannot be edited in current status.");
         EnsureConcurrency(header, request.UpdateTime);
@@ -245,14 +244,34 @@ public class ShipInfoService : IShipInfoService
             throw new ShipInfoBusinessException(string.Join(' ', validationErrors));
         }
 
+        var previousTetPo = header.TetPo;
         var changes = ShipInfoEntityMapper.DetectChanges(header, values, fields);
         ShipInfoEntityMapper.ApplyEditableValues(header, values, fields);
         CrudAuditHelper.ApplyUpdateAudit(header, userName);
 
-        await _repository.UpdateHeaderAsync(header, cancellationToken);
+        var relatedDetails = string.Equals(previousTetPo, header.TetPo, StringComparison.Ordinal)
+            ? []
+            : await _repository.GetDetailEntitiesForUpdateByInvoiceNoAndTetPoAsync(
+                header.InvoiceNo,
+                previousTetPo,
+                cancellationToken);
+        foreach (var detail in relatedDetails)
+        {
+            detail.TetPo = header.TetPo;
+            CrudAuditHelper.ApplyUpdateAudit(detail, userName);
+        }
+
+        if (relatedDetails.Count > 0)
+        {
+            await _repository.UpdateHeaderAndDetailsAsync(header, relatedDetails, cancellationToken);
+        }
+        else
+        {
+            await _repository.UpdateHeaderAsync(header, cancellationToken);
+        }
 
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
-        await WriteFieldAuditAsync("Header", headerRowKey, invoiceKey, changes, userName, cancellationToken);
+        await WriteFieldAuditAsync("Header", header.Id.ToString("D"), invoiceKey, changes, userName, cancellationToken);
         LogOperation("EditHeader", headerKey: invoiceKey);
         return ShipInfoEntityMapper.MapEntity(header);
     }
@@ -274,9 +293,8 @@ public class ShipInfoService : IShipInfoService
         var detail = await _repository.GetDetailForUpdateAsync(detailKey, cancellationToken)
             ?? throw new ShipInfoNotFoundException("Detail not found.");
 
-        var headerRowKey = ShipInfoKeyHelper.BuildHeaderRowKey(detail.InvoiceNo, detail.TetPo);
         var headerKey = ShipInfoKeyHelper.BuildHeaderKey(detail.InvoiceNo);
-        var header = await _repository.GetHeaderByRowKeyAsync(headerRowKey, cancellationToken)
+        var header = await _repository.GetHeaderByInvoiceNoAndTetPoAsync(detail.InvoiceNo, detail.TetPo, cancellationToken)
             ?? throw new ShipInfoNotFoundException("Header not found.");
 
         EnsureStatusAllows(header, permission => permission.Edit, "Detail cannot be edited in current status.");
@@ -302,16 +320,15 @@ public class ShipInfoService : IShipInfoService
         return ShipInfoEntityMapper.MapEntity(detail);
     }
 
-    public async Task DiscardHeaderAsync(string headerRowKey, string? reason, string? userName, CancellationToken cancellationToken = default)
+    public async Task DiscardHeaderAsync(string headerId, string? reason, string? userName, CancellationToken cancellationToken = default)
     {
         EnsurePermission(ShipInfoPermissionCodes.Discard);
-        if (string.IsNullOrWhiteSpace(headerRowKey)) throw new ShipInfoBusinessException("Header row key is required.");
+        if (string.IsNullOrWhiteSpace(headerId)) throw new ShipInfoBusinessException("Header ID is required.");
         var normalizedReason = reason?.Trim();
         if (string.IsNullOrWhiteSpace(normalizedReason)) throw new ShipInfoBusinessException("Discard reason is required.");
         if (normalizedReason.Length > 200) throw new ShipInfoBusinessException("Discard reason cannot exceed 200 characters.");
 
-        var header = await _repository.GetHeaderForUpdateByRowKeyAsync(headerRowKey, cancellationToken)
-            ?? throw new ShipInfoNotFoundException("Header not found.");
+        var header = await RequireHeaderForUpdateByIdAsync(headerId, cancellationToken);
         EnsureStatusAllows(header, permission => permission.Delete, "Header cannot be discarded in current status.");
 
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
@@ -319,7 +336,7 @@ public class ShipInfoService : IShipInfoService
         header.Cancellation = "Y";
         header.ReasonForCancellation = normalizedReason;
         CrudAuditHelper.ApplyUpdateAudit(header, userName);
-        var auditLog = CreateAuditLog("Header", headerRowKey, invoiceKey, "Discard", userName,
+        var auditLog = CreateAuditLog("Header", header.Id.ToString("D"), invoiceKey, "Discard", userName,
             oldStatus: oldStatus, newStatus: ShipInfoStatuses.Cancelled);
         auditLog.FieldName = nameof(IcpHeader.ReasonForCancellation);
         auditLog.NewValue = normalizedReason;
@@ -333,11 +350,10 @@ public class ShipInfoService : IShipInfoService
         LogOperation("DiscardHeader", headerKey: invoiceKey);
     }
 
-    public async Task DeleteHeaderAsync(string headerRowKey, string? userName, CancellationToken cancellationToken = default)
+    public async Task DeleteHeaderAsync(string headerId, string? userName, CancellationToken cancellationToken = default)
     {
         EnsurePermission(ShipInfoPermissionCodes.Delete);
-        var selectedHeader = await _repository.GetHeaderByRowKeyAsync(headerRowKey, cancellationToken)
-            ?? throw new ShipInfoNotFoundException("Header not found.");
+        var selectedHeader = await RequireHeaderByIdAsync(headerId, cancellationToken);
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(selectedHeader);
         var headers = await _repository.GetHeaderEntitiesByInvoiceNoAsync(invoiceKey, cancellationToken);
         foreach (var header in headers)
@@ -360,8 +376,7 @@ public class ShipInfoService : IShipInfoService
         EnsurePermission(ShipInfoPermissionCodes.Delete);
         var detail = await _repository.GetDetailForUpdateAsync(detailKey, cancellationToken)
             ?? throw new ShipInfoNotFoundException("Detail not found.");
-        var headerRowKey = ShipInfoKeyHelper.BuildHeaderRowKey(detail.InvoiceNo, detail.TetPo);
-        var header = await _repository.GetHeaderByRowKeyAsync(headerRowKey, cancellationToken)
+        var header = await _repository.GetHeaderByInvoiceNoAndTetPoAsync(detail.InvoiceNo, detail.TetPo, cancellationToken)
             ?? throw new ShipInfoNotFoundException("Header not found.");
         EnsureStatusAllows(header, permission => permission.Delete, "Detail cannot be deleted in current status.");
 
@@ -380,14 +395,14 @@ public class ShipInfoService : IShipInfoService
     }
 
     public async Task<ShipInfoCaseDrawerData> GetCaseDrawerDataAsync(
-        string headerRowKey,
+        string headerId,
         string caseType,
         CancellationToken cancellationToken = default)
     {
         EnsurePermission(ShipInfoPermissionCodes.View);
         var normalizedCaseType = NormalizeCaseType(caseType);
         EnsureCasePermission(normalizedCaseType);
-        var header = await RequireHeaderByRowKeyAsync(headerRowKey, cancellationToken);
+        var header = await RequireHeaderByIdAsync(headerId, cancellationToken);
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
         var details = await _repository.GetDetailEntitiesByHeaderKeyAsync(invoiceKey, cancellationToken);
         var validationMessages = ValidateCaseCreation(header, details, normalizedCaseType, previewOnly: true).ToList();
@@ -400,7 +415,7 @@ public class ShipInfoService : IShipInfoService
 
         return new ShipInfoCaseDrawerData
         {
-            HeaderKey = headerRowKey,
+            HeaderKey = header.Id.ToString("D"),
             CaseType = normalizedCaseType,
             HeaderSummary = ShipInfoDetailSummaryCalculator.BuildHeaderSummary(header),
             Header = ShipInfoEntityMapper.MapEntity(header),
@@ -412,19 +427,19 @@ public class ShipInfoService : IShipInfoService
     }
 
     public Task<ShipInfoCaseCreateResult> CreateDepositCaseAsync(
-        string headerRowKey,
+        string headerId,
         string? userName,
         CancellationToken cancellationToken = default) =>
-        CreateCaseAsync(headerRowKey, ShipInfoCaseTypes.Deposit, userName, cancellationToken);
+        CreateCaseAsync(headerId, ShipInfoCaseTypes.Deposit, userName, cancellationToken);
 
     public Task<ShipInfoCaseCreateResult> CreateArurCaseAsync(
-        string headerRowKey,
+        string headerId,
         string? userName,
         CancellationToken cancellationToken = default) =>
-        CreateCaseAsync(headerRowKey, ShipInfoCaseTypes.Arur, userName, cancellationToken);
+        CreateCaseAsync(headerId, ShipInfoCaseTypes.Arur, userName, cancellationToken);
 
     private async Task<ShipInfoCaseCreateResult> CreateCaseAsync(
-        string headerRowKey,
+        string headerId,
         string caseType,
         string? userName,
         CancellationToken cancellationToken)
@@ -434,8 +449,8 @@ public class ShipInfoService : IShipInfoService
         {
             throw new ShipInfoBusinessException("RabbitMQ is disabled. Case creation is unavailable.");
         }
-        var header = await _repository.GetHeaderForUpdateByRowKeyAsync(headerRowKey, cancellationToken)
-            ?? throw new ShipInfoNotFoundException("Header not found.");
+        var header = await RequireHeaderForUpdateByIdAsync(headerId, cancellationToken);
+        var legacyHeaderKey = ShipInfoKeyHelper.BuildHeaderRowKey(header);
 
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
         var currentCaseStatus = caseType == ShipInfoCaseTypes.Deposit
@@ -444,7 +459,7 @@ public class ShipInfoService : IShipInfoService
 
         if (ShipInfoCaseStatusResolver.Normalize(currentCaseStatus) == ShipInfoCaseStatuses.Initiated)
         {
-            return await ResendFailedOutboxAsync(header, headerRowKey, invoiceKey, caseType, userName, cancellationToken);
+            return await ResendFailedOutboxAsync(header, header.Id.ToString("D"), invoiceKey, caseType, userName, cancellationToken);
         }
 
         var details = (await _repository.GetDetailEntitiesByHeaderKeyAsync(invoiceKey, cancellationToken)).ToList();
@@ -476,7 +491,7 @@ public class ShipInfoService : IShipInfoService
             var newStatus = ShipInfoStatusResolver.Resolve(header);
             var auditLog = CreateAuditLog(
                 "Header",
-                headerRowKey,
+                header.Id.ToString("D"),
                 invoiceKey,
                 "CreateCase",
                 userName,
@@ -486,7 +501,7 @@ public class ShipInfoService : IShipInfoService
                 newStatus: newStatus);
 
             var integrationEvent = _caseEventFactory.Create(
-                headerRowKey,
+                legacyHeaderKey,
                 invoiceKey,
                 caseType,
                 caseNo,
@@ -508,7 +523,7 @@ public class ShipInfoService : IShipInfoService
 
             return new ShipInfoCaseCreateResult
             {
-                HeaderKey = headerRowKey,
+                HeaderKey = header.Id.ToString("D"),
                 CaseType = caseType,
                 DepositNo = caseType == ShipInfoCaseTypes.Deposit ? caseNo : header.Deposit,
                 ArurNo = caseType == ShipInfoCaseTypes.Arur ? caseNo : header.RtNo,
@@ -994,14 +1009,30 @@ public class ShipInfoService : IShipInfoService
             CreateUser = userName
         };
 
-    private async Task<IcpHeader> RequireHeaderByRowKeyAsync(string headerRowKey, CancellationToken cancellationToken)
+    private async Task<IcpHeader> RequireHeaderByIdAsync(string headerId, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(headerRowKey))
+        if (!Guid.TryParse(headerId, out var id))
         {
-            throw new ShipInfoBusinessException("Header row key is required.");
+            throw new ShipInfoBusinessException("Header ID is invalid.");
         }
 
-        var header = await _repository.GetHeaderByRowKeyAsync(headerRowKey, cancellationToken);
+        var header = await _repository.GetHeaderByIdAsync(id, cancellationToken);
+        if (header is null)
+        {
+            throw new ShipInfoNotFoundException("Header not found.");
+        }
+
+        return header;
+    }
+
+    private async Task<IcpHeader> RequireHeaderForUpdateByIdAsync(string headerId, CancellationToken cancellationToken)
+    {
+        if (!Guid.TryParse(headerId, out var id))
+        {
+            throw new ShipInfoBusinessException("Header ID is invalid.");
+        }
+
+        var header = await _repository.GetHeaderForUpdateByIdAsync(id, cancellationToken);
         if (header is null)
         {
             throw new ShipInfoNotFoundException("Header not found.");

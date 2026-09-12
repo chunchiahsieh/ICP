@@ -36,9 +36,11 @@ public interface IShipInfoRepository
 
     Task<bool> ExistsHeaderByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default);
 
-    Task<IcpHeader?> GetHeaderByRowKeyAsync(string headerRowKey, CancellationToken cancellationToken = default);
+    Task<IcpHeader?> GetHeaderByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<IcpHeader?> GetHeaderForUpdateByRowKeyAsync(string headerRowKey, CancellationToken cancellationToken = default);
+    Task<IcpHeader?> GetHeaderForUpdateByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<IcpHeader?> GetHeaderByInvoiceNoAndTetPoAsync(string invoiceNo, string? tetPo, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<IcpHeader>> GetHeaderEntitiesByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default);
 
@@ -48,6 +50,11 @@ public interface IShipInfoRepository
 
     Task<IReadOnlyList<IcpDetail>> GetDetailEntitiesByHeaderKeyAsync(
         string headerKey,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<IcpDetail>> GetDetailEntitiesForUpdateByInvoiceNoAndTetPoAsync(
+        string invoiceNo,
+        string tetPo,
         CancellationToken cancellationToken = default);
 
     Task UpdateHeaderAsync(IcpHeader header, CancellationToken cancellationToken = default);

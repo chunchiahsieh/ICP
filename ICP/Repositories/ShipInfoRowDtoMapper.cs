@@ -29,7 +29,9 @@ public static class ShipInfoRowDtoMapper
 
         return new ShipInfoHeaderRowDto
         {
-            Id = headerRowKey,
+            // The UI/API identifier must be the stable database primary key.  Invoice/TET PO
+            // remain business data and must not be used as a transport key.
+            Id = header.Id.ToString("D"),
             RowId = header.Id,
             HeaderKey = headerKey,
             HeaderRowKey = headerRowKey,

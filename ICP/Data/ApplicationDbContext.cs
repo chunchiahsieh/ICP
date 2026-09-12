@@ -255,7 +255,6 @@ public class ApplicationDbContext : DbContext
         {
             entity.ToTable("ICP_HEADER");
             entity.HasKey(e => e.Id);
-            entity.HasAlternateKey(e => new { e.InvoiceNo, e.TetPo });
             entity.Property(e => e.Id).HasDefaultValueSql("newid()");
             entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
             entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired();
@@ -320,11 +319,9 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.CreateTime).HasDefaultValueSql("getdate()").IsRequired();
             entity.Property(e => e.CreateUser).HasMaxLength(100);
             entity.Property(e => e.UpdateUser).HasMaxLength(100);
-            entity.HasMany(e => e.Details)
-                .WithOne(d => d.Header)
-                .HasForeignKey(d => new { d.InvoiceNo, d.TetPo })
-                .HasPrincipalKey(h => new { h.InvoiceNo, h.TetPo })
-                .OnDelete(DeleteBehavior.Cascade);
+            // InvoiceNo/TetPo are editable business fields, not entity keys.  Header and
+            // Detail association is handled explicitly by ShipInfo services.
+            entity.Ignore(e => e.Details);
         });
 
         modelBuilder.Entity<Attachment>(entity =>
@@ -354,6 +351,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Id).HasDefaultValueSql("newid()");
             entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
             entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired();
+            entity.Ignore(e => e.Header);
             entity.Property(e => e.TetPoLine).HasMaxLength(35);
             entity.Property(e => e.ItemNo).HasMaxLength(47);
             entity.Property(e => e.Description).HasMaxLength(60);

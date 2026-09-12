@@ -130,20 +130,34 @@ public class ShipInfoRepository : IShipInfoRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<IcpDetail>> GetDetailEntitiesForUpdateByInvoiceNoAndTetPoAsync(
+        string invoiceNo,
+        string tetPo,
+        CancellationToken cancellationToken = default) =>
+        await _db.IcpDetails
+            .Where(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo)
+            .ToListAsync(cancellationToken);
+
     public async Task<bool> ExistsHeaderByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default) =>
         await _db.IcpHeaders.AsNoTracking().AnyAsync(x => x.InvoiceNo == invoiceNo, cancellationToken);
 
-    public async Task<IcpHeader?> GetHeaderByRowKeyAsync(string headerRowKey, CancellationToken cancellationToken = default)
-    {
-        var (invoiceNo, tetPo) = ShipInfoKeyHelper.ParseHeaderRowKey(headerRowKey);
-        return await _db.IcpHeaders.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo, cancellationToken);
-    }
+    public Task<IcpHeader?> GetHeaderByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        _db.IcpHeaders.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-    public async Task<IcpHeader?> GetHeaderForUpdateByRowKeyAsync(string headerRowKey, CancellationToken cancellationToken = default)
+    public Task<IcpHeader?> GetHeaderForUpdateByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        _db.IcpHeaders.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+    public Task<IcpHeader?> GetHeaderByInvoiceNoAndTetPoAsync(
+        string invoiceNo,
+        string? tetPo,
+        CancellationToken cancellationToken = default)
     {
-        var (invoiceNo, tetPo) = ShipInfoKeyHelper.ParseHeaderRowKey(headerRowKey);
-        return await _db.IcpHeaders.FirstOrDefaultAsync(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo, cancellationToken);
+        var normalizedTetPo = tetPo?.Trim();
+        var query = _db.IcpHeaders.AsNoTracking().Where(x => x.InvoiceNo == invoiceNo);
+        query = string.IsNullOrWhiteSpace(normalizedTetPo)
+            ? query.Where(x => string.IsNullOrWhiteSpace(x.TetPo))
+            : query.Where(x => x.TetPo == normalizedTetPo);
+        return query.FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<IcpHeader>> GetHeaderEntitiesByInvoiceNoAsync(string invoiceNo, CancellationToken cancellationToken = default) =>
