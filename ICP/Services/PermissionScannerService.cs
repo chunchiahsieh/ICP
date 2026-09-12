@@ -56,6 +56,27 @@ public partial class PermissionScannerService
                     SourceFile = relativePath
                 });
             }
+
+            // Sidebar menu items are generated from a Razor tuple list so their runtime
+            // attributes remain permission-aware. Scan their literal keys as well, or a
+            // later permission scan would incorrectly retire the existing menu resources.
+            if (relativePath.Equals("Shared/_SidebarNav.cshtml", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (var match in SidebarPermissionCodeRegex().Matches(content).Cast<Match>())
+                {
+                    var resourceCode = match.Groups["perm"].Value;
+                    var isCategory = resourceCode.Split('.').Length == 4;
+                    results.Add(new ScannedPermission
+                    {
+                        ResourceCode = resourceCode,
+                        ResourceName = PermissionResourceNameResolver.Resolve(_environment, resourceCode),
+                        ResourceType = isCategory ? "Menu Category" : "Menu",
+                        Route = ResolveSidebarRoute(resourceCode),
+                        Description = "Auto-scanned from Views/Shared/_SidebarNav.cshtml",
+                        SourceFile = relativePath
+                    });
+                }
+            }
         }
 
         return PermissionScanDeduplicator.DeduplicateByResourceCode(results);
@@ -170,6 +191,25 @@ public partial class PermissionScannerService
         return $"/{string.Join('/', parts)}";
     }
 
+    private static string? ResolveSidebarRoute(string resourceCode)
+    {
+        var segments = resourceCode.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (segments.Length <= 4 || segments[^1].Equals("Permissions", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        if (segments[^1].Equals("Logout", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/Login/Logout";
+        }
+
+        return $"/{segments[^1]}";
+    }
+
     [GeneratedRegex(@"<(?<tag>[a-zA-Z][\w-]*)(?<tagContent>[^>]*)\bdata-permissions\s*=\s*[""'](?<perm>[^""']+)[""'][^>]*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex PermissionTagRegex();
+
+    [GeneratedRegex(@"Views\.Shared\._SidebarNav(?:\.[A-Za-z0-9_]+)+", RegexOptions.CultureInvariant)]
+    private static partial Regex SidebarPermissionCodeRegex();
 }

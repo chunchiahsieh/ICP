@@ -15,6 +15,10 @@
         var state = app.state;
         if (!state.viewModalKey) return;
         var isHeader = state.viewModalKind === 'header';
+        if (!isHeader && app.getDetailRowCount() === 1) {
+            app.showToast(app.messages.deleteLastDetailNotAllowed || 'At least one detail row must remain and cannot be deleted.', 'warning');
+            return;
+        }
         state.deleteTarget = { kind: isHeader ? 'header' : 'detail', key: state.viewModalKey };
         $('#shipInfoDeleteConfirmModalLabel').text(isHeader ? app.messages.deleteConfirmTitle : app.messages.deleteDetailConfirmTitle);
         $('#shipInfoDeleteConfirmMessage').text(isHeader ? app.messages.deleteConfirmMessage : app.messages.deleteDetailConfirmMessage);

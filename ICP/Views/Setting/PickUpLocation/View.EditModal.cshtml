@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">@Localizer["Common.Edit"]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label='@Localizer["Common.Close"]'></button>
             </div>
             <div class="modal-body">
                 <form id="editForm">
@@ -11,22 +11,22 @@
                     <input type="hidden" name="Category" />
                     <div class="alert alert-danger crud-form-error d-none" role="alert"></div>
                     <div class="mb-3">
-                        <label class="form-label">SLOC</label>
+                        <label class="form-label">@Localizer["Setting.Field.Sloc"]</label>
                         <input type="text" class="form-control form-control-sm" name="Key1" maxlength="100" />
                         <div class="text-danger small crud-field-error" data-field-error="Key1"></div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">提貨地點</label>
+                        <label class="form-label">@Localizer["Setting.Field.PickupLocation"]</label>
                         <input type="text" class="form-control form-control-sm" name="Value1" maxlength="1000" />
                         <div class="text-danger small crud-field-error" data-field-error="Value1"></div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Contact Person</label>
+                        <label class="form-label">@Localizer["Setting.Field.ContactPerson"]</label>
                         <input type="text" class="form-control form-control-sm" name="Value2" maxlength="1000" />
                         <div class="text-danger small crud-field-error" data-field-error="Value2"></div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Phone No.</label>
+                        <label class="form-label">@Localizer["Setting.Field.PhoneNumber"]</label>
                         <input type="text" class="form-control form-control-sm" name="Value3" maxlength="1000" />
                         <div class="text-danger small crud-field-error" data-field-error="Value3"></div>
                     </div>

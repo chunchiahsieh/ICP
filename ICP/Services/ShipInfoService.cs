@@ -209,8 +209,12 @@ public class ShipInfoService : IShipInfoService
         return errors;
     }
 
-    public IReadOnlyList<string> ValidateDetailValues(IReadOnlyDictionary<string, string?> values) =>
-        ValidateEditableValues(_metadataProvider.GetPageConfig().DetailEditFields, values);
+    public IReadOnlyList<string> ValidateDetailValues(IReadOnlyDictionary<string, string?> values)
+    {
+        var errors = ValidateEditableValues(_metadataProvider.GetPageConfig().DetailEditFields, values).ToList();
+        errors.AddRange(ValidateDetailBusinessRules(values));
+        return errors;
+    }
 
     public async Task<Dictionary<string, object?>> SaveHeaderAsync(
         ShipInfoSaveRequest request,
@@ -280,7 +284,8 @@ public class ShipInfoService : IShipInfoService
 
         var currentValues = ShipInfoEntityMapper.MapEntity(detail)
             .ToDictionary(x => x.Key, x => x.Value?.ToString(), StringComparer.OrdinalIgnoreCase);
-        var validationErrors = CollectValidationErrors(fields, values, currentValues);
+        var validationErrors = CollectValidationErrors(fields, values, currentValues).ToList();
+        validationErrors.AddRange(ValidateDetailBusinessRules(values));
         if (validationErrors.Count > 0)
         {
             throw new ShipInfoBusinessException(string.Join(' ', validationErrors));
@@ -724,9 +729,9 @@ public class ShipInfoService : IShipInfoService
         else
         {
             AddRequiredCaseFieldErrors(header, errors);
-            if (header.Warehouse?.Trim().Length > 3)
+            if (header.Warehouse?.Trim().Length > 4)
             {
-                errors.Add("Warehouse exceeds 3 characters. ARUR cannot be created.");
+                errors.Add("Warehouse exceeds 4 characters. ARUR cannot be created.");
             }
         }
 
@@ -775,6 +780,76 @@ public class ShipInfoService : IShipInfoService
         }
 
         return errors;
+    }
+
+    private static IReadOnlyList<string> ValidateDetailBusinessRules(IReadOnlyDictionary<string, string?> values)
+    {
+        var errors = new List<string>();
+        AddOptionalNonNegativeNumberError(values, "InvoiceSeq", errors);
+        AddNonNegativeDecimalError(values, "Price", 2, errors);
+        AddNonNegativeDecimalError(values, "Amount", 2, errors);
+
+        foreach (var fieldName in new[] { "Qty", "CartonNo", "Length", "Width", "Hight", "GrossWeight" })
+        {
+            AddNonNegativeIntegerError(values, fieldName, errors);
+        }
+
+        return errors;
+    }
+
+    private static void AddOptionalNonNegativeNumberError(
+        IReadOnlyDictionary<string, string?> values,
+        string fieldName,
+        ICollection<string> errors)
+    {
+        if (!values.TryGetValue(fieldName, out var value) || string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        if (!decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var number) || number < 0)
+        {
+            errors.Add($"{fieldName} must be a non-negative number.");
+        }
+    }
+
+    private static void AddNonNegativeDecimalError(
+        IReadOnlyDictionary<string, string?> values,
+        string fieldName,
+        int decimalPlaces,
+        ICollection<string> errors)
+    {
+        if (!values.TryGetValue(fieldName, out var value) || string.IsNullOrWhiteSpace(value))
+        {
+            errors.Add($"{fieldName} is required.");
+            return;
+        }
+
+        if (!decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var number)
+            || number < 0
+            || decimal.Round(number, decimalPlaces) != number)
+        {
+            errors.Add($"{fieldName} must be a non-negative number with up to {decimalPlaces} decimal places.");
+        }
+    }
+
+    private static void AddNonNegativeIntegerError(
+        IReadOnlyDictionary<string, string?> values,
+        string fieldName,
+        ICollection<string> errors)
+    {
+        if (!values.TryGetValue(fieldName, out var value) || string.IsNullOrWhiteSpace(value))
+        {
+            errors.Add($"{fieldName} is required.");
+            return;
+        }
+
+        if (!decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var number)
+            || number < 0
+            || number != decimal.Truncate(number))
+        {
+            errors.Add($"{fieldName} must be a non-negative integer.");
+        }
     }
 
     private IReadOnlyList<string> ValidateEditableValues(

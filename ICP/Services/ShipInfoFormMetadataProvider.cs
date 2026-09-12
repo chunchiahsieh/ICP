@@ -15,7 +15,7 @@ public sealed class ShipInfoFormMetadataProvider
     private const string CreateMode = "create";
     private static readonly HashSet<string> SupportedTypes = new(StringComparer.OrdinalIgnoreCase)
     {
-        "text", "number", "date", "select", "checkbox"
+        "text", "number", "decimal", "date", "select", "checkbox"
     };
     private static readonly IReadOnlyDictionary<string, string> OptionsSources =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -27,6 +27,7 @@ public sealed class ShipInfoFormMetadataProvider
             ["defaultDeliveryWh"] = "DefaultDeliveryWh",
             ["deliveryTo"] = "DeliveryToList",
             ["etaDelDateTable"] = "EtaDelDateTable",
+            ["flightNo"] = "FlightNo",
             ["invoiceType"] = "InvoiceType",
             ["orderPriority"] = "OrderPriority",
             ["orderType"] = "OrderType",
@@ -47,7 +48,7 @@ public sealed class ShipInfoFormMetadataProvider
         IStringLocalizerFactory localizerFactory,
         ILogger<ShipInfoFormMetadataProvider> logger)
     {
-        _headerFilePath = Path.Combine(environment.ContentRootPath, "Config", "shipinfo-form-fields.json");
+        _headerFilePath = Path.Combine(environment.ContentRootPath, "Config", "shipinfo-header-form-fields.json");
         _detailFilePath = Path.Combine(environment.ContentRootPath, "Config", "shipinfo-detail-form-fields.json");
         _isDevelopment = environment.IsDevelopment();
         _localizerFactory = localizerFactory;
@@ -68,9 +69,15 @@ public sealed class ShipInfoFormMetadataProvider
         return metadata;
     }
 
+    public IReadOnlyList<ShipInfoFieldMetadata> GetHeaderEditFields(string? culture = null) =>
+        BuildEditFields(GetHeaderFormMetadata(culture), ShipInfoFieldCatalog.BuildHeaderCatalog());
+
+    public IReadOnlyList<ShipInfoFieldMetadata> GetDetailEditFields(string? culture = null) =>
+        BuildEditFields(GetDetailFormMetadata(culture), ShipInfoFieldCatalog.BuildDetailCatalog());
+
     public static void ValidateAtStartup(string contentRootPath)
     {
-        _ = LoadAndValidate(Path.Combine(contentRootPath, "Config", "shipinfo-form-fields.json"), HeaderFormId, ShipInfoFieldCatalog.BuildHeaderCatalog());
+        _ = LoadAndValidate(Path.Combine(contentRootPath, "Config", "shipinfo-header-form-fields.json"), HeaderFormId, ShipInfoFieldCatalog.BuildHeaderCatalog());
         _ = LoadAndValidate(Path.Combine(contentRootPath, "Config", "shipinfo-detail-form-fields.json"), DetailFormId, ShipInfoFieldCatalog.BuildDetailCatalog());
     }
 
@@ -91,6 +98,66 @@ public sealed class ShipInfoFormMetadataProvider
         ValidateMetadata(metadata, formId, catalog);
         return metadata;
     }
+
+    private static IReadOnlyList<ShipInfoFieldMetadata> BuildEditFields(
+        ShipInfoFormMetadata metadata,
+        IReadOnlyList<ShipInfoFieldMetadata> catalog)
+    {
+        var catalogByName = catalog.ToDictionary(field => field.FieldName, StringComparer.OrdinalIgnoreCase);
+        var editMode = metadata.Modes[EditMode];
+        var fields = new List<ShipInfoFieldMetadata>();
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var group in editMode.Groups.OrderBy(group => group.Order ?? int.MaxValue))
+        {
+            if (!string.IsNullOrWhiteSpace(group.Component))
+            {
+                continue;
+            }
+
+            foreach (var modeField in group.Fields.OrderBy(field => field.Order ?? int.MaxValue))
+            {
+                if (!names.Add(modeField.Name) || !catalogByName.TryGetValue(modeField.Name, out var catalogField))
+                {
+                    continue;
+                }
+
+                var definition = metadata.Fields[modeField.Name];
+                fields.Add(new ShipInfoFieldMetadata
+                {
+                    Id = catalogField.Id,
+                    FieldName = catalogField.FieldName,
+                    EntityPropertyName = catalogField.EntityPropertyName,
+                    DisplayName = catalogField.DisplayName,
+                    DisplayNameZh = catalogField.DisplayNameZh,
+                    LabelKey = definition.LabelKey ?? catalogField.LabelKey,
+                    Label = definition.Label ?? catalogField.Label,
+                    DisplayOrder = fields.Count + 1,
+                    Visible = true,
+                    Searchable = false,
+                    Editable = modeField.ReadOnly != true,
+                    ReadOnly = modeField.ReadOnly == true,
+                    Required = modeField.Required == true,
+                    ControlType = NormalizeControlType(definition.Type),
+                    LookupCategory = definition.LookupCategory,
+                    MaxLength = definition.MaxLength ?? catalogField.MaxLength,
+                    Group = group.Id
+                });
+            }
+        }
+
+        return fields;
+    }
+
+    private static string NormalizeControlType(string type) => type.Trim().ToLowerInvariant() switch
+    {
+        "number" => ShipInfoControlTypes.Number,
+        "decimal" => ShipInfoControlTypes.Decimal,
+        "date" => ShipInfoControlTypes.Date,
+        "select" => ShipInfoControlTypes.Select,
+        "checkbox" => ShipInfoControlTypes.Checkbox,
+        _ => ShipInfoControlTypes.Text
+    };
 
     private static void ValidateMetadata(ShipInfoFormMetadata metadata, string formId, IReadOnlyList<ShipInfoFieldMetadata> catalogFields)
     {

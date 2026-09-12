@@ -12,7 +12,9 @@ using ICP.Models.Tariff;
 using ICP.Models.ShipInfo;
 using ICP.Models.Forwarder;
 using ICP.Models.Integration;
+using ICP.Models.LocalizationManagement;
 using ICP.Models.Report;
+using ICP.Models.Sidebar;
 using ICP.Models.CustomsDataDownload;
 
 using ICP.Repositories;
@@ -38,6 +40,7 @@ using Serilog;
 
 
 var isAgaComputer = HostEnvironmentExtensions.IsAgaComputer();
+var telAppSettingsFile = ResolveTelAppSettingsFile();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,12 +49,12 @@ if (!isAgaComputer)
     builder.Configuration.Sources.Clear();
     builder.Configuration
         .SetBasePath(builder.Environment.ContentRootPath)
-        .AddJsonFile("appsettings.TEL.json", optional: false, reloadOnChange: true)
+        .AddJsonFile(telAppSettingsFile, optional: false, reloadOnChange: true)
         .AddEnvironmentVariables()
         .AddCommandLine(args);
 }
 
-var appSettingsProfile = ResolveAppSettingsProfile(isAgaComputer, builder.Environment);
+var appSettingsProfile = ResolveAppSettingsProfile(isAgaComputer, builder.Environment, telAppSettingsFile);
 var logDirectory = Path.Combine(builder.Environment.ContentRootPath, "Logs");
 Directory.CreateDirectory(logDirectory);
 var logFilePath = Path.GetFullPath(Path.Combine(logDirectory, $"icp-{DateTime.Now:yyyyMMdd}.log"));
@@ -81,13 +84,22 @@ builder.Services.Configure<TariffDataOptions>(
 builder.Services.Configure<IntegrationOptions>(
     builder.Configuration.GetSection(IntegrationOptions.SectionName));
 
+builder.Services.Configure<LocalizationManagementOptions>(
+    builder.Configuration.GetSection(LocalizationManagementOptions.SectionName));
+
+builder.Services.AddSingleton<IValidateOptions<SidebarOptions>, SidebarOptionsValidator>();
+builder.Services
+    .AddOptions<SidebarOptions>()
+    .Bind(builder.Configuration.GetSection(SidebarOptions.SectionName))
+    .ValidateOnStart();
+
 var shipInfoTableFieldsConfiguration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("Config/shipinfo-table-fields.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("Config/shipinfo-pro-datatable-fields.json", optional: false, reloadOnChange: true)
     .Build();
 
 builder.Services
-    .AddOptions<ShipInfoTableFieldsOptions>()
+    .AddOptions<ShipInfoProDataTableFieldsOptions>()
     .Bind(shipInfoTableFieldsConfiguration)
     .ValidateOnStart();
 
@@ -132,7 +144,7 @@ var shippingReportTableFieldsConfiguration = new ConfigurationBuilder()
     .Build();
 
 builder.Services
-    .AddOptions<ShipInfoTableFieldsOptions>(ReportKeys.ShippingReport)
+    .AddOptions<ShipInfoProDataTableFieldsOptions>(ReportKeys.ShippingReport)
     .Bind(shippingReportTableFieldsConfiguration)
     .ValidateOnStart();
 
@@ -142,7 +154,7 @@ var compareIcpVsArUrTableFieldsConfiguration = new ConfigurationBuilder()
     .Build();
 
 builder.Services
-    .AddOptions<ShipInfoTableFieldsOptions>(ReportKeys.CompareIcpVsArUr)
+    .AddOptions<ShipInfoProDataTableFieldsOptions>(ReportKeys.CompareIcpVsArUr)
     .Bind(compareIcpVsArUrTableFieldsConfiguration)
     .ValidateOnStart();
 
@@ -152,7 +164,7 @@ var massDataReportTableFieldsConfiguration = new ConfigurationBuilder()
     .Build();
 
 builder.Services
-    .AddOptions<ShipInfoTableFieldsOptions>(ReportKeys.MassDataReport)
+    .AddOptions<ShipInfoProDataTableFieldsOptions>(ReportKeys.MassDataReport)
     .Bind(massDataReportTableFieldsConfiguration)
     .ValidateOnStart();
 
@@ -223,6 +235,7 @@ builder.Services.AddScoped<ShipInfoLookupService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
 builder.Services.AddScoped<IReportDataService, ReportDataService>();
 builder.Services.AddScoped<IExportService, ExportService>();
+builder.Services.AddSingleton<LocalizationResourceManagementService>();
 builder.Services.AddHttpClient("IntegrationHub", (sp, client) =>
 {
     var hub = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<IntegrationOptions>>().Value.Hub;
@@ -381,9 +394,17 @@ finally
     Log.CloseAndFlush();
 }
 
-static string ResolveAppSettingsProfile(bool isAgaComputer, IWebHostEnvironment environment) =>
+static string ResolveTelAppSettingsFile() =>
+    string.Equals(Environment.MachineName, "TETIS87181", StringComparison.OrdinalIgnoreCase)
+        ? "appsettings.TEL.TETIS87181.json"
+        : "appsettings.TEL.json";
+
+static string ResolveAppSettingsProfile(
+    bool isAgaComputer,
+    IWebHostEnvironment environment,
+    string telAppSettingsFile) =>
     isAgaComputer
         ? environment.IsDevelopment()
             ? "appsettings.json, appsettings.Development.json"
             : "appsettings.json"
-        : "appsettings.TEL.json";
+        : telAppSettingsFile;

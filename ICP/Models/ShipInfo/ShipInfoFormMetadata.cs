@@ -3,8 +3,8 @@ using System.Text.Json.Serialization;
 namespace ICP.Models.ShipInfo;
 
 /// <summary>
-/// Ship Info Header form UI metadata. This model intentionally controls only rendering;
-/// SaveHeaderAsync remains the authoritative update boundary.
+/// Ship Info Header/Detail form UI metadata. This model controls form rendering and
+/// defines the edit-field whitelist used by the save boundary.
 /// </summary>
 public sealed class ShipInfoFormMetadata
 {

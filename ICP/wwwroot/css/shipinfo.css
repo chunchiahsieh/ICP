@@ -206,7 +206,7 @@
     box-shadow: 1px 0 0 var(--bs-border-color, #dee2e6);
 }
 
-.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable .shipinfo-header-freeze-col {
+.shipinfo-page .shipinfo-sticky-left-enabled .shipinfo-pro-table .shipinfo-configured-freeze-col {
     position: sticky;
     left: var(--shipinfo-freeze-left, auto);
     z-index: 2;
@@ -214,12 +214,12 @@
     background-clip: padding-box;
 }
 
-.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable thead .shipinfo-header-freeze-col {
+.shipinfo-page .shipinfo-sticky-left-enabled .shipinfo-pro-table thead .shipinfo-configured-freeze-col {
     z-index: 6;
     background-color: #f8f9fa;
 }
 
-.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable .shipinfo-header-freeze-col[data-freeze-field="MdpFlag"] {
+.shipinfo-page .shipinfo-sticky-left-enabled #shipInfoHeaderTable .shipinfo-frozen-boundary {
     /* Bootstrap paints striped/hover rows using an inset box-shadow.
        Preserve that layer and draw the frozen boundary with a border. */
     border-right: 1px solid var(--bs-border-color, #dee2e6);

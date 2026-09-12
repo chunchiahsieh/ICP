@@ -81,7 +81,7 @@
 }
 
 /* ShipInfo: one scroll owner per table, with no Bootstrap row gutters.
-   Keep a short Detail table's scrollbar immediately below its last row. */
+   Reserve the same table viewport even when the current page has few rows. */
 .shipinfo-page.report-split-page .report-split-pane,
 .shipinfo-page.report-split-page .report-split-table,
 .shipinfo-page.report-split-page .shipinfo-table-wrap,
@@ -114,17 +114,17 @@
     border-spacing: 0;
 }
 
-.shipinfo-page #shipInfoHeaderTable thead .shipinfo-header-freeze-col {
+.shipinfo-page .shipinfo-pro-table thead .shipinfo-configured-freeze-col {
     background: #f8f9fa;
     background-clip: border-box;
 }
 
-.shipinfo-page #shipInfoHeaderTable tbody .shipinfo-header-freeze-col {
+.shipinfo-page .shipinfo-pro-table tbody .shipinfo-configured-freeze-col {
     background: #fff;
     background-clip: border-box;
 }
 
-.shipinfo-page #shipInfoHeaderTable tbody tr.table-primary .shipinfo-header-freeze-col {
+.shipinfo-page .shipinfo-pro-table tbody tr.table-primary .shipinfo-configured-freeze-col {
     background: #cfe2ff;
 }
 
@@ -143,8 +143,9 @@
 
 #shipInfoHeaderDataDiv .dataTables_wrapper > .row:has(table),
 #shipInfoDetailDataDiv .dataTables_wrapper > .row:has(table) {
-    min-height: 0;
-    height: auto;
+    /* Do not let filtering or a short final page collapse the table area. */
+    min-height: min(420px, 50vh);
+    height: min(420px, 50vh);
     max-height: min(420px, 50vh);
     flex: 0 0 auto;
     overflow: auto;
@@ -159,19 +160,23 @@
 /* Use one explicit layer for frozen cells, including the filter row.
    Non-frozen filters must pass underneath it when scrolling horizontally. */
 #shipInfoHeaderTable > thead > tr > th.shipinfo-frozen-cell,
-#shipInfoHeaderTable > tbody > tr > td.shipinfo-frozen-cell {
+#shipInfoHeaderTable > tbody > tr > td.shipinfo-frozen-cell,
+#shipInfoDetailTable > thead > tr > th.shipinfo-frozen-cell,
+#shipInfoDetailTable > tbody > tr > td.shipinfo-frozen-cell {
     position: sticky;
     background-color: #fff;
     background-clip: border-box;
     z-index: 8;
 }
 
-#shipInfoHeaderTable > thead > tr > th.shipinfo-frozen-cell {
+#shipInfoHeaderTable > thead > tr > th.shipinfo-frozen-cell,
+#shipInfoDetailTable > thead > tr > th.shipinfo-frozen-cell {
     background-color: #f8f9fa;
     z-index: 12;
 }
 
-#shipInfoHeaderTable > thead > tr.users-filter-row > th.shipinfo-frozen-cell {
+#shipInfoHeaderTable > thead > tr.users-filter-row > th.shipinfo-frozen-cell,
+#shipInfoDetailTable > thead > tr.users-filter-row > th.shipinfo-frozen-cell {
     top: var(--shipinfo-header-row-height, 2.5rem);
     z-index: 13;
 }
@@ -180,6 +185,36 @@
     background-color: #cfe2ff;
 }
 
-#shipInfoHeaderTable > thead > tr.users-filter-row > th.shipinfo-frozen-cell:has(.dropdown-menu.show) {
+#shipInfoHeaderTable > thead > tr.users-filter-row > th.shipinfo-frozen-cell:has(.dropdown-menu.show),
+#shipInfoDetailTable > thead > tr.users-filter-row > th.shipinfo-frozen-cell:has(.dropdown-menu.show) {
     z-index: 14;
+}
+
+/* Keep the calendar action inside the fixed yyyy-MM-dd date field. */
+.shipinfo-date-picker-group {
+    position: relative;
+}
+
+.shipinfo-date-picker-group > .shipinfo-control {
+    padding-right: 2.25rem;
+}
+
+.shipinfo-date-picker-group > .shipinfo-date-picker {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    width: 2.25rem;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #000;
+}
+
+.shipinfo-date-picker-group > .shipinfo-date-picker:hover,
+.shipinfo-date-picker-group > .shipinfo-date-picker:focus {
+    background: transparent;
+    color: #000;
+    box-shadow: none;
 }

@@ -10,6 +10,9 @@ public class ShipInfoTableUiOptions
     [JsonPropertyName("stickyLeftColumns")]
     public bool? StickyLeftColumns { get; set; }
 
+    [JsonPropertyName("frozenFields")]
+    public List<string> FrozenFields { get; set; } = [];
+
     [JsonPropertyName("maxHeight")]
     public string? MaxHeight { get; set; }
 
@@ -18,6 +21,10 @@ public class ShipInfoTableUiOptions
         {
             StickyHeader = source?.StickyHeader ?? true,
             StickyLeftColumns = source?.StickyLeftColumns ?? true,
+            FrozenFields = source?.FrozenFields
+                .Where(field => !string.IsNullOrWhiteSpace(field))
+                .Select(field => field.Trim())
+                .ToList() ?? [],
             MaxHeight = string.IsNullOrWhiteSpace(source?.MaxHeight) ? "420px" : source!.MaxHeight
         };
 }

@@ -700,7 +700,7 @@
     <value>主旨超過 50 字（採購單 + 發票），無法起案。</value>
   </data>
   <data name="ShipInfo.ArurWarehouseTooLong" xml:space="preserve">
-    <value>倉別超過 3 碼，無法起案。</value>
+    <value>倉別超過 4 碼，無法起案。</value>
   </data>
   <data name="ShipInfo.ArurTetPoTooLong" xml:space="preserve">
     <value>採購單超過 30 字，無法起案。</value>
@@ -2002,5 +2002,77 @@
   <data name="Compare.DataSourceUnavailable" xml:space="preserve"><value>設定的 ILC 資料庫找不到 dbo.RT_ARUR_HEADER。請將 ICP 的 ILC_Connection 指向 AR/UR 起案寫入的 ILC 資料庫。</value></data>
   <data name="ShipInfo.CaseRequirement.Deposit" xml:space="preserve"><value>押金起案必填</value></data>
   <data name="ShipInfo.CaseRequirement.Arur" xml:space="preserve"><value>ARUR 起案必填</value></data>
-  <data name="ShipInfo.CaseRequirement.ArurWarehouse" xml:space="preserve"><value>ARUR 起案：最多 3 碼</value></data>
+  <data name="ShipInfo.CaseRequirement.ArurWarehouse" xml:space="preserve"><value>ARUR 起案：最多 4 碼</value></data>
+  <data name="Common.Actions" xml:space="preserve"><value>操作</value></data>
+  <data name="Common.Close" xml:space="preserve"><value>關閉</value></data>
+  <data name="Setting.SystemConfig.KeyRequired" xml:space="preserve"><value>Key 為必填</value></data>
+  <data name="Setting.SystemConfig.CreateTitle" xml:space="preserve"><value>新增</value></data>
+  <data name="Setting.SystemConfig.EditTitle" xml:space="preserve"><value>編輯</value></data>
+  <data name="Setting.SystemConfig.BatchDeleteConfirm" xml:space="preserve"><value>確定要刪除所選資料嗎？</value></data>
+  <data name="Setting.SystemConfig.DeleteConfirm" xml:space="preserve"><value>確定要刪除此筆資料嗎？</value></data>
+  <data name="Setting.BuCode.Title" xml:space="preserve"><value>BU 代碼</value></data>
+  <data name="Setting.WhCode.Title" xml:space="preserve"><value>倉庫代碼</value></data>
+  <data name="Setting.DeliveryToList.Title" xml:space="preserve"><value>交貨對象清單</value></data>
+  <data name="Setting.PickUpLocation.Title" xml:space="preserve"><value>提貨地點</value></data>
+  <data name="Setting.EtaDelDateTable.Title" xml:space="preserve"><value>ETA 交貨日表</value></data>
+  <data name="Setting.DefaultDeliveryWh.Title" xml:space="preserve"><value>預設交貨倉庫</value></data>
+  <data name="Setting.Broker.Title" xml:space="preserve"><value>Broker</value></data>
+  <data name="Setting.AirSea.Title" xml:space="preserve"><value>Air/Sea</value></data>
+  <data name="Setting.InvoiceType.Title" xml:space="preserve"><value>Invoice Type</value></data>
+  <data name="Setting.OrderType.Title" xml:space="preserve"><value>訂單類型</value></data>
+  <data name="Setting.OrderPriority.Title" xml:space="preserve"><value>Order Priority</value></data>
+  <data name="Setting.Field.Key" xml:space="preserve"><value>鍵值</value></data>
+  <data name="Setting.Field.CustomerCode" xml:space="preserve"><value>客戶代碼</value></data>
+  <data name="Setting.Field.Name" xml:space="preserve"><value>名稱</value></data>
+  <data name="Setting.Field.Fab" xml:space="preserve"><value>廠別</value></data>
+  <data name="Setting.Field.Address" xml:space="preserve"><value>地址</value></data>
+  <data name="Setting.Field.Phone" xml:space="preserve"><value>電話</value></data>
+  <data name="Setting.Field.Area" xml:space="preserve"><value>區域</value></data>
+  <data name="Setting.Field.Sloc" xml:space="preserve"><value>儲位</value></data>
+  <data name="Setting.Field.PickupLocation" xml:space="preserve"><value>提貨地點</value></data>
+  <data name="Setting.Field.ContactPerson" xml:space="preserve"><value>聯絡人</value></data>
+  <data name="Setting.Field.PhoneNumber" xml:space="preserve"><value>電話號碼</value></data>
+  <data name="Setting.Field.DestinationPort" xml:space="preserve"><value>目的港</value></data>
+  <data name="Setting.Field.EtaCalendarType" xml:space="preserve"><value>ETA 行事曆類型</value></data>
+  <data name="Setting.Field.WhCode" xml:space="preserve"><value>倉庫代碼</value></data>
+  <data name="Setting.Field.FlightNo" xml:space="preserve"><value>航班號碼</value></data>
+  <data name="Setting.Field.DeliveryDate" xml:space="preserve"><value>交貨日期</value></data>
+  <data name="Setting.Field.Remark" xml:space="preserve"><value>備註</value></data>
+  <data name="Setting.Field.Category" xml:space="preserve"><value>分類</value></data>
+  <data name="Setting.Field.FunctionCode" xml:space="preserve"><value>功能代碼</value></data>
+  <data name="Setting.Field.Key1" xml:space="preserve"><value>鍵值 1</value></data>
+  <data name="Setting.Field.Key2" xml:space="preserve"><value>鍵值 2</value></data>
+  <data name="Setting.Field.Value1" xml:space="preserve"><value>值 1</value></data>
+  <data name="Setting.Field.Value2" xml:space="preserve"><value>值 2</value></data>
+  <data name="Setting.Field.Value3" xml:space="preserve"><value>值 3</value></data>
+  <data name="Setting.Field.Value4" xml:space="preserve"><value>值 4</value></data>
+  <data name="Setting.Field.Value5" xml:space="preserve"><value>值 5</value></data>
+  <data name="Setting.Field.Value6" xml:space="preserve"><value>值 6</value></data>
+  <data name="Views.Shared._SidebarNav.Setting.LocalizationManagement" xml:space="preserve"><value>多國語言</value></data>
+  <data name="Views.Shared._SidebarNav.Localization" xml:space="preserve"><value>多國語言</value></data>
+  <data name="Sidebar.Search" xml:space="preserve"><value>搜尋選單</value></data>
+  <data name="Sidebar.Recent" xml:space="preserve"><value>最近使用</value></data>
+  <data name="LocalizationManagement.Title" xml:space="preserve"><value>多國語言管理</value></data>
+  <data name="LocalizationManagement.Hint" xml:space="preserve"><value>直接修改翻譯後儲存。儲存前會建立備份；重新啟動 ICP 後，網站會載入新的翻譯。</value></data>
+  <data name="LocalizationManagement.Search" xml:space="preserve"><value>搜尋 Resource Key 或翻譯內容</value></data>
+  <data name="LocalizationManagement.Loading" xml:space="preserve"><value>載入中…</value></data>
+  <data name="LocalizationManagement.NoRows" xml:space="preserve"><value>找不到符合的翻譯資料。</value></data>
+  <data name="LocalizationManagement.SaveChanges" xml:space="preserve"><value>儲存變更</value></data>
+  <data name="LocalizationManagement.Saved" xml:space="preserve"><value>已更新 {0} 個翻譯值。請重新啟動 ICP 後確認網站顯示。</value></data>
+  <data name="LocalizationManagement.LoadFailed" xml:space="preserve"><value>無法載入翻譯資料。</value></data>
+  <data name="LocalizationManagement.SaveFailed" xml:space="preserve"><value>無法儲存翻譯資料。</value></data>
+  <data name="LocalizationManagement.NoChanges" xml:space="preserve"><value>沒有需要儲存的變更。</value></data>
+  <data name="LocalizationManagement.ExportExcel" xml:space="preserve"><value>匯出 Excel</value></data>
+  <data name="LocalizationManagement.ImportExcel" xml:space="preserve"><value>匯入 Excel</value></data>
+  <data name="LocalizationManagement.Imported" xml:space="preserve"><value>已匯入 {0} 筆翻譯資料，更新 {1} 個翻譯值。請重新啟動 ICP 後確認網站顯示。</value></data>
+  <data name="LocalizationManagement.ImportFailed" xml:space="preserve"><value>無法匯入翻譯 Excel 檔案。</value></data>
+  <data name="Sidebar.NoResults" xml:space="preserve"><value>找不到符合的選單項目</value></data>
+  <data name="Sidebar.CustomLinks" xml:space="preserve"><value>常用連結</value></data>
+  <data name="Sidebar.SearchCount" xml:space="preserve"><value>找到 {0} 筆</value></data>
+  <data name="Sidebar.ClearRecent" xml:space="preserve"><value>清除最近使用</value></data>
+  <data name="Sidebar.OpenInNewTab" xml:space="preserve"><value>在新視窗開啟</value></data>
+  <data name="Sidebar.Resize" xml:space="preserve"><value>調整側欄寬度</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>釘選</value></data>
+  <data name="Sidebar.Pin" xml:space="preserve"><value>釘選此項目</value></data>
+  <data name="Sidebar.Unpin" xml:space="preserve"><value>取消釘選此項目</value></data>
 </root>

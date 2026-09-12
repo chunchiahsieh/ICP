@@ -44,6 +44,41 @@
         });
     }
 
+    function validateDetailNumericRules(values) {
+        var decimalFields = ['Price', 'Amount'];
+        var integerFields = ['Qty', 'CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight'];
+
+        if (Object.prototype.hasOwnProperty.call(values, 'InvoiceSeq')
+            && String(values.InvoiceSeq || '').trim() !== ''
+            && !/^\d+(?:\.\d+)?$/.test(String(values.InvoiceSeq).trim())) {
+            return 'Invoice Seq must be a non-negative number.';
+        }
+
+        for (var i = 0; i < decimalFields.length; i++) {
+            var decimalField = decimalFields[i];
+            if (!Object.prototype.hasOwnProperty.call(values, decimalField)) {
+                continue;
+            }
+
+            if (!/^\d+(?:\.\d{1,2})?$/.test(String(values[decimalField] || '').trim())) {
+                return decimalField + ' must be a non-negative number with up to 2 decimal places.';
+            }
+        }
+
+        for (var j = 0; j < integerFields.length; j++) {
+            var integerField = integerFields[j];
+            if (!Object.prototype.hasOwnProperty.call(values, integerField)) {
+                continue;
+            }
+
+            if (!/^\d+$/.test(String(values[integerField] || '').trim())) {
+                return integerField + ' must be a non-negative integer.';
+            }
+        }
+
+        return null;
+    }
+
     function getStatusSource() {
         return state.viewModalKind === 'header'
             ? state.viewModalData
@@ -56,7 +91,7 @@
         var canDiscard = state.viewModalKind === 'header'
             && app.hasPermission('Views.Function.ShipInfo.Discard')
             && permission.delete;
-        var canDelete = app.hasPermission('Views.Function.ShipInfo.Delete') && permission.delete;
+        var isLastDetail = state.viewModalKind === 'detail' && app.getDetailRowCount() === 1;
         var editing = !!state.viewModalEditing;
 
         $('#btnShipInfoViewEdit').toggleClass('d-none', editing || !canEdit);
@@ -64,7 +99,7 @@
         $('#btnShipInfoViewCancelEdit').toggleClass('d-none', !editing || !canEdit);
         $('#btnShipInfoViewDiscard').toggleClass('d-none', editing || !canDiscard)
             .prop('disabled', !!state.actionBusy);
-        $('#btnShipInfoViewDelete').toggleClass('d-none', editing || !canDelete)
+        $('#btnShipInfoViewDelete').toggleClass('d-none', editing || !app.hasPermission('Views.Function.ShipInfo.Delete') || !permission.delete || isLastDetail)
             .prop('disabled', !!state.actionBusy);
         $('#shipInfoViewModalLabel').text(editing
             ? (messages.editMode || messages.edit || 'Edit')
@@ -218,6 +253,11 @@
         if (Object.prototype.hasOwnProperty.call(values, 'TotalCartons')
             && !/^\d+$/.test(String(values.TotalCartons || '').trim())) {
             app.showToast(messages.totalCartonsInteger || 'Total Cartons must be a non-negative integer.', 'warning');
+            return;
+        }
+        var detailNumericError = validateDetailNumericRules(values);
+        if (detailNumericError) {
+            app.showToast(detailNumericError, 'warning');
             return;
         }
         var meta = renderApi.collectSaveMeta($form);

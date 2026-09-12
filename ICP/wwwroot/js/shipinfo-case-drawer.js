@@ -166,8 +166,8 @@
             errors.push(messages.arurTetPoTooLong || '採購單超過 30 字，無法起案。');
         }
 
-        if (warehouse.length > 3) {
-            errors.push(messages.arurWarehouseTooLong || '倉別超過 3 碼，無法起案。');
+        if (warehouse.length > 4) {
+            errors.push(messages.arurWarehouseTooLong || '倉別超過 4 碼，無法起案。');
         }
 
         if (subject.length > 50) {
@@ -185,7 +185,7 @@
             }
         });
 
-        if (headerText(header, ['Warehouse', 'warehouse']).length > 3) {
+        if (headerText(header, ['Warehouse', 'warehouse']).length > 4) {
             invalid.add('warehouse');
         }
 

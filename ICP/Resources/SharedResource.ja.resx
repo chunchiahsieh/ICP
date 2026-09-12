@@ -700,7 +700,7 @@
     <value>件名が 50 文字を超えています（発注番号 + 請求書）。ARUR を起案できません。</value>
   </data>
   <data name="ShipInfo.ArurWarehouseTooLong" xml:space="preserve">
-    <value>倉庫コードが 3 文字を超えています。ARUR を起案できません。</value>
+    <value>倉庫コードが 4 文字を超えています。ARUR を起案できません。</value>
   </data>
   <data name="ShipInfo.ArurTetPoTooLong" xml:space="preserve">
     <value>発注番号が 30 文字を超えています。ARUR を起案できません。</value>
@@ -2002,5 +2002,77 @@
   <data name="Compare.DataSourceUnavailable" xml:space="preserve"><value>設定された ILC データベースに dbo.RT_ARUR_HEADER がありません。ICP の ILC_Connection を AR/UR 起案の書込み先 ILC データベースに設定してください。</value></data>
   <data name="ShipInfo.CaseRequirement.Deposit" xml:space="preserve"><value>デポジット起案必須</value></data>
   <data name="ShipInfo.CaseRequirement.Arur" xml:space="preserve"><value>ARUR 起案必須</value></data>
-  <data name="ShipInfo.CaseRequirement.ArurWarehouse" xml:space="preserve"><value>ARUR 起案：最大 3 文字</value></data>
+  <data name="ShipInfo.CaseRequirement.ArurWarehouse" xml:space="preserve"><value>ARUR 起案：最大 4 文字</value></data>
+  <data name="Common.Actions" xml:space="preserve"><value>操作</value></data>
+  <data name="Common.Close" xml:space="preserve"><value>閉じる</value></data>
+  <data name="Setting.SystemConfig.KeyRequired" xml:space="preserve"><value>キーは必須です。</value></data>
+  <data name="Setting.SystemConfig.CreateTitle" xml:space="preserve"><value>追加</value></data>
+  <data name="Setting.SystemConfig.EditTitle" xml:space="preserve"><value>編集</value></data>
+  <data name="Setting.SystemConfig.BatchDeleteConfirm" xml:space="preserve"><value>選択したデータを削除しますか？</value></data>
+  <data name="Setting.SystemConfig.DeleteConfirm" xml:space="preserve"><value>このデータを削除しますか？</value></data>
+  <data name="Setting.BuCode.Title" xml:space="preserve"><value>BUコード</value></data>
+  <data name="Setting.WhCode.Title" xml:space="preserve"><value>倉庫コード</value></data>
+  <data name="Setting.DeliveryToList.Title" xml:space="preserve"><value>納入先リスト</value></data>
+  <data name="Setting.PickUpLocation.Title" xml:space="preserve"><value>集荷場所</value></data>
+  <data name="Setting.EtaDelDateTable.Title" xml:space="preserve"><value>ETA納品日テーブル</value></data>
+  <data name="Setting.DefaultDeliveryWh.Title" xml:space="preserve"><value>デフォルト納品倉庫</value></data>
+  <data name="Setting.Broker.Title" xml:space="preserve"><value>ブローカー</value></data>
+  <data name="Setting.AirSea.Title" xml:space="preserve"><value>航空／海上</value></data>
+  <data name="Setting.InvoiceType.Title" xml:space="preserve"><value>インボイスタイプ</value></data>
+  <data name="Setting.OrderType.Title" xml:space="preserve"><value>注文タイプ</value></data>
+  <data name="Setting.OrderPriority.Title" xml:space="preserve"><value>注文優先度</value></data>
+  <data name="Setting.Field.Key" xml:space="preserve"><value>キー</value></data>
+  <data name="Setting.Field.CustomerCode" xml:space="preserve"><value>顧客コード</value></data>
+  <data name="Setting.Field.Name" xml:space="preserve"><value>名称</value></data>
+  <data name="Setting.Field.Fab" xml:space="preserve"><value>工場</value></data>
+  <data name="Setting.Field.Address" xml:space="preserve"><value>住所</value></data>
+  <data name="Setting.Field.Phone" xml:space="preserve"><value>電話</value></data>
+  <data name="Setting.Field.Area" xml:space="preserve"><value>エリア</value></data>
+  <data name="Setting.Field.Sloc" xml:space="preserve"><value>保管場所</value></data>
+  <data name="Setting.Field.PickupLocation" xml:space="preserve"><value>集荷場所</value></data>
+  <data name="Setting.Field.ContactPerson" xml:space="preserve"><value>担当者</value></data>
+  <data name="Setting.Field.PhoneNumber" xml:space="preserve"><value>電話番号</value></data>
+  <data name="Setting.Field.DestinationPort" xml:space="preserve"><value>仕向港</value></data>
+  <data name="Setting.Field.EtaCalendarType" xml:space="preserve"><value>ETAカレンダータイプ</value></data>
+  <data name="Setting.Field.WhCode" xml:space="preserve"><value>倉庫コード</value></data>
+  <data name="Setting.Field.FlightNo" xml:space="preserve"><value>便名</value></data>
+  <data name="Setting.Field.DeliveryDate" xml:space="preserve"><value>納品日</value></data>
+  <data name="Setting.Field.Remark" xml:space="preserve"><value>備考</value></data>
+  <data name="Setting.Field.Category" xml:space="preserve"><value>カテゴリ</value></data>
+  <data name="Setting.Field.FunctionCode" xml:space="preserve"><value>機能コード</value></data>
+  <data name="Setting.Field.Key1" xml:space="preserve"><value>キー 1</value></data>
+  <data name="Setting.Field.Key2" xml:space="preserve"><value>キー 2</value></data>
+  <data name="Setting.Field.Value1" xml:space="preserve"><value>値 1</value></data>
+  <data name="Setting.Field.Value2" xml:space="preserve"><value>値 2</value></data>
+  <data name="Setting.Field.Value3" xml:space="preserve"><value>値 3</value></data>
+  <data name="Setting.Field.Value4" xml:space="preserve"><value>値 4</value></data>
+  <data name="Setting.Field.Value5" xml:space="preserve"><value>値 5</value></data>
+  <data name="Setting.Field.Value6" xml:space="preserve"><value>値 6</value></data>
+  <data name="Views.Shared._SidebarNav.Setting.LocalizationManagement" xml:space="preserve"><value>多言語</value></data>
+  <data name="Views.Shared._SidebarNav.Localization" xml:space="preserve"><value>多言語</value></data>
+  <data name="Sidebar.Search" xml:space="preserve"><value>メニューを検索</value></data>
+  <data name="Sidebar.Recent" xml:space="preserve"><value>最近使用</value></data>
+  <data name="LocalizationManagement.Title" xml:space="preserve"><value>多言語管理</value></data>
+  <data name="LocalizationManagement.Hint" xml:space="preserve"><value>翻訳を直接編集して保存します。保存前にバックアップを作成します。変更を反映するには ICP を再起動してください。</value></data>
+  <data name="LocalizationManagement.Search" xml:space="preserve"><value>Resource Key または翻訳を検索</value></data>
+  <data name="LocalizationManagement.Loading" xml:space="preserve"><value>読み込み中…</value></data>
+  <data name="LocalizationManagement.NoRows" xml:space="preserve"><value>一致する翻訳がありません。</value></data>
+  <data name="LocalizationManagement.SaveChanges" xml:space="preserve"><value>変更を保存</value></data>
+  <data name="LocalizationManagement.Saved" xml:space="preserve"><value>{0} 件の翻訳を更新しました。ICP を再起動して表示を確認してください。</value></data>
+  <data name="LocalizationManagement.LoadFailed" xml:space="preserve"><value>翻訳を読み込めません。</value></data>
+  <data name="LocalizationManagement.SaveFailed" xml:space="preserve"><value>翻訳を保存できません。</value></data>
+  <data name="LocalizationManagement.NoChanges" xml:space="preserve"><value>保存する変更はありません。</value></data>
+  <data name="LocalizationManagement.ExportExcel" xml:space="preserve"><value>Excel をエクスポート</value></data>
+  <data name="LocalizationManagement.ImportExcel" xml:space="preserve"><value>Excel をインポート</value></data>
+  <data name="LocalizationManagement.Imported" xml:space="preserve"><value>{0} 件の翻訳をインポートし、{1} 件の値を更新しました。更新内容を表示するには ICP を再起動してください。</value></data>
+  <data name="LocalizationManagement.ImportFailed" xml:space="preserve"><value>翻訳 Excel ファイルをインポートできません。</value></data>
+  <data name="Sidebar.NoResults" xml:space="preserve"><value>一致するメニュー項目がありません</value></data>
+  <data name="Sidebar.CustomLinks" xml:space="preserve"><value>リンク</value></data>
+  <data name="Sidebar.SearchCount" xml:space="preserve"><value>{0} 件</value></data>
+  <data name="Sidebar.ClearRecent" xml:space="preserve"><value>最近使用をクリア</value></data>
+  <data name="Sidebar.OpenInNewTab" xml:space="preserve"><value>新しいタブで開く</value></data>
+  <data name="Sidebar.Resize" xml:space="preserve"><value>サイドバーの幅を変更</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>固定</value></data>
+  <data name="Sidebar.Pin" xml:space="preserve"><value>この項目を固定</value></data>
+  <data name="Sidebar.Unpin" xml:space="preserve"><value>この項目の固定を解除</value></data>
 </root>

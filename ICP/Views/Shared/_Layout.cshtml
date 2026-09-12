@@ -1,6 +1,7 @@
 @using System.Globalization
 @inject IConfiguration Configuration
 @inject ICP.Services.UserAuthService UserAuth
+@inject ICP.Services.UserResourcePermissionService UserResourcePerm
 @inject Microsoft.Extensions.Localization.IStringLocalizer<ICP.SharedResource> Localizer
 @{
     var brandName = Configuration["App:BrandName"] ?? "ICP";
@@ -102,8 +103,13 @@
                         <div class="small mt-2">@Localizer["Common.ReleaseVersion"]</div>
                         <div>@releaseVersion</div>
                     }
+                    @if (UserResourcePerm.HasMenuPermission("Views.Shared._SidebarNav.Logout"))
+                    {
+                        <a class="nav-link sidebar-logout-link" asp-controller="Login" asp-action="Logout" data-permissions="Views.Shared._SidebarNav.Logout" data-i18n-key="Views.Shared._SidebarNav.Logout"><div class="sb-nav-link-icon"><i class="fa-solid fa-right-from-bracket"></i></div>@Localizer["Views.Shared._SidebarNav.Logout"]</a>
+                    }
                 </div>
             </nav>
+            <div id="sidebarResizeHandle" class="sidebar-resize-handle" role="separator" aria-orientation="vertical" aria-label="@Localizer["Sidebar.Resize"]" tabindex="0"></div>
         </div>
         <div id="layoutSidenav_content">
             <main>
@@ -127,6 +133,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/ilc/all.js" asp-append-version="true"></script>
     <script src="~/js/ilc/scripts.js" asp-append-version="true"></script>
+    <script src="~/js/icp-sidebar.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function () {
             $(window).on('keydown', function (event) {

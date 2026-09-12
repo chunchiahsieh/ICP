@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using ICP.Models;
 using ICP.Services;
+using ICP.Models.Sidebar;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +11,16 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly UserAuthService _userAuthService;
+    private readonly SidebarOptions _sidebarOptions;
 
     public HomeController(
         ILogger<HomeController> logger,
-        UserAuthService userAuthService)
+        UserAuthService userAuthService,
+        Microsoft.Extensions.Options.IOptions<SidebarOptions> sidebarOptions)
     {
         _logger = logger;
         _userAuthService = userAuthService;
+        _sidebarOptions = sidebarOptions.Value;
     }
 
     [AllowAnonymous]
@@ -27,7 +31,7 @@ public class HomeController : Controller
             return RedirectToAction("Index", "Login");
         }
 
-        return View("~/Views/Home/Index.cshtml");
+        return RedirectToAction("Index", _sidebarOptions.DefaultPage);
     }
 
     public IActionResult Privacy()

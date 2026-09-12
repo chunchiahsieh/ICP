@@ -84,7 +84,7 @@
             },
             onDraw: function ($div) {
                 syncStickyHeaderOffset($div);
-                syncFrozenHeaderColumns($div);
+                syncFrozenColumns($div, kind);
             },
             formatFilterOptionLabel: function (column, value) {
                 if (!column || value == null) {
@@ -188,12 +188,13 @@
 
     function bindHeaderTableEvents($scope) {
         syncStickyHeaderOffset($scope);
-        syncFrozenHeaderColumns($scope);
+        syncFrozenColumns($scope, 'header');
         app.restoreHeaderSelection($scope);
     }
 
-    function syncFrozenHeaderColumns($scope) {
-        var $table = $scope.find('#shipInfoHeaderTable');
+    function syncFrozenColumns($scope, kind) {
+        var tableId = kind === 'header' ? 'shipInfoHeaderTable' : 'shipInfoDetailTable';
+        var $table = $scope.find('#' + tableId);
         var $headerRow = $table.find('thead tr').first();
         if (!$headerRow.length) {
             return;
@@ -203,10 +204,18 @@
         // report its visual (already shifted) position and columns then overlap on
         // horizontal scrolling. Build each left offset from the real preceding widths.
         var left = 0;
-        var frozenFields = ['SaDate', 'InvoiceNo', 'Hawb', 'MdpFlag'];
+        var pageConfig = app.state.pageConfig || {};
+        var tableUi = kind === 'header'
+            ? (pageConfig.headerTableUi || pageConfig.HeaderTableUi)
+            : (pageConfig.detailTableUi || pageConfig.DetailTableUi);
+        var frozenFields = (tableUi && (tableUi.frozenFields || tableUi.FrozenFields) || []).map(function (field) {
+            return String(field).toLowerCase();
+        });
+        var lastFrozenField = frozenFields.length ? frozenFields[frozenFields.length - 1] : null;
         $headerRow.children().each(function (index) {
             var fieldName = $(this).attr('data-freeze-field');
-            var frozen = index < 2 || frozenFields.indexOf(fieldName) >= 0;
+            var normalizedFieldName = fieldName ? String(fieldName).toLowerCase() : '';
+            var frozen = index < (kind === 'header' ? 2 : 1) || frozenFields.indexOf(normalizedFieldName) >= 0;
             var width = this.getBoundingClientRect().width;
             // Apply the same column contract to both header rows and every data
             // row after DataTables draws. Filter cells must also own a sticky
@@ -214,6 +223,7 @@
             $table.children('thead, tbody').children('tr').each(function () {
                 $(this).children().eq(index)
                     .toggleClass('shipinfo-frozen-cell', frozen)
+                    .toggleClass('shipinfo-frozen-boundary', normalizedFieldName === lastFrozenField)
                     .css('left', frozen ? left + 'px' : '');
             });
             if (frozen) left += width;
@@ -251,6 +261,7 @@
 
     function bindDetailTableEvents($scope) {
         syncStickyHeaderOffset($scope);
+        syncFrozenColumns($scope, 'detail');
         app.getDetailRowCount($scope);
 
         $scope.find('#shipInfoDetailTable .shipinfo-detail-edit-btn').off('click.shipinfo').on('click.shipinfo', function (e) {
@@ -362,7 +373,8 @@
 
         $(window).off('resize.shipinfoStickyHeader').on('resize.shipinfoStickyHeader', function () {
             syncStickyHeaderOffset();
-            syncFrozenHeaderColumns($('#shipInfoHeaderDataDiv'));
+            syncFrozenColumns($('#shipInfoHeaderDataDiv'), 'header');
+            syncFrozenColumns($('#shipInfoDetailDataDiv'), 'detail');
         });
     };
 

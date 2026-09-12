@@ -6,6 +6,7 @@ using ICPFileGenerator.Services;
 using ICPFileGenerator.Workers;
 
 var isAgaComputer = HostEnvironmentExtensions.IsAgaComputer();
+var telAppSettingsFile = ResolveTelAppSettingsFile();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +15,12 @@ if (!isAgaComputer)
     builder.Configuration.Sources.Clear();
     builder.Configuration
         .SetBasePath(builder.Environment.ContentRootPath)
-        .AddJsonFile("appsettings.TEL.json", optional: false, reloadOnChange: true)
+        .AddJsonFile(telAppSettingsFile, optional: false, reloadOnChange: true)
         .AddEnvironmentVariables()
         .AddCommandLine(args);
 }
 
-var appSettingsProfile = ResolveAppSettingsProfile(isAgaComputer, builder.Environment);
+var appSettingsProfile = ResolveAppSettingsProfile(isAgaComputer, builder.Environment, telAppSettingsFile);
 
 builder.Services.Configure<FileGeneratorOptions>(
     builder.Configuration.GetSection(FileGeneratorOptions.SectionName));
@@ -63,9 +64,17 @@ app.MapControllers();
 
 app.Run();
 
-static string ResolveAppSettingsProfile(bool isAgaComputer, IWebHostEnvironment environment) =>
+static string ResolveTelAppSettingsFile() =>
+    string.Equals(Environment.MachineName, "TETIS87181", StringComparison.OrdinalIgnoreCase)
+        ? "appsettings.TEL.TETIS87181.json"
+        : "appsettings.TEL.json";
+
+static string ResolveAppSettingsProfile(
+    bool isAgaComputer,
+    IWebHostEnvironment environment,
+    string telAppSettingsFile) =>
     isAgaComputer
         ? environment.IsDevelopment()
             ? "appsettings.json, appsettings.Development.json"
             : "appsettings.json"
-        : "appsettings.TEL.json";
+        : telAppSettingsFile;

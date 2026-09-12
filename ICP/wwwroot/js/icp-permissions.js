@@ -110,6 +110,14 @@
                 heading.hidden = true;
             }
         });
+
+        document.querySelectorAll('[data-sidebar-menu-group]').forEach(function (group) {
+            var visibleLinks = Array.prototype.some.call(
+                group.querySelectorAll('.nav-link[data-permissions]'),
+                function (link) { return !link.hidden; });
+            var isConfigurationOnlyGroup = group.querySelector('.nav-link:not([data-permissions])');
+            group.hidden = !visibleLinks && !isConfigurationOnlyGroup;
+        });
     }
 
     if (document.readyState === 'loading') {

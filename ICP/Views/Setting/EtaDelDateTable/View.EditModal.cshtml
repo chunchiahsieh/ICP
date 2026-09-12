@@ -7,7 +7,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">@Localizer["Common.Edit"]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label='@Localizer["Common.Close"]'></button>
             </div>
             <div class="modal-body">
                 <form id="editForm">
@@ -16,33 +16,33 @@
                     <div class="alert alert-danger crud-form-error d-none" role="alert"></div>
                     <div class="row g-2">
                         <div class="col-md-6">
-                            <label class="form-label">Key</label>
+                            <label class="form-label">@Localizer["Setting.Field.Key"]</label>
                             <input type="text" class="form-control form-control-sm" name="Key1" maxlength="100" />
                             <div class="text-danger small crud-field-error" data-field-error="Key1"></div>
                         </div>
                         <div class="col-md-6">
                             @await Html.PartialAsync("~/Views/Shared/_ProFormLookupDropdown.cshtml",
-                                ("lookup-DestinationPort", "Destination Port", "Value1", "Destination Port", "single", lookupOptionsUrl))
+                                ("lookup-DestinationPort", Localizer["Setting.Field.DestinationPort"].Value, "Value1", "Destination Port", "single", lookupOptionsUrl))
                         </div>
                         <div class="col-md-6">
                             @await Html.PartialAsync("~/Views/Shared/_ProFormLookupDropdown.cshtml",
-                                ("lookup-EtaCalendarType", "EtaCalendarType", "Value2", "EtaCalendarType", "single", lookupOptionsUrl))
+                                ("lookup-EtaCalendarType", Localizer["Setting.Field.EtaCalendarType"].Value, "Value2", "EtaCalendarType", "single", lookupOptionsUrl))
                         </div>
                         <div class="col-md-6">
                             @await Html.PartialAsync("~/Views/Shared/_ProFormLookupDropdown.cshtml",
-                                ("lookup-WhCode", "WhCode", "Value3", "WhCode", "multi", lookupOptionsUrl))
+                                ("lookup-WhCode", Localizer["Setting.Field.WhCode"].Value, "Value3", "WhCode", "multi", lookupOptionsUrl))
                         </div>
                         <div class="col-md-6">
                             @await Html.PartialAsync("~/Views/Shared/_ProFormLookupDropdown.cshtml",
-                                ("lookup-FlightNo", "FlightNo", "Value4", "FlightNo", "multi", lookupOptionsUrl))
+                                ("lookup-FlightNo", Localizer["Setting.Field.FlightNo"].Value, "Value4", "FlightNo", "multi", lookupOptionsUrl))
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Del Date</label>
+                            <label class="form-label">@Localizer["Setting.Field.DeliveryDate"]</label>
                             <input type="text" class="form-control form-control-sm" name="Value5" maxlength="1000" />
                             <div class="text-danger small crud-field-error" data-field-error="Value5"></div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Remark</label>
+                            <label class="form-label">@Localizer["Setting.Field.Remark"]</label>
                             <input type="text" class="form-control form-control-sm" name="Value6" maxlength="1000" />
                             <div class="text-danger small crud-field-error" data-field-error="Value6"></div>
                         </div>

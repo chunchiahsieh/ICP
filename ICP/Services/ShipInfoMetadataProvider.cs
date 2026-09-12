@@ -7,13 +7,13 @@ namespace ICP.Services;
 
 public class ShipInfoMetadataProvider
 {
-    private readonly IOptionsMonitor<ShipInfoTableFieldsOptions> _tableFieldsOptions;
+    private readonly IOptionsMonitor<ShipInfoProDataTableFieldsOptions> _tableFieldsOptions;
     private readonly IStringLocalizerFactory _localizerFactory;
     private readonly ShipInfoFormMetadataProvider _formMetadataProvider;
     private readonly ILogger<ShipInfoMetadataProvider> _logger;
 
     public ShipInfoMetadataProvider(
-        IOptionsMonitor<ShipInfoTableFieldsOptions> tableFieldsOptions,
+        IOptionsMonitor<ShipInfoProDataTableFieldsOptions> tableFieldsOptions,
         IStringLocalizerFactory localizerFactory,
         ShipInfoFormMetadataProvider formMetadataProvider,
         ILogger<ShipInfoMetadataProvider> logger)
@@ -30,6 +30,8 @@ public class ShipInfoMetadataProvider
         var tableFields = _tableFieldsOptions.CurrentValue;
         var headerCatalog = ShipInfoFieldCatalog.BuildHeaderCatalog();
         var detailCatalog = ShipInfoFieldCatalog.BuildDetailCatalog();
+        var headerFormMetadata = _formMetadataProvider.GetHeaderFormMetadata(normalizedCulture);
+        var detailFormMetadata = _formMetadataProvider.GetDetailFormMetadata(normalizedCulture);
         var headerListFields = MergeAndLabelFields(headerCatalog, tableFields.Header, ShipInfoFieldConfigMerger.MergeList, normalizedCulture);
         var configuredHeaderNames = tableFields.Header.ResolveListFieldEntries()
             .Select(x => x.FieldName).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -38,8 +40,14 @@ public class ShipInfoMetadataProvider
             headerListFields = headerListFields.Where(x => configuredHeaderNames.Contains(x.FieldName)).ToList();
         }
         var detailListFields = MergeAndLabelFields(detailCatalog, tableFields.Detail, ShipInfoFieldConfigMerger.MergeList, normalizedCulture);
-        var headerEditFields = MergeAndLabelFields(headerCatalog, tableFields.Header, ShipInfoFieldConfigMerger.MergeEdit, normalizedCulture);
-        var detailEditFields = MergeAndLabelFields(detailCatalog, tableFields.Detail, ShipInfoFieldConfigMerger.MergeEdit, normalizedCulture);
+        var configuredDetailNames = tableFields.Detail.ResolveListFieldEntries()
+            .Select(x => x.FieldName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (configuredDetailNames.Count > 0)
+        {
+            detailListFields = detailListFields.Where(x => configuredDetailNames.Contains(x.FieldName)).ToList();
+        }
+        var headerEditFields = _formMetadataProvider.GetHeaderEditFields(normalizedCulture);
+        var detailEditFields = _formMetadataProvider.GetDetailEditFields(normalizedCulture);
 
         return new ShipInfoPageConfig
         {
@@ -47,8 +55,8 @@ public class ShipInfoMetadataProvider
             HeaderFields = headerListFields,
             DetailFields = detailListFields,
             HeaderEditFields = headerEditFields,
-            HeaderFormMetadata = _formMetadataProvider.GetHeaderFormMetadata(normalizedCulture),
-            DetailFormMetadata = _formMetadataProvider.GetDetailFormMetadata(normalizedCulture),
+            HeaderFormMetadata = headerFormMetadata,
+            DetailFormMetadata = detailFormMetadata,
             DetailEditFields = detailEditFields,
             SearchFields = ShipInfoMetadataHelper.GetSearchFields(headerListFields),
             StatusRules = ShipInfoStatusRules.BuildMatrix(),

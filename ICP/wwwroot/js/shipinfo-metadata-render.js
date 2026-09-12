@@ -319,6 +319,48 @@
             );
         }
 
+        if (controlType === 'Date' && options.mode !== 'view') {
+            var initialDateValue = normalizeDateInputValue(value == null ? '' : value);
+            var $dateInput = $('<input type="text" class="form-control shipinfo-control" inputmode="numeric" placeholder="yyyy-MM-dd" pattern="\\d{4}-\\d{2}-\\d{2}" />')
+                .attr('data-field', fieldName)
+                .attr('data-control-type', controlType)
+                .val(initialDateValue);
+            var $nativeDateInput = $('<input type="date" class="visually-hidden" tabindex="-1" aria-hidden="true" />')
+                .attr('data-date-native-for', fieldName)
+                .val(isValidYyyyMmDd(initialDateValue) ? initialDateValue : '');
+            var $datePickerButton = $('<button type="button" class="btn shipinfo-date-picker" aria-label="Open calendar"><i class="bi bi-calendar"></i></button>');
+            var $datePicker = $('<div class="input-group shipinfo-date-picker-group"></div>')
+                .append($dateInput, $nativeDateInput, $datePickerButton);
+
+            $dateInput.on('blur', function () {
+                var normalized = normalizeDateInputValue($(this).val());
+                if (normalized) {
+                    $(this).val(normalized);
+                    $nativeDateInput.val(isValidYyyyMmDd(normalized) ? normalized : '');
+                }
+            });
+            $datePickerButton.on('click', function () {
+                var normalized = normalizeDateInputValue($dateInput.val());
+                $dateInput.val(normalized);
+                $nativeDateInput.val(isValidYyyyMmDd(normalized) ? normalized : '');
+                var nativePicker = $nativeDateInput[0];
+                if (!nativePicker) return;
+                if (typeof nativePicker.showPicker === 'function') nativePicker.showPicker();
+                else nativePicker.click();
+            });
+            $nativeDateInput.on('change', function () {
+                $dateInput.val(normalizeDateInputValue($(this).val())).trigger('change');
+            });
+
+            if (lockControl) {
+                $dateInput.prop('readonly', true).prop('disabled', true);
+                $nativeDateInput.prop('disabled', true);
+                $datePickerButton.prop('disabled', true);
+            }
+
+            return $datePicker;
+        }
+
         var inputType = 'text';
         if (controlType === 'Number' || controlType === 'Decimal' || controlType === 'Currency') {
             inputType = 'number';
@@ -337,6 +379,18 @@
             .attr('data-control-type', controlType)
             .attr('placeholder', placeholder || (controlType === 'Date' ? 'yyyy-MM-dd' : (controlType === 'DateTime' ? 'yyyy-MM-dd HH:mm' : '')))
             .val(displayValue);
+
+        if (controlType === 'Decimal' || controlType === 'Currency') {
+            $input.attr('step', '0.01').attr('min', '0');
+        }
+
+        if (fieldName === 'InvoiceSeq') {
+            $input.attr('step', 'any').attr('min', '0');
+        }
+
+        if (['Qty', 'CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight', 'TotalCartons'].indexOf(fieldName) >= 0) {
+            $input.attr('step', '1').attr('min', '0');
+        }
 
         if (controlType === 'Date') {
             $input.attr('inputmode', 'numeric').attr('pattern', '\\d{4}-\\d{2}-\\d{2}');
@@ -745,7 +799,7 @@
 
     function normalizeMetadataType(type) {
         var normalized = String(type || '').toLowerCase();
-        var map = { text: 'Text', number: 'Number', date: 'Date', select: 'Select', checkbox: 'Checkbox' };
+        var map = { text: 'Text', number: 'Number', decimal: 'Decimal', date: 'Date', select: 'Select', checkbox: 'Checkbox' };
         if (!map[normalized]) {
             failMetadata('Unsupported component type: ' + type);
         }
