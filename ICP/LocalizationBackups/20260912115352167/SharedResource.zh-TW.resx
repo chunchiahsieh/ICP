@@ -1,0 +1,2081 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Auth.FailedContactIs" xml:space="preserve">
+    <value>權限驗證錯誤，請洽詢 IS 人員或使用工號登入。</value>
+  </data>
+  <data name="Auth.PleaseLoginFirst" xml:space="preserve">
+    <value>請先登入系統。1</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissions" xml:space="preserve">
+    <value>重新載入權限</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissionsSuccess" xml:space="preserve">
+    <value>權限已重新載入，頁面即將更新。</value>
+  </data>
+  <data name="Auth.RefreshSessionPermissionsFailed" xml:space="preserve">
+    <value>重新載入權限失敗，請稍後再試。</value>
+  </data>
+  <data name="Common.Add" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="Common.BatchDelete" xml:space="preserve">
+    <value>批次刪除</value>
+  </data>
+  <data name="Common.BatchDisable" xml:space="preserve">
+    <value>批次停用</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Common.Clear" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="Common.Confirm" xml:space="preserve">
+    <value>確定</value>
+  </data>
+  <data name="Common.Create" xml:space="preserve">
+    <value>建立</value>
+  </data>
+  <data name="Common.CreatePermission" xml:space="preserve">
+    <value>建立權限</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="Common.Disable" xml:space="preserve">
+    <value>停用</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="Common.Filter" xml:space="preserve">
+    <value>篩選</value>
+  </data>
+  <data name="Common.Language" xml:space="preserve">
+    <value>語言</value>
+  </data>
+  <data name="Common.LoggedInAs" xml:space="preserve">
+    <value>Logged in as:</value>
+  </data>
+  <data name="Common.Logout" xml:space="preserve">
+    <value>登出</value>
+  </data>
+  <data name="Common.Next" xml:space="preserve">
+    <value>下一步</value>
+  </data>
+  <data name="Common.NoMatches" xml:space="preserve">
+    <value>無符合項目</value>
+  </data>
+  <data name="Common.None" xml:space="preserve">
+    <value>（無）</value>
+  </data>
+  <data name="Common.PleaseSelect" xml:space="preserve">
+    <value>-- 請選擇 --</value>
+  </data>
+  <data name="Common.Reset" xml:space="preserve">
+    <value>重設</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>搜尋...</value>
+  </data>
+  <data name="Common.SelectAll" xml:space="preserve">
+    <value>全選</value>
+  </data>
+  <data name="Common.SelectAllPage" xml:space="preserve">
+    <value>全選本頁</value>
+  </data>
+  <data name="Common.Submit" xml:space="preserve">
+    <value>建立</value>
+  </data>
+  <data name="Culture.En" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Culture.Ja" xml:space="preserve">
+    <value>日本語</value>
+  </data>
+  <data name="Culture.ZhTW" xml:space="preserve">
+    <value>繁體中文</value>
+  </data>
+  <data name="DataTables.EmptyTable" xml:space="preserve">
+    <value>表中資料為空</value>
+  </data>
+  <data name="DataTables.Info" xml:space="preserve">
+    <value>顯示第 _START_ 至 _END_ 項結果，共 _TOTAL_ 項</value>
+  </data>
+  <data name="DataTables.InfoEmpty" xml:space="preserve">
+    <value>顯示第 0 至 0 項結果，共 0 項</value>
+  </data>
+  <data name="DataTables.InfoFiltered" xml:space="preserve">
+    <value>(從 _MAX_ 項結果過濾)</value>
+  </data>
+  <data name="DataTables.LengthMenu" xml:space="preserve">
+    <value>顯示 _MENU_ 項結果</value>
+  </data>
+  <data name="DataTables.LengthMenuItem" xml:space="preserve">
+    <value>{0} 筆</value>
+  </data>
+  <data name="DataTables.LoadingRecords" xml:space="preserve">
+    <value>載入中...</value>
+  </data>
+  <data name="DataTables.Paginate.First" xml:space="preserve">
+    <value>第一頁</value>
+  </data>
+  <data name="DataTables.Paginate.Last" xml:space="preserve">
+    <value>最後一頁</value>
+  </data>
+  <data name="DataTables.Paginate.Next" xml:space="preserve">
+    <value>下一頁</value>
+  </data>
+  <data name="DataTables.Paginate.Previous" xml:space="preserve">
+    <value>上一頁</value>
+  </data>
+  <data name="DataTables.Processing" xml:space="preserve">
+    <value>處理中...</value>
+  </data>
+  <data name="DataTables.Search" xml:space="preserve">
+    <value>搜尋:</value>
+  </data>
+  <data name="DataTables.ZeroRecords" xml:space="preserve">
+    <value>沒有符合的結果</value>
+  </data>
+  <data name="Error.RoleCodeExists" xml:space="preserve">
+    <value>RoleCode 已存在</value>
+  </data>
+  <data name="Error.RoleDepIdExists" xml:space="preserve">
+    <value>此 DepID 與角色組合已存在</value>
+  </data>
+  <data name="Error.RoleMailGroupExists" xml:space="preserve">
+    <value>此 MailGroup 與角色組合已存在</value>
+  </data>
+  <data name="Error.RolePermissionExists" xml:space="preserve">
+    <value>此角色、資源與動作組合已存在</value>
+  </data>
+  <data name="Error.RoleTelIdExists" xml:space="preserve">
+    <value>此 TELID 與角色組合已存在</value>
+  </data>
+  <data name="Home.Description" xml:space="preserve">
+    <value>說明</value>
+  </data>
+  <data name="Home.Feature" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="Home.HomeDesc" xml:space="preserve">
+    <value>系統首頁</value>
+  </data>
+  <data name="Home.PrivacyDesc" xml:space="preserve">
+    <value>隱私權政策</value>
+  </data>
+  <data name="Home.SidebarPlaceholder" xml:space="preserve">
+    <value>左側選單與使用者資訊為版型佔位；完整功能選單將於登入與權限模組就緒後啟用。</value>
+  </data>
+  <data name="Function.Placeholder" xml:space="preserve">
+    <value>功能開發中，敬請期待。</value>
+  </data>
+  <data name="ShipInfo.Search" xml:space="preserve">
+    <value>查詢</value>
+  </data>
+  <data name="ShipInfo.Reset" xml:space="preserve">
+    <value>重設</value>
+  </data>
+  <data name="ShipInfo.Edit" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="ShipInfo.Delete" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="ShipInfo.Discard" xml:space="preserve">
+    <value>報廢</value>
+  </data>
+  <data name="ShipInfo.DiscardConfirmTitle" xml:space="preserve">
+    <value>確定要報廢嗎？</value>
+  </data>
+  <data name="ShipInfo.DiscardConfirmMessage" xml:space="preserve">
+    <value>報廢後將保留 Header 與 Detail 資料，且無法再編輯或起案。</value>
+  </data>
+  <data name="ShipInfo.DiscardReason" xml:space="preserve">
+    <value>報廢原因</value>
+  </data>
+  <data name="ShipInfo.DiscardReasonRequired" xml:space="preserve">
+    <value>請填寫報廢原因。</value>
+  </data>
+  <data name="ShipInfo.DiscardSuccess" xml:space="preserve">
+    <value>報廢成功</value>
+  </data>
+  <data name="ShipInfo.DiscardFailed" xml:space="preserve">
+    <value>報廢失敗</value>
+  </data>
+  <data name="ShipInfo.Deposit" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.ARUR" xml:space="preserve">
+    <value>ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.Save" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="ShipInfo.Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ShipInfo.HeaderTitle" xml:space="preserve">
+    <value>船務表頭</value>
+  </data>
+  <data name="ShipInfo.DetailTitle" xml:space="preserve">
+    <value>船務明細</value>
+  </data>
+  <data name="ShipInfo.SelectHeaderFirst" xml:space="preserve">
+    <value>請先選擇 Header</value>
+  </data>
+  <data name="ShipInfo.DepositCompleted" xml:space="preserve">
+    <value>已完成押金起案</value>
+  </data>
+  <data name="ShipInfo.Loading" xml:space="preserve">
+    <value>處理中...</value>
+  </data>
+  <data name="ShipInfo.SaveSuccess" xml:space="preserve">
+    <value>儲存成功</value>
+  </data>
+  <data name="ShipInfo.SaveFailed" xml:space="preserve">
+    <value>儲存失敗</value>
+  </data>
+  <data name="ShipInfo.DeleteSuccess" xml:space="preserve">
+    <value>刪除成功</value>
+  </data>
+  <data name="ShipInfo.DeleteFailed" xml:space="preserve">
+    <value>刪除失敗</value>
+  </data>
+  <data name="ShipInfo.DeleteLastDetailNotAllowed" xml:space="preserve">
+    <value>至少需保留一筆 Detail，無法刪除。</value>
+  </data>
+  <data name="ShipInfo.NoData" xml:space="preserve">
+    <value>查無資料</value>
+  </data>
+  <data name="ShipInfo.Action" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="ShipInfo.RequiredMark" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="ShipInfo.TotalCartonsInteger" xml:space="preserve">
+    <value>總箱數必須為非負整數。</value>
+  </data>
+  <data name="ShipInfo.ValidationFailed" xml:space="preserve">
+    <value>驗證失敗</value>
+  </data>
+  <data name="ShipInfo.DrawerHeader" xml:space="preserve">
+    <value>Header 編輯</value>
+  </data>
+  <data name="ShipInfo.DrawerDetail" xml:space="preserve">
+    <value>Detail 編輯</value>
+  </data>
+  <data name="ShipInfo.NoDetailData" xml:space="preserve">
+    <value>尚無 Detail 資料</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmTitle" xml:space="preserve">
+    <value>是否確定刪除？</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmMessage" xml:space="preserve">
+    <value>此操作將一併刪除 Header 與所有 Detail。若原資料已在 ILC 建立押金或 AR/UR，請自行至 ILC 作廢。</value>
+  </data>
+  <data name="ShipInfo.DeleteConfirmIrreversible" xml:space="preserve">
+    <value>此動作不可復原。</value>
+  </data>
+  <data name="ShipInfo.DeleteDetailConfirmTitle" xml:space="preserve">
+    <value>是否確定刪除 Detail？</value>
+  </data>
+  <data name="ShipInfo.DeleteDetailConfirmMessage" xml:space="preserve">
+    <value>刪除後無法復原。</value>
+  </data>
+  <data name="ShipInfo.HeaderInformation" xml:space="preserve">
+    <value>表頭資訊</value>
+  </data>
+  <data name="ShipInfo.DetailInformation" xml:space="preserve">
+    <value>明細資訊</value>
+  </data>
+  <data name="ShipInfo.StatusNotAllowed" xml:space="preserve">
+    <value>目前狀態不允許此操作</value>
+  </data>
+  <data name="ShipInfo.ConcurrencyError" xml:space="preserve">
+    <value>資料已更新，請重新整理</value>
+  </data>
+  <data name="ShipInfo.Confirm" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="ShipInfo.SearchCompleted" xml:space="preserve">
+    <value>查詢完成</value>
+  </data>
+  <data name="ShipInfo.ArurCompleted" xml:space="preserve">
+    <value>已完成 ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.PageSize" xml:space="preserve">
+    <value>每頁筆數</value>
+  </data>
+  <data name="ShipInfo.PageLabel" xml:space="preserve">
+    <value>頁次</value>
+  </data>
+  <data name="ShipInfo.TotalRecords" xml:space="preserve">
+    <value>共 {0} 筆</value>
+  </data>
+  <data name="ShipInfo.DrawerTitle" xml:space="preserve">
+    <value>Ship Info 明細</value>
+  </data>
+  <data name="ShipInfo.DrawerSummary" xml:space="preserve">
+    <value>彙總</value>
+  </data>
+  <data name="ShipInfo.DetailCount" xml:space="preserve">
+    <value>Detail 筆數</value>
+  </data>
+  <data name="ShipInfo.TotalQty" xml:space="preserve">
+    <value>總數量</value>
+  </data>
+  <data name="ShipInfo.TotalWeight" xml:space="preserve">
+    <value>總重量</value>
+  </data>
+  <data name="ShipInfo.TotalAmount" xml:space="preserve">
+    <value>總金額</value>
+  </data>
+  <data name="ShipInfo.QtyLabel" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="ShipInfo.View" xml:space="preserve">
+    <value>檢視</value>
+  </data>
+  <data name="ShipInfo.ViewDrawer" xml:space="preserve">
+    <value>明細檢視</value>
+  </data>
+  <data name="ShipInfo.Submit" xml:space="preserve">
+    <value>送出</value>
+  </data>
+  <data name="ShipInfo.HeaderSummary" xml:space="preserve">
+    <value>Header 摘要</value>
+  </data>
+  <data name="ShipInfo.ShipNo" xml:space="preserve">
+    <value>Ship No</value>
+  </data>
+  <data name="ShipInfo.Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="ShipInfo.Status" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="ShipInfo.CreateDate" xml:space="preserve">
+    <value>建立日期</value>
+  </data>
+  <data name="ShipInfo.EditMode" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="ShipInfo.Close" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="ShipInfo.Status.Processing" xml:space="preserve">
+    <value>處理中</value>
+  </data>
+  <data name="ShipInfo.Status.Cancelled" xml:space="preserve">
+    <value>作廢</value>
+  </data>
+  <data name="ShipInfo.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+  <data name="ShipInfo.SaDate" xml:space="preserve">
+    <value>SA Date</value>
+  </data>
+  <data name="ShipInfo.InvoiceNo" xml:space="preserve">
+    <value>Invoice No</value>
+  </data>
+  <data name="ShipInfo.Field.Status" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="ShipInfo.Field.CreateDate" xml:space="preserve">
+    <value>建立日期</value>
+  </data>
+  <data name="ShipInfo.Field.SaDate" xml:space="preserve">
+    <value>SA 日期</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceNo" xml:space="preserve">
+    <value>發票號碼</value>
+  </data>
+  <data name="ShipInfo.Field.Broker" xml:space="preserve">
+    <value>報關行</value>
+  </data>
+  <data name="ShipInfo.Field.Eta" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="ShipInfo.Field.TetPo" xml:space="preserve">
+    <value>TET PO</value>
+  </data>
+  <data name="ShipInfo.Field.Forwarder" xml:space="preserve">
+    <value>貨代</value>
+  </data>
+  <data name="ShipInfo.Field.Etd" xml:space="preserve">
+    <value>ETD</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceDate" xml:space="preserve">
+    <value>發票日期</value>
+  </data>
+  <data name="ShipInfo.Field.Mawb" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="ShipInfo.Field.Hawb" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="ShipInfo.Field.Flt" xml:space="preserve">
+    <value>航班</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryTo" xml:space="preserve">
+    <value>交貨對象</value>
+  </data>
+  <data name="ShipInfo.Field.Warehouse" xml:space="preserve">
+    <value>倉庫</value>
+  </data>
+  <data name="ShipInfo.Field.OrderType" xml:space="preserve">
+    <value>訂單類型</value>
+  </data>
+  <data name="ShipInfo.Field.Deposit" xml:space="preserve">
+    <value>押金</value>
+  </data>
+  <data name="ShipInfo.Field.DepositCaseStatus" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.Field.ArurCaseStatus" xml:space="preserve">
+    <value>ARUR起案狀態</value>
+  </data>
+  <data name="ShipInfo.Field.RtNo" xml:space="preserve">
+    <value>RT 單號</value>
+  </data>
+  <data name="ShipInfo.Field.Notes" xml:space="preserve">
+    <value>備註</value>
+  </data>
+  <data name="ShipInfo.Field.SapRemarks" xml:space="preserve">
+    <value>SAP 備註</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceSeq" xml:space="preserve">
+    <value>發票序號</value>
+  </data>
+  <data name="ShipInfo.Field.TetPoLine" xml:space="preserve">
+    <value>TET PO 項次</value>
+  </data>
+  <data name="ShipInfo.Field.ItemNo" xml:space="preserve">
+    <value>料號</value>
+  </data>
+  <data name="ShipInfo.Field.Description" xml:space="preserve">
+    <value>品名</value>
+  </data>
+  <data name="ShipInfo.Field.Qty" xml:space="preserve">
+    <value>數量</value>
+  </data>
+  <data name="ShipInfo.Field.Uom" xml:space="preserve">
+    <value>單位</value>
+  </data>
+  <data name="ShipInfo.Field.Coo" xml:space="preserve">
+    <value>產地</value>
+  </data>
+  <data name="ShipInfo.Field.Price" xml:space="preserve">
+    <value>單價</value>
+  </data>
+  <data name="ShipInfo.Field.Amount" xml:space="preserve">
+    <value>金額</value>
+  </data>
+  <data name="ShipInfo.Field.Currency" xml:space="preserve">
+    <value>幣別</value>
+  </data>
+  <data name="ShipInfo.Field.CartonNo" xml:space="preserve">
+    <value>箱號</value>
+  </data>
+  <data name="ShipInfo.Field.GrossWeight" xml:space="preserve">
+    <value>毛重</value>
+  </data>
+  <data name="ShipInfo.Field.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="ShipInfo.Field.CreateTime" xml:space="preserve">
+    <value>建立時間</value>
+  </data>
+  <data name="ShipInfo.Field.CreateUser" xml:space="preserve">
+    <value>建立者</value>
+  </data>
+  <data name="ShipInfo.Field.UpdateTime" xml:space="preserve">
+    <value>更新時間</value>
+  </data>
+  <data name="ShipInfo.Field.UpdateUser" xml:space="preserve">
+    <value>更新者</value>
+  </data>
+  <data name="ShipInfo.Field.Freight" xml:space="preserve">
+    <value>運費</value>
+  </data>
+  <data name="ShipInfo.Field.DestinationPort" xml:space="preserve">
+    <value>目的港</value>
+  </data>
+  <data name="ShipInfo.Field.DestinationCountry" xml:space="preserve">
+    <value>目的國</value>
+  </data>
+  <data name="ShipInfo.Field.InvoiceType" xml:space="preserve">
+    <value>發票類型</value>
+  </data>
+  <data name="ShipInfo.Field.Incoterms" xml:space="preserve">
+    <value>貿易條件</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryDate" xml:space="preserve">
+    <value>交貨日期</value>
+  </data>
+  <data name="ShipInfo.Field.Bu" xml:space="preserve">
+    <value>BU</value>
+  </data>
+  <data name="ShipInfo.Field.OrderPriority" xml:space="preserve">
+    <value>訂單優先序</value>
+  </data>
+  <data name="ShipInfo.Field.MdpFlag" xml:space="preserve">
+    <value>MDP 旗標</value>
+  </data>
+  <data name="ShipInfo.Field.TotalCartons" xml:space="preserve">
+    <value>總箱數</value>
+  </data>
+  <data name="ShipInfo.Field.NcdrNo" xml:space="preserve">
+    <value>NCDR 單號</value>
+  </data>
+  <data name="ShipInfo.Field.NcdrRequestor" xml:space="preserve">
+    <value>NCDR 申請人</value>
+  </data>
+  <data name="ShipInfo.Field.EndUserCode" xml:space="preserve">
+    <value>終端用戶代碼</value>
+  </data>
+  <data name="ShipInfo.Field.EndUser" xml:space="preserve">
+    <value>終端用戶</value>
+  </data>
+  <data name="ShipInfo.Field.Receiver" xml:space="preserve">
+    <value>收貨人</value>
+  </data>
+  <data name="ShipInfo.Field.Owner" xml:space="preserve">
+    <value>負責人</value>
+  </data>
+  <data name="ShipInfo.Field.MachineNo" xml:space="preserve">
+    <value>機台編號</value>
+  </data>
+  <data name="ShipInfo.Field.MachineType" xml:space="preserve">
+    <value>機台類型</value>
+  </data>
+  <data name="ShipInfo.Field.ShipReason" xml:space="preserve">
+    <value>出貨原因</value>
+  </data>
+  <data name="ShipInfo.Field.Forklift" xml:space="preserve">
+    <value>堆高機</value>
+  </data>
+  <data name="ShipInfo.Field.MovingLabor" xml:space="preserve">
+    <value>搬運人力</value>
+  </data>
+  <data name="ShipInfo.Field.CarMethod" xml:space="preserve">
+    <value>車輛方式</value>
+  </data>
+  <data name="ShipInfo.Field.ArriveTime" xml:space="preserve">
+    <value>到達時間</value>
+  </data>
+  <data name="ShipInfo.Field.WasteDisposal" xml:space="preserve">
+    <value>廢棄物處理</value>
+  </data>
+  <data name="ShipInfo.Field.DriverDetails" xml:space="preserve">
+    <value>司機資訊</value>
+  </data>
+  <data name="ShipInfo.Field.OrderReason" xml:space="preserve">
+    <value>訂單原因</value>
+  </data>
+  <data name="ShipInfo.Field.ArrivalNoticeFlag" xml:space="preserve">
+    <value>到貨通知旗標</value>
+  </data>
+  <data name="ShipInfo.Field.ArrivalNotice" xml:space="preserve">
+    <value>到貨通知</value>
+  </data>
+  <data name="ShipInfo.Field.ReasonForDeliveryDelay" xml:space="preserve">
+    <value>延遲交貨原因</value>
+  </data>
+  <data name="ShipInfo.Field.DelayNotificationDate" xml:space="preserve">
+    <value>延遲通知日期</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryNo" xml:space="preserve">
+    <value>交貨單號</value>
+  </data>
+  <data name="ShipInfo.Field.SoldToPartyCode" xml:space="preserve">
+    <value>售達方代碼</value>
+  </data>
+  <data name="ShipInfo.Field.SoldToParty" xml:space="preserve">
+    <value>售達方</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToPartyCode" xml:space="preserve">
+    <value>送達方代碼</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToParty" xml:space="preserve">
+    <value>送達方</value>
+  </data>
+  <data name="ShipInfo.Field.ShipToPartyAddress" xml:space="preserve">
+    <value>送達方地址</value>
+  </data>
+  <data name="ShipInfo.Field.EmgFlight" xml:space="preserve">
+    <value>緊急航班</value>
+  </data>
+  <data name="ShipInfo.Field.WbsElement" xml:space="preserve">
+    <value>WBS 元素</value>
+  </data>
+  <data name="ShipInfo.Field.Cancellation" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ShipInfo.Field.ReasonForCancellation" xml:space="preserve">
+    <value>取消原因</value>
+  </data>
+  <data name="ShipInfo.Field.AttachedFile" xml:space="preserve">
+    <value>附件</value>
+  </data>
+  <data name="ShipInfo.Field.Rate" xml:space="preserve">
+    <value>匯率</value>
+  </data>
+  <data name="ShipInfo.Field.PackingType" xml:space="preserve">
+    <value>包裝類型</value>
+  </data>
+  <data name="ShipInfo.Field.Length" xml:space="preserve">
+    <value>長度</value>
+  </data>
+  <data name="ShipInfo.Field.Width" xml:space="preserve">
+    <value>寬度</value>
+  </data>
+  <data name="ShipInfo.Field.Hight" xml:space="preserve">
+    <value>高度</value>
+  </data>
+  <data name="ShipInfo.Field.NetWeightOfTheItem" xml:space="preserve">
+    <value>淨重</value>
+  </data>
+  <data name="ShipInfo.Field.DeliveryLineNo" xml:space="preserve">
+    <value>交貨行號</value>
+  </data>
+  <data name="ShipInfo.Field.Eccn" xml:space="preserve">
+    <value>ECCN</value>
+  </data>
+  <data name="ShipInfo.Field.ElFlag" xml:space="preserve">
+    <value>EL 旗標</value>
+  </data>
+  <data name="ShipInfo.Field.SdsFlag" xml:space="preserve">
+    <value>SDS 旗標</value>
+  </data>
+  <data name="ShipInfo.Field.Hazmat" xml:space="preserve">
+    <value>危險品</value>
+  </data>
+  <data name="ShipInfo.TotalInvoiceQty" xml:space="preserve">
+    <value>Total Invoice Qty</value>
+  </data>
+  <data name="ShipInfo.TotalCarton" xml:space="preserve">
+    <value>Total Carton</value>
+  </data>
+  <data name="ShipInfo.CaseDrawerDepositTitle" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.CaseDrawerArurTitle" xml:space="preserve">
+    <value>ARUR 起案</value>
+  </data>
+  <data name="ShipInfo.DepositConfirmTitle" xml:space="preserve">
+    <value>是否確認建立押金案件？</value>
+  </data>
+  <data name="ShipInfo.DepositConfirmMessage" xml:space="preserve">
+    <value>請確認 Header 與 Detail 資料無誤後再送出。</value>
+  </data>
+  <data name="ShipInfo.ArurConfirmTitle" xml:space="preserve">
+    <value>是否確認建立 ARUR 案件？</value>
+  </data>
+  <data name="ShipInfo.ArurConfirmMessage" xml:space="preserve">
+    <value>請確認 Header 與 Detail 資料無誤後再送出。</value>
+  </data>
+  <data name="ShipInfo.ArurSubjectTooLong" xml:space="preserve">
+    <value>主旨超過 50 字（採購單 + 發票），無法起案。</value>
+  </data>
+  <data name="ShipInfo.ArurWarehouseTooLong" xml:space="preserve">
+    <value>倉別超過 4 碼，無法起案。</value>
+  </data>
+  <data name="ShipInfo.ArurTetPoTooLong" xml:space="preserve">
+    <value>採購單超過 30 字，無法起案。</value>
+  </data>
+  <data name="ShipInfo.CaseCreateSuccess" xml:space="preserve">
+    <value>起案成功</value>
+  </data>
+  <data name="ShipInfo.CaseCreateFailed" xml:space="preserve">
+    <value>起案失敗</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.NotInitiated" xml:space="preserve">
+    <value>未起案</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Initiated" xml:space="preserve">
+    <value>已起案</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Failed" xml:space="preserve">
+    <value>起案失敗</value>
+  </data>
+  <data name="ShipInfo.CaseStatus.Processing" xml:space="preserve">
+    <value>起案處理中</value>
+  </data>
+  <data name="ShipInfo.DepositCaseStatus" xml:space="preserve">
+    <value>押金起案</value>
+  </data>
+  <data name="ShipInfo.ArurCaseStatus" xml:space="preserve">
+    <value>ARUR 起案</value>
+  </data>
+  <data name="Views.Function.ShipInfo.View" xml:space="preserve">
+    <value>Ship Info 查詢</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Edit" xml:space="preserve">
+    <value>Ship Info 編輯</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Delete" xml:space="preserve">
+    <value>Ship Info 刪除</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Discard" xml:space="preserve">
+    <value>Ship Info 報廢</value>
+  </data>
+  <data name="Views.Function.ShipInfo.Deposit" xml:space="preserve">
+    <value>Ship Info 押金起案</value>
+  </data>
+  <data name="Views.Function.ShipInfo.ARUR" xml:space="preserve">
+    <value>Ship Info ARUR 起案</value>
+  </data>
+  <data name="Function.AddDiSa.Title" xml:space="preserve">
+    <value>新增 DI/SA</value>
+  </data>
+  <data name="Function.AddDiSa.UploaderTitle" xml:space="preserve">
+    <value>上傳 DI/SA 資料</value>
+  </data>
+  <data name="Function.AddDiSa.UploaderButton" xml:space="preserve">
+    <value>上傳檔案</value>
+  </data>
+  <data name="Function.AddDiSa.MaxSizeHint" xml:space="preserve">
+    <value>單檔上限 {0} MB，支援 .xlsx、.xls</value>
+  </data>
+  <data name="Function.AddDiSa.SaveButton" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="Function.AddDiSa.DownloadTemplate" xml:space="preserve">
+    <value>下載範例</value>
+  </data>
+  <data name="Function.AddDiSa.NoFileSelected" xml:space="preserve">
+    <value>未選擇檔案</value>
+  </data>
+  <data name="Function.AddDiSa.MaxSizeExceeded" xml:space="preserve">
+    <value>檔案超過 {0}MB</value>
+  </data>
+  <data name="Function.AddDiSa.InvalidFileType" xml:space="preserve">
+    <value>僅支援 .xlsx、.xls 格式</value>
+  </data>
+  <data name="Function.AddDiSa.UploadSuccess" xml:space="preserve">
+    <value>儲存成功：Header {0} 筆、Detail {1} 筆</value>
+  </data>
+  <data name="Function.AddDiSa.UploadFailed" xml:space="preserve">
+    <value>匯入失敗，請檢查檔案內容後重試</value>
+  </data>
+  <data name="Function.AddDiSa.ParseSuccess" xml:space="preserve">
+    <value>已解析 Header {0} 筆、Detail {1} 筆，請按儲存</value>
+  </data>
+  <data name="Function.AddDiSa.SaveSuccess" xml:space="preserve">
+    <value>儲存成功：Header {0} 筆、Detail {1} 筆</value>
+  </data>
+  <data name="Function.AddDiSa.PleaseUploadFirst" xml:space="preserve">
+    <value>請先上傳檔案</value>
+  </data>
+  <data name="Function.AddDiSa.SaveFailed" xml:space="preserve">
+    <value>儲存失敗，請檢查後重試</value>
+  </data>
+  <data name="Function.AddDiSa.ImportResultTitle" xml:space="preserve">
+    <value>匯入預覽</value>
+  </data>
+  <data name="Function.AddDiSa.Column.CanUpload" xml:space="preserve">
+    <value>可否上傳</value>
+  </data>
+  <data name="Function.AddDiSa.Column.RowNo" xml:space="preserve">
+    <value>筆數</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.Ok" xml:space="preserve">
+    <value>可上傳</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.DbExists" xml:space="preserve">
+    <value>系統已存在，不可上傳</value>
+  </data>
+  <data name="Function.AddDiSa.CanUpload.InvoiceInconsistent" xml:space="preserve">
+    <value>Invoice MAWB/HAWB/FLT/ETA 不一致</value>
+  </data>
+  <data name="Function.AddDiSa.CannotSaveMessage" xml:space="preserve">
+    <value>檔案無法儲存，請修正「可否上傳」欄位問題後重新上傳</value>
+  </data>
+  <data name="Views.Function.AddDiSa.View" xml:space="preserve">
+    <value>新增 DI/SA 查詢</value>
+  </data>
+  <data name="Views.Function.AddDiSa.Upload" xml:space="preserve">
+    <value>新增 DI/SA 上傳</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.UploaderTitle" xml:space="preserve">
+    <value>上傳 NCPI 批次更新檔案</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.UploaderButton" xml:space="preserve">
+    <value>上傳檔案</value>
+  </data>
+  <data name="Function.MassUpdateNcpi.MaxSizeHint" xml:space="preserve">
+    <value>單檔上限 {0} MB，支援 .xlsx、.xls、.csv</value>
+  </data>
+  <data name="Views.Function.MassUpdateNcpi.View" xml:space="preserve">
+    <value>大量更新 (NCPI) 查詢</value>
+  </data>
+  <data name="Views.Function.MassUpdateNcpi.Upload" xml:space="preserve">
+    <value>NCPI 批次更新上傳</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.UploaderTitle" xml:space="preserve">
+    <value>上傳非 NCPI 批次更新檔案</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.UploaderButton" xml:space="preserve">
+    <value>上傳檔案</value>
+  </data>
+  <data name="Function.MassUpdateNonNcpi.MaxSizeHint" xml:space="preserve">
+    <value>單檔上限 {0} MB，支援 .xlsx、.xls、.csv</value>
+  </data>
+  <data name="Views.Function.MassUpdateNonNcpi.View" xml:space="preserve">
+    <value>大量更新 (非 NCPI) 查詢</value>
+  </data>
+  <data name="Views.Function.MassUpdateNonNcpi.Upload" xml:space="preserve">
+    <value>非 NCPI 批次更新上傳</value>
+  </data>
+  <data name="Function.MassUpdate.DownloadSample" xml:space="preserve"><value>下載範例</value></data>
+  <data name="Function.MassUpdate.SaveButton" xml:space="preserve"><value>儲存</value></data>
+  <data name="Function.MassUpdate.PreviewTitle" xml:space="preserve"><value>批次更新預覽</value></data>
+  <data name="Function.MassUpdate.ParseSuccess" xml:space="preserve"><value>解析 {0} 列：可更新 {1} 列，查無 {2} 列。</value></data>
+  <data name="Function.MassUpdate.SaveSuccess" xml:space="preserve"><value>更新 {0} 筆 Header（Excel 可更新 {1} 列，查無 {2} 列）。</value></data>
+  <data name="Function.MassUpdate.PleaseUploadFirst" xml:space="preserve"><value>請先上傳批次更新檔案。</value></data>
+  <data name="Function.MassUpdate.SaveFailed" xml:space="preserve"><value>批次更新儲存失敗。</value></data>
+  <data name="Function.MassUpdate.CannotSave" xml:space="preserve"><value>只要有一列查無資料、重複或驗證失敗，整批皆不可更新。請修正後重新上傳。</value></data>
+  <data name="Function.MassUpdate.ClearValue" xml:space="preserve"><value>（清空）</value></data>
+  <data name="Function.MassUpdate.Column.Status" xml:space="preserve"><value>可否上傳</value></data>
+  <data name="Function.MassUpdate.Column.RowNo" xml:space="preserve"><value>筆數</value></data>
+  <data name="Function.MassUpdate.Status.Duplicate" xml:space="preserve"><value>檔內 Invoice No 重複</value></data>
+  <data name="Function.MassUpdate.Status.NotFound" xml:space="preserve"><value>查無資料</value></data>
+  <data name="Function.MassUpdate.Status.Matched" xml:space="preserve"><value>可更新 {0} 筆</value></data>
+  <data name="Function.MassUpdate.StatusFilter.All" xml:space="preserve"><value>全部</value></data>
+  <data name="Function.MassUpdate.StatusFilter.Matched" xml:space="preserve"><value>可更新</value></data>
+  <data name="Home.Subtitle" xml:space="preserve">
+    <value>ASP.NET Core MVC (.NET 9)</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>首頁</value>
+  </data>
+  <data name="Home.Welcome" xml:space="preserve">
+    <value>歡迎使用 ICP 系統</value>
+  </data>
+  <data name="Js.SelectedCount" xml:space="preserve">
+    <value>已選 {0} 筆</value>
+  </data>
+  <data name="Login.LoginButton" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login.LoginFailed" xml:space="preserve">
+    <value>登入失敗，請稍後再試。</value>
+  </data>
+  <data name="Login.Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Login.StaffId" xml:space="preserve">
+    <value>Staff ID</value>
+  </data>
+  <data name="Login.Title" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login.WrongStaffId" xml:space="preserve">
+    <value>Wrong Staff ID !!</value>
+  </data>
+  <data name="Message.BatchCreateSuccess" xml:space="preserve">
+    <value>建立完成：新增 {0} 筆，略過 {1} 筆。</value>
+  </data>
+  <data name="Message.CreateFailed" xml:space="preserve">
+    <value>建立失敗</value>
+  </data>
+  <data name="Message.CreateFailedRetry" xml:space="preserve">
+    <value>建立失敗，請稍後再試。</value>
+  </data>
+  <data name="Message.DeleteConfirm" xml:space="preserve">
+    <value>確定要刪除嗎？</value>
+  </data>
+  <data name="Message.DeleteFailed" xml:space="preserve">
+    <value>刪除失敗</value>
+  </data>
+  <data name="Message.DeleteFailedRetry" xml:space="preserve">
+    <value>刪除失敗，請稍後再試。</value>
+  </data>
+  <data name="Message.DeleteSuccess" xml:space="preserve">
+    <value>已刪除 {0} 筆。</value>
+  </data>
+  <data name="Message.DisableConfirm" xml:space="preserve">
+    <value>確定要停用嗎？</value>
+  </data>
+  <data name="Message.LoadFailed" xml:space="preserve">
+    <value>載入資料失敗</value>
+  </data>
+  <data name="Message.OperationFailed" xml:space="preserve">
+    <value>操作失敗</value>
+  </data>
+  <data name="Message.OperationFailedRetry" xml:space="preserve">
+    <value>操作失敗，請稍後再試。</value>
+  </data>
+  <data name="Message.RecordsNotFound" xml:space="preserve">
+    <value>找不到資料</value>
+  </data>
+  <data name="Message.SaveFailed" xml:space="preserve">
+    <value>儲存失敗</value>
+  </data>
+  <data name="Message.SaveFailedRetry" xml:space="preserve">
+    <value>儲存失敗，請稍後再試。</value>
+  </data>
+  <data name="Message.SelectRecords" xml:space="preserve">
+    <value>請至少選擇一筆資料</value>
+  </data>
+  <data name="Message.SelectRoleAndResource" xml:space="preserve">
+    <value>請至少選擇一筆 Role 與一筆 Resource</value>
+  </data>
+  <data name="ErrorPage.Message" xml:space="preserve">
+    <value>此功能尚未建立，請稍後再試。</value>
+  </data>
+  <data name="ErrorPage.Title" xml:space="preserve">
+    <value>ERROR</value>
+  </data>
+  <data name="Permission.AccessDenied" xml:space="preserve">
+    <value>您沒有存取此頁面的權限。</value>
+  </data>
+  <data name="Message.ValidRoleResourceNotFound" xml:space="preserve">
+    <value>找不到有效的 Role 或 Resource</value>
+  </data>
+  <data name="Nav.Admin" xml:space="preserve">
+    <value>系統管理</value>
+  </data>
+  <data name="Nav.AddDiSa" xml:space="preserve">
+    <value>新增 DI/SA</value>
+  </data>
+  <data name="Nav.Broker" xml:space="preserve">
+    <value>報關</value>
+  </data>
+  <data name="Nav.BuCode" xml:space="preserve">
+    <value>BU 代碼</value>
+  </data>
+  <data name="Nav.CompareIcpVsArUr" xml:space="preserve">
+    <value>ICP 與 AR/UR 比對</value>
+  </data>
+  <data name="Nav.CustomsDataDownload" xml:space="preserve">
+    <value>關務資料下載</value>
+  </data>
+  <data name="Nav.DefaultDeliveryWh" xml:space="preserve">
+    <value>預設交貨倉庫</value>
+  </data>
+  <data name="Nav.DeliveryToList" xml:space="preserve">
+    <value>交貨對象清單</value>
+  </data>
+  <data name="Nav.DropDownList" xml:space="preserve">
+    <value>下拉選單維護</value>
+  </data>
+  <data name="Nav.EtaDelDateTable" xml:space="preserve">
+    <value>ETA 交貨日表</value>
+  </data>
+  <data name="Nav.Export" xml:space="preserve">
+    <value>匯出</value>
+  </data>
+  <data name="Nav.Forwarder" xml:space="preserve">
+    <value>貨代</value>
+  </data>
+  <data name="Nav.ForwarderDataUpload" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
+  <data name="Nav.Function" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="Nav.Home" xml:space="preserve">
+    <value>首頁</value>
+  </data>
+  <data name="Nav.Permission" xml:space="preserve">
+    <value>權限管理</value>
+  </data>
+  <data name="Nav.Privacy" xml:space="preserve">
+    <value>隱私權</value>
+  </data>
+  <data name="Nav.MassDataReport" xml:space="preserve">
+    <value>大量資料報表</value>
+  </data>
+  <data name="Nav.MassUpdateNonNcpi" xml:space="preserve">
+    <value>大量更新 (非 NCPI)</value>
+  </data>
+  <data name="Nav.MassUpdateNcpi" xml:space="preserve">
+    <value>大量更新 (NCPI)</value>
+  </data>
+  <data name="Nav.OrderType" xml:space="preserve">
+    <value>訂單類型</value>
+  </data>
+  <data name="Nav.Permissions" xml:space="preserve">
+    <value>權限</value>
+  </data>
+  <data name="Nav.PickUpLocation" xml:space="preserve">
+    <value>提貨地點</value>
+  </data>
+  <data name="Nav.Report" xml:space="preserve">
+    <value>報表</value>
+  </data>
+  <data name="Nav.Resources" xml:space="preserve">
+    <value>資源</value>
+  </data>
+  <data name="Nav.RoleDepIds" xml:space="preserve">
+    <value>部門角色</value>
+  </data>
+  <data name="Nav.RoleMailGroups" xml:space="preserve">
+    <value>郵件群組角色</value>
+  </data>
+  <data name="Nav.RolePermissions" xml:space="preserve">
+    <value>角色權限</value>
+  </data>
+  <data name="Nav.Roles" xml:space="preserve">
+    <value>角色</value>
+  </data>
+  <data name="Nav.RoleTelIds" xml:space="preserve">
+    <value>人員角色</value>
+  </data>
+  <data name="Nav.Setting" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Nav.ShipInfo" xml:space="preserve">
+    <value>船務資訊</value>
+  </data>
+  <data name="Nav.ShippingReport" xml:space="preserve">
+    <value>船務報表</value>
+  </data>
+  <data name="Nav.TariffData" xml:space="preserve">
+    <value>關稅資料</value>
+  </data>
+  <data name="Nav.WhCode" xml:space="preserve">
+    <value>倉庫代碼</value>
+  </data>
+  <data name="Nav.Users" xml:space="preserve">
+    <value>使用者</value>
+  </data>
+  <data name="Views.Shared._Layout.Home" xml:space="preserve">
+    <value>首頁</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker" xml:space="preserve">
+    <value>報關</value>
+  </data>
+  <data name="Views.Broker.CustomsDataDownload.View" xml:space="preserve">
+    <value>關務資料下載查詢</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
+    <value>關務資料下載</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
+    <value>關稅資料</value>
+  </data>
+  <data name="Broker.TariffData.Title" xml:space="preserve">
+    <value>關稅資料</value>
+  </data>
+  <data name="Broker.TariffData.MaxSizeHint" xml:space="preserve">
+    <value>單檔大小上限：{0} MB</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataTitle" xml:space="preserve">
+    <value>上傳報關資料</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataButton" xml:space="preserve">
+    <value>上傳報關資料</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfTitle" xml:space="preserve">
+    <value>上傳報單 PDF</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfButton" xml:space="preserve">
+    <value>上傳報單 PDF</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostTitle" xml:space="preserve">
+    <value>上傳 Cost</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostButton" xml:space="preserve">
+    <value>上傳 Cost</value>
+  </data>
+  <data name="Broker.TariffData.NoFileSelected" xml:space="preserve">
+    <value>未選擇檔案</value>
+  </data>
+  <data name="Broker.TariffData.MaxSizeExceeded" xml:space="preserve">
+    <value>檔案超過 {0} MB</value>
+  </data>
+  <data name="Broker.TariffData.InvalidFileType" xml:space="preserve">
+    <value>不支援的檔案格式</value>
+  </data>
+  <data name="Broker.TariffData.InvalidFileName" xml:space="preserve">
+    <value>檔案名稱無效</value>
+  </data>
+  <data name="Broker.TariffData.UploadCustomsDataSuccess" xml:space="preserve">
+    <value>報關資料 {0} 上傳成功，已匯入 {1} 筆</value>
+  </data>
+  <data name="Broker.TariffData.UploadDeclarationPdfSuccess" xml:space="preserve">
+    <value>報單 PDF {0} 上傳成功</value>
+  </data>
+  <data name="Broker.TariffData.UploadCostSuccess" xml:space="preserve">
+    <value>Cost 檔案 {0} 上傳成功</value>
+  </data>
+  <data name="Broker.TariffData.HawbNotFound" xml:space="preserve">
+    <value>HAWB {0} 不存在於關稅資料，無法上傳</value>
+  </data>
+  <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Broker.TariffData.DownloadTemplate" xml:space="preserve">
+    <value>下載範例</value>
+  </data>
+  <data name="Views.Broker.TariffData.View" xml:space="preserve">
+    <value>關稅資料查詢</value>
+  </data>
+  <data name="Views.Broker.TariffData.Export" xml:space="preserve">
+    <value>下載關稅資料</value>
+  </data>
+  <data name="Broker.TariffData.ExportAllConfirm" xml:space="preserve">
+    <value>尚未設定篩選條件，確定要下載全部關稅資料嗎？</value>
+  </data>
+  <data name="Broker.TariffData.Export.Yes" xml:space="preserve">
+    <value>有</value>
+  </data>
+  <data name="Broker.TariffData.Export.No" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadCustomsData" xml:space="preserve">
+    <value>上傳報關資料</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadDeclarationPdf" xml:space="preserve">
+    <value>上傳報單 PDF</value>
+  </data>
+  <data name="Views.Broker.TariffData.UploadCost" xml:space="preserve">
+    <value>上傳 Cost</value>
+  </data>
+  <data name="Broker.TariffData.Column.RowNo" xml:space="preserve">
+    <value>筆數</value>
+  </data>
+  <data name="Broker.TariffData.Column.PDF" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="Broker.TariffData.Column.Cost" xml:space="preserve">
+    <value>Cost</value>
+  </data>
+  <data name="Broker.TariffData.Filter.HasPdf" xml:space="preserve">
+    <value>有 PDF</value>
+  </data>
+  <data name="Broker.TariffData.Filter.NonePdf" xml:space="preserve">
+    <value>無 PDF</value>
+  </data>
+  <data name="Broker.TariffData.Filter.HasCost" xml:space="preserve">
+    <value>有 Cost</value>
+  </data>
+  <data name="Broker.TariffData.Filter.NoneCost" xml:space="preserve">
+    <value>無 Cost</value>
+  </data>
+  <data name="Broker.TariffData.Column.MAWB" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="Broker.TariffData.Column.HAWB" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="Broker.TariffData.Column.ImportDate" xml:space="preserve">
+    <value>進口日期</value>
+  </data>
+  <data name="Broker.TariffData.Column.DeclarationDate" xml:space="preserve">
+    <value>報關日期</value>
+  </data>
+  <data name="Broker.TariffData.Column.ReleaseDate" xml:space="preserve">
+    <value>放行日期</value>
+  </data>
+  <data name="Broker.TariffData.Column.InvoiceNumber" xml:space="preserve">
+    <value>Invoice No.</value>
+  </data>
+  <data name="Broker.TariffData.Column.DescriptionOfGoods" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Broker.TariffData.Column.HTSNumber" xml:space="preserve">
+    <value>HTS Code</value>
+  </data>
+  <data name="Broker.TariffData.Column.EntryNumber" xml:space="preserve">
+    <value>報單號碼</value>
+  </data>
+  <data name="Broker.TariffData.Column.Mode" xml:space="preserve">
+    <value>運送方式</value>
+  </data>
+  <data name="Broker.TariffData.Column.PortOfDeparture" xml:space="preserve">
+    <value>出口港/代碼</value>
+  </data>
+  <data name="Broker.TariffData.Column.FlightNo" xml:space="preserve">
+    <value>船名航次/航機班次</value>
+  </data>
+  <data name="Broker.TariffData.Column.Shipper" xml:space="preserve">
+    <value>出口方</value>
+  </data>
+  <data name="Broker.TariffData.Column.Broker" xml:space="preserve">
+    <value>報關行</value>
+  </data>
+  <data name="Broker.TariffData.Column.AirSea" xml:space="preserve">
+    <value>Air/Sea</value>
+  </data>
+  <data name="Broker.TariffData.Column.CreateDate" xml:space="preserve">
+    <value>上傳檔案日期</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Forwarder" xml:space="preserve">
+    <value>貨代</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Forwarder.ForwarderDataUpload" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Title" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.UploaderTitle" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.UploaderButton" xml:space="preserve">
+    <value>上傳檔案</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.MaxSizeHint" xml:space="preserve">
+    <value>單檔上限 {0} MB，支援 .xlsx、.xls、.csv</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.ImportResultTitle" xml:space="preserve">
+    <value>匯入結果</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.LengthMenuAll" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.SaveButton" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DownloadTemplate" xml:space="preserve">
+    <value>下載範例</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PreviewMessage" xml:space="preserve">
+    <value>已解析 {0} 筆，請確認後按儲存</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.SaveSuccessMessage" xml:space="preserve">
+    <value>成功儲存 {0} 筆</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.AlreadySaved" xml:space="preserve">
+    <value>此檔案已儲存過</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PendingFilesLabel" xml:space="preserve">
+    <value>待儲存檔案：</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.PendingFilesRemaining" xml:space="preserve">
+    <value>尚有 {0} 個檔案待儲存。</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.RemovePendingFile" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DuplicateInvoiceConfirm" xml:space="preserve">
+    <value>此檔案含有已存在於系統的 Invoice。舊資料可能已被取用過，確認上傳將完全覆蓋舊資料並備份備查、記錄移除時間。
+
+【是】確認上傳並覆蓋
+【否】取消此檔案上傳</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.DuplicateInvoicePreview" xml:space="preserve">
+    <value>此檔案含有已存在於系統的 Invoice，請於表格「重複」欄確認；儲存時將提示是否覆蓋。</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Duplicate" xml:space="preserve">
+    <value>可否上傳</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Column.RowNo" xml:space="preserve">
+    <value>筆數</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.DbDuplicate" xml:space="preserve">
+    <value>系統已存在</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.InFileMultiLine" xml:space="preserve">
+    <value>檔內多筆</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.Duplicate.None" xml:space="preserve">
+    <value>非重複</value>
+  </data>
+  <data name="Forwarder.ForwarderDataUpload.OverwriteArchivedMessage" xml:space="preserve">
+    <value>已備份並覆蓋 {0} 筆舊資料。</value>
+  </data>
+  <data name="Views.Forwarder.ForwarderDataUpload.View" xml:space="preserve">
+    <value>貨代資料上傳查詢</value>
+  </data>
+  <data name="Views.Forwarder.ForwarderDataUpload.Upload" xml:space="preserve">
+    <value>貨代資料上傳</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.AddDiSa" xml:space="preserve">
+    <value>新增 DI/SA</value>
+  </data>
+  <data name="Views.Function.Export.View" xml:space="preserve">
+    <value>匯出查詢</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.Export" xml:space="preserve">
+    <value>匯出</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.MassUpdateNonNcpi" xml:space="preserve">
+    <value>大量更新 (非 NCPI)</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.MassUpdateNcpi" xml:space="preserve">
+    <value>大量更新 (NCPI)</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Function.ShipInfo" xml:space="preserve">
+    <value>船務資訊</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Logout" xml:space="preserve">
+    <value>登出</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report" xml:space="preserve">
+    <value>報表</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.CompareIcpVsArUr" xml:space="preserve">
+    <value>ICP 與 AR/UR 比對</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.MassDataReport" xml:space="preserve">
+    <value>大量資料報表</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Report.ShippingReport" xml:space="preserve">
+    <value>船務報表</value>
+  </data>
+  <data name="Views.Report.CompareIcpVsArUr.View" xml:space="preserve">
+    <value>ICP 與 AR/UR 比對查詢</value>
+  </data>
+  <data name="Views.Report.MassDataReport.View" xml:space="preserve">
+    <value>大量資料報表查詢</value>
+  </data>
+  <data name="Views.Report.ShippingReport.View" xml:space="preserve">
+    <value>船務報表查詢</value>
+  </data>
+  <data name="Report.HeaderTitle" xml:space="preserve">
+    <value>表頭</value>
+  </data>
+  <data name="Report.DetailTitle" xml:space="preserve">
+    <value>明細</value>
+  </data>
+  <data name="Report.DownloadExcel" xml:space="preserve">
+    <value>下載 Excel</value>
+  </data>
+  <data name="Report.NoData" xml:space="preserve">
+    <value>查無資料</value>
+  </data>
+  <data name="Report.NoDetailData" xml:space="preserve">
+    <value>尚無明細資料</value>
+  </data>
+  <data name="Report.SelectHeaderFirst" xml:space="preserve">
+    <value>請先選擇一筆表頭</value>
+  </data>
+  <data name="Report.DownloadFailed" xml:space="preserve">
+    <value>下載 Excel 失敗</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.BuCode" xml:space="preserve">
+    <value>BU 代碼</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.DefaultDeliveryWh" xml:space="preserve">
+    <value>預設交貨倉庫</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.DeliveryToList" xml:space="preserve">
+    <value>交貨對象清單</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.EtaDelDateTable" xml:space="preserve">
+    <value>ETA 交貨日表</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.OrderType" xml:space="preserve">
+    <value>訂單類型</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.PickUpLocation" xml:space="preserve">
+    <value>提貨地點</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.WhCode" xml:space="preserve">
+    <value>倉庫代碼</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.AirSea" xml:space="preserve">
+    <value>空運/海運</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.Broker" xml:space="preserve">
+    <value>報關行</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.InvoiceType" xml:space="preserve">
+    <value>發票類型</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.OrderPriority" xml:space="preserve">
+    <value>訂單優先順序</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Setting.Customized" xml:space="preserve">
+    <value>自訂設定</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems" xml:space="preserve">
+    <value>系統管理</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.DropDownList" xml:space="preserve">
+    <value>下拉選單維護</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions" xml:space="preserve">
+    <value>權限</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Resources" xml:space="preserve">
+    <value>資源</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleDepIds" xml:space="preserve">
+    <value>部門角色</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleMailGroups" xml:space="preserve">
+    <value>郵件群組角色</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RolePermissions" xml:space="preserve">
+    <value>角色權限</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Roles" xml:space="preserve">
+    <value>角色</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.RoleTelIds" xml:space="preserve">
+    <value>人員角色</value>
+  </data>
+  <data name="Views.Shared._SidebarNav.Systems.Permissions.Users" xml:space="preserve">
+    <value>使用者</value>
+  </data>
+  <data name="Permission.Resource.Scan" xml:space="preserve">
+    <value>權限掃描同步</value>
+  </data>
+  <data name="Permission.Resource.View" xml:space="preserve">
+    <value>資源查詢</value>
+  </data>
+  <data name="Permission.Role.Create" xml:space="preserve">
+    <value>角色新增</value>
+  </data>
+  <data name="Permission.Role.Disable" xml:space="preserve">
+    <value>角色停用</value>
+  </data>
+  <data name="Permission.Role.Edit" xml:space="preserve">
+    <value>角色編輯</value>
+  </data>
+  <data name="Permission.Role.View" xml:space="preserve">
+    <value>角色查詢</value>
+  </data>
+  <data name="Permission.RoleDepId.Create" xml:space="preserve">
+    <value>部門角色新增</value>
+  </data>
+  <data name="Permission.RoleDepId.Delete" xml:space="preserve">
+    <value>部門角色刪除</value>
+  </data>
+  <data name="Permission.RoleDepId.View" xml:space="preserve">
+    <value>部門角色查詢</value>
+  </data>
+  <data name="Permission.RolePermission.Create" xml:space="preserve">
+    <value>角色權限新增</value>
+  </data>
+  <data name="Permission.RolePermission.Delete" xml:space="preserve">
+    <value>角色權限刪除</value>
+  </data>
+  <data name="Permission.RolePermission.View" xml:space="preserve">
+    <value>角色權限查詢</value>
+  </data>
+  <data name="Permission.RoleTelId.Create" xml:space="preserve">
+    <value>使用者角色新增</value>
+  </data>
+  <data name="Permission.RoleTelId.Delete" xml:space="preserve">
+    <value>使用者角色刪除</value>
+  </data>
+  <data name="Permission.RoleTelId.View" xml:space="preserve">
+    <value>使用者角色查詢</value>
+  </data>
+  <data name="Permission.User.View" xml:space="preserve">
+    <value>使用者查詢</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.Create" xml:space="preserve">
+    <value>部門角色新增</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.Delete" xml:space="preserve">
+    <value>部門角色刪除</value>
+  </data>
+  <data name="Views.Permission.RoleDepIds.View" xml:space="preserve">
+    <value>部門角色查詢</value>
+  </data>
+  <data name="Views.Permission.RoleMailGroups.Create" xml:space="preserve">
+    <value>郵件群組角色新增</value>
+  </data>
+  <data name="Views.Permission.RoleMailGroups.Delete" xml:space="preserve">
+    <value>郵件群組角色刪除</value>
+  </data>
+  <data name="Views.Permission.RoleMailGroups.View" xml:space="preserve">
+    <value>郵件群組角色查詢</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.Create" xml:space="preserve">
+    <value>角色權限新增</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.Delete" xml:space="preserve">
+    <value>角色權限刪除</value>
+  </data>
+  <data name="Views.Permission.RolePermissions.View" xml:space="preserve">
+    <value>角色權限查詢</value>
+  </data>
+  <data name="Views.Permission.RoleResources.Scan" xml:space="preserve">
+    <value>權限掃描同步</value>
+  </data>
+  <data name="Views.Permission.RoleResources.View" xml:space="preserve">
+    <value>資源查詢</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.Create" xml:space="preserve">
+    <value>使用者角色新增</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.Delete" xml:space="preserve">
+    <value>使用者角色刪除</value>
+  </data>
+  <data name="Views.Permission.RoleTelIds.View" xml:space="preserve">
+    <value>使用者角色查詢</value>
+  </data>
+  <data name="Views.Permission.Roles.Create" xml:space="preserve">
+    <value>角色新增</value>
+  </data>
+  <data name="Views.Permission.Roles.Disable" xml:space="preserve">
+    <value>角色停用</value>
+  </data>
+  <data name="Views.Permission.Roles.Edit" xml:space="preserve">
+    <value>角色編輯</value>
+  </data>
+  <data name="Views.Permission.Roles.View" xml:space="preserve">
+    <value>角色查詢</value>
+  </data>
+  <data name="Views.Permission.Users.View" xml:space="preserve">
+    <value>使用者查詢</value>
+  </data>
+  <data name="Resources.ScanFailed" xml:space="preserve">
+    <value>PermissionScan 失敗，請稍後再試。</value>
+  </data>
+  <data name="Resources.ScanSyncComplete" xml:space="preserve">
+    <value>同步完成：掃描 {0} 筆，新增 {1} 筆，更新 {2} 筆，停用舊格式 {3} 筆，遷移角色權限 {4} 筆。</value>
+  </data>
+  <data name="Resources.Title" xml:space="preserve">
+    <value>資源管理</value>
+  </data>
+  <data name="RoleDepIds.BatchDeleteConfirm" xml:space="preserve">
+    <value>確定要刪除所選的部門角色對應嗎？</value>
+  </data>
+  <data name="RoleDepIds.CreateDrawerTitle" xml:space="preserve">
+    <value>建立部門角色</value>
+  </data>
+  <data name="RoleDepIds.Title" xml:space="preserve">
+    <value>部門角色</value>
+  </data>
+  <data name="RoleMailGroups.BatchDeleteConfirm" xml:space="preserve">
+    <value>確定要刪除所選的郵件群組角色對應嗎？</value>
+  </data>
+  <data name="RoleMailGroups.CreateDrawerTitle" xml:space="preserve">
+    <value>建立郵件群組角色</value>
+  </data>
+  <data name="RoleMailGroups.Title" xml:space="preserve">
+    <value>郵件群組角色</value>
+  </data>
+  <data name="RoleMailGroups.Col.Uid" xml:space="preserve">
+    <value>UID</value>
+  </data>
+  <data name="RoleMailGroups.Col.Name" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="RoleMailGroups.Col.Address" xml:space="preserve">
+    <value>位址</value>
+  </data>
+  <data name="RoleMailGroups.Col.EmpId" xml:space="preserve">
+    <value>EmpID</value>
+  </data>
+  <data name="RoleMailGroups.Col.TelId" xml:space="preserve">
+    <value>TELID</value>
+  </data>
+  <data name="RoleMailGroups.Col.DisplayName" xml:space="preserve">
+    <value>DisplayName</value>
+  </data>
+  <data name="RoleMailGroups.Col.EmailAddress" xml:space="preserve">
+    <value>EmailAddress</value>
+  </data>
+  <data name="RoleMailGroups.Col.RoleCode" xml:space="preserve">
+    <value>角色代碼</value>
+  </data>
+  <data name="RoleMailGroups.Col.RoleName" xml:space="preserve">
+    <value>角色名稱</value>
+  </data>
+  <data name="RoleMailGroups.Col.CreateTime" xml:space="preserve">
+    <value>建立時間</value>
+  </data>
+  <data name="RoleMailGroups.Col.CreateUser" xml:space="preserve">
+    <value>建立者</value>
+  </data>
+  <data name="RoleMailGroups.Col.UpdateTime" xml:space="preserve">
+    <value>更新時間</value>
+  </data>
+  <data name="RoleMailGroups.Col.UpdateUser" xml:space="preserve">
+    <value>更新者</value>
+  </data>
+  <data name="RolePermissions.BatchDeleteConfirm" xml:space="preserve">
+    <value>確定要刪除所選的角色權限嗎？</value>
+  </data>
+  <data name="RolePermissions.CreatedList" xml:space="preserve">
+    <value>已建立權限</value>
+  </data>
+  <data name="RolePermissions.CreateDrawerTitle" xml:space="preserve">
+    <value>建立角色權限</value>
+  </data>
+  <data name="RolePermissions.Title" xml:space="preserve">
+    <value>角色權限</value>
+  </data>
+  <data name="Roles.BatchDisableConfirm" xml:space="preserve">
+    <value>確定要停用所選的角色嗎？</value>
+  </data>
+  <data name="Roles.CreateTitle" xml:space="preserve">
+    <value>新增角色</value>
+  </data>
+  <data name="Roles.DisableConfirm" xml:space="preserve">
+    <value>確定要停用此角色嗎？</value>
+  </data>
+  <data name="Roles.EditTitle" xml:space="preserve">
+    <value>編輯角色</value>
+  </data>
+  <data name="Roles.Title" xml:space="preserve">
+    <value>角色管理</value>
+  </data>
+  <data name="RoleTelIds.BatchDeleteConfirm" xml:space="preserve">
+    <value>確定要刪除所選的使用者角色對應嗎？</value>
+  </data>
+  <data name="RoleTelIds.CreateDrawerTitle" xml:space="preserve">
+    <value>建立使用者角色</value>
+  </data>
+  <data name="RoleTelIds.Title" xml:space="preserve">
+    <value>使用者角色</value>
+  </data>
+  <data name="Users.Title" xml:space="preserve">
+    <value>使用者</value>
+  </data>
+  <data name="Users.Permissions" xml:space="preserve">
+    <value>權限</value>
+  </data>
+  <data name="Users.PermissionsModalTitle" xml:space="preserve">
+    <value>使用者權限</value>
+  </data>
+  <data name="Users.PermissionsLoadFailed" xml:space="preserve">
+    <value>無法載入使用者權限，請稍後再試。</value>
+  </data>
+  <data name="Users.CopyPermissionsJson" xml:space="preserve">
+    <value>複製 JSON 到剪貼簿</value>
+  </data>
+  <data name="Users.CopyPermissionsJsonSuccess" xml:space="preserve">
+    <value>已複製到剪貼簿</value>
+  </data>
+  <data name="Users.CopyPermissionsJsonFailed" xml:space="preserve">
+    <value>複製失敗，請稍後再試。</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneDepartment" xml:space="preserve">
+    <value>請至少選擇一筆部門</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneMailGroup" xml:space="preserve">
+    <value>請至少選擇一筆 MailGroup</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRecord" xml:space="preserve">
+    <value>請至少選擇一筆資料</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneResource" xml:space="preserve">
+    <value>請至少選擇一筆資源</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRole" xml:space="preserve">
+    <value>請至少選擇一筆角色</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRoleAndResource" xml:space="preserve">
+    <value>請至少選擇一筆角色與一筆資源</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneRoleAndUser" xml:space="preserve">
+    <value>請至少選擇一筆角色與一筆使用者</value>
+  </data>
+  <data name="Validation.SelectAtLeastOneUser" xml:space="preserve">
+    <value>請至少選擇一筆使用者</value>
+  </data>
+  <data name="Wizard.EstimatedCreateCount" xml:space="preserve">
+    <value>預計建立筆數：</value>
+  </data>
+  <data name="Wizard.PickDepartmentsHint" xml:space="preserve">
+    <value>勾選要指派的部門（以 DepID 為準）。可換頁篩選，已選項目會保留。</value>
+  </data>
+  <data name="Wizard.PickMailGroupsHint" xml:space="preserve">
+    <value>勾選要指派的 MailGroup（以 Address 為準）。僅顯示 MailGroup.EmpID 與 ILC TELID 可對應的項目。可換頁篩選，已選項目會保留。</value>
+  </data>
+  <data name="Wizard.PickResourcesHint" xml:space="preserve">
+    <value>勾選要指派的資源。可換頁篩選，已選項目會保留。</value>
+  </data>
+  <data name="Wizard.PickRolesHint" xml:space="preserve">
+    <value>勾選要指派的角色。可換頁篩選，已選項目會保留。</value>
+  </data>
+  <data name="Wizard.PickUsersHint" xml:space="preserve">
+    <value>勾選要指派的使用者（以 TELID 為準）。可換頁篩選，已選項目會保留。</value>
+  </data>
+  <data name="Wizard.PreviewIntro" xml:space="preserve">
+    <value>請確認以下指派內容。重複組合將自動略過。</value>
+  </data>
+  <data name="Wizard.SelectedDepartments" xml:space="preserve">
+    <value>已選部門</value>
+  </data>
+  <data name="Wizard.SelectedMailGroups" xml:space="preserve">
+    <value>已選 MailGroup</value>
+  </data>
+  <data name="Wizard.SelectedResources" xml:space="preserve">
+    <value>已選資源</value>
+  </data>
+  <data name="Wizard.SelectedRoles" xml:space="preserve">
+    <value>已選角色</value>
+  </data>
+  <data name="Wizard.SelectedUsers" xml:space="preserve">
+    <value>已選使用者</value>
+  </data>
+  <data name="Wizard.Step1Roles" xml:space="preserve">
+    <value>1 選擇角色</value>
+  </data>
+  <data name="Wizard.Step2Departments" xml:space="preserve">
+    <value>2 選擇部門</value>
+  </data>
+  <data name="Wizard.Step2MailGroups" xml:space="preserve">
+    <value>2 選擇 MailGroup</value>
+  </data>
+  <data name="Wizard.Step2Resources" xml:space="preserve">
+    <value>2 選擇資源</value>
+  </data>
+  <data name="Wizard.Step2Users" xml:space="preserve">
+    <value>2 選擇使用者</value>
+  </data>
+  <data name="Wizard.Step3Confirm" xml:space="preserve">
+    <value>3 確認建立</value>
+  </data>
+  <data name="Message.ValidRoleUserNotFound" xml:space="preserve">
+    <value>找不到有效的角色或使用者</value>
+  </data>
+  <data name="Message.SelectRoleAndDepartment" xml:space="preserve">
+    <value>請至少選擇一筆角色與一筆部門</value>
+  </data>
+  <data name="Message.ValidRoleDepartmentNotFound" xml:space="preserve">
+    <value>找不到有效的角色或部門</value>
+  </data>
+  <data name="Message.SelectRoleAndMailGroup" xml:space="preserve">
+    <value>請至少選擇一筆角色與一筆 MailGroup</value>
+  </data>
+  <data name="Message.ValidRoleMailGroupNotFound" xml:space="preserve">
+    <value>找不到有效的角色或 MailGroup</value>
+  </data>
+  <data name="Message.SelectRoleAndUser" xml:space="preserve">
+    <value>請至少選擇一筆角色與一筆使用者</value>
+  </data>
+  <data name="Views.Setting.Customized.View" xml:space="preserve">
+    <value>自訂設定查詢</value>
+  </data>
+  <data name="Views.Setting.Customized.Create" xml:space="preserve">
+    <value>自訂設定新增</value>
+  </data>
+  <data name="Views.Setting.Customized.Edit" xml:space="preserve">
+    <value>自訂設定編輯</value>
+  </data>
+  <data name="Views.Setting.Customized.Delete" xml:space="preserve">
+    <value>自訂設定刪除</value>
+  </data>
+  <data name="Setting.SystemConfig.CategoryRequired" xml:space="preserve">
+    <value>Category 為必填</value>
+  </data>
+  <data name="Setting.SystemConfig.CustomizedCategoryNotAllowed" xml:space="preserve">
+    <value>Category 不可為 PickUpLocation 或 InvoiceType</value>
+  </data>
+  <data name="Setting.Customized.Title" xml:space="preserve">
+    <value>自訂設定</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.LengthMenuAll" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.RunId" xml:space="preserve">
+    <value>RunId</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.FileCode" xml:space="preserve">
+    <value>FileCode</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SourceFileName" xml:space="preserve">
+    <value>SourceFileName</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SourceFileHash" xml:space="preserve">
+    <value>SourceFileHash</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SourceFileDate" xml:space="preserve">
+    <value>SourceFileDate</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.CreatedUtc" xml:space="preserve">
+    <value>CreatedUtc</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.InvoiceNo" xml:space="preserve">
+    <value>INVOICE_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Forwarder" xml:space="preserve">
+    <value>FORWARDER</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Etd" xml:space="preserve">
+    <value>ETD</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Eta" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.InvoiceDate" xml:space="preserve">
+    <value>INVOICE_DATE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Mawb" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Hawb" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Flt" xml:space="preserve">
+    <value>FLT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.DestinationPort" xml:space="preserve">
+    <value>DESTINATION_PORT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.DestinationCountry" xml:space="preserve">
+    <value>DESTINATION_COUNTRY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.InvoiceType" xml:space="preserve">
+    <value>INVOICE_TYPE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Incoterms" xml:space="preserve">
+    <value>INCOTERMS</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Bu" xml:space="preserve">
+    <value>BU</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.PoNo" xml:space="preserve">
+    <value>PO_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.PoLine" xml:space="preserve">
+    <value>PO_LINE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.OrderPriority" xml:space="preserve">
+    <value>ORDER_PRIORITY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.InvoiceSeq" xml:space="preserve">
+    <value>INVOICE_SEQ</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ItemNo" xml:space="preserve">
+    <value>ITEM_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Description" xml:space="preserve">
+    <value>DESCRIPTION</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Qty" xml:space="preserve">
+    <value>QTY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Uom" xml:space="preserve">
+    <value>UOM</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Coo" xml:space="preserve">
+    <value>COO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Price" xml:space="preserve">
+    <value>PRICE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Amount" xml:space="preserve">
+    <value>AMOUNT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Currency" xml:space="preserve">
+    <value>CURRENCY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.PackingType" xml:space="preserve">
+    <value>PACKING_TYPE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.CartonNo" xml:space="preserve">
+    <value>CARTON_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Length" xml:space="preserve">
+    <value>LENGTH</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Width" xml:space="preserve">
+    <value>WIDTH</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Hight" xml:space="preserve">
+    <value>HIGHT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.GrossWeight" xml:space="preserve">
+    <value>GROSS_WEIGHT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.TotalCartons" xml:space="preserve">
+    <value>TOTAL_CARTONS</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.NetWeightOfTheItem" xml:space="preserve">
+    <value>NET_WEIGHT_OF_THE_ITEM</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.NcdrNo" xml:space="preserve">
+    <value>NCDR_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.EndUserCode" xml:space="preserve">
+    <value>END_USER_CODE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.EndUser" xml:space="preserve">
+    <value>END_USER</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.MachineNo" xml:space="preserve">
+    <value>MACHINE_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.MachineType" xml:space="preserve">
+    <value>MACHINE_TYPE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ShipReason" xml:space="preserve">
+    <value>SHIP_REASON</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.DeliveryNo" xml:space="preserve">
+    <value>DELIVERY_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.DeliveryLineNo" xml:space="preserve">
+    <value>DELIVERY_LINE_NO</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SoldToPartyCode" xml:space="preserve">
+    <value>SOLD_TO_PARTY_CODE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SoldToParty" xml:space="preserve">
+    <value>SOLD_TO_PARTY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ShipToPartyCode" xml:space="preserve">
+    <value>SHIP_TO_PARTY_CODE</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ShipToParty" xml:space="preserve">
+    <value>SHIP_TO_PARTY</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.ShipToPartyAddress" xml:space="preserve">
+    <value>SHIP_TO_PARTY_ADDRESS</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.Hazmat" xml:space="preserve">
+    <value>HAZMAT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.WbsElement" xml:space="preserve">
+    <value>WBS_ELEMENT</value>
+  </data>
+  <data name="Broker.CustomsDataDownload.Column.SapRemarks" xml:space="preserve">
+    <value>SAP_REMARKS</value>
+  </data>
+  <data name="ShipInfo.Group.Summary" xml:space="preserve">
+    <value>摘要</value>
+  </data>
+  <data name="ShipInfo.Group.Shipping" xml:space="preserve">
+    <value>運輸資訊</value>
+  </data>
+  <data name="ShipInfo.Group.Basic" xml:space="preserve">
+    <value>基本資訊</value>
+  </data>
+  <data name="ShipInfo.Group.Attachments" xml:space="preserve">
+    <value>附件</value>
+  </data>
+  <data name="ShipInfo.Group.BasicOrder" xml:space="preserve"><value>基本／訂單資訊</value></data>
+  <data name="ShipInfo.Group.ShippingCustoms" xml:space="preserve"><value>航運／報關資訊</value></data>
+  <data name="ShipInfo.Group.Delivery" xml:space="preserve"><value>配送資訊</value></data>
+  <data name="ShipInfo.Group.PackingServices" xml:space="preserve"><value>包裝／設備／服務</value></data>
+  <data name="ShipInfo.Group.Customer" xml:space="preserve"><value>客戶資訊</value></data>
+  <data name="ShipInfo.Group.CaseProject" xml:space="preserve"><value>案件／專案資訊</value></data>
+  <data name="ShipInfo.Group.Notifications" xml:space="preserve"><value>通知／延遲資訊</value></data>
+  <data name="ShipInfo.Group.Remarks" xml:space="preserve"><value>備註</value></data>
+  <data name="ShipInfo.Group.Discard" xml:space="preserve"><value>報廢資訊</value></data>
+  <data name="ShipInfo.Group.Audit" xml:space="preserve"><value>系統紀錄</value></data>
+  <data name="ShipInfo.Group.DetailLine" xml:space="preserve"><value>明細／品項資訊</value></data>
+  <data name="ShipInfo.Group.QuantityPrice" xml:space="preserve"><value>數量／金額資訊</value></data>
+  <data name="ShipInfo.Group.Packing" xml:space="preserve"><value>包裝／尺寸／重量</value></data>
+  <data name="ShipInfo.Group.Compliance" xml:space="preserve"><value>配送／法規資訊</value></data>
+  <data name="Compare.Number" xml:space="preserve"><value>編號</value></data>
+  <data name="Compare.Result" xml:space="preserve"><value>比對結果</value></data>
+  <data name="Compare.RtNo" xml:space="preserve"><value>RT_NO</value></data>
+  <data name="Compare.InvoiceNo" xml:space="preserve"><value>Invoice No</value></data>
+  <data name="Compare.Field" xml:space="preserve"><value>欄位說明</value></data>
+  <data name="Compare.IcpValue" xml:space="preserve"><value>ICP 目前資料值</value></data>
+  <data name="Compare.IlcValue" xml:space="preserve"><value>ILC 目前資料值</value></data>
+  <data name="Compare.All" xml:space="preserve"><value>全部</value></data>
+  <data name="Compare.Equal" xml:space="preserve"><value>一致</value></data>
+  <data name="Compare.Different" xml:space="preserve"><value>不一致</value></data>
+  <data name="Compare.Missing" xml:space="preserve"><value>ILC 查無案件</value></data>
+  <data name="Compare.Ambiguous" xml:space="preserve"><value>ILC 案號重複</value></data>
+  <data name="Compare.Search" xml:space="preserve"><value>查詢</value></data>
+  <data name="Compare.Export" xml:space="preserve"><value>匯出 Excel</value></data>
+  <data name="Compare.Error" xml:space="preserve"><value>查詢失敗，請確認 ILC 連線或聯絡管理員。</value></data>
+  <data name="Compare.Empty" xml:space="preserve"><value>沒有符合條件的比對資料。</value></data>
+  <data name="Compare.Description" xml:space="preserve"><value>以 RT_NO 比對已起案資料。ICP 值依起案轉換規則顯示；備註包含搬運等資訊，附件比較相對路徑。</value></data>
+  <data name="Compare.Field.Notes" xml:space="preserve"><value>備註及搬運需求（組合值）</value></data>
+  <data name="Compare.Field.ShipTo" xml:space="preserve"><value>Delivery To 設定地址</value></data>
+  <data name="Compare.DataSourceUnavailable" xml:space="preserve"><value>設定的 ILC 資料庫找不到 dbo.RT_ARUR_HEADER。請將 ICP 的 ILC_Connection 指向 AR/UR 起案寫入的 ILC 資料庫。</value></data>
+  <data name="ShipInfo.CaseRequirement.Deposit" xml:space="preserve"><value>押金起案必填</value></data>
+  <data name="ShipInfo.CaseRequirement.Arur" xml:space="preserve"><value>ARUR 起案必填</value></data>
+  <data name="ShipInfo.CaseRequirement.ArurWarehouse" xml:space="preserve"><value>ARUR 起案：最多 4 碼</value></data>
+  <data name="Common.Actions" xml:space="preserve"><value>操作</value></data>
+  <data name="Common.Close" xml:space="preserve"><value>關閉</value></data>
+  <data name="Setting.SystemConfig.KeyRequired" xml:space="preserve"><value>Key 為必填</value></data>
+  <data name="Setting.SystemConfig.CreateTitle" xml:space="preserve"><value>新增</value></data>
+  <data name="Setting.SystemConfig.EditTitle" xml:space="preserve"><value>編輯</value></data>
+  <data name="Setting.SystemConfig.BatchDeleteConfirm" xml:space="preserve"><value>確定要刪除所選資料嗎？</value></data>
+  <data name="Setting.SystemConfig.DeleteConfirm" xml:space="preserve"><value>確定要刪除此筆資料嗎？</value></data>
+  <data name="Setting.BuCode.Title" xml:space="preserve"><value>BU 代碼</value></data>
+  <data name="Setting.WhCode.Title" xml:space="preserve"><value>倉庫代碼</value></data>
+  <data name="Setting.DeliveryToList.Title" xml:space="preserve"><value>交貨對象清單</value></data>
+  <data name="Setting.PickUpLocation.Title" xml:space="preserve"><value>提貨地點</value></data>
+  <data name="Setting.EtaDelDateTable.Title" xml:space="preserve"><value>ETA 交貨日表</value></data>
+  <data name="Setting.DefaultDeliveryWh.Title" xml:space="preserve"><value>預設交貨倉庫</value></data>
+  <data name="Setting.Broker.Title" xml:space="preserve"><value>Broker</value></data>
+  <data name="Setting.AirSea.Title" xml:space="preserve"><value>Air/Sea</value></data>
+  <data name="Setting.InvoiceType.Title" xml:space="preserve"><value>Invoice Type</value></data>
+  <data name="Setting.OrderType.Title" xml:space="preserve"><value>訂單類型</value></data>
+  <data name="Setting.OrderPriority.Title" xml:space="preserve"><value>Order Priority</value></data>
+  <data name="Setting.Field.Key" xml:space="preserve"><value>鍵值</value></data>
+  <data name="Setting.Field.CustomerCode" xml:space="preserve"><value>客戶代碼</value></data>
+  <data name="Setting.Field.Name" xml:space="preserve"><value>名稱</value></data>
+  <data name="Setting.Field.Fab" xml:space="preserve"><value>廠別</value></data>
+  <data name="Setting.Field.Address" xml:space="preserve"><value>地址</value></data>
+  <data name="Setting.Field.Phone" xml:space="preserve"><value>電話</value></data>
+  <data name="Setting.Field.Area" xml:space="preserve"><value>區域</value></data>
+  <data name="Setting.Field.Sloc" xml:space="preserve"><value>儲位</value></data>
+  <data name="Setting.Field.PickupLocation" xml:space="preserve"><value>提貨地點</value></data>
+  <data name="Setting.Field.ContactPerson" xml:space="preserve"><value>聯絡人</value></data>
+  <data name="Setting.Field.PhoneNumber" xml:space="preserve"><value>電話號碼</value></data>
+  <data name="Setting.Field.DestinationPort" xml:space="preserve"><value>目的港</value></data>
+  <data name="Setting.Field.EtaCalendarType" xml:space="preserve"><value>ETA 行事曆類型</value></data>
+  <data name="Setting.Field.WhCode" xml:space="preserve"><value>倉庫代碼</value></data>
+  <data name="Setting.Field.FlightNo" xml:space="preserve"><value>航班號碼</value></data>
+  <data name="Setting.Field.DeliveryDate" xml:space="preserve"><value>交貨日期</value></data>
+  <data name="Setting.Field.Remark" xml:space="preserve"><value>備註</value></data>
+  <data name="Setting.Field.Category" xml:space="preserve"><value>分類</value></data>
+  <data name="Setting.Field.FunctionCode" xml:space="preserve"><value>功能代碼</value></data>
+  <data name="Setting.Field.Key1" xml:space="preserve"><value>鍵值 1</value></data>
+  <data name="Setting.Field.Key2" xml:space="preserve"><value>鍵值 2</value></data>
+  <data name="Setting.Field.Value1" xml:space="preserve"><value>值 1</value></data>
+  <data name="Setting.Field.Value2" xml:space="preserve"><value>值 2</value></data>
+  <data name="Setting.Field.Value3" xml:space="preserve"><value>值 3</value></data>
+  <data name="Setting.Field.Value4" xml:space="preserve"><value>值 4</value></data>
+  <data name="Setting.Field.Value5" xml:space="preserve"><value>值 5</value></data>
+  <data name="Setting.Field.Value6" xml:space="preserve"><value>值 6</value></data>
+  <data name="Views.Shared._SidebarNav.Setting.LocalizationManagement" xml:space="preserve"><value>多國語言</value></data>
+  <data name="Views.Shared._SidebarNav.Localization" xml:space="preserve"><value>多國語言</value></data>
+  <data name="Sidebar.Search" xml:space="preserve"><value>搜尋選單</value></data>
+  <data name="Sidebar.Recent" xml:space="preserve"><value>最近使用</value></data>
+  <data name="LocalizationManagement.Title" xml:space="preserve"><value>多國語言管理</value></data>
+  <data name="LocalizationManagement.Hint" xml:space="preserve"><value>直接修改翻譯後儲存。儲存前會建立備份；重新啟動 ICP 後，網站會載入新的翻譯。</value></data>
+  <data name="LocalizationManagement.Search" xml:space="preserve"><value>搜尋 Resource Key 或翻譯內容</value></data>
+  <data name="LocalizationManagement.Loading" xml:space="preserve"><value>載入中…</value></data>
+  <data name="LocalizationManagement.NoRows" xml:space="preserve"><value>找不到符合的翻譯資料。</value></data>
+  <data name="LocalizationManagement.SaveChanges" xml:space="preserve"><value>儲存變更</value></data>
+  <data name="LocalizationManagement.Saved" xml:space="preserve"><value>已更新 {0} 個翻譯值。請重新啟動 ICP 後確認網站顯示。</value></data>
+  <data name="LocalizationManagement.LoadFailed" xml:space="preserve"><value>無法載入翻譯資料。</value></data>
+  <data name="LocalizationManagement.SaveFailed" xml:space="preserve"><value>無法儲存翻譯資料。</value></data>
+  <data name="LocalizationManagement.NoChanges" xml:space="preserve"><value>沒有需要儲存的變更。</value></data>
+  <data name="LocalizationManagement.ExportExcel" xml:space="preserve"><value>匯出 Excel</value></data>
+  <data name="LocalizationManagement.ImportExcel" xml:space="preserve"><value>匯入 Excel</value></data>
+  <data name="LocalizationManagement.Imported" xml:space="preserve"><value>已匯入 {0} 筆翻譯資料，更新 {1} 個翻譯值。請重新啟動 ICP 後確認網站顯示。</value></data>
+  <data name="LocalizationManagement.ImportFailed" xml:space="preserve"><value>無法匯入翻譯 Excel 檔案。</value></data>
+  <data name="Sidebar.NoResults" xml:space="preserve"><value>找不到符合的選單項目</value></data>
+  <data name="Sidebar.CustomLinks" xml:space="preserve"><value>常用連結</value></data>
+  <data name="Sidebar.SearchCount" xml:space="preserve"><value>找到 {0} 筆</value></data>
+  <data name="Sidebar.ClearRecent" xml:space="preserve"><value>清除最近使用</value></data>
+  <data name="Sidebar.OpenInNewTab" xml:space="preserve"><value>在新視窗開啟</value></data>
+  <data name="Sidebar.Resize" xml:space="preserve"><value>調整側欄寬度</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>釘選</value></data>
+  <data name="Sidebar.Pin" xml:space="preserve"><value>釘選此項目</value></data>
+  <data name="Sidebar.Unpin" xml:space="preserve"><value>取消釘選此項目</value></data>
+</root>

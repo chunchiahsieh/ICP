@@ -17,8 +17,17 @@ alwaysApply: true
 
 - **禁止**在新增或修改程式時使用 `yyyy/MM/dd`、`dd/MM/yyyy` 等其它分隔或順序（除非明確處理外部匯入的**輸入解析**，解析後仍輸出 `yyyy-MM-dd`）。
 - C# 格式化使用 `CultureInfo.InvariantCulture`。
-- 前端 `<input type="date">` 的 `value` 必須為 `yyyy-MM-dd`（HTML 標準）。
+- 前端日期元件的送出值必須為 `yyyy-MM-dd`（HTML 標準）。
 - API / JSON 回傳給前端的日期字串，優先 `yyyy-MM-dd`。
+
+## ICP 日期元件（必須使用）
+
+ICP 只要需要輸入或選擇日期，一律使用固定格式日期元件，不可直接將原生 `<input type="date">` 顯示給使用者，因為瀏覽器會依語系顯示成 `yyyy/MM/dd` 等格式。
+
+- 可見欄位使用文字輸入框，固定顯示與輸入 `yyyy-MM-dd`。
+- 右側使用嵌在輸入框內的黑色 `bi-calendar` icon 開啟日期選擇器；不可使用有獨立框線的日期按鈕。
+- 原生 `<input type="date">` 僅作為隱藏的 picker，選取後必須正規化並回填到可見欄位為 `yyyy-MM-dd`。
+- ShipInfo 請沿用 `shipinfo-metadata-render.js` 的 `shipinfo-date-picker-group`／`shipinfo-date-picker` 實作與 `report-data.css` 樣式；其他 ICP 頁面新增日期欄位時也須遵循相同行為與視覺樣式。
 
 ## 實作參考
 
@@ -31,8 +40,8 @@ dateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 ```
 
 ```javascript
-// type="date" 僅接受 yyyy-MM-dd
-$input.attr('type', 'date').val('2026-06-06');
+// 可見欄位一律回填固定格式；隱藏的 native date picker 只負責選日期。
+$visibleInput.val('2026-06-06');
 ```
 
 ## 修改程式時

@@ -1,0 +1,39 @@
+{
+  "_comment": "僅設定 ShipInfo ProDataTable 的欄位、篩選與排序。Header 與 Detail 的 View/Edit 表單請分別編輯 shipinfo-header-form-fields.json 與 shipinfo-detail-form-fields.json。",
+  "header": {
+    "tableUi": {
+      "stickyHeader": true,
+      "stickyLeftColumns": true,
+      "frozenFields": ["SaDate", "InvoiceNo", "Hawb", "MdpFlag"]
+    },
+    "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "CreateDate", "visible": true, "filterType": "Checkbox" },
+        { "fieldName": "InvoiceNo", "visible": true, "filterType": "Text" },
+        { "fieldName": "SaDate", "visible": true, "filterType": "DateRange" },
+        { "fieldName": "Eta", "visible": true, "filterType": "Date" },
+        { "fieldName": "Broker", "visible": true },
+        { "fieldName": "Notes", "visible": true }
+      ]
+    }
+  },
+  "detail": {
+    "tableUi": {
+      "stickyHeader": true,
+      "stickyLeftColumns": true,
+      "frozenFields": ["DepositCaseStatus", "ArurCaseStatus"]
+    },
+    "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
+    "list": {
+      "fields": [
+        { "fieldName": "InvoiceSeq", "visible": true, "filterType": "Checkbox" },
+        { "fieldName": "ItemNo", "visible": true, "filterType": "Text" },
+        { "fieldName": "Description", "visible": true },
+        { "fieldName": "Qty", "visible": true },
+        { "fieldName": "Uom", "visible": true }
+      ]
+    }
+  }
+}

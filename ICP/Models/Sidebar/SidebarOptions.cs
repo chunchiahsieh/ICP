@@ -59,11 +59,14 @@ public sealed class SidebarOptionsValidator : IValidateOptions<SidebarOptions>
             else if (!names.Add(link.Name.Trim()))
                 failures.Add($"Sidebar:CustomLinks contains duplicate name '{link.Name}'.");
 
-            if (!Uri.TryCreate(link.Url, UriKind.Absolute, out var uri) ||
-                (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
-                failures.Add($"Sidebar:CustomLinks '{link.Name}' must use an absolute http or https Url.");
-            else if (!urls.Add(uri.AbsoluteUri))
-                failures.Add($"Sidebar:CustomLinks contains duplicate Url '{uri.AbsoluteUri}'.");
+            var normalizedUrl = link.Url.Trim();
+            var isLocalPath = normalizedUrl.StartsWith('/') && !normalizedUrl.StartsWith("//", StringComparison.Ordinal);
+            var isHttpUrl = Uri.TryCreate(normalizedUrl, UriKind.Absolute, out var uri) &&
+                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+            if (!isLocalPath && !isHttpUrl)
+                failures.Add($"Sidebar:CustomLinks '{link.Name}' must use a root-relative path or an absolute http or https Url.");
+            else if (!urls.Add(isLocalPath ? normalizedUrl : uri!.AbsoluteUri))
+                failures.Add($"Sidebar:CustomLinks contains duplicate Url '{normalizedUrl}'.");
             if (link.SortOrder is < -10000 or > 10000)
                 failures.Add($"Sidebar:CustomLinks '{link.Name}' SortOrder must be between -10000 and 10000.");
         }

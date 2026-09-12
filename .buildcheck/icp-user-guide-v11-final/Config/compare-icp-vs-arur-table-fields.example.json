@@ -1,0 +1,20 @@
+{
+  "header": {
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "ArurCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox" }
+      ]
+    }
+  },
+  "detail": {
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "ItemNo", "visible": true, "searchable": true, "filterType": "Text" },
+        { "fieldName": "ArurCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox" }
+      ]
+    }
+  }
+}

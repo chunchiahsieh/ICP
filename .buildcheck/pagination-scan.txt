@@ -1,0 +1,137 @@
+ICP\Repositories\IShipInfoRepository.cs:8:    Task<ShipInfoHeaderListResult> SearchHeadersAsync(
+ICP\Repositories\IShipInfoRepository.cs:12:    Task<IReadOnlyList<Dictionary<string, object?>>> QueryHeadersAsync(
+ICP\Repositories\IShipInfoRepository.cs:17:    Task<IReadOnlyList<Dictionary<string, object?>>> QueryDetailsAsync(
+ICP\Repositories\ShipInfoRepository.cs:18:    public async Task<ShipInfoHeaderListResult> SearchHeadersAsync(
+ICP\Repositories\ShipInfoRepository.cs:43:    public async Task<IReadOnlyList<Dictionary<string, object?>>> QueryHeadersAsync(
+ICP\Repositories\ShipInfoRepository.cs:59:    public async Task<IReadOnlyList<Dictionary<string, object?>>> QueryDetailsAsync(
+ICP\Services\IReportDataService.cs:9:    Task<ShipInfoTableListViewModel> QueryHeaderTableAsync(
+ICP\Services\IReportDataService.cs:14:    Task<ShipInfoTableListViewModel> QueryDetailTableAsync(
+ICP\Services\IShipInfoService.cs:13:    Task<ShipInfoHeaderListResult> SearchHeadersAsync(
+ICP\Services\IShipInfoService.cs:17:    Task<ShipInfoTableListViewModel> QueryHeaderTableAsync(
+ICP\Services\IShipInfoService.cs:32:    Task<ShipInfoTableListViewModel> QueryDetailTableAsync(
+ICP\Services\ForwarderDataImportService.cs:283:        var columnMap = BuildColumnMapFromDataTable(table, errors);
+ICP\Services\ForwarderDataImportService.cs:374:    private static Dictionary<string, int> BuildColumnMapFromDataTable(DataTable table, List<string> errors)
+ICP\Services\ReportDataService.cs:36:    public async Task<ShipInfoTableListViewModel> QueryHeaderTableAsync(
+ICP\Services\ReportDataService.cs:42:        var items = await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken);
+ICP\Services\ReportDataService.cs:54:    public async Task<ShipInfoTableListViewModel> QueryDetailTableAsync(
+ICP\Services\ReportDataService.cs:73:        var items = await _repository.QueryDetailsAsync(criteria, config.DetailFields, cancellationToken);
+ICP\Services\ReportDataService.cs:119:        var headers = await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken);
+ICP\Controllers\ReportControllerBase.cs:49:        var model = await _reportDataService.QueryHeaderTableAsync(ReportKey, criteria, cancellationToken);
+ICP\Controllers\ReportControllerBase.cs:59:        var model = await _reportDataService.QueryDetailTableAsync(ReportKey, criteria, cancellationToken);
+ICP\Controllers\RoleDepIdsController.cs:174:        var list = await QueryRolesPickAsync(criteria, cancellationToken);
+ICP\Controllers\RoleDepIdsController.cs:204:        var list = await QueryUsersPickAsync(criteria, cancellationToken);
+ICP\Controllers\RoleDepIdsController.cs:236:        var list = await QueryRoleDepIdsAsync(criteria, cancellationToken);
+ICP\Controllers\RoleDepIdsController.cs:281:    private async Task<List<Role>> QueryRolesPickAsync(RolesSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RoleDepIdsController.cs:300:    private async Task<List<UserInfoAd>> QueryUsersPickAsync(UsersSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RoleDepIdsController.cs:330:    private async Task<List<RoleDepId>> QueryRoleDepIdsAsync(
+ICP\Controllers\ResourcesController.cs:56:        var list = await QueryResourcesAsync(criteria, cancellationToken);
+ICP\Controllers\ResourcesController.cs:97:    private async Task<List<Resource>> QueryResourcesAsync(ResourcesSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RolePermissionsController.cs:174:        var list = await QueryRolesPickAsync(criteria, cancellationToken);
+ICP\Controllers\RolePermissionsController.cs:204:        var list = await QueryResourcesPickAsync(criteria, cancellationToken);
+ICP\Controllers\RolePermissionsController.cs:237:        var list = await QueryRolePermissionsAsync(criteria, cancellationToken);
+ICP\Controllers\RolePermissionsController.cs:256:    private async Task<List<Role>> QueryRolesPickAsync(RolesSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RolePermissionsController.cs:275:    private async Task<List<Resource>> QueryResourcesPickAsync(ResourcesSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RolePermissionsController.cs:337:    private async Task<List<RolePermission>> QueryRolePermissionsAsync(
+ICP\Controllers\RoleMailGroupsController.cs:190:        var list = await QueryRolesPickAsync(criteria, cancellationToken);
+ICP\Controllers\RoleMailGroupsController.cs:220:        var list = await QueryMailGroupsPickAsync(criteria, cancellationToken);
+ICP\Controllers\RoleMailGroupsController.cs:262:        var list = await QueryRoleMailGroupsAsync(criteria, cancellationToken);
+ICP\Controllers\RoleMailGroupsController.cs:293:        var items = await QueryRoleMailGroupsAsync(new RoleMailGroupsSearchModel(), cancellationToken);
+ICP\Controllers\RoleMailGroupsController.cs:322:    private async Task<List<Role>> QueryRolesPickAsync(RolesSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RoleMailGroupsController.cs:363:    private async Task<List<MailGroupPickItem>> QueryMailGroupsPickAsync(
+ICP\Controllers\RoleMailGroupsController.cs:458:    private async Task<List<RoleMailGroupListItem>> QueryRoleMailGroupsAsync(
+ICP\Controllers\ShipInfoController.cs:120:        var model = await _shipInfoService.QueryHeaderTableAsync(criteria, cancellationToken);
+ICP\Controllers\ShipInfoController.cs:142:        var model = await _shipInfoService.QueryDetailTableAsync(criteria, cancellationToken);
+ICP\Controllers\ShipInfoController.cs:151:        var result = await _shipInfoService.SearchHeadersAsync(criteria ?? new ShipInfoSearchCriteria(), cancellationToken);
+ICP\Services\ShipInfoService.cs:60:    public async Task<ShipInfoHeaderListResult> SearchHeadersAsync(
+ICP\Services\ShipInfoService.cs:66:        var result = await _repository.SearchHeadersAsync(criteria, cancellationToken);
+ICP\Services\ShipInfoService.cs:76:    public async Task<ShipInfoTableListViewModel> QueryHeaderTableAsync(
+ICP\Services\ShipInfoService.cs:83:        var items = (await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken)).ToList();
+ICP\Services\ShipInfoService.cs:136:    public async Task<ShipInfoTableListViewModel> QueryDetailTableAsync(
+ICP\Services\ShipInfoService.cs:157:        var result = await _repository.QueryDetailsAsync(criteria, config.DetailFields, cancellationToken);
+ICP\Controllers\TariffDataController.cs:100:        var list = await QueryTariffDataAsync(criteria, cancellationToken);
+ICP\Controllers\TariffDataController.cs:111:        var list = await QueryTariffDataAsync(criteria, cancellationToken);
+ICP\Controllers\TariffDataController.cs:366:    private async Task<List<TariffData>> QueryTariffDataAsync(
+ICP\Controllers\CustomsDataDownloadController.cs:61:        var list = await QueryRowsAsync(criteria, cancellationToken);
+ICP\Controllers\CustomsDataDownloadController.cs:87:        var list = await QueryRowsAsync(criteria, cancellationToken);
+ICP\Controllers\CustomsDataDownloadController.cs:136:    private async Task<List<StgRawShippingAdvice>> QueryRowsAsync(
+ICP\Controllers\RolesController.cs:179:        var list = await QueryRolesAsync(criteria, cancellationToken);
+ICP\Controllers\RolesController.cs:219:    private async Task<List<Role>> QueryRolesAsync(RolesSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RoleTelIdsController.cs:175:        var list = await QueryRolesPickAsync(criteria, cancellationToken);
+ICP\Controllers\RoleTelIdsController.cs:205:        var list = await QueryUsersPickAsync(criteria, cancellationToken);
+ICP\Controllers\RoleTelIdsController.cs:238:        var list = await QueryRoleTelIdsAsync(criteria, cancellationToken);
+ICP\Controllers\RoleTelIdsController.cs:283:    private async Task<List<Role>> QueryRolesPickAsync(RolesSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RoleTelIdsController.cs:302:    private async Task<List<UserInfoAd>> QueryUsersPickAsync(UsersSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\RoleTelIdsController.cs:336:    private async Task<List<RoleTelId>> QueryRoleTelIdsAsync(
+ICP\Controllers\UsersController.cs:56:        var list = await QueryUsersAsync(criteria, cancellationToken);
+ICP\Controllers\UsersController.cs:158:    private async Task<List<UserInfoAd>> QueryUsersAsync(UsersSearchModel criteria, CancellationToken cancellationToken)
+ICP\Controllers\Setting\EtaDelDateTableController.cs:107:    protected override async Task<SystemConfigSearchListViewModel> BuildSearchListViewModelAsync(
+ICP\Services\TariffDataImportService.cs:189:        var columnMap = BuildColumnMapFromDataTable(table);
+ICP\Services\TariffDataImportService.cs:239:    private static Dictionary<string, int> BuildColumnMapFromDataTable(DataTable table)
+ICP\Controllers\Setting\SystemConfigControllerBase.cs:178:        var list = await QueryConfigsAsync(criteria, cancellationToken);
+ICP\Controllers\Setting\SystemConfigControllerBase.cs:179:        var viewModel = await BuildSearchListViewModelAsync(list, cancellationToken);
+ICP\Controllers\Setting\SystemConfigControllerBase.cs:183:    protected virtual Task<SystemConfigSearchListViewModel> BuildSearchListViewModelAsync(
+ICP\Controllers\Setting\SystemConfigControllerBase.cs:276:    protected async Task<List<SystemConfig>> QueryConfigsAsync(
+ICP\Views\BROKER\TariffData\View.cshtml:129:                if (!$table.length || !$.fn.dataTable.isDataTable($table[0])) {
+ICP\Views\BROKER\TariffData\View.cshtml:133:                var start = $table.DataTable().page.info().start;
+ICP\Views\BROKER\TariffData\View.cshtml:144:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig($.extend({
+ICP\Views\BROKER\TariffData\View.cshtml:147:                    pageLength: 10,
+ICP\Views\FORWARDER\ForwarderDataUpload\View.cshtml:577:                    pageLength: -1,
+ICP\Views\FORWARDER\ForwarderDataUpload\View.cshtml:669:                    tableInstance = ProDataTables.initUsers(buildTableConfig());
+ICP\Views\FORWARDER\ForwarderDataUpload\View.cshtml:685:                if ($table.length && $.fn.dataTable.isDataTable($table[0])) {
+ICP\Views\FORWARDER\ForwarderDataUpload\View.cshtml:687:                    $table.DataTable().destroy();
+ICP\Views\BROKER\CustomsDataDownload\View.cshtml:89:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig($.extend({
+ICP\Views\BROKER\CustomsDataDownload\View.cshtml:92:                    pageLength: 10,
+ICP\Views\Setting\Broker\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\wwwroot\js\shipinfo-protable.js:79:            pageLength: 10,
+ICP\wwwroot\js\shipinfo-protable.js:310:        headerTableInstance = ProDataTables.initUsers(buildShipInfoTableConfig('header'));
+ICP\wwwroot\js\shipinfo-protable.js:311:        detailTableInstance = ProDataTables.initUsers(buildShipInfoTableConfig('detail'));
+ICP\wwwroot\js\pro-datatables.js:10:    pageLength: 10,
+ICP\wwwroot\js\pro-datatables.js:43:  function ProDataTablesInitUsers(config) {
+ICP\wwwroot\js\pro-datatables.js:69:      if (!$.fn.dataTable.isDataTable(tableEl)) return;
+ICP\wwwroot\js\pro-datatables.js:70:      var dt = $table.DataTable();
+ICP\wwwroot\js\pro-datatables.js:230:    function initDataTable() {
+ICP\wwwroot\js\pro-datatables.js:235:      if ($.fn.dataTable.isDataTable(tableEl)) {
+ICP\wwwroot\js\pro-datatables.js:236:        $table.DataTable().destroy();
+ICP\wwwroot\js\pro-datatables.js:271:        pageLength: tablePageLengthState,
+ICP\wwwroot\js\pro-datatables.js:305:      $table.DataTable(dtOptions);
+ICP\wwwroot\js\pro-datatables.js:337:            initDataTable();
+ICP\wwwroot\js\pro-datatables.js:440:    return ProDataTablesInitUsers(config);
+ICP\wwwroot\js\pro-role-permissions.js:63:  function adjustDataTable(tableSelector) {
+ICP\wwwroot\js\pro-role-permissions.js:65:    if (!tableEl || !$.fn.dataTable.isDataTable(tableEl)) {
+ICP\wwwroot\js\pro-role-permissions.js:68:    $(tableSelector).DataTable().columns.adjust().draw(false);
+ICP\wwwroot\js\pro-role-permissions.js:82:        pageLength: 10
+ICP\wwwroot\js\pro-role-permissions.js:152:      rolesTableInstance = ProDataTables.initUsers(proDt({
+ICP\wwwroot\js\pro-role-permissions.js:169:      resourcesTableInstance = ProDataTables.initUsers(proDt({
+ICP\wwwroot\js\pro-role-permissions.js:186:        adjustDataTable(config.rolesTableSelector);
+ICP\wwwroot\js\pro-role-permissions.js:195:        adjustDataTable(config.resourcesTableSelector);
+ICP\wwwroot\js\pro-role-permissions.js:248:          adjustDataTable(config.rolesTableSelector);
+ICP\wwwroot\js\pro-role-permissions.js:253:          adjustDataTable(config.resourcesTableSelector);
+ICP\wwwroot\js\pro-role-permissions.js:295:      resultTableInstance = ProDataTables.initUsers(proDt({
+ICP\Views\Setting\WhCode\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\wwwroot\js\pro-role-assignment.js:61:  function adjustDataTable(tableSelector) {
+ICP\wwwroot\js\pro-role-assignment.js:63:    if (!tableEl || !$.fn.dataTable.isDataTable(tableEl)) {
+ICP\wwwroot\js\pro-role-assignment.js:66:    $(tableSelector).DataTable().columns.adjust().draw(false);
+ICP\wwwroot\js\pro-role-assignment.js:80:        pageLength: 10
+ICP\wwwroot\js\pro-role-assignment.js:155:      rolesTableInstance = ProDataTables.initUsers(proDt({
+ICP\wwwroot\js\pro-role-assignment.js:172:      usersTableInstance = ProDataTables.initUsers(proDt({
+ICP\wwwroot\js\pro-role-assignment.js:189:        adjustDataTable(config.rolesTableSelector);
+ICP\wwwroot\js\pro-role-assignment.js:198:        adjustDataTable(config.usersTableSelector);
+ICP\wwwroot\js\pro-role-assignment.js:253:          adjustDataTable(config.rolesTableSelector);
+ICP\wwwroot\js\pro-role-assignment.js:258:          adjustDataTable(config.usersTableSelector);
+ICP\wwwroot\js\pro-role-assignment.js:296:      resultTableInstance = ProDataTables.initUsers(proDt({
+ICP\Views\Setting\EtaDelDateTable\View.cshtml:72:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Setting\AirSea\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\wwwroot\js\report-data.js:170:            pageLength: 10,
+ICP\wwwroot\js\report-data.js:319:                headerTableInstance = ProDataTables.initUsers(buildTableConfig('header'));
+ICP\wwwroot\js\report-data.js:320:                detailTableInstance = ProDataTables.initUsers(buildTableConfig('detail'));
+ICP\Views\Setting\DefaultDeliveryWh\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Setting\BuCode\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Setting\DeliveryToList\View.cshtml:63:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Permission\Users\View.cshtml:38:                ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Setting\Customized\View.cshtml:65:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Setting\OrderType\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Setting\PickUpLocation\View.cshtml:60:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Setting\InvoiceType\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Setting\OrderPriority\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Permission\Roles\View.cshtml:58:                tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig({
+ICP\Views\Permission\RoleResources\View.cshtml:47:                ProDataTables.initUsers(ProDataTables.buildConfig({

@@ -1,0 +1,71 @@
+{
+  "header": {
+    "tableUi": {"stickyHeader": true, "stickyLeftColumns": true, "frozenFields": ["SaDate", "InvoiceNo", "Hawb", "MdpFlag"]},
+    "initialSort": {"fieldName": "CreateDate", "direction": "desc"},
+    "list": {
+      "fields": [
+        {"fieldName": "SaDate", "visible": true, "searchable": true, "filterType": "DateRange"},
+        {"fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Hawb", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "MdpFlag", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "Mawb", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Flt", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Eta", "visible": true, "searchable": true, "filterType": "Date"},
+        {"fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "DestinationPort", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "Warehouse", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "OrderType", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "DeliveryTo", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "DeliveryDate", "visible": true, "searchable": true, "filterType": "DateRange"},
+        {"fieldName": "ArriveTime", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "NcdrNo", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "NcdrRequestor", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "EndUser", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "MachineNo", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "ArrivalNoticeFlag", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "ReasonForDeliveryDelay", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "WbsElement", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "DepositCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "ArurCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "RtNo", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Cancellation", "visible": true, "searchable": true, "filterType": "Checkbox"}
+
+      ]
+    }
+  },
+  "detail": {
+    "tableUi": {"stickyHeader": true, "stickyLeftColumns": true},
+    "initialSort": {"fieldName": "InvoiceSeq", "direction": "asc"},
+    "list": {
+      "fields": [
+        {"fieldName": "Id", "visible": false, "searchable": false, "filterType": "Checkbox"},
+        {"fieldName": "DepositCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "ArurCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "InvoiceSeq", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "TetPoLine", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "ItemNo", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Description", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Qty", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Uom", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "Price", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Amount", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Currency", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "Rate", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Coo", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "PackingType", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "CartonNo", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "Length", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Width", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Hight", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "GrossWeight", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "Eccn", "visible": true, "searchable": true, "filterType": "Text"},
+        {"fieldName": "ElFlag", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "SdsFlag", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "Hazmat", "visible": true, "searchable": true, "filterType": "Checkbox"}
+      ]
+    }
+  }
+}

@@ -16,8 +16,14 @@
     int MenuOrder(string target) => menuOrder.TryGetValue(target, out var order) ? order : int.MaxValue;
     var customLinks = Configuration.GetSection("Sidebar:CustomLinks").GetChildren()
         .Where(link => link.GetValue<bool?>("Enabled") != false && !string.IsNullOrWhiteSpace(link["Name"]))
-        .Where(link => Uri.TryCreate(link["Url"], UriKind.Absolute, out var uri) &&
-            (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+        .Where(link =>
+        {
+            var url = link["Url"]?.Trim();
+            return !string.IsNullOrWhiteSpace(url) &&
+                ((url.StartsWith('/') && !url.StartsWith("//", StringComparison.Ordinal)) ||
+                 (Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
+                  (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)));
+        })
         .OrderBy(link => link.GetValue<int?>("SortOrder") ?? int.MaxValue)
         .ThenBy(link => link["Name"], StringComparer.CurrentCultureIgnoreCase)
         .ToArray();

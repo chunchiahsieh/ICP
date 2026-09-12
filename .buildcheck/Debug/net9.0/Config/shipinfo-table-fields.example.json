@@ -1,0 +1,59 @@
+{
+  "_comment": "edit.includeAllExceptSystem=true 時顯示 DTO 全部欄位（排除系統稽核欄位）；fields 僅覆寫。可編輯欄位須在 edit.fields 明確設 editable:true（與 header 相同）。清單 filterType 與編輯 controlType 分開：SaDate 清單篩選用 DateRange，編輯用 Date 單一日期。",
+  "header": {
+    "tableUi": {
+      "stickyHeader": true,
+      "stickyLeftColumns": true
+    },
+    "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
+    "list": {
+      "fields": [
+        { "fieldName": "Id", "visible": false, "searchable": false },
+        { "fieldName": "CreateDate", "visible": true, "filterType": "Checkbox" },
+        { "fieldName": "InvoiceNo", "visible": true, "filterType": "Text" },
+        { "fieldName": "SaDate", "visible": true, "filterType": "DateRange" },
+        { "fieldName": "Eta", "visible": true, "filterType": "Date" },
+        { "fieldName": "Broker", "visible": true },
+        { "fieldName": "Notes", "visible": true }
+      ]
+    },
+    "edit": {
+      "includeAllExceptSystem": true,
+      "fields": [
+        {"fieldName": "SaDate", "editable": true, "controlType": "Date"},
+        {"fieldName": "Eta", "editable": true, "controlType": "Date"},
+        {"fieldName": "Broker", "editable": true},
+        {"fieldName": "DepositCaseStatus", "readOnly": true}
+      ]
+    }
+  },
+  "detail": {
+    "tableUi": {
+      "stickyHeader": true,
+      "stickyLeftColumns": true
+    },
+    "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
+    "list": {
+      "fields": [
+        { "fieldName": "InvoiceSeq", "visible": true, "filterType": "Checkbox" },
+        { "fieldName": "ItemNo", "visible": true, "filterType": "Text" },
+        { "fieldName": "Description", "visible": true },
+        { "fieldName": "Qty", "visible": true },
+        { "fieldName": "Uom", "visible": true }
+      ]
+    },
+    "edit": {
+      "includeAllExceptSystem": true,
+      "fields": [
+        {"fieldName": "Description", "editable": true},
+        {"fieldName": "Qty", "editable": true},
+        {"fieldName": "Uom", "editable": true},
+        {"fieldName": "Coo", "editable": true},
+        {"fieldName": "CartonNo", "editable": true},
+        {"fieldName": "GrossWeight", "editable": true},
+        {"fieldName": "DepositCaseStatus", "readOnly": true},
+        {"fieldName": "ArurCaseStatus", "readOnly": true}
+      ]
+    }
+  }
+}
