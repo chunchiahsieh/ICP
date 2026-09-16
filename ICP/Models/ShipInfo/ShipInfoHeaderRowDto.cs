@@ -36,6 +36,8 @@ public class ShipInfoHeaderRowDto
 
     public string? Forwarder { get; init; }
 
+    public string? Shipper { get; init; }
+
     public string? Broker { get; init; }
 
     public string? Etd { get; init; }

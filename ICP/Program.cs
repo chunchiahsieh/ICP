@@ -171,6 +171,9 @@ builder.Services
 builder.Services.AddSingleton<ReportTableFieldsOptions>();
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+// SharedResource is editable from Localization Management. Resolve it from the
+// deployed RESX files so a browser refresh sees a saved translation immediately.
+builder.Services.AddScoped<Microsoft.Extensions.Localization.IStringLocalizer<SharedResource>, RuntimeSharedResourceLocalizer>();
 
 var supportedCultures = new[] { "zh-TW", "en", "ja" };
 
@@ -227,6 +230,9 @@ builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 builder.Services.AddSingleton<IShipInfoCaseEventFactory, ShipInfoCaseEventFactory>();
 builder.Services.AddHostedService<IntegrationEventOutboxPublisherWorker>();
 builder.Services.AddScoped<ShipInfoMetadataProvider>();
+builder.Services.AddScoped<ShipInfoRuntimeTranslations>();
+builder.Services.AddScoped<ExportRuntimeTranslations>();
+builder.Services.AddScoped<CommonRuntimeTranslations>();
 builder.Services.AddScoped<ShipInfoFormMetadataProvider>();
 builder.Services.AddScoped<ReportMetadataProvider>();
 builder.Services.AddScoped<ForwarderTableMetadataProvider>();

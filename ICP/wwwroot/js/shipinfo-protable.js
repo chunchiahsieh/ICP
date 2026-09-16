@@ -91,6 +91,10 @@
                     return value;
                 }
 
+                if (value === '__BLANK__') {
+                    return app.messages.blank || '(Blank)';
+                }
+
                 var col = String(column);
                 if (col === 'DepositCaseStatus' || col === 'ArurCaseStatus') {
                     return app.formatCaseStatusLabel(value);

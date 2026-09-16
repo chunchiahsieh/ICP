@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using ICP.Helpers;
+using ICP.Models.Icp;
 using ICP.Models.ShipInfo;
 
 namespace ICP.Models.ShipInfo;
@@ -10,7 +11,7 @@ public static class ShipInfoFieldCatalog
     public static readonly string[] HeaderFieldOrder =
     [
         "Id", "CreateTime", "CreateUser", "UpdateTime", "UpdateUser",
-        "CreateDate", "SaDate", "InvoiceNo", "Forwarder", "Broker", "Etd", "Eta",
+        "CreateDate", "SaDate", "InvoiceNo", "Forwarder", "Shipper", "Broker", "Etd", "Eta",
         "InvoiceDate", "Mawb", "Hawb", "Flt", "Freight", "DestinationPort", "DestinationCountry",
         "Warehouse", "InvoiceType", "Incoterms", "OrderType", "DeliveryDate", "DeliveryTo", "Bu",
         "TetPo", "OrderPriority", "MdpFlag", "TotalCartons", "NcdrNo", "NcdrRequestor",
@@ -45,6 +46,7 @@ public static class ShipInfoFieldCatalog
         ["CreateDate"] = new(ShipInfoControlTypes.Text, editable: false, searchable: true, maxLength: 20, group: "Basic"),
         ["SaDate"] = new(ShipInfoControlTypes.Date, editable: false, searchable: true, maxLength: 10, group: "Shipping"),
         ["InvoiceNo"] = new(ShipInfoControlTypes.Text, editable: false, searchable: true, maxLength: 30, group: "Invoice"),
+        ["Shipper"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: "Shipper", maxLength: IcpHeader.ShipperMaxLength, group: "Shipping"),
         ["Broker"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: "Broker", maxLength: 30, group: "Customs"),
         ["Eta"] = new(ShipInfoControlTypes.Date, editable: false, searchable: true, maxLength: 10, group: "Shipping"),
         ["DeliveryTo"] = new(ShipInfoControlTypes.Select, editable: false, lookupCategory: "DeliveryToList", maxLength: 20, group: "Warehouse"),
@@ -62,7 +64,7 @@ public static class ShipInfoFieldCatalog
         ["Description"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 60, group: "Basic"),
         ["Qty"] = new(ShipInfoControlTypes.Decimal, editable: false, required: true, minValue: 0, group: "Basic"),
         ["Uom"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 10, group: "Basic"),
-        ["Coo"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 50, group: "Basic"),
+        ["Coo"] = new(ShipInfoControlTypes.Select, editable: false, maxLength: 50, lookupCategory: "Country of Origin", group: "Basic"),
         ["CartonNo"] = new(ShipInfoControlTypes.Decimal, editable: false, group: "Packing"),
         ["GrossWeight"] = new(ShipInfoControlTypes.Decimal, editable: false, group: "Packing"),
         ["DepositCaseStatus"] = new(ShipInfoControlTypes.Select, editable: false, searchable: true, lookupCategory: ShipInfoCaseStatuses.DepositCaseStatusCategory, group: "Case"),

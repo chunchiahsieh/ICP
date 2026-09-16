@@ -19,6 +19,7 @@ public sealed class PageDataScopeService(ApplicationDbContext db,
         "shippingreport" => "Views.Report.ShippingReport.View",
         "massdatareport" => "Views.Report.MassDataReport.View",
         "tariffdata" => "Views.Broker.TariffData.View",
+        "customized" => "Views.Setting.Customized.View",
         _ => null
     };
 

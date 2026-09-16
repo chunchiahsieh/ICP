@@ -11,6 +11,7 @@ public class MassUpdateRow
     public string? SaDate { get; init; }
     public string? Forwarder { get; init; }
     public string? Broker { get; init; }
+    public string? Shipper { get; init; }
     public string? Eta { get; init; }
     public string? Mawb { get; init; }
     public string? Hawb { get; init; }

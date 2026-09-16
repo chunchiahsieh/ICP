@@ -99,7 +99,10 @@ public class ForwarderTableMetadataProvider
             Visible = entry.Visible ?? true,
             Searchable = entry.Searchable ?? false,
             FilterType = string.IsNullOrWhiteSpace(entry.FilterType) ? "Checkbox" : entry.FilterType,
-            HeaderLabel = DefaultHeaderLabels.TryGetValue(fieldName, out var label) ? label : fieldName
+            HeaderLabel = DefaultHeaderLabels.TryGetValue(fieldName, out var label) ? label : fieldName,
+            HeaderLabelKey = fieldName.Equals("DuplicateStatus", StringComparison.OrdinalIgnoreCase)
+                ? "Forwarder.ForwarderDataUpload.Column.Duplicate"
+                : $"Forwarder.ForwarderDataUpload.Column.{fieldName}"
         };
     }
 

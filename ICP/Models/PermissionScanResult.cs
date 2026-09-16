@@ -8,6 +8,10 @@ public class PermissionScanResult
 
     public int UpdatedCount { get; set; }
 
+    public int DisabledCount { get; set; }
+
+    public int ReactivatedCount { get; set; }
+
     public int DisabledLegacyCount { get; set; }
 
     public int MigratedRolePermissionCount { get; set; }

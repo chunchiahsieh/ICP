@@ -60,6 +60,86 @@ public sealed class LocalizationResourceManagementService
         }
     }
 
+    public IReadOnlyDictionary<string, string> ReadShipInfoTranslations(string culture)
+    {
+        // Share the save lock so a request cannot observe a partially saved set of files.
+        WriteLock.Wait();
+        try
+        {
+            var documents = LoadDocuments();
+            var values = GetValues(documents["Default"]);
+            var language = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "En"
+                : culture.StartsWith("ja", StringComparison.OrdinalIgnoreCase) ? "Ja"
+                : culture.Equals("zh-TW", StringComparison.OrdinalIgnoreCase) ? "ZhTw" : "Default";
+            foreach (var pair in GetValues(documents[language])) values[pair.Key] = pair.Value;
+            return values.Where(pair => pair.Key.StartsWith("ShipInfo.", StringComparison.Ordinal))
+                .ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+        }
+        finally
+        {
+            WriteLock.Release();
+        }
+    }
+
+    public IReadOnlyDictionary<string, string> ReadExportTranslations(string culture)
+    {
+        WriteLock.Wait();
+        try
+        {
+            var documents = LoadDocuments();
+            var values = GetValues(documents["Default"]);
+            var language = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "En"
+                : culture.StartsWith("ja", StringComparison.OrdinalIgnoreCase) ? "Ja"
+                : culture.Equals("zh-TW", StringComparison.OrdinalIgnoreCase) ? "ZhTw" : "Default";
+            foreach (var pair in GetValues(documents[language])) values[pair.Key] = pair.Value;
+            return values.Where(pair => pair.Key.StartsWith("Export.", StringComparison.Ordinal)
+                                        || pair.Key.Equals("Views.Function.Export.View", StringComparison.Ordinal)
+                                        || pair.Key.Equals("Views.Shared._SidebarNav.Function.Export", StringComparison.Ordinal))
+                .ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+        }
+        finally
+        {
+            WriteLock.Release();
+        }
+    }
+
+    public string? ReadTranslation(string key, string culture)
+    {
+        WriteLock.Wait();
+        try
+        {
+            var documents = LoadDocuments();
+            var language = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "En"
+                : culture.StartsWith("ja", StringComparison.OrdinalIgnoreCase) ? "Ja"
+                : culture.Equals("zh-TW", StringComparison.OrdinalIgnoreCase) ? "ZhTw" : "Default";
+            var value = GetValues(documents[language]).GetValueOrDefault(key);
+            return value ?? GetValues(documents["Default"]).GetValueOrDefault(key);
+        }
+        finally
+        {
+            WriteLock.Release();
+        }
+    }
+
+    public IReadOnlyDictionary<string, string> ReadTranslations(string culture)
+    {
+        WriteLock.Wait();
+        try
+        {
+            var documents = LoadDocuments();
+            var values = GetValues(documents["Default"]);
+            var language = culture.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "En"
+                : culture.StartsWith("ja", StringComparison.OrdinalIgnoreCase) ? "Ja"
+                : culture.Equals("zh-TW", StringComparison.OrdinalIgnoreCase) ? "ZhTw" : "Default";
+            foreach (var pair in GetValues(documents[language])) values[pair.Key] = pair.Value;
+            return values;
+        }
+        finally
+        {
+            WriteLock.Release();
+        }
+    }
+
     public async Task<int> SaveAsync(IReadOnlyCollection<LocalizationResourceRow> rows, CancellationToken cancellationToken = default)
     {
         if (rows.Count == 0)

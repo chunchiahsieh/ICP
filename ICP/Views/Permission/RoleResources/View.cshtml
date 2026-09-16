@@ -69,7 +69,9 @@
                                 .replace('{1}', result.insertedCount)
                                 .replace('{2}', result.updatedCount)
                                 .replace('{3}', result.disabledLegacyCount)
-                                .replace('{4}', result.migratedRolePermissionCount));
+                                .replace('{4}', result.migratedRolePermissionCount)
+                                .replace('{5}', result.disabledCount)
+                                .replace('{6}', result.reactivatedCount));
                         window.location.reload();
                     })
                     .fail(function () {

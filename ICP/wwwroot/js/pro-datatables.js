@@ -9,7 +9,8 @@
     filterDropdownSelector: '.column-filter-dropdown',
     pageLength: 10,
     searchDebounceMs: 300,
-    initialSort: [[0, 'desc']]
+    initialSort: [[0, 'desc']],
+    showClearAllFilters: true
   };
 
   global.ProDataTables.linkedDetailTableOptions = {
@@ -106,6 +107,35 @@
         });
       });
       return payload;
+    }
+
+    function hasActiveFilters() {
+      var payload = buildQueryPayload(getFilterValues());
+      return Object.keys(payload || {}).some(function (key) {
+        var value = payload[key];
+        return value != null && String(value).trim() !== '';
+      });
+    }
+
+    function clearAllFilters() {
+      $.each(filterSearchDebounceTimers, function (_, timer) {
+        clearTimeout(timer);
+      });
+      filterSearchDebounceTimers = {};
+
+      var $root = $(config.dataDivSelector);
+      $root.find('.column-filter-cb').prop('checked', false);
+      $root.find('.filter-search-input, .pro-table-filter-text-input, .pro-table-filter-date-from, .pro-table-filter-date-to, .pro-table-filter-date-input, .pro-table-filter-date-native').val('');
+      $root.find('.column-filter-dropdown').each(function () {
+        updateFilterCount($(this));
+        closeFilterDropdown($(this));
+      });
+
+      if (global.ProTableFilters && typeof global.ProTableFilters.updateAllProTableFilterCounts === 'function') {
+        global.ProTableFilters.updateAllProTableFilterCounts($root, config.filterFieldMap);
+      }
+
+      Query();
     }
 
     function updateFilterCount($dropdown) {
@@ -315,7 +345,18 @@
       var start = totalRecordCount === 0 ? 0 : ((pageState - 1) * tablePageLengthState) + 1;
       var end = Math.min(pageState * tablePageLengthState, totalRecordCount);
       var $pager = $('<div class="pro-server-pager d-flex align-items-center justify-content-between flex-wrap gap-2 mt-2"></div>');
+      var $summaryGroup = $('<div class="d-flex align-items-center gap-2 flex-wrap"></div>');
       var $summary = $('<div class="small text-muted"></div>').text(start + '-' + end + ' / ' + totalRecordCount);
+      $summaryGroup.append($summary);
+      if (config.showClearAllFilters !== false && Object.keys(config.filterFieldMap || {}).length > 0) {
+        var clearLabel = config.clearAllFiltersLabel
+          || (global.IcpI18n && global.IcpI18n.clearAllFilters)
+          || 'Clear all filters';
+        var $clearAll = $('<button type="button" class="btn btn-sm btn-outline-secondary pro-clear-all-filters"></button>')
+          .text(clearLabel)
+          .prop('disabled', !hasActiveFilters());
+        $summaryGroup.append($clearAll);
+      }
       var $controls = $('<div class="d-flex align-items-center gap-2"></div>');
       var $size = $('<select class="form-select form-select-sm pro-server-page-size" style="width:auto"></select>');
       $.each(global.ProDataTables.resolveLengthMenu(config)[0], function (_, value) {
@@ -336,7 +377,7 @@
       var $next = $('<button type="button" class="btn btn-sm btn-outline-secondary pro-server-page-next">›</button>')
         .prop('disabled', pageState >= pageCount);
       $controls.append($size, $previous, $page, $current, $next);
-      $pager.append($summary, $controls);
+      $pager.append($summaryGroup, $controls);
       $root.append($pager);
     }
 
@@ -405,7 +446,12 @@
       .off('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-prev')
       .off('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-next')
       .off('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-jump')
-      .off('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-size');
+      .off('change.' + instanceNs, config.dataDivSelector + ' .pro-server-page-size')
+      .off('click.' + instanceNs, config.dataDivSelector + ' .pro-clear-all-filters');
+
+    $(document).on('click.' + instanceNs, config.dataDivSelector + ' .pro-clear-all-filters', function () {
+      clearAllFilters();
+    });
 
     $(document).on('click.' + instanceNs, config.dataDivSelector + ' .pro-server-page-prev', function () {
       if (pageState > 1) Query({ page: pageState - 1, keepPage: true });
@@ -503,7 +549,7 @@
       Query();
     }
 
-    return { reload: Query };
+    return { reload: Query, clearFilters: clearAllFilters };
   }
 
   global.ProDataTables.initUsers = function (config) {

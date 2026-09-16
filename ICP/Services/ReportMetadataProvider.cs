@@ -9,15 +9,18 @@ namespace ICP.Services;
 public class ReportMetadataProvider
 {
     private readonly ReportTableFieldsOptions _reportTableFields;
+    private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly IStringLocalizerFactory _localizerFactory;
     private readonly ILogger<ReportMetadataProvider> _logger;
 
     public ReportMetadataProvider(
         ReportTableFieldsOptions reportTableFields,
+        IStringLocalizer<SharedResource> localizer,
         IStringLocalizerFactory localizerFactory,
         ILogger<ReportMetadataProvider> logger)
     {
         _reportTableFields = reportTableFields;
+        _localizer = localizer;
         _localizerFactory = localizerFactory;
         _logger = logger;
     }
@@ -81,7 +84,8 @@ public class ReportMetadataProvider
             }
         }
 
-        ShipInfoFieldLabelResolver.ApplyLabels(fields, _localizerFactory, culture);
+        ShipInfoFieldLabelResolver.ApplyLabels(fields, _localizerFactory, culture,
+            key => _localizer[key].Value);
         return fields;
     }
 }

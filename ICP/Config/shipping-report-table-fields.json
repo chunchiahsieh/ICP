@@ -10,6 +10,7 @@
         { "fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Checkbox" },
         { "fieldName": "Forwarder", "visible": true, "searchable": true, "filterType": "Checkbox" },
         { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Shipper", "visible": true, "searchable": true, "filterType": "Checkbox" },
         { "fieldName": "Etd", "visible": true, "searchable": true, "filterType": "Date" },
         { "fieldName": "Eta", "visible": true, "searchable": true, "filterType": "Date" },
         { "fieldName": "Mawb", "visible": true, "searchable": true, "filterType": "Text" },

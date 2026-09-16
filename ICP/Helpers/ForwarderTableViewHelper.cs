@@ -8,14 +8,10 @@ public static class ForwarderTableViewHelper
 {
     public static string ResolveHeaderLabel(ForwarderTableFieldMetadata field, Func<string, string> localizeDuplicate)
     {
-        if (string.Equals(field.FieldName, "DuplicateStatus", StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrWhiteSpace(field.HeaderLabelKey))
         {
-            return localizeDuplicate("Forwarder.ForwarderDataUpload.Column.Duplicate");
-        }
-
-        if (string.Equals(field.FieldName, "RowNo", StringComparison.OrdinalIgnoreCase))
-        {
-            return localizeDuplicate("Forwarder.ForwarderDataUpload.Column.RowNo");
+            var localized = localizeDuplicate(field.HeaderLabelKey);
+            if (!string.Equals(localized, field.HeaderLabelKey, StringComparison.Ordinal)) return localized;
         }
 
         return field.HeaderLabel;

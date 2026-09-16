@@ -24,6 +24,7 @@ public sealed class ShipInfoFormMetadataProvider
             ["broker"] = "Broker",
             ["buCode"] = "BuCode",
             ["customized"] = "Customized",
+            ["countryOfOrigin"] = "Country of Origin",
             ["defaultDeliveryWh"] = "DefaultDeliveryWh",
             ["deliveryTo"] = "DeliveryToList",
             ["etaDelDateTable"] = "EtaDelDateTable",
@@ -32,6 +33,7 @@ public sealed class ShipInfoFormMetadataProvider
             ["orderPriority"] = "OrderPriority",
             ["orderType"] = "OrderType",
             ["pickUpLocation"] = "PickUpLocation",
+            ["shipper"] = "Shipper",
             ["warehouse"] = "WhCode"
         };
     private const string FileUploaderComponent = "fileUploader";
@@ -42,17 +44,20 @@ public sealed class ShipInfoFormMetadataProvider
     private readonly bool _isDevelopment;
     private readonly IStringLocalizerFactory _localizerFactory;
     private readonly ILogger<ShipInfoFormMetadataProvider> _logger;
+    private readonly ShipInfoRuntimeTranslations _translations;
 
     public ShipInfoFormMetadataProvider(
         IWebHostEnvironment environment,
         IStringLocalizerFactory localizerFactory,
-        ILogger<ShipInfoFormMetadataProvider> logger)
+        ILogger<ShipInfoFormMetadataProvider> logger,
+        ShipInfoRuntimeTranslations translations)
     {
         _headerFilePath = Path.Combine(environment.ContentRootPath, "Config", "shipinfo-header-form-fields.json");
         _detailFilePath = Path.Combine(environment.ContentRootPath, "Config", "shipinfo-detail-form-fields.json");
         _isDevelopment = environment.IsDevelopment();
         _localizerFactory = localizerFactory;
         _logger = logger;
+        _translations = translations;
     }
 
     public ShipInfoFormMetadata GetHeaderFormMetadata(string? culture = null)
@@ -338,7 +343,7 @@ public sealed class ShipInfoFormMetadataProvider
                 foreach (var field in group.GetProperty("fields").EnumerateArray())
                 {
                     RequireObject(field, "$.modes." + mode.Name + ".groups[].fields[]", "name");
-                    ValidateProperties(field, "$.modes." + mode.Name + ".groups[].fields[]", ["name", "order", "readOnly", "required", "columnSpan"]);
+                    ValidateProperties(field, "$.modes." + mode.Name + ".groups[].fields[]", ["name", "order", "readOnly", "required", "columnSpan", "breakAfter"]);
                 }
             }
         }
@@ -413,6 +418,8 @@ public sealed class ShipInfoFormMetadataProvider
     private string? ResolveText(IStringLocalizer localizer, string? key, string? fallback, string path)
     {
         if (string.IsNullOrWhiteSpace(key)) return fallback;
+        var runtimeLabel = _translations.Resolve(key, CultureInfo.CurrentUICulture.Name);
+        if (runtimeLabel is not null) return runtimeLabel;
         var localized = localizer[key];
         if (!localized.ResourceNotFound) return localized.Value;
         if (_isDevelopment)

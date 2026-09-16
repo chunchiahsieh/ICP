@@ -45,6 +45,7 @@ public static class ShipInfoRowDtoMapper
             SaDateFrom = header.SaDate,
             InvoiceNo = header.InvoiceNo,
             Forwarder = header.Forwarder,
+            Shipper = header.Shipper,
             Broker = header.Broker,
             Etd = header.Etd,
             Eta = header.Eta,

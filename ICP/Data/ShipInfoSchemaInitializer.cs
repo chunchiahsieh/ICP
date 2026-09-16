@@ -35,6 +35,13 @@ public static class ShipInfoSchemaInitializer
         END
         """;
 
+    private const string EnsureShipperColumnSql = """
+        IF COL_LENGTH('dbo.ICP_HEADER', 'SHIPPER') IS NULL
+        BEGIN
+            ALTER TABLE dbo.ICP_HEADER ADD SHIPPER NVARCHAR(50) NULL;
+        END
+        """;
+
     private const string EnsureDeleteLogTableSql = """
         IF OBJECT_ID(N'dbo.DELETE_LOG', N'U') IS NULL
         BEGIN
@@ -148,6 +155,7 @@ public static class ShipInfoSchemaInitializer
             await db.Database.ExecuteSqlRawAsync(EnsureDeleteLogTableSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(EnsureAttachmentsTableSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(EnsureDepositColumnLengthSql, cancellationToken);
+            await db.Database.ExecuteSqlRawAsync(EnsureShipperColumnSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(EnsureCaseStatusColumnsSql, cancellationToken);
             await db.Database.ExecuteSqlRawAsync(MigrateCaseStatusDataSql, cancellationToken);
         }

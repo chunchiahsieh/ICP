@@ -44,6 +44,8 @@ public abstract class SystemConfigControllerBase : Controller
 
     protected abstract string Category { get; }
 
+    protected virtual string DataCategory => Category;
+
     protected string PermissionPrefix => $"Views.Setting.{Category}";
 
     protected string SettingViewPath => $"~/Views/Setting/{Category}/View.cshtml";
@@ -233,12 +235,12 @@ public abstract class SystemConfigControllerBase : Controller
 
     protected virtual void ApplyCreateCategory(SystemConfig entity, SystemConfigEditModel model)
     {
-        entity.Category = Category;
+        entity.Category = DataCategory;
     }
 
     protected virtual IQueryable<SystemConfig> ScopeQuery(IQueryable<SystemConfig> query)
     {
-        return query.Where(e => e.Category == Category && !e.IsDeleted);
+        return query.Where(e => e.Category == DataCategory && !e.IsDeleted);
     }
 
     private IQueryable<SystemConfig> BaseQuery()

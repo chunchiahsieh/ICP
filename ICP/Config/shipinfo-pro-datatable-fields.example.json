@@ -9,13 +9,13 @@
     "initialSort": { "fieldName": "CreateDate", "direction": "desc" },
     "list": {
       "fields": [
-        { "fieldName": "Id", "visible": false, "searchable": false },
-        { "fieldName": "CreateDate", "visible": true, "filterType": "Checkbox" },
-        { "fieldName": "InvoiceNo", "visible": true, "filterType": "Text" },
-        { "fieldName": "SaDate", "visible": true, "filterType": "DateRange" },
-        { "fieldName": "Eta", "visible": true, "filterType": "Date" },
-        { "fieldName": "Broker", "visible": true },
-        { "fieldName": "Notes", "visible": true }
+        { "fieldName": "Id", "labelKey": "ShipInfo.Header.Field.Id", "visible": false, "searchable": false },
+        { "fieldName": "CreateDate", "labelKey": "ShipInfo.Header.Field.CreateDate", "visible": true, "filterType": "Checkbox" },
+        { "fieldName": "InvoiceNo", "labelKey": "ShipInfo.Header.Field.InvoiceNo", "visible": true, "filterType": "Text" },
+        { "fieldName": "SaDate", "labelKey": "ShipInfo.Header.Field.SaDate", "visible": true, "filterType": "DateRange" },
+        { "fieldName": "Eta", "labelKey": "ShipInfo.Header.Field.Eta", "visible": true, "filterType": "DateRange" },
+        { "fieldName": "Broker", "labelKey": "ShipInfo.Header.Field.Broker", "visible": true },
+        { "fieldName": "Notes", "labelKey": "ShipInfo.Header.Field.Notes", "visible": true }
       ]
     }
   },
@@ -28,11 +28,11 @@
     "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
     "list": {
       "fields": [
-        { "fieldName": "InvoiceSeq", "visible": true, "filterType": "Checkbox" },
-        { "fieldName": "ItemNo", "visible": true, "filterType": "Text" },
-        { "fieldName": "Description", "visible": true },
-        { "fieldName": "Qty", "visible": true },
-        { "fieldName": "Uom", "visible": true }
+        { "fieldName": "InvoiceSeq", "labelKey": "ShipInfo.Detail.Field.InvoiceSeq", "visible": true, "filterType": "Checkbox" },
+        { "fieldName": "ItemNo", "labelKey": "ShipInfo.Detail.Field.ItemNo", "visible": true, "filterType": "Text" },
+        { "fieldName": "Description", "labelKey": "ShipInfo.Detail.Field.Description", "visible": true },
+        { "fieldName": "Qty", "labelKey": "ShipInfo.Detail.Field.Qty", "visible": true },
+        { "fieldName": "Uom", "labelKey": "ShipInfo.Detail.Field.Uom", "visible": true }
       ]
     }
   }

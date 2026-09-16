@@ -251,6 +251,7 @@ public class MassUpdateImportService
                 SaDate = Trim(values, "SaDate", 10),
                 Forwarder = Trim(values, "Forwarder", 50),
                 Broker = Trim(values, "Broker", 30),
+                Shipper = Trim(values, "Shipper", IcpHeader.ShipperMaxLength),
                 Eta = Trim(values, "Eta", 10),
                 Mawb = Trim(values, "Mawb", 20),
                 Hawb = Trim(values, "Hawb", 20),
@@ -273,6 +274,7 @@ public class MassUpdateImportService
         Set(changes, "SaDate", header.SaDate, row.SaDate, value => header.SaDate = value);
         Set(changes, "Forwarder", header.Forwarder, row.Forwarder, value => header.Forwarder = value);
         Set(changes, "Broker", header.Broker, row.Broker, value => header.Broker = value);
+        Set(changes, "Shipper", header.Shipper, row.Shipper, value => header.Shipper = value);
         Set(changes, "Eta", header.Eta, row.Eta, value => header.Eta = value);
         Set(changes, "Mawb", header.Mawb, row.Mawb, value => header.Mawb = value);
         Set(changes, "Hawb", header.Hawb, row.Hawb, value => header.Hawb = value);

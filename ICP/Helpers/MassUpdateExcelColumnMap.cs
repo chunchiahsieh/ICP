@@ -8,7 +8,7 @@ public static class MassUpdateExcelColumnMap
 
     public static readonly IReadOnlyList<string> UpdateProperties =
     [
-        "ArrivalNotice", "SaDate", "Forwarder", "Broker", "Eta", "Mawb", "Hawb", "Flt",
+        "ArrivalNotice", "SaDate", "Forwarder", "Broker", "Shipper", "Eta", "Mawb", "Hawb", "Flt",
         "DeliveryDate", "MdpFlag", "ReasonForDeliveryDelay", "DelayNotificationDate"
     ];
 
@@ -27,6 +27,7 @@ public static class MassUpdateExcelColumnMap
         ["sadate"] = "SaDate",
         ["forwarder"] = "Forwarder",
         ["broker"] = "Broker",
+        ["shipper"] = "Shipper",
         ["eta"] = "Eta",
         ["mawb"] = "Mawb",
         ["hawb"] = "Hawb",

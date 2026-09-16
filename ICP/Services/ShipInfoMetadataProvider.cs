@@ -11,17 +11,20 @@ public class ShipInfoMetadataProvider
     private readonly IStringLocalizerFactory _localizerFactory;
     private readonly ShipInfoFormMetadataProvider _formMetadataProvider;
     private readonly ILogger<ShipInfoMetadataProvider> _logger;
+    private readonly ShipInfoRuntimeTranslations _translations;
 
     public ShipInfoMetadataProvider(
         IOptionsMonitor<ShipInfoProDataTableFieldsOptions> tableFieldsOptions,
         IStringLocalizerFactory localizerFactory,
         ShipInfoFormMetadataProvider formMetadataProvider,
-        ILogger<ShipInfoMetadataProvider> logger)
+        ILogger<ShipInfoMetadataProvider> logger,
+        ShipInfoRuntimeTranslations translations)
     {
         _tableFieldsOptions = tableFieldsOptions;
         _localizerFactory = localizerFactory;
         _formMetadataProvider = formMetadataProvider;
         _logger = logger;
+        _translations = translations;
     }
 
     public ShipInfoPageConfig GetPageConfig(string? culture = null)
@@ -80,7 +83,7 @@ public class ShipInfoMetadataProvider
         string culture)
     {
         var merged = merge(catalog, section, _logger);
-        ShipInfoFieldLabelResolver.ApplyLabels(merged, _localizerFactory, culture);
+        ShipInfoFieldLabelResolver.ApplyLabels(merged, _localizerFactory, culture, key => _translations.Resolve(key, culture));
         return merged;
     }
 }

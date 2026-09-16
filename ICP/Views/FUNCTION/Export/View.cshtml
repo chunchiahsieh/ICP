@@ -1,14 +1,16 @@
 @model IReadOnlyList<ICP.Models.Icp.ExportRequest>
 @using System.Globalization
 @using ICP.Models.Icp
+@inject ICP.Services.ExportRuntimeTranslations ExportTranslations
 @{
-    ViewData["Title"] = Localizer["Views.Shared._SidebarNav.Function.Export"];
+    string T(string key, string fallback) => ExportTranslations.Resolve(key, fallback);
+    ViewData["Title"] = T("Views.Shared._SidebarNav.Function.Export", Localizer["Views.Shared._SidebarNav.Function.Export"].Value);
 }
 
 <div data-permissions="Views.Function.Export.View"
      data-i18n-key="Views.Function.Export.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
-        <h4 class="mb-0">@Localizer["Views.Shared._SidebarNav.Function.Export"]</h4>
+        <h4 class="mb-0">@T("Export.Title", "Export")</h4>
     </div>
 
     @if (TempData["ExportOk"] is string ok)
@@ -25,14 +27,13 @@
             <form asp-action="Upload" asp-controller="Export" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
                 <div class="mb-3">
-                    <label class="form-label" for="file">Upload Shipping advice Excel</label>
+                    <label class="form-label" for="file">@T("Export.Upload.Label", "Upload Shipping advice Excel")</label>
                     <input class="form-control" type="file" id="file" name="file" accept=".xlsx,.xls" required />
                 </div>
-                <button type="submit" class="btn btn-primary">Upload &amp; notify Hub</button>
+                <button type="submit" class="btn btn-primary">@T("Export.Upload.Button", "Upload & notify Hub")</button>
             </form>
             <p class="text-muted small mt-2 mb-0">
-                Flow: ICP upload → Hub Job (ShippingAdvice) → FileGenerator writes PickupNotice Excel + Case Mark PDFs
-                under shared OutputDirectory/{RequestId}/ → Completed → View files.
+                @T("Export.Flow", "Flow: ICP upload → Hub Job (ShippingAdvice) → FileGenerator writes PickupNotice Excel + Case Mark PDFs under shared OutputDirectory/{RequestId}/ → Completed → View files.")
             </p>
         </div>
     </div>
@@ -41,19 +42,19 @@
         <table class="table table-sm table-bordered align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>RequestId</th>
-                    <th>FileName</th>
-                    <th>Status</th>
-                    <th>CreateTime</th>
-                    <th>UpdateTime</th>
-                    <th>Error</th>
+                    <th>@T("Export.Column.RequestId", "Request ID")</th>
+                    <th>@T("Export.Column.FileName", "File Name")</th>
+                    <th>@T("Export.Column.Status", "Status")</th>
+                    <th>@T("Export.Column.CreateTime", "Create Time")</th>
+                    <th>@T("Export.Column.UpdateTime", "Update Time")</th>
+                    <th>@T("Export.Column.Error", "Error")</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
             @if (Model is null || Model.Count == 0)
             {
-                <tr><td colspan="7" class="text-muted">No export requests yet.</td></tr>
+                <tr><td colspan="7" class="text-muted">@T("Export.Empty", "No export requests yet.")</td></tr>
             }
             else
             {
@@ -72,7 +73,7 @@
                                 <button type="button"
                                         class="btn btn-sm btn-outline-primary js-export-files"
                                         data-request-id="@item.Id.ToString("D")">
-                                    View files
+                                    @T("Export.ViewFiles", "View files")
                                 </button>
                             }
                             else
@@ -92,21 +93,21 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exportFilesModalLabel">Export output files</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="exportFilesModalLabel">@T("Export.Modal.Title", "Export output files")</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@T("Export.Close", "Close")"></button>
             </div>
             <div class="modal-body">
                 <p class="small text-muted mb-2" id="exportFilesPath"></p>
                 <div class="d-flex justify-content-end mb-2">
-                    <a id="exportDownloadAll" class="btn btn-sm btn-primary" href="#" style="display:none;">Download all (zip)</a>
+                    <a id="exportDownloadAll" class="btn btn-sm btn-primary" href="#" style="display:none;">@T("Export.DownloadAll", "Download all (zip)")</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-sm table-bordered mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>File</th>
-                                <th>Type</th>
-                                <th>Size</th>
+                                <th>@T("Export.Column.File", "File")</th>
+                                <th>@T("Export.Column.Type", "Type")</th>
+                                <th>@T("Export.Column.Size", "Size")</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -114,7 +115,7 @@
                         </tbody>
                     </table>
                 </div>
-                <p id="exportFilesEmpty" class="text-muted mb-0" style="display:none;">No files found in output folder.</p>
+                <p id="exportFilesEmpty" class="text-muted mb-0" style="display:none;">@T("Export.Files.Empty", "No files found in output folder.")</p>
             </div>
         </div>
     </div>
@@ -122,6 +123,12 @@
 
 <script>
 (function () {
+    var labels = {
+        loading: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(T("Export.Files.Loading", "Loading..."))),
+        requestId: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(T("Export.Files.RequestId", "Request ID: "))),
+        failed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(T("Export.Files.LoadFailed", "Failed to load files ({0})"))),
+        download: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(T("Export.Download", "Download")))
+    };
     function formatSize(bytes) {
         if (bytes < 1024) return bytes + ' B';
         if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -138,13 +145,13 @@
             body.innerHTML = '';
             empty.style.display = 'none';
             zipBtn.style.display = 'none';
-            pathEl.textContent = 'Loading...';
+            pathEl.textContent = labels.loading;
 
             try {
                 var res = await fetch('@Url.Action("Files", "Export")?id=' + encodeURIComponent(requestId));
-                if (!res.ok) throw new Error('Failed to load files (' + res.status + ')');
+                if (!res.ok) throw new Error(labels.failed.replace('{0}', res.status));
                 var data = await res.json();
-                pathEl.textContent = data.displayPath || ('RequestId: ' + requestId);
+                pathEl.textContent = data.displayPath || (labels.requestId + requestId);
 
                 if (!data.files || data.files.length === 0) {
                     empty.style.display = 'block';
@@ -155,7 +162,7 @@
                             '<td>' + f.fileName + '</td>' +
                             '<td>' + (f.extension || '') + '</td>' +
                             '<td>' + formatSize(f.sizeBytes || 0) + '</td>' +
-                            '<td><a class="btn btn-sm btn-outline-secondary" href="' + f.downloadUrl + '">Download</a></td>';
+                            '<td><a class="btn btn-sm btn-outline-secondary" href="' + f.downloadUrl + '">' + labels.download + '</a></td>';
                         body.appendChild(tr);
                     });
                     zipBtn.href = '@Url.Action("DownloadAll", "Export")?id=' + encodeURIComponent(requestId);

@@ -9,6 +9,13 @@ public static class PermissionResourceTypes
             return "Menu Category";
         }
 
+        // Sidebar entries can be links or nested-collapse buttons. Both are menu
+        // permissions and must be evaluated by HasMenuPermission at runtime.
+        if (IsSidebarMenu(resourceCode))
+        {
+            return "Menu";
+        }
+
         return tag.ToLowerInvariant() switch
         {
             "button" => "Button",
@@ -28,6 +35,15 @@ public static class PermissionResourceTypes
 
         var segments = resourceCode.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         return segments.Length == 4
+            && segments[0].Equals("Views", StringComparison.OrdinalIgnoreCase)
+            && segments[1].Equals("Shared", StringComparison.OrdinalIgnoreCase)
+            && segments[2].Equals("_SidebarNav", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsSidebarMenu(string resourceCode)
+    {
+        var segments = resourceCode.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return segments.Length >= 5
             && segments[0].Equals("Views", StringComparison.OrdinalIgnoreCase)
             && segments[1].Equals("Shared", StringComparison.OrdinalIgnoreCase)
             && segments[2].Equals("_SidebarNav", StringComparison.OrdinalIgnoreCase);

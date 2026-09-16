@@ -60,11 +60,12 @@ public class PermissionResourceSyncService
 
         var inserted = 0;
         var updated = 0;
+        var reactivated = 0;
         var resourceCodes = new List<string>();
 
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
         var scannedCodes = distinctItems.Select(x => x.ResourceCode).ToList();
-        await RemoveResourcesNotInScanAsync(scannedCodes, cancellationToken);
+        var disabled = await DisableResourcesNotInScanAsync(scannedCodes, actor, cancellationToken);
 
         foreach (var item in distinctItems)
         {
@@ -103,6 +104,11 @@ public class PermissionResourceSyncService
             existing.Route = item.Route;
             existing.Description = item.Description;
             existing.ModuleCode = ResolveModuleCode(item.ResourceCode);
+            if (!existing.IsEnabled)
+            {
+                existing.IsEnabled = true;
+                reactivated++;
+            }
             existing.UpdateTime = DateTime.Now;
             existing.UpdateUser = actor;
             updated++;
@@ -126,6 +132,8 @@ public class PermissionResourceSyncService
             ScannedCount = scannedItems.Count,
             InsertedCount = inserted,
             UpdatedCount = updated,
+            DisabledCount = disabled,
+            ReactivatedCount = reactivated,
             DisabledLegacyCount = disabledLegacyCount + disabledIcpPermissionCount,
             MigratedRolePermissionCount = migratedRolePermissionCount + migratedFromIcpPermissionCount,
             ResourceCodes = resourceCodes
@@ -412,29 +420,24 @@ public class PermissionResourceSyncService
 
             foreach (var rolePermission in rolePermissionsForLegacy)
             {
-                if (newResource is not null)
+                if (newResource is null)
                 {
-                    var key = $"{rolePermission.RoleId}|{newResource.Id}|{rolePermission.ActionCode}";
-                    if (!existingSet.Contains(key))
-                    {
-                        var migrated = new RolePermission
-                        {
-                            Id = Guid.NewGuid(),
-                            RoleId = rolePermission.RoleId,
-                            ResourceId = newResource.Id,
-                            ActionCode = rolePermission.ActionCode,
-                            IsAllowed = rolePermission.IsAllowed,
-                            DataScope = rolePermission.DataScope,
-                            Description = rolePermission.Description
-                        };
-                        CrudAuditHelper.ApplyCreateAudit(migrated, actor);
-                        _dbContext.RolePermissions.Add(migrated);
-                        existingSet.Add(key);
-                        migratedCount++;
-                    }
+                    continue;
                 }
 
-                _dbContext.RolePermissions.Remove(rolePermission);
+                var key = $"{rolePermission.RoleId}|{newResource.Id}|{rolePermission.ActionCode}";
+                if (existingSet.Contains(key))
+                {
+                    // Keep the legacy row instead of deleting it. The target permission already
+                    // exists and remains the effective permission while the legacy resource is disabled.
+                    continue;
+                }
+
+                // Move the existing row so its Id, DataScope and audit history are preserved.
+                rolePermission.ResourceId = newResource.Id;
+                CrudAuditHelper.ApplyUpdateAudit(rolePermission, actor);
+                existingSet.Add(key);
+                migratedCount++;
             }
 
             legacy.IsEnabled = false;
@@ -445,38 +448,34 @@ public class PermissionResourceSyncService
         return (legacyResources.Count, migratedCount);
     }
 
-    private async Task RemoveResourcesNotInScanAsync(
+    private async Task<int> DisableResourcesNotInScanAsync(
         IReadOnlyList<string> scannedResourceCodes,
+        string actor,
         CancellationToken cancellationToken)
     {
         if (scannedResourceCodes.Count == 0)
         {
-            return;
+            return 0;
         }
 
         var codeSet = scannedResourceCodes.ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var idsToRemove = await _dbContext.Resources
-            .Where(r => !codeSet.Contains(r.ResourceCode))
-            .Select(r => r.Id)
+        var resourcesToDisable = await _dbContext.Resources
+            .Where(r => r.IsEnabled && !codeSet.Contains(r.ResourceCode))
             .ToListAsync(cancellationToken);
 
-        if (idsToRemove.Count == 0)
+        if (resourcesToDisable.Count == 0)
         {
-            return;
+            return 0;
         }
 
-        await _dbContext.Resources
-            .Where(r => r.ParentId != null && idsToRemove.Contains(r.ParentId.Value))
-            .ExecuteUpdateAsync(
-                s => s.SetProperty(r => r.ParentId, (Guid?)null),
-                cancellationToken);
+        var now = DateTime.Now;
+        foreach (var resource in resourcesToDisable)
+        {
+            resource.IsEnabled = false;
+            resource.UpdateTime = now;
+            resource.UpdateUser = actor;
+        }
 
-        await _dbContext.RolePermissions
-            .Where(rp => idsToRemove.Contains(rp.ResourceId))
-            .ExecuteDeleteAsync(cancellationToken);
-
-        await _dbContext.Resources
-            .Where(r => idsToRemove.Contains(r.Id))
-            .ExecuteDeleteAsync(cancellationToken);
+        return resourcesToDisable.Count;
     }
 }

@@ -4,6 +4,7 @@ using ICP.Helpers;
 using ICP.Infrastructure;
 using ICP.Models;
 using ICP.Models.Icp;
+using ICP.Services;
 using Microsoft.Extensions.Localization;
 
 namespace ICP.Controllers.Setting;
@@ -12,20 +13,26 @@ namespace ICP.Controllers.Setting;
 public class CustomizedController : SystemConfigControllerBase
 {
     private static readonly string[] ExcludedCategories = SettingCategories.CustomizedExcluded;
+    private readonly PageDataScopeService _dataScope;
 
-    public CustomizedController(ApplicationDbContext icpDb, IStringLocalizer<SharedResource> localizer)
+    public CustomizedController(
+        ApplicationDbContext icpDb,
+        IStringLocalizer<SharedResource> localizer,
+        PageDataScopeService dataScope)
         : base(icpDb, localizer)
     {
+        _dataScope = dataScope;
     }
 
     protected override string Category => "Customized";
 
     protected override IQueryable<SystemConfig> ScopeQuery(IQueryable<SystemConfig> query)
     {
-        return query.Where(e => !e.IsDeleted
+        var customizedQuery = query.Where(e => !e.IsDeleted
             && e.Category != null
             && e.Category != ""
             && !ExcludedCategories.Contains(e.Category));
+        return _dataScope.Apply(customizedQuery);
     }
 
     protected override void ValidateSaveModel(SystemConfigEditModel model)

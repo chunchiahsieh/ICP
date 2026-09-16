@@ -309,6 +309,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.EmgFlight).HasMaxLength(5);
             entity.Property(e => e.WbsElement).HasMaxLength(30);
             entity.Property(e => e.Deposit).HasMaxLength(IcpHeader.DepositMaxLength);
+            entity.Property(e => e.Shipper).HasMaxLength(IcpHeader.ShipperMaxLength);
             entity.Property(e => e.DepositCaseStatus).HasMaxLength(20).HasDefaultValue(ShipInfoCaseStatuses.NotInitiated).IsRequired();
             entity.Property(e => e.ArurCaseStatus).HasMaxLength(20).HasDefaultValue(ShipInfoCaseStatuses.NotInitiated).IsRequired();
             entity.Property(e => e.SapRemarks).HasMaxLength(1000);
@@ -455,6 +456,10 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.CreateTime).HasDefaultValueSql("GETDATE()").IsRequired();
             entity.Property(e => e.CreateUser).HasMaxLength(100);
             entity.Property(e => e.UpdateUser).HasMaxLength(100);
+
+            entity.HasIndex(e => e.ResourceCode)
+                .IsUnique()
+                .HasDatabaseName("UX_Resources_ResourceCode");
 
             entity.HasOne(e => e.Parent)
                 .WithMany(e => e.Children)

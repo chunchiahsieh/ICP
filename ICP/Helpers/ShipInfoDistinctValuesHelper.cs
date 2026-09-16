@@ -8,6 +8,7 @@ namespace ICP.Helpers;
 
 public static class ShipInfoDistinctValuesHelper
 {
+    public const string BlankFilterValue = "__BLANK__";
     private const int Limit = 200;
 
     private static readonly Dictionary<string, PropertyInfo> HeaderProperties =
@@ -200,18 +201,27 @@ public static class ShipInfoDistinctValuesHelper
         string? search,
         CancellationToken cancellationToken)
     {
-        var query = source.Where(x => x != null && x != string.Empty);
+        var includeBlank = string.IsNullOrWhiteSpace(search)
+            && await source.AnyAsync(x => x == null || x.Trim() == string.Empty, cancellationToken);
+        var query = source.Where(x => x != null && x.Trim() != string.Empty);
         if (!string.IsNullOrWhiteSpace(search))
         {
             query = query.Where(x => x!.Contains(search));
         }
 
-        return await query
+        var values = await query
             .Select(x => x!)
             .Distinct()
             .OrderBy(x => x)
             .Take(Limit)
             .ToListAsync(cancellationToken);
+
+        if (includeBlank)
+        {
+            values.Insert(0, BlankFilterValue);
+        }
+
+        return values;
     }
 
     private static async Task<IReadOnlyList<string>> DistinctDoubleColumnAsync(

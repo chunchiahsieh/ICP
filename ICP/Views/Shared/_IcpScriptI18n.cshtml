@@ -2,8 +2,12 @@
 @using ICP.Services
 @inject Microsoft.Extensions.Localization.IStringLocalizer<ICP.SharedResource> ScriptLocalizer
 @inject UserResourcePermissionService UserResourcePerm
+@inject CommonRuntimeTranslations CommonTranslations
 @{
     var i18n = IcpScriptI18nBuilder.Build(ScriptLocalizer);
+    i18n["clearAllFilters"] = CommonTranslations.Resolve(
+        "Common.ClearAllFilters",
+        i18n["clearAllFilters"]);
     var dataTables = IcpScriptI18nBuilder.BuildDataTablesLanguage(ScriptLocalizer);
     var permissions = new
     {

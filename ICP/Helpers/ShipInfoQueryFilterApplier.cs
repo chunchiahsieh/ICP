@@ -337,12 +337,25 @@ public static class ShipInfoQueryFilterApplier
         string fieldName,
         List<string> values)
     {
+        var includeBlank = values.Contains(ShipInfoDistinctValuesHelper.BlankFilterValue, StringComparer.Ordinal);
+        var nonBlankValues = values
+            .Where(value => !string.Equals(value, ShipInfoDistinctValuesHelper.BlankFilterValue, StringComparison.Ordinal))
+            .ToList();
         var parameter = Expression.Parameter(typeof(TEntity), "entity");
         var property = Expression.Property(parameter, fieldName);
         var notNull = Expression.NotEqual(property, Expression.Constant(null, typeof(string)));
         var containsMethod = typeof(List<string>).GetMethod(nameof(List<string>.Contains), [typeof(string)])!;
-        var callContains = Expression.Call(Expression.Constant(values), containsMethod, property);
-        var body = Expression.AndAlso(notNull, callContains);
+        var callContains = Expression.Call(Expression.Constant(nonBlankValues), containsMethod, property);
+        Expression body = Expression.AndAlso(notNull, callContains);
+        if (includeBlank)
+        {
+            var isNull = Expression.Equal(property, Expression.Constant(null, typeof(string)));
+            var trimMethod = typeof(string).GetMethod(nameof(string.Trim), Type.EmptyTypes)!;
+            var trimmed = Expression.Call(property, trimMethod);
+            var isEmpty = Expression.Equal(trimmed, Expression.Constant(string.Empty));
+            body = Expression.OrElse(body, Expression.OrElse(isNull, Expression.AndAlso(notNull, isEmpty)));
+        }
+
         var lambda = Expression.Lambda<Func<TEntity, bool>>(body, parameter);
         return query.Where(lambda);
     }

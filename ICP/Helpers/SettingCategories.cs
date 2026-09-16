@@ -15,6 +15,8 @@ public static class SettingCategories
         "InvoiceType",
         "OrderType",
         "OrderPriority",
+        "Country of Origin",
+        "Shipper",
     ];
 
     public static readonly string[] All =
@@ -30,6 +32,8 @@ public static class SettingCategories
         "InvoiceType",
         "OrderType",
         "OrderPriority",
+        "CountryOfOrigin",
+        "Shipper",
         "Customized",
     ];
 

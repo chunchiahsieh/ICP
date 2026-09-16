@@ -6,10 +6,12 @@ namespace ICP.Controllers;
 public class ExportController : Controller
 {
     private readonly IExportService _exportService;
+    private readonly ExportRuntimeTranslations _translations;
 
-    public ExportController(IExportService exportService)
+    public ExportController(IExportService exportService, ExportRuntimeTranslations translations)
     {
         _exportService = exportService;
+        _translations = translations;
     }
 
     [HttpGet]
@@ -27,13 +29,13 @@ public class ExportController : Controller
         {
             if (file is null || file.Length == 0)
             {
-                TempData["ExportError"] = "Please select a file.";
+                TempData["ExportError"] = T("Export.Error.SelectFile", "Please select a file.");
                 return RedirectToAction(nameof(Index));
             }
 
             var created = await _exportService.UploadAndNotifyHubAsync(file, cancellationToken);
             TempData["ExportOk"] =
-                $"Uploaded {created.FileName}. RequestId={created.Id:D}. Hub notified (Pending → Processing by Hub).";
+                string.Format(T("Export.Success.Uploaded", "Uploaded {0}. RequestId={1}. Hub notified (Pending → Processing by Hub)."), created.FileName, created.Id.ToString("D"));
         }
         catch (Exception ex)
         {
@@ -42,6 +44,8 @@ public class ExportController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    private string T(string key, string fallback) => _translations.Resolve(key, fallback);
 
     [HttpGet]
     public async Task<IActionResult> Files(Guid id, CancellationToken cancellationToken)

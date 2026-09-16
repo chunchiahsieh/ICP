@@ -895,6 +895,8 @@
                     Required: metadataValue(modeField, 'required') === true,
                     columnSpan: span,
                     ColumnSpan: span,
+                    breakAfter: metadataValue(modeField, 'breakAfter') === true,
+                    BreakAfter: metadataValue(modeField, 'breakAfter') === true,
                     group: groupId,
                     Group: groupId
                 });
@@ -957,6 +959,9 @@
                     $group.append('<div class="form-text">' + escapeHtml(field.helpText) + '</div>');
                 }
                 $row.append($group);
+                if (field.breakAfter) {
+                    $row.append('<div class="w-100 d-none d-md-block" aria-hidden="true"></div>');
+                }
             });
             $section.append($row);
             $container.append($section);

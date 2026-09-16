@@ -42,6 +42,7 @@ public class ReportDataService : IReportDataService
     {
         var config = GetPageConfig(reportKey);
         var items = await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken);
+        await ApplyShipperDisplayValuesAsync(reportKey, items, cancellationToken);
         return new ShipInfoTableListViewModel
         {
             TableId = "reportHeaderTable",
@@ -119,6 +120,7 @@ public class ReportDataService : IReportDataService
     {
         var config = GetPageConfig(reportKey);
         var headers = await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken);
+        await ApplyShipperDisplayValuesAsync(reportKey, headers, cancellationToken);
         var headerFields = ShipInfoTableViewHelper.GetVisibleFields(config.HeaderFields);
         var detailFields = ShipInfoTableViewHelper.GetVisibleFields(config.DetailFields)
             .Where(field => !SharedKeyFields.Contains(field.FieldName))
@@ -199,6 +201,47 @@ public class ReportDataService : IReportDataService
         if (field is null || !field.Searchable || !ShipInfoMetadataHelper.IsCheckboxFilter(field))
         {
             throw new ArgumentException("Filter column is invalid.", nameof(column));
+        }
+    }
+
+    private async Task ApplyShipperDisplayValuesAsync(
+        string reportKey,
+        IReadOnlyList<Dictionary<string, object?>> rows,
+        CancellationToken cancellationToken)
+    {
+        if ((!reportKey.Equals(Models.Report.ReportKeys.ShippingReport, StringComparison.OrdinalIgnoreCase)
+             && !reportKey.Equals(Models.Report.ReportKeys.MassDataReport, StringComparison.OrdinalIgnoreCase))
+            || rows.Count == 0)
+        {
+            return;
+        }
+
+        var valuesByKey = await _db.SystemConfigs
+            .AsNoTracking()
+            .Where(config => !config.IsDeleted && config.Category == "Shipper")
+            .GroupBy(config => config.Key1)
+            .Select(group => group
+                .OrderByDescending(config => config.UpdateTime ?? config.CreateTime)
+                .Select(config => new { config.Key1, config.Value1 })
+                .First())
+            .ToDictionaryAsync(
+                config => config.Key1,
+                config => string.IsNullOrWhiteSpace(config.Value1) ? config.Key1 : config.Value1!,
+                StringComparer.OrdinalIgnoreCase,
+                cancellationToken);
+
+        foreach (var row in rows)
+        {
+            if (!row.TryGetValue("Shipper", out var rawValue))
+            {
+                continue;
+            }
+
+            var key = Convert.ToString(rawValue, CultureInfo.InvariantCulture)?.Trim();
+            if (!string.IsNullOrWhiteSpace(key) && valuesByKey.TryGetValue(key, out var displayValue))
+            {
+                row["Shipper"] = displayValue;
+            }
         }
     }
 

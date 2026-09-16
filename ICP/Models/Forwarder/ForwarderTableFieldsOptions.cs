@@ -75,6 +75,8 @@ public class ForwarderTableFieldMetadata
     public string FilterType { get; init; } = "Checkbox";
 
     public string HeaderLabel { get; init; } = string.Empty;
+
+    public string? HeaderLabelKey { get; init; }
 }
 
 public class ForwarderTablePageConfig

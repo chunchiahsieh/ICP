@@ -9,7 +9,6 @@ public sealed class SidebarOptions
     public bool RecentEnabled { get; set; } = true;
     public int PinnedLimit { get; set; } = 5;
     public string DefaultPage { get; set; } = "ShipInfo";
-    public Dictionary<string, int> MenuOrder { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public List<SidebarCustomLinkOptions> CustomLinks { get; set; } = [];
 }
 
@@ -28,7 +27,7 @@ public sealed class SidebarOptionsValidator : IValidateOptions<SidebarOptions>
     {
         "ShipInfo", "AddDiSa", "MassUpdateNonNcpi", "MassUpdateNcpi", "Export",
         "BuCode", "WhCode", "DeliveryToList", "PickUpLocation", "EtaDelDateTable",
-        "DefaultDeliveryWh", "OrderType", "AirSea", "Broker", "InvoiceType", "OrderPriority", "Customized",
+        "DefaultDeliveryWh", "OrderType", "AirSea", "Broker", "InvoiceType", "OrderPriority", "CountryOfOrigin", "Shipper", "Customized",
         "ShippingReport", "CompareIcpVsArUr", "MassDataReport", "ForwarderDataUpload", "CustomsDataDownload", "TariffData",
         "LocalizationManagement", "Users", "Resources", "Roles", "RolePermissions", "RoleTelIds", "RoleDepIds", "RoleMailGroups"
     };
@@ -42,14 +41,6 @@ public sealed class SidebarOptionsValidator : IValidateOptions<SidebarOptions>
             failures.Add("Sidebar:PinnedLimit must be between 0 and 20.");
         if (!ValidDefaultPages.Contains(options.DefaultPage))
             failures.Add("Sidebar:DefaultPage must be the controller name of an ICP menu page.");
-        foreach (var (page, order) in options.MenuOrder)
-        {
-            if (!ValidDefaultPages.Contains(page))
-                failures.Add($"Sidebar:MenuOrder contains unknown menu page '{page}'.");
-            if (order is < -10000 or > 10000)
-                failures.Add($"Sidebar:MenuOrder '{page}' must be between -10000 and 10000.");
-        }
-
         var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var urls = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var link in options.CustomLinks.Where(link => link.Enabled))

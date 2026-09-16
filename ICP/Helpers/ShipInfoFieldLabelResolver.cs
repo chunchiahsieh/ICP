@@ -14,7 +14,8 @@ public static class ShipInfoFieldLabelResolver
     public static void ApplyLabels(
         IEnumerable<ShipInfoFieldMetadata> fields,
         IStringLocalizerFactory localizerFactory,
-        string? culture)
+        string? culture,
+        Func<string, string?>? resolveRuntime = null)
     {
         var normalizedCulture = string.IsNullOrWhiteSpace(culture) ? "zh-TW" : culture;
         var cultureInfo = CultureInfo.GetCultureInfo(normalizedCulture);
@@ -29,6 +30,12 @@ public static class ShipInfoFieldLabelResolver
 
             foreach (var field in fields)
             {
+                var runtimeLabel = resolveRuntime?.Invoke(ResolveLabelKey(field));
+                if (runtimeLabel is not null)
+                {
+                    field.Label = runtimeLabel;
+                    continue;
+                }
                 var localized = localizer[ResolveLabelKey(field)];
                 field.Label = localized.ResourceNotFound
                     ? ShipInfoTableViewHelper.ResolveLabel(field, normalizedCulture)

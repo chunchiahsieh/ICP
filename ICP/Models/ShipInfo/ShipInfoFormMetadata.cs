@@ -124,4 +124,7 @@ public sealed class ShipInfoFormModeFieldDefinition
 
     [JsonPropertyName("columnSpan")]
     public int? ColumnSpan { get; set; }
+
+    [JsonPropertyName("breakAfter")]
+    public bool? BreakAfter { get; set; }
 }

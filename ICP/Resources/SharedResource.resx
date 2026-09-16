@@ -267,6 +267,9 @@
   <data name="ShipInfo.NoData" xml:space="preserve">
     <value>查無資料</value>
   </data>
+  <data name="ShipInfo.Blank" xml:space="preserve">
+    <value>（空白）</value>
+  </data>
   <data name="ShipInfo.Action" xml:space="preserve">
     <value>操作</value>
   </data>
@@ -541,7 +544,7 @@
     <value>Order Priority</value>
   </data>
   <data name="ShipInfo.Field.MdpFlag" xml:space="preserve">
-    <value>MDP Flag</value>
+    <value>MDP</value>
   </data>
   <data name="ShipInfo.Field.TotalCartons" xml:space="preserve">
     <value>Total Cartons</value>
@@ -572,6 +575,9 @@
   </data>
   <data name="ShipInfo.Field.ShipReason" xml:space="preserve">
     <value>Ship Reason</value>
+  </data>
+  <data name="ShipInfo.Field.Shipper" xml:space="preserve">
+    <value>Shipper</value>
   </data>
   <data name="ShipInfo.Field.Forklift" xml:space="preserve">
     <value>Forklift</value>
@@ -1553,7 +1559,7 @@
     <value>PermissionScan 失敗，請稍後再試。</value>
   </data>
   <data name="Resources.ScanSyncComplete" xml:space="preserve">
-    <value>同步完成：掃描 {0} 筆，新增 {1} 筆，更新 {2} 筆，停用舊格式 {3} 筆，遷移角色權限 {4} 筆。</value>
+    <value>同步完成：掃描 {0} 筆，新增 {1} 筆，更新 {2} 筆，停用舊格式 {3} 筆，遷移角色權限 {4} 筆，停用未掃描資源 {5} 筆，重新啟用 {6} 筆。</value>
   </data>
   <data name="Resources.Title" xml:space="preserve">
     <value>資源管理</value>
@@ -1956,7 +1962,7 @@
     <value>倉庫代碼刪除</value>
   </data>
   <data name="Common.Actions" xml:space="preserve">
-    <value>操作</value>
+    <value>Actions</value>
   </data>
   <data name="SystemConfig.Category" xml:space="preserve">
     <value>Category</value>
@@ -2208,6 +2214,8 @@
     <value>Attachments</value>
   </data>
   <data name="ShipInfo.Group.BasicOrder" xml:space="preserve"><value>基本／訂單資訊</value></data>
+  <data name="ShipInfo.Group.Information" xml:space="preserve"><value>資訊</value></data>
+  <data name="ShipInfo.Group.ItemDetails" xml:space="preserve"><value>品項明細</value></data>
   <data name="ShipInfo.Group.ShippingCustoms" xml:space="preserve"><value>航運／報關資訊</value></data>
   <data name="ShipInfo.Group.Delivery" xml:space="preserve"><value>配送資訊</value></data>
   <data name="ShipInfo.Group.PackingServices" xml:space="preserve"><value>包裝／設備／服務</value></data>
@@ -2220,7 +2228,7 @@
   <data name="ShipInfo.Group.DetailLine" xml:space="preserve"><value>明細／品項資訊</value></data>
   <data name="ShipInfo.Group.QuantityPrice" xml:space="preserve"><value>數量／金額資訊</value></data>
   <data name="ShipInfo.Group.Packing" xml:space="preserve"><value>包裝／尺寸／重量</value></data>
-  <data name="ShipInfo.Group.Compliance" xml:space="preserve"><value>配送／法規資訊</value></data>
+  <data name="ShipInfo.Group.Compliance" xml:space="preserve"><value>法規資訊</value></data>
   <data name="Compare.Number" xml:space="preserve"><value>編號</value></data>
   <data name="Compare.Result" xml:space="preserve"><value>比對結果</value></data>
   <data name="Compare.RtNo" xml:space="preserve"><value>RT_NO</value></data>
@@ -2257,7 +2265,7 @@
   <data name="Setting.Field.ContactPerson" xml:space="preserve"><value>聯絡人</value></data>
   <data name="Setting.Field.PhoneNumber" xml:space="preserve"><value>電話號碼</value></data>
   <data name="Setting.Field.DestinationPort" xml:space="preserve"><value>目的港</value></data>
-  <data name="Setting.Field.EtaCalendarType" xml:space="preserve"><value>ETA 行事曆類型</value></data>
+  <data name="Setting.Field.EtaCalendarType" xml:space="preserve"><value>ETA Calendar Type</value></data>
   <data name="Setting.Field.WhCode" xml:space="preserve"><value>倉庫代碼</value></data>
   <data name="Setting.Field.FlightNo" xml:space="preserve"><value>航班號碼</value></data>
   <data name="Setting.Field.DeliveryDate" xml:space="preserve"><value>交貨日期</value></data>
@@ -2277,18 +2285,18 @@
   <data name="Sidebar.Search" xml:space="preserve"><value>搜尋選單</value></data>
   <data name="Sidebar.Recent" xml:space="preserve"><value>最近使用</value></data>
   <data name="LocalizationManagement.Title" xml:space="preserve"><value>多國語言管理</value></data>
-  <data name="LocalizationManagement.Hint" xml:space="preserve"><value>直接修改翻譯後儲存。儲存前會建立備份；重新啟動 ICP 後，網站會載入新的翻譯。</value></data>
+  <data name="LocalizationManagement.Hint" xml:space="preserve"><value>編輯翻譯後儲存，儲存前會建立備份。重新整理頁面即可套用更新。</value></data>
   <data name="LocalizationManagement.Search" xml:space="preserve"><value>搜尋 Resource Key 或翻譯內容</value></data>
   <data name="LocalizationManagement.Loading" xml:space="preserve"><value>載入中…</value></data>
   <data name="LocalizationManagement.NoRows" xml:space="preserve"><value>找不到符合的翻譯資料。</value></data>
   <data name="LocalizationManagement.SaveChanges" xml:space="preserve"><value>儲存變更</value></data>
-  <data name="LocalizationManagement.Saved" xml:space="preserve"><value>已更新 {0} 個翻譯值。請重新啟動 ICP 後確認網站顯示。</value></data>
+  <data name="LocalizationManagement.Saved" xml:space="preserve"><value>已更新 {0} 個翻譯值。請重新整理頁面查看更新。</value></data>
   <data name="LocalizationManagement.LoadFailed" xml:space="preserve"><value>無法載入翻譯資料。</value></data>
   <data name="LocalizationManagement.SaveFailed" xml:space="preserve"><value>無法儲存翻譯資料。</value></data>
   <data name="LocalizationManagement.NoChanges" xml:space="preserve"><value>沒有需要儲存的變更。</value></data>
   <data name="LocalizationManagement.ExportExcel" xml:space="preserve"><value>匯出 Excel</value></data>
   <data name="LocalizationManagement.ImportExcel" xml:space="preserve"><value>匯入 Excel</value></data>
-  <data name="LocalizationManagement.Imported" xml:space="preserve"><value>已匯入 {0} 筆翻譯資料，更新 {1} 個翻譯值。請重新啟動 ICP 後確認網站顯示。</value></data>
+  <data name="LocalizationManagement.Imported" xml:space="preserve"><value>已匯入 {0} 筆翻譯並更新 {1} 個值。請重新整理頁面查看更新。</value></data>
   <data name="LocalizationManagement.ImportFailed" xml:space="preserve"><value>無法匯入翻譯 Excel 檔案。</value></data>
   <data name="Sidebar.NoResults" xml:space="preserve"><value>找不到符合的選單項目</value></data>
   <data name="Sidebar.CustomLinks" xml:space="preserve"><value>常用連結</value></data>
@@ -2299,4 +2307,340 @@
   <data name="Sidebar.Pinned" xml:space="preserve"><value>釘選</value></data>
   <data name="Sidebar.Pin" xml:space="preserve"><value>釘選此項目</value></data>
   <data name="Sidebar.Unpin" xml:space="preserve"><value>取消釘選此項目</value></data>
+  <data name="Views.Shared._SidebarNav.Setting.CountryOfOrigin" xml:space="preserve"><value>原產國</value></data>
+  <data name="Views.Shared._SidebarNav.Setting.Shipper" xml:space="preserve"><value>出貨人</value></data>
+  <data name="Views.Setting.CountryOfOrigin.View" xml:space="preserve"><value>原產國查詢</value></data>
+  <data name="Views.Setting.CountryOfOrigin.Create" xml:space="preserve"><value>原產國新增</value></data>
+  <data name="Views.Setting.CountryOfOrigin.Edit" xml:space="preserve"><value>原產國編輯</value></data>
+  <data name="Views.Setting.CountryOfOrigin.Delete" xml:space="preserve"><value>原產國刪除</value></data>
+  <data name="Views.Setting.Shipper.View" xml:space="preserve"><value>出貨人查詢</value></data>
+  <data name="Views.Setting.Shipper.Create" xml:space="preserve"><value>出貨人新增</value></data>
+  <data name="Views.Setting.Shipper.Edit" xml:space="preserve"><value>出貨人編輯</value></data>
+  <data name="Views.Setting.Shipper.Delete" xml:space="preserve"><value>出貨人刪除</value></data>
+  <data name="Setting.CountryOfOrigin.Title" xml:space="preserve"><value>原產國</value></data>
+  <data name="Setting.Shipper.Title" xml:space="preserve"><value>出貨人</value></data>
+  <data name="DataScope.SupportedPagesTitle" xml:space="preserve"><value>目前支援 DataScope 的頁面：</value></data>
+  <data name="DataScope.SupportedPages" xml:space="preserve"><value>Customs Data Download、Ship Info、Tariff Data、Shipping Report、Mass Data Report、Customized。</value></data>
+  <data name="Common.ClearAllFilters" xml:space="preserve"><value>重設搜尋</value></data>
+  <data name="ShipInfo.Field.Time" xml:space="preserve"><value>時間</value></data>
+  <data name="ShipInfo.Field.WarehouseShort" xml:space="preserve"><value>W/H</value></data>
+<data name="ShipInfo.Header.Field.SaDate" xml:space="preserve">
+    <value>SA Date</value>
+  </data>
+<data name="ShipInfo.Header.Field.InvoiceNo" xml:space="preserve">
+    <value>Invoice No</value>
+  </data>
+<data name="ShipInfo.Header.Field.Hawb" xml:space="preserve">
+    <value>HAWB</value>
+  </data>
+<data name="ShipInfo.Header.Field.MdpFlag" xml:space="preserve">
+    <value>MDP</value>
+  </data>
+<data name="ShipInfo.Header.Field.Mawb" xml:space="preserve">
+    <value>MAWB</value>
+  </data>
+<data name="ShipInfo.Header.Field.Flt" xml:space="preserve">
+    <value>FLT</value>
+  </data>
+<data name="ShipInfo.Header.Field.Eta" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+<data name="ShipInfo.Header.Field.Broker" xml:space="preserve">
+    <value>Broker</value>
+  </data>
+<data name="ShipInfo.Header.Field.DestinationPort" xml:space="preserve">
+    <value>Destination Port</value>
+  </data>
+<data name="ShipInfo.Header.Field.WarehouseShort" xml:space="preserve"><value>W/H</value></data>
+<data name="ShipInfo.Header.Field.OrderType" xml:space="preserve">
+    <value>Order Type</value>
+  </data>
+<data name="ShipInfo.Header.Field.TetPo" xml:space="preserve">
+    <value>TET PO</value>
+  </data>
+<data name="ShipInfo.Header.Field.DeliveryTo" xml:space="preserve">
+    <value>Delivery To</value>
+  </data>
+<data name="ShipInfo.Header.Field.DeliveryDate" xml:space="preserve">
+    <value>Delivery Date</value>
+  </data>
+<data name="ShipInfo.Header.Field.Time" xml:space="preserve"><value>時間</value></data>
+<data name="ShipInfo.Header.Field.NcdrNo" xml:space="preserve">
+    <value>NCDR No</value>
+  </data>
+<data name="ShipInfo.Header.Field.NcdrRequestor" xml:space="preserve">
+    <value>NCDR Requestor</value>
+  </data>
+<data name="ShipInfo.Header.Field.EndUser" xml:space="preserve">
+    <value>End User</value>
+  </data>
+<data name="ShipInfo.Header.Field.MachineNo" xml:space="preserve">
+    <value>Machine No</value>
+  </data>
+<data name="ShipInfo.Header.Field.ArrivalNoticeFlag" xml:space="preserve">
+    <value>Arrival Notice Flag</value>
+  </data>
+<data name="ShipInfo.Header.Field.ReasonForDeliveryDelay" xml:space="preserve">
+    <value>Reason For Delivery Delay</value>
+  </data>
+<data name="ShipInfo.Header.Field.WbsElement" xml:space="preserve">
+    <value>WBS Element</value>
+  </data>
+<data name="ShipInfo.Header.Field.DepositCaseStatus" xml:space="preserve">
+    <value>Deposit</value>
+  </data>
+<data name="ShipInfo.Header.Field.ArurCaseStatus" xml:space="preserve">
+    <value>ARUR Status</value>
+  </data>
+<data name="ShipInfo.Header.Field.RtNo" xml:space="preserve">
+    <value>RT No</value>
+  </data>
+<data name="ShipInfo.Header.Field.Cancellation" xml:space="preserve">
+    <value>Cancellation</value>
+  </data>
+<data name="ShipInfo.Header.Field.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+<data name="ShipInfo.Header.Field.CreateDate" xml:space="preserve">
+    <value>Create Date</value>
+  </data>
+<data name="ShipInfo.Header.Field.Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+<data name="ShipInfo.Header.Field.CreateTime" xml:space="preserve">
+    <value>Create Time</value>
+  </data>
+<data name="ShipInfo.Header.Field.CreateUser" xml:space="preserve">
+    <value>Create User</value>
+  </data>
+<data name="ShipInfo.Header.Field.UpdateTime" xml:space="preserve">
+    <value>Update Time</value>
+  </data>
+<data name="ShipInfo.Header.Field.UpdateUser" xml:space="preserve">
+    <value>Update User</value>
+  </data>
+<data name="ShipInfo.Header.Field.Forwarder" xml:space="preserve">
+    <value>Forwarder</value>
+  </data>
+<data name="ShipInfo.Header.Field.Shipper" xml:space="preserve">
+    <value>Shipper</value>
+  </data>
+<data name="ShipInfo.Header.Field.Etd" xml:space="preserve">
+    <value>ETD</value>
+  </data>
+<data name="ShipInfo.Header.Field.InvoiceDate" xml:space="preserve">
+    <value>Invoice Date</value>
+  </data>
+<data name="ShipInfo.Header.Field.Freight" xml:space="preserve">
+    <value>Air/Sea</value>
+  </data>
+<data name="ShipInfo.Header.Field.DestinationCountry" xml:space="preserve">
+    <value>Destination Country</value>
+  </data>
+<data name="ShipInfo.Header.Field.Incoterms" xml:space="preserve">
+    <value>Incoterms</value>
+  </data>
+<data name="ShipInfo.Header.Field.DeliveryNo" xml:space="preserve">
+    <value>Delivery No</value>
+  </data>
+<data name="ShipInfo.Header.Field.Receiver" xml:space="preserve">
+    <value>Receiver</value>
+  </data>
+<data name="ShipInfo.Header.Field.CarMethod" xml:space="preserve">
+    <value>Car Method</value>
+  </data>
+<data name="ShipInfo.Header.Field.DriverDetails" xml:space="preserve">
+    <value>Driver Details</value>
+  </data>
+<data name="ShipInfo.Header.Field.InvoiceType" xml:space="preserve">
+    <value>Invoice Type</value>
+  </data>
+<data name="ShipInfo.Header.Field.Bu" xml:space="preserve">
+    <value>BU</value>
+  </data>
+<data name="ShipInfo.Header.Field.OrderPriority" xml:space="preserve">
+    <value>Order Priority</value>
+  </data>
+<data name="ShipInfo.Header.Field.OrderReason" xml:space="preserve">
+    <value>Order Reason</value>
+  </data>
+<data name="ShipInfo.Header.Field.TotalCartons" xml:space="preserve">
+    <value>Total Cartons</value>
+  </data>
+<data name="ShipInfo.Header.Field.MachineType" xml:space="preserve">
+    <value>Machine Type</value>
+  </data>
+<data name="ShipInfo.Header.Field.Forklift" xml:space="preserve">
+    <value>Forklift</value>
+  </data>
+<data name="ShipInfo.Header.Field.MovingLabor" xml:space="preserve">
+    <value>Moving Labor</value>
+  </data>
+<data name="ShipInfo.Header.Field.WasteDisposal" xml:space="preserve">
+    <value>Waste Disposal</value>
+  </data>
+<data name="ShipInfo.Header.Field.ShipReason" xml:space="preserve">
+    <value>Ship Reason</value>
+  </data>
+<data name="ShipInfo.Header.Field.EndUserCode" xml:space="preserve">
+    <value>End User Code</value>
+  </data>
+<data name="ShipInfo.Header.Field.Owner" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+<data name="ShipInfo.Header.Field.SoldToPartyCode" xml:space="preserve">
+    <value>Sold To Party Code</value>
+  </data>
+<data name="ShipInfo.Header.Field.SoldToParty" xml:space="preserve">
+    <value>Sold To Party</value>
+  </data>
+<data name="ShipInfo.Header.Field.ShipToPartyCode" xml:space="preserve">
+    <value>Ship To Party Code</value>
+  </data>
+<data name="ShipInfo.Header.Field.ShipToParty" xml:space="preserve">
+    <value>Ship To Party</value>
+  </data>
+<data name="ShipInfo.Header.Field.ShipToPartyAddress" xml:space="preserve">
+    <value>Ship To Party Address</value>
+  </data>
+<data name="ShipInfo.Header.Field.EmgFlight" xml:space="preserve">
+    <value>EMG Flight</value>
+  </data>
+<data name="ShipInfo.Header.Field.Deposit" xml:space="preserve">
+    <value>Deposit</value>
+  </data>
+<data name="ShipInfo.Header.Field.ArrivalNotice" xml:space="preserve">
+    <value>Arrival Notice</value>
+  </data>
+<data name="ShipInfo.Header.Field.DelayNotificationDate" xml:space="preserve">
+    <value>Delay Notification Date</value>
+  </data>
+<data name="ShipInfo.Header.Field.SapRemarks" xml:space="preserve">
+    <value>SAP Remarks</value>
+  </data>
+<data name="ShipInfo.Header.Field.ReasonForCancellation" xml:space="preserve">
+    <value>Reason For Cancellation</value>
+  </data>
+<data name="ShipInfo.Header.Field.AttachedFile" xml:space="preserve">
+    <value>Attached File</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+<data name="ShipInfo.Detail.Field.DepositCaseStatus" xml:space="preserve">
+    <value>Deposit</value>
+  </data>
+<data name="ShipInfo.Detail.Field.ArurCaseStatus" xml:space="preserve">
+    <value>ARUR Status</value>
+  </data>
+<data name="ShipInfo.Detail.Field.InvoiceNo" xml:space="preserve">
+    <value>Invoice No</value>
+  </data>
+<data name="ShipInfo.Detail.Field.InvoiceSeq" xml:space="preserve">
+    <value>Invoice Seq</value>
+  </data>
+<data name="ShipInfo.Detail.Field.TetPo" xml:space="preserve">
+    <value>TET PO</value>
+  </data>
+<data name="ShipInfo.Detail.Field.TetPoLine" xml:space="preserve">
+    <value>TET PO Line</value>
+  </data>
+<data name="ShipInfo.Detail.Field.ItemNo" xml:space="preserve">
+    <value>Item No</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Qty" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Uom" xml:space="preserve">
+    <value>UOM</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Rate" xml:space="preserve">
+    <value>Rate</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Coo" xml:space="preserve">
+    <value>COO</value>
+  </data>
+<data name="ShipInfo.Detail.Field.PackingType" xml:space="preserve">
+    <value>Packing Type</value>
+  </data>
+<data name="ShipInfo.Detail.Field.CartonNo" xml:space="preserve">
+    <value>Carton No</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Length" xml:space="preserve">
+    <value>Length</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Width" xml:space="preserve">
+    <value>Width</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Hight" xml:space="preserve">
+    <value>Height</value>
+  </data>
+<data name="ShipInfo.Detail.Field.GrossWeight" xml:space="preserve">
+    <value>Gross Weight</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Eccn" xml:space="preserve">
+    <value>ECCN</value>
+  </data>
+<data name="ShipInfo.Detail.Field.ElFlag" xml:space="preserve">
+    <value>EL Flag</value>
+  </data>
+<data name="ShipInfo.Detail.Field.SdsFlag" xml:space="preserve">
+    <value>SDS Flag</value>
+  </data>
+<data name="ShipInfo.Detail.Field.Hazmat" xml:space="preserve">
+    <value>Hazmat</value>
+  </data>
+<data name="ShipInfo.Detail.Field.CreateTime" xml:space="preserve">
+    <value>Create Time</value>
+  </data>
+<data name="ShipInfo.Detail.Field.CreateUser" xml:space="preserve">
+    <value>Create User</value>
+  </data>
+<data name="ShipInfo.Detail.Field.UpdateTime" xml:space="preserve">
+    <value>Update Time</value>
+  </data>
+<data name="ShipInfo.Detail.Field.UpdateUser" xml:space="preserve">
+    <value>Update User</value>
+  </data>
+<data name="ShipInfo.Detail.Field.NetWeightOfTheItem" xml:space="preserve">
+    <value>Net Weight Of The Item</value>
+  </data>
+<data name="ShipInfo.Detail.Field.DeliveryLineNo" xml:space="preserve">
+    <value>Delivery Line No</value>
+  </data>
+  <data name="Export.Title" xml:space="preserve"><value>匯出</value></data><data name="Export.Upload.Label" xml:space="preserve"><value>上傳 Shipping advice Excel</value></data><data name="Export.Upload.Button" xml:space="preserve"><value>上傳並通知 Hub</value></data><data name="Export.Flow" xml:space="preserve"><value>流程：ICP 上傳 → Hub Job (ShippingAdvice) → FileGenerator 於共用 OutputDirectory/{RequestId}/ 產生 PickupNotice Excel 與 Case Mark PDF → 完成 → 檢視檔案。</value></data><data name="Export.Column.RequestId" xml:space="preserve"><value>申請編號</value></data><data name="Export.Column.FileName" xml:space="preserve"><value>檔案名稱</value></data><data name="Export.Column.Status" xml:space="preserve"><value>狀態</value></data><data name="Export.Column.CreateTime" xml:space="preserve"><value>建立時間</value></data><data name="Export.Column.UpdateTime" xml:space="preserve"><value>更新時間</value></data><data name="Export.Column.Error" xml:space="preserve"><value>錯誤</value></data><data name="Export.Empty" xml:space="preserve"><value>目前沒有匯出申請。</value></data><data name="Export.ViewFiles" xml:space="preserve"><value>檢視檔案</value></data><data name="Export.Modal.Title" xml:space="preserve"><value>匯出結果檔案</value></data><data name="Export.Close" xml:space="preserve"><value>關閉</value></data><data name="Export.DownloadAll" xml:space="preserve"><value>全部下載 (zip)</value></data><data name="Export.Column.File" xml:space="preserve"><value>檔案</value></data><data name="Export.Column.Type" xml:space="preserve"><value>類型</value></data><data name="Export.Column.Size" xml:space="preserve"><value>大小</value></data><data name="Export.Files.Empty" xml:space="preserve"><value>輸出資料夾內沒有檔案。</value></data><data name="Export.Files.Loading" xml:space="preserve"><value>載入中...</value></data><data name="Export.Files.RequestId" xml:space="preserve"><value>申請編號：</value></data><data name="Export.Files.LoadFailed" xml:space="preserve"><value>載入檔案失敗 ({0})</value></data><data name="Export.Download" xml:space="preserve"><value>下載</value></data><data name="Export.Error.SelectFile" xml:space="preserve"><value>請選擇檔案。</value></data><data name="Export.Success.Uploaded" xml:space="preserve"><value>已上傳 {0}。申請編號={1}。已通知 Hub（Pending → Processing）。</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.InvoiceNo" xml:space="preserve"><value>Invoice No.</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.CustomerReference" xml:space="preserve"><value>Customer Reference</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.MaterialCode" xml:space="preserve"><value>Material Code</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.OrderMaterialName" xml:space="preserve"><value>Order Material Name</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Quantity" xml:space="preserve"><value>Quantity</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.PortOfLoading" xml:space="preserve"><value>Port of Loading</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.ShipToName" xml:space="preserve"><value>Ship to Name</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.ShipToAddress" xml:space="preserve"><value>Ship to Address</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.ShipToPartyCountryCode" xml:space="preserve"><value>Ship to Party Country Code</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.ShipToPortCode" xml:space="preserve"><value>Ship to Port Code</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.FreightCharge" xml:space="preserve"><value>Freight charge</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.ConfirmedCustomDate" xml:space="preserve"><value>Confirmed Custom Date</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Hawb" xml:space="preserve"><value>HAWB</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Mawb" xml:space="preserve"><value>MAWB</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Etd" xml:space="preserve"><value>ETD</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Eta" xml:space="preserve"><value>ETA</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Flight1" xml:space="preserve"><value>FLIGHT 1#</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Flight2" xml:space="preserve"><value>FLIGHT 2#</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Cb" xml:space="preserve"><value>C/B</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Action" xml:space="preserve"><value>Action</value></data>
+  <data name="Forwarder.ForwarderDataUpload.Column.Mdp" xml:space="preserve"><value>MDP</value></data>
 </root>

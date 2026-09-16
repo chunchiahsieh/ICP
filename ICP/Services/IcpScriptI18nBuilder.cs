@@ -9,6 +9,7 @@ public static class IcpScriptI18nBuilder
         {
             ["selectedCount"] = localizer["Js.SelectedCount"],
             ["pageLabel"] = localizer["ShipInfo.PageLabel"],
+            ["clearAllFilters"] = localizer["Common.ClearAllFilters"],
             ["none"] = localizer["Common.None"],
             ["selectAtLeastOneRole"] = localizer["Validation.SelectAtLeastOneRole"],
             ["selectAtLeastOneResource"] = localizer["Validation.SelectAtLeastOneResource"],

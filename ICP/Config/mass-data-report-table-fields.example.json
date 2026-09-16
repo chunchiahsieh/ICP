@@ -4,7 +4,9 @@
       "fields": [
         { "fieldName": "Id", "visible": false, "searchable": false },
         { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Checkbox" }
+        { "fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
+        { "fieldName": "Shipper", "visible": true, "searchable": true, "filterType": "Checkbox" }
       ]
     }
   },

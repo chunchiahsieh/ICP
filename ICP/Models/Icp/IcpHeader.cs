@@ -9,6 +9,7 @@ public class IcpHeader : IcpAuditableEntity
 {
     public const int DepositMaxLength = 30;
     public const int RtNoMaxLength = 30;
+    public const int ShipperMaxLength = 50;
 
     [Column("CREATE_DATE")]
     [MaxLength(20)]
@@ -25,6 +26,10 @@ public class IcpHeader : IcpAuditableEntity
     [Column("FORWARDER")]
     [MaxLength(50)]
     public string? Forwarder { get; set; }
+
+    [Column("SHIPPER")]
+    [MaxLength(ShipperMaxLength)]
+    public string? Shipper { get; set; }
 
     [Column("BROKER")]
     [MaxLength(30)]
