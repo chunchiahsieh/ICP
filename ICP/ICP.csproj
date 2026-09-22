@@ -81,6 +81,7 @@
     <Content Update="Config\mass-data-report-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\mass-data-report-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Files\Mass Update Sample File.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Files\AddDiSaTemplate.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
