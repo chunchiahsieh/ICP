@@ -45,6 +45,7 @@ public class AddDiSaController : Controller
     }
 
     [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult DownloadTemplate()
     {
         var templatePath = Path.Combine(_environment.ContentRootPath, "Files", TemplateFileName);

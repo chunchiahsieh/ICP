@@ -42,6 +42,10 @@ public sealed class ShippingAdviceRow
 
     public string CustPoJ { get; init; } = string.Empty;
 
+    public string CountryOfOriginCode { get; init; } = string.Empty;
+
+    public string CountryOfOriginName { get; set; } = string.Empty;
+
     public bool IsNoCharge =>
         string.Equals(AhFlag.Trim(), "X", StringComparison.OrdinalIgnoreCase);
 

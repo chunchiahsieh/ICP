@@ -29,16 +29,35 @@ public static class CaseMarkPdfGenerator
 
         foreach (var group in groups)
         {
-            var pages = group
+            var orderedRows = group
                 .OrderBy(r => ParseCartonSortKey(r.CartonNo))
                 .ThenBy(r => r.CartonNo, StringComparer.OrdinalIgnoreCase)
                 .ToList();
-            if (pages.Count == 0)
+            if (orderedRows.Count == 0)
             {
                 continue;
             }
 
-            var first = pages[0];
+            // One case mark per carton; multiple item rows in the same carton share its origin list.
+            var pages = orderedRows
+                .Select((row, index) => new
+                {
+                    Row = row,
+                    Key = string.IsNullOrWhiteSpace(row.CnoDisplay)
+                        ? $"__empty_carton_{index}"
+                        : row.CnoDisplay
+                })
+                .GroupBy(item => item.Key, StringComparer.OrdinalIgnoreCase)
+                .Select(carton => new
+                {
+                    Row = carton.First().Row,
+                    Origins = string.Join(" & ", carton
+                        .Select(item => item.Row.CountryOfOriginName)
+                        .Distinct(StringComparer.OrdinalIgnoreCase))
+                })
+                .ToList();
+
+            var first = pages[0].Row;
             var isNoCharge = first.IsNoCharge;
             var prefix = isNoCharge ? "NoCharge" : "Charge";
             var safeInvoice = SanitizeFileName(group.Key);
@@ -47,7 +66,7 @@ public static class CaseMarkPdfGenerator
 
             Document.Create(container =>
             {
-                foreach (var pageRow in pages)
+                foreach (var carton in pages)
                 {
                     container.Page(page =>
                     {
@@ -56,17 +75,21 @@ public static class CaseMarkPdfGenerator
                         page.DefaultTextStyle(x => x.FontSize(14).FontFamily(Fonts.Arial));
                         page.Content().Column(col =>
                         {
-                            col.Spacing(8);
-                            col.Item().AlignCenter().Text("**** CASE MARK ****").Bold().FontSize(18);
+                            col.Item().Border(1).Padding(10).Column(frame =>
+                            {
+                                frame.Spacing(8);
+                                frame.Item().AlignCenter().Text("**** CASE MARK ****").Bold().FontSize(18);
 
-                            if (isNoCharge)
-                            {
-                                BuildNoCharge(col, pageRow);
-                            }
-                            else
-                            {
-                                BuildCharge(col, pageRow);
-                            }
+                                if (isNoCharge)
+                                {
+                                    BuildNoCharge(frame, carton.Row);
+                                }
+                                else
+                                {
+                                    BuildCharge(frame, carton.Row);
+                                }
+                            });
+                            col.Item().AlignRight().Text($"Made in {carton.Origins}").Bold().FontSize(14);
                         });
                     });
                 }

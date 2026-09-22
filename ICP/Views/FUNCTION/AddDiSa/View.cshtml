@@ -1,10 +1,15 @@
 @using System.Text.Json
+@inject IWebHostEnvironment WebHostEnvironment
 @{
     ViewData["Title"] = Localizer["Function.AddDiSa.Title"];
     var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
     var maxSizeHint = string.Format(Localizer["Function.AddDiSa.MaxSizeHint"].Value, maxSizeMb);
     var uploaderButtonText = Localizer["Function.AddDiSa.UploaderButton"].Value;
     var saveButtonText = Localizer["Function.AddDiSa.SaveButton"].Value;
+    var templatePath = System.IO.Path.Combine(WebHostEnvironment.ContentRootPath, "Files", "AddDiSaTemplate.xlsx");
+    var templateVersion = System.IO.File.Exists(templatePath)
+        ? System.IO.File.GetLastWriteTimeUtc(templatePath).Ticks.ToString()
+        : "0";
 }
 
 @section Styles {
@@ -36,6 +41,7 @@
         </div>
         <a asp-action="DownloadTemplate"
            asp-controller="AddDiSa"
+           asp-route-v="@templateVersion"
            class="btn btn-outline-secondary align-self-center"
            data-permissions="Views.Function.AddDiSa.Upload"
            data-i18n-key="Function.AddDiSa.DownloadTemplate">

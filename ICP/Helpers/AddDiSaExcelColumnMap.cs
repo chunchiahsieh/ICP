@@ -7,6 +7,7 @@ public static class AddDiSaExcelColumnMap
 {
     public const string InvoiceNo = "InvoiceNo";
     public const string TetPo = "TetPo";
+    public const string Shipper = "Shipper";
     public const string Mawb = "Mawb";
     public const string Hawb = "Hawb";
     public const string Flt = "Flt";
@@ -14,7 +15,7 @@ public static class AddDiSaExcelColumnMap
 
     private static readonly HashSet<string> HeaderProperties = new(StringComparer.OrdinalIgnoreCase)
     {
-        "CreateDate", "SaDate", "InvoiceNo", "Forwarder", "Broker", "Etd", "Eta", "InvoiceDate",
+        "CreateDate", "SaDate", "InvoiceNo", "Forwarder", "Broker", "Shipper", "Etd", "Eta", "InvoiceDate",
         "Mawb", "Hawb", "Flt", "Freight", "DestinationPort", "DestinationCountry", "Warehouse",
         "InvoiceType", "Incoterms", "OrderType", "DeliveryDate", "DeliveryTo", "Bu", "TetPo",
         "OrderPriority", "MdpFlag", "TotalCartons", "NcdrNo", "NcdrRequestor", "EndUserCode",

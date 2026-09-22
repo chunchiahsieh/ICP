@@ -57,9 +57,30 @@ public class AddDiSaImportService
             throw new InvalidOperationException("檔案中沒有可匯入的資料列");
         }
 
+        await ValidateShippersAsync(rows, cancellationToken);
+
         // Content validation (dates/required) already applied in ParseExcel.
         // Invoice consistency is soft for preview; Save calls ValidateForSaveAsync.
         return rows;
+    }
+
+    private async Task ValidateShippersAsync(
+        IReadOnlyList<AddDiSaImportRow> rows,
+        CancellationToken cancellationToken)
+    {
+        var validCodes = await _db.SystemConfigs
+            .AsNoTracking()
+            .Where(config => config.Category == "Shipper"
+                && !config.IsDeleted
+                && config.Key1 != "")
+            .Select(config => config.Key1)
+            .ToListAsync(cancellationToken);
+        var validSet = new HashSet<string>(validCodes, StringComparer.OrdinalIgnoreCase);
+        var errors = rows
+            .Where(row => !validSet.Contains(row.Header.Shipper!))
+            .Select(row => $"第 {row.RowNumber} 列 SHIPPER 代碼 {row.Header.Shipper} 不在 Settings → Shipper 對照表中")
+            .ToList();
+        AddDiSaImportRules.ThrowIfErrors(errors);
     }
 
     public async Task<List<AddDiSaImportRowViewModel>> BuildPreviewRowsAsync(
@@ -297,6 +318,11 @@ public class AddDiSaImportService
                     "TET_PO",
                     errors),
                 AddDiSaImportRules.TetPoMaxLength) ?? string.Empty;
+            var shipper = AddDiSaImportRules.RequireNonEmpty(
+                GetValue(values, AddDiSaExcelColumnMap.Shipper),
+                excelRowNumber,
+                "SHIPPER",
+                errors);
 
             if (string.IsNullOrEmpty(invoiceNo) || string.IsNullOrEmpty(tetPo))
             {
@@ -306,6 +332,7 @@ public class AddDiSaImportService
             var header = BuildHeader(values);
             header.InvoiceNo = invoiceNo;
             header.TetPo = tetPo;
+            header.Shipper = shipper;
 
             var detail = BuildDetail(values);
             detail.InvoiceNo = invoiceNo;
@@ -335,6 +362,7 @@ public class AddDiSaImportService
             CreateDate = Trim(values, "CreateDate", 20),
             SaDate = Trim(values, "SaDate", 10),
             Forwarder = Trim(values, "Forwarder", 50),
+            Shipper = Trim(values, "Shipper", IcpHeader.ShipperMaxLength),
             Broker = Trim(values, "Broker", 30),
             Etd = Trim(values, "Etd", 10),
             Eta = Trim(values, "Eta", 10),
@@ -427,6 +455,7 @@ public class AddDiSaImportService
             SaDate = source.SaDate,
             InvoiceNo = source.InvoiceNo,
             Forwarder = source.Forwarder,
+            Shipper = source.Shipper,
             Broker = source.Broker,
             Etd = source.Etd,
             Eta = source.Eta,

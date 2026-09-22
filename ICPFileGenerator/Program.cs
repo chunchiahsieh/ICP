@@ -28,6 +28,7 @@ builder.Services.Configure<FileGeneratorOptions>(
 builder.Services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
 builder.Services.AddScoped<IJobRepository, JobRepository>();
 builder.Services.AddScoped<IPickUpLocationLookup, PickUpLocationLookup>();
+builder.Services.AddScoped<ICountryOfOriginLookup, CountryOfOriginLookup>();
 builder.Services.AddScoped<IFileGenerationService, FileGenerationService>();
 builder.Services.AddScoped<IHubNotificationService, HubNotificationService>();
 builder.Services.AddHttpClient("IntegrationHub", (sp, client) =>

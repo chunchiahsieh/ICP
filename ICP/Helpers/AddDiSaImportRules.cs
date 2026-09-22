@@ -8,7 +8,8 @@ public static class AddDiSaImportRules
     public static readonly string[] RequiredProperties =
     [
         AddDiSaExcelColumnMap.InvoiceNo,
-        AddDiSaExcelColumnMap.TetPo
+        AddDiSaExcelColumnMap.TetPo,
+        AddDiSaExcelColumnMap.Shipper
     ];
 
     public static readonly string[] InvoiceConsistencyProperties =

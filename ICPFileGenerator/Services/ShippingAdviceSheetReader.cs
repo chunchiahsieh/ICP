@@ -22,6 +22,43 @@ public static class ShippingAdviceSheetReader
             throw new InvalidOperationException($"Worksheet '{SourceSheetName}' was not found.");
         }
 
+        var columns = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var cell in sheet.Row(1).CellsUsed())
+        {
+            var title = cell.GetString().Trim();
+            if (!string.IsNullOrEmpty(title))
+            {
+                columns.TryAdd(title, cell.Address.ColumnNumber);
+            }
+        }
+
+        // Resolve by title so the inserted DO line Remark column cannot shift exported values.
+        string Value(int row, string title)
+        {
+            if (!columns.TryGetValue(title, out var column))
+            {
+                throw new InvalidOperationException($"Required Shipping advice column '{title}' was not found.");
+            }
+
+            return sheet.Cell(row, column).GetFormattedString().Trim();
+        }
+
+        var required = new[]
+        {
+            "Invoice No.", "Ship-to Party Address", "End User", "RMA#", "SLOC",
+            "Delivery No", "Carton No.", "Total Cartons", "Length", "Width",
+            "Height", "Weight", "Carton Name", "No Charge Flag",
+            "Ship-to Party", "Port of Entry", "Forwarder", "PO#", "SO#",
+            "Customer PO No.", "Country of Origin"
+        };
+        foreach (var title in required)
+        {
+            if (!columns.ContainsKey(title))
+            {
+                throw new InvalidOperationException($"Required Shipping advice column '{title}' was not found.");
+            }
+        }
+
         var lastRow = sheet.LastRowUsed()?.RowNumber() ?? 0;
         if (lastRow < DataStartRow)
         {
@@ -31,8 +68,8 @@ public static class ShippingAdviceSheetReader
         var rows = new List<ShippingAdviceRow>();
         for (var r = DataStartRow; r <= lastRow; r++)
         {
-            var invoice = Cell(sheet, r, "N");
-            var carton = Cell(sheet, r, "BQ");
+            var invoice = Value(r, "Invoice No.");
+            var carton = Value(r, "Carton No.");
             if (string.IsNullOrWhiteSpace(invoice) && string.IsNullOrWhiteSpace(carton))
             {
                 continue;
@@ -41,34 +78,30 @@ public static class ShippingAdviceSheetReader
             rows.Add(new ShippingAdviceRow
             {
                 InvoiceNo = invoice,
-                ShipToAddress = Cell(sheet, r, "BG"),
-                Customer = Cell(sheet, r, "Y"),
-                ColumnK = Cell(sheet, r, "K"),
-                ColumnC = Cell(sheet, r, "C"),
-                TetDo = Cell(sheet, r, "P"),
+                ShipToAddress = Value(r, "Ship-to Party Address"),
+                Customer = Value(r, "End User"),
+                ColumnK = Value(r, "RMA#"),
+                ColumnC = Value(r, "SLOC"),
+                TetDo = Value(r, "Delivery No"),
                 CartonNo = carton,
-                TotalCartons = Cell(sheet, r, "BM"),
-                Length = Cell(sheet, r, "BX"),
-                Width = Cell(sheet, r, "BY"),
-                Height = Cell(sheet, r, "BZ"),
-                Weight = Cell(sheet, r, "BW"),
-                PackingMethod = Cell(sheet, r, "CA"),
-                AhFlag = Cell(sheet, r, "AH"),
-                CompanyNameBf = Cell(sheet, r, "BF"),
-                PortOfDischargeAu = Cell(sheet, r, "AU"),
-                ForwarderBl = Cell(sheet, r, "BL"),
-                TeaPoE = Cell(sheet, r, "E"),
-                TetSoG = Cell(sheet, r, "G"),
-                CustPoJ = Cell(sheet, r, "J")
+                TotalCartons = Value(r, "Total Cartons"),
+                Length = Value(r, "Length"),
+                Width = Value(r, "Width"),
+                Height = Value(r, "Height"),
+                Weight = Value(r, "Weight"),
+                PackingMethod = Value(r, "Carton Name"),
+                AhFlag = Value(r, "No Charge Flag"),
+                CompanyNameBf = Value(r, "Ship-to Party"),
+                PortOfDischargeAu = Value(r, "Port of Entry"),
+                ForwarderBl = Value(r, "Forwarder"),
+                TeaPoE = Value(r, "PO#"),
+                TetSoG = Value(r, "SO#"),
+                CustPoJ = Value(r, "Customer PO No."),
+                CountryOfOriginCode = Value(r, "Country of Origin")
             });
         }
 
         return rows;
     }
 
-    private static string Cell(IXLWorksheet sheet, int row, string columnLetter)
-    {
-        var value = sheet.Cell(row, columnLetter).GetFormattedString()?.Trim();
-        return value ?? string.Empty;
-    }
 }
