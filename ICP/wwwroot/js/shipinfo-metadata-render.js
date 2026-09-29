@@ -371,6 +371,10 @@
             displayValue = normalizeDateInputValue(displayValue);
         } else if (controlType === 'DateTime') {
             displayValue = normalizeDateTimeInputValue(displayValue);
+        } else if (['Qty', 'Price', 'Amount', 'Rate'].indexOf(fieldName) >= 0
+            && displayValue !== '' && Number.isFinite(Number(displayValue))) {
+            var decimalPlaces = fieldName === 'Qty' ? 3 : (fieldName === 'Rate' ? 4 : 2);
+            displayValue = Number(displayValue).toFixed(decimalPlaces);
         }
 
         var $input = $('<input class="form-control shipinfo-control" />')
@@ -385,10 +389,16 @@
         }
 
         if (fieldName === 'InvoiceSeq') {
-            $input.attr('step', 'any').attr('min', '0');
+            $input.attr('step', '1').attr('min', '1');
         }
 
-        if (['Qty', 'CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight', 'TotalCartons'].indexOf(fieldName) >= 0) {
+        if (fieldName === 'Qty') {
+            $input.attr('step', '0.001').attr('min', '0');
+        } else if (fieldName === 'Rate') {
+            $input.attr('step', '0.0001').attr('min', '0');
+        } else if (['Price', 'Amount'].indexOf(fieldName) >= 0) {
+            $input.attr('step', '0.01').attr('min', '0');
+        } else if (['CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight', 'TotalCartons'].indexOf(fieldName) >= 0) {
             $input.attr('step', '1').attr('min', '0');
         }
 

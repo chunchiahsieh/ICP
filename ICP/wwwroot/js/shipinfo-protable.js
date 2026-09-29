@@ -398,4 +398,16 @@
             detailTableInstance.reload();
         }
     };
+
+    app.resetHeaderFilters = function () {
+        if (headerTableInstance && headerTableInstance.clearFilters) {
+            headerTableInstance.clearFilters();
+        }
+    };
+
+    app.resetDetailFilters = function () {
+        if (app.state.selectedHeaderKey && detailTableInstance && detailTableInstance.clearFilters) {
+            detailTableInstance.clearFilters();
+        }
+    };
 })(window, window.jQuery);

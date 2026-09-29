@@ -60,7 +60,7 @@ public static class ShipInfoFieldCatalog
 
     private static readonly Dictionary<string, ShipInfoFieldSpec> DetailSpecs = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["InvoiceSeq"] = new(ShipInfoControlTypes.Decimal, editable: false, group: "Basic"),
+        ["InvoiceSeq"] = new(ShipInfoControlTypes.Number, editable: false, minValue: 1, group: "Basic"),
         ["Description"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 60, group: "Basic"),
         ["Qty"] = new(ShipInfoControlTypes.Decimal, editable: false, required: true, minValue: 0, group: "Basic"),
         ["Uom"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 10, group: "Basic"),

@@ -4,12 +4,17 @@
 }
 
 <div class="container-fluid shipinfo-page report-data-page pro-datatables-page report-split-page"
-     data-i18n-key="@titleKey">
+    data-i18n-key="@titleKey">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3 flex-wrap gap-2 report-split-toolbar">
         <h4 class="mb-0">@Localizer[titleKey]</h4>
-        <button type="button" class="btn btn-sm btn-outline-success" id="btnReportDownloadExcel">
-            <i class="bi bi-file-earmark-excel me-1"></i>@Localizer["Report.DownloadExcel"]
-        </button>
+        <div class="d-flex align-items-center flex-wrap gap-2">
+            <button type="button" class="btn btn-sm btn-outline-success" id="btnReportDownloadExcel">
+                <i class="bi bi-file-earmark-excel me-1"></i>@Localizer["Report.DownloadExcel"]
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="btnReportHeaderResetFilters">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>@Localizer["Common.ClearAllFilters"]
+            </button>
+        </div>
     </div>
 
     <div class="report-split-panes">
@@ -18,7 +23,12 @@
             <div id="reportHeaderDataDiv" class="report-split-table"></div>
         </section>
         <section class="report-split-pane">
-            <h6 class="report-pane-title mb-2">@Localizer["Report.DetailTitle"]</h6>
+            <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                <h6 class="report-pane-title mb-0">@Localizer["Report.DetailTitle"]</h6>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnReportDetailResetFilters">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>@Localizer["Common.ClearAllFilters"]
+                </button>
+            </div>
             <div id="reportDetailDataDiv" class="report-split-table"></div>
         </section>
     </div>

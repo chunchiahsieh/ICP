@@ -73,6 +73,21 @@
     var pendingBatchDelete = false;
     var selectedListIds = new Set();
     var listContainerSelector = config.listContainerSelector || '#DataDiv';
+    var resetFiltersBtnSelector = config.resetFiltersBtnSelector || '#btnResetFilters';
+    var $resetFiltersButton = $(resetFiltersBtnSelector);
+
+    if (!$resetFiltersButton.length) {
+      var $toolbar = $(config.createBtnSelector || '#btnCreate').closest('.d-flex');
+      if ($toolbar.length) {
+        $resetFiltersButton = $('<button type="button" class="btn btn-outline-secondary btn-sm" id="btnResetFilters"></button>')
+          .text((global.IcpI18n && global.IcpI18n.clearAllFilters) || 'Reset Filters');
+        $toolbar.prepend($resetFiltersButton);
+      }
+    }
+
+    $resetFiltersButton.off('click.proSystemConfigResetFilters').on('click.proSystemConfigResetFilters', function () {
+      $(listContainerSelector).find('.pro-clear-all-filters').trigger('click');
+    });
 
     function syncListCheckboxes() {
       $(listContainerSelector).find('tbody tr[data-id]').each(function () {

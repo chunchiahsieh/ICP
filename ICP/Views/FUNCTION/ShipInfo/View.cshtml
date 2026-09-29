@@ -28,7 +28,7 @@
 
 <div class="container-fluid shipinfo-page report-data-page pro-datatables-page report-split-page"
      data-permissions="Views.Function.ShipInfo.View"
-     data-i18n-key="Views.Function.ShipInfo.View">
+    data-i18n-key="Views.Function.ShipInfo.View">
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3 flex-wrap gap-2 report-split-toolbar">
         <h4 class="mb-0">@Localizer["Views.Function.ShipInfo.View"]</h4>
     </div>
@@ -38,6 +38,9 @@
             <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
                 <h6 class="report-pane-title mb-0">@Localizer["ShipInfo.HeaderTitle"]</h6>
                 <div class="d-flex flex-wrap gap-2 align-items-center shipinfo-header-toolbar">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btnShipInfoHeaderResetFilters">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>@Localizer["Common.ClearAllFilters"]
+                    </button>
                     <button type="button" class="btn btn-sm btn-success" id="btnShipInfoDeposit" data-permissions="Views.Function.ShipInfo.Deposit" disabled>
                         <i class="bi bi-box-arrow-up me-1"></i>@Localizer["ShipInfo.Deposit"]
                     </button>
@@ -49,7 +52,12 @@
             <div id="shipInfoHeaderDataDiv" class="report-split-table"></div>
         </section>
         <section class="report-split-pane">
-            <h6 class="report-pane-title mb-2">@Localizer["ShipInfo.DetailTitle"]</h6>
+            <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                <h6 class="report-pane-title mb-0">@Localizer["ShipInfo.DetailTitle"]</h6>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnShipInfoDetailResetFilters">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>@Localizer["Common.ClearAllFilters"]
+                </button>
+            </div>
             <div id="shipInfoDetailDataDiv" class="report-split-table"></div>
         </section>
     </div>

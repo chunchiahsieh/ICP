@@ -10,6 +10,7 @@ public class TariffTableMetadataProvider
     private static readonly IReadOnlyDictionary<string, string> DefaultHeaderLabelKeys =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
+            ["Actions"] = "Broker.TariffData.Column.Actions",
             ["RowNo"] = "Broker.TariffData.Column.RowNo",
             ["DeclarationPdf"] = "Broker.TariffData.Column.PDF",
             ["CostFile"] = "Broker.TariffData.Column.Cost",
@@ -28,7 +29,8 @@ public class TariffTableMetadataProvider
             ["Shipper"] = "Broker.TariffData.Column.Shipper",
             ["Broker"] = "Broker.TariffData.Column.Broker",
             ["AirSea"] = "Broker.TariffData.Column.AirSea",
-            ["CreateDate"] = "Broker.TariffData.Column.CreateDate"
+            ["CreateDate"] = "Broker.TariffData.Column.CreateDate",
+            ["Cost"] = "Broker.TariffData.Column.CostValue"
         };
 
     private readonly IOptionsMonitor<TariffTableFieldsOptions> _tableFieldsOptions;

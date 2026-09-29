@@ -442,7 +442,7 @@
     <value>フライト</value>
   </data>
   <data name="ShipInfo.Field.DeliveryTo" xml:space="preserve">
-    <value>納入先</value>
+    <value>配送先住所</value>
   </data>
   <data name="ShipInfo.Field.Warehouse" xml:space="preserve">
     <value>倉庫</value>
@@ -2455,4 +2455,69 @@
   <data name="Forwarder.ForwarderDataUpload.Column.Cb" xml:space="preserve"><value>C/B</value></data>
   <data name="Forwarder.ForwarderDataUpload.Column.Action" xml:space="preserve"><value>Action</value></data>
   <data name="Forwarder.ForwarderDataUpload.Column.Mdp" xml:space="preserve"><value>MDP</value></data>
+  <data name="Broker.TariffData.Column.Id" xml:space="preserve"><value>ID</value></data>
+  <data name="Broker.TariffData.Column.LineNo" xml:space="preserve"><value>行番号</value></data>
+  <data name="Broker.TariffData.Column.PartNumber" xml:space="preserve"><value>品番</value></data>
+  <data name="Broker.TariffData.Column.PONumber" xml:space="preserve"><value>PO 番号</value></data>
+  <data name="Broker.TariffData.Column.Quantity" xml:space="preserve"><value>数量</value></data>
+  <data name="Broker.TariffData.Column.UOM" xml:space="preserve"><value>単位</value></data>
+  <data name="Broker.TariffData.Column.NetWeightKg" xml:space="preserve"><value>正味重量 (kg)</value></data>
+  <data name="Broker.TariffData.Column.UnitValue" xml:space="preserve"><value>単価</value></data>
+  <data name="Broker.TariffData.Column.COO" xml:space="preserve"><value>原産国</value></data>
+  <data name="Broker.TariffData.Column.DutyRate" xml:space="preserve"><value>関税率</value></data>
+  <data name="Broker.TariffData.Column.DutyTreatment" xml:space="preserve"><value>関税区分</value></data>
+  <data name="Broker.TariffData.Column.PermitNo1" xml:space="preserve"><value>許可番号 1</value></data>
+  <data name="Broker.TariffData.Column.PermitItem1" xml:space="preserve"><value>許可項目 1</value></data>
+  <data name="Broker.TariffData.Column.PermitNo2" xml:space="preserve"><value>許可番号 2</value></data>
+  <data name="Broker.TariffData.Column.PermitItem2" xml:space="preserve"><value>許可項目 2</value></data>
+  <data name="Broker.TariffData.Column.PermitNo3" xml:space="preserve"><value>許可番号 3</value></data>
+  <data name="Broker.TariffData.Column.PermitItem3" xml:space="preserve"><value>許可項目 3</value></data>
+  <data name="Broker.TariffData.Column.Type" xml:space="preserve"><value>種類</value></data>
+  <data name="Broker.TariffData.Column.TermsOfTrade" xml:space="preserve"><value>貿易条件</value></data>
+  <data name="Broker.TariffData.Column.Currency" xml:space="preserve"><value>通貨</value></data>
+  <data name="Broker.TariffData.Column.ExchangeRate" xml:space="preserve"><value>為替レート</value></data>
+  <data name="Broker.TariffData.Column.CIFValue" xml:space="preserve"><value>CIF 価格</value></data>
+  <data name="Broker.TariffData.Column.FreightCharge" xml:space="preserve"><value>運賃</value></data>
+  <data name="Broker.TariffData.Column.TotalPieces" xml:space="preserve"><value>総個数</value></data>
+  <data name="Broker.TariffData.Column.GrossWeightKg" xml:space="preserve"><value>総重量 (kg)</value></data>
+  <data name="Broker.TariffData.Column.TotalAmountForeignCurrency" xml:space="preserve"><value>外貨建総額</value></data>
+  <data name="Broker.TariffData.Column.TotalAmountTWD" xml:space="preserve"><value>台湾ドル建総額</value></data>
+  <data name="Broker.TariffData.Column.DeclarationAmountTWD" xml:space="preserve"><value>申告金額 (TWD)</value></data>
+  <data name="Broker.TariffData.Column.DeclarationFile" xml:space="preserve"><value>申告書ファイル</value></data>
+  <data name="Broker.TariffData.Column.CostValue" xml:space="preserve"><value>Cost ファイル名</value></data>
+  <data name="Broker.TariffData.Column.ImportBatchId" xml:space="preserve"><value>取込バッチ ID</value></data>
+  <data name="Broker.TariffData.Column.ImportFileName" xml:space="preserve"><value>取込ファイル名</value></data>
+  <data name="Broker.TariffData.Column.CreateTime" xml:space="preserve"><value>作成日時</value></data>
+  <data name="Broker.TariffData.Column.CreateUser" xml:space="preserve"><value>作成者</value></data>
+  <data name="Broker.TariffData.Column.UpdateTime" xml:space="preserve"><value>更新日時</value></data>
+  <data name="Broker.TariffData.Column.UpdateUser" xml:space="preserve"><value>更新者</value></data>
+  <data name="Views.Broker.TariffData.Delete" xml:space="preserve"><value>関税データを削除</value></data>
+  <data name="Broker.TariffData.Column.Actions" xml:space="preserve"><value>操作</value></data>
+  <data name="Broker.TariffData.Delete.Record" xml:space="preserve"><value>データを削除</value></data>
+  <data name="Broker.TariffData.Delete.Pdf" xml:space="preserve"><value>PDF を削除</value></data>
+  <data name="Broker.TariffData.Delete.Excel" xml:space="preserve"><value>Excel を削除</value></data>
+  <data name="Broker.TariffData.Delete.RecordConfirm" xml:space="preserve"><value>このデータ（HAWB: {0}）を削除しますか？添付ファイルは残ります。</value></data>
+  <data name="Broker.TariffData.Delete.PdfConfirm" xml:space="preserve"><value>HAWB {0} で共有される PDF を削除しますか？</value></data>
+  <data name="Broker.TariffData.Delete.ExcelConfirm" xml:space="preserve"><value>HAWB {0} で共有される Excel を削除しますか？</value></data>
+  <data name="Broker.TariffData.Delete.RecordSuccess" xml:space="preserve"><value>データを削除しました。</value></data>
+  <data name="Broker.TariffData.Delete.AttachmentSuccess" xml:space="preserve"><value>添付ファイルを削除しました。</value></data>
+  <data name="Broker.TariffData.Delete.Failed" xml:space="preserve"><value>削除に失敗しました。再試行してください。</value></data>
+  <data name="Broker.TariffData.Delete.NotFound" xml:space="preserve"><value>データまたは添付ファイルが見つかりません。</value></data>
+  <data name="Broker.TariffData.Delete.InvalidKind" xml:space="preserve"><value>添付ファイルの種類が無効です。</value></data>
+  <data name="Broker.TariffData.Delete.ScopeConflict" xml:space="preserve"><value>同じ HAWB に権限範囲外のデータが含まれるため、共有添付ファイルを削除できません。</value></data>
+  <data name="Broker.TariffData.Delete.UnsafeFile" xml:space="preserve"><value>添付ファイルのパスが安全な削除条件を満たしていません。管理者に連絡してください。</value></data>
+  <data name="Broker.TariffData.BrokerRole" xml:space="preserve"><value>通関業者ロール</value></data>
+  <data name="Broker.TariffData.SelectBrokerRole" xml:space="preserve"><value>Broker ロールを選択</value></data>
+  <data name="Broker.TariffData.BrokerRoleInvalid" xml:space="preserve"><value>割り当てられている Broker ロールを選択してください。</value></data>
+  <data name="Views.Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>関税添付ファイルをアップロード</value></data>
+  <data name="Broker.TariffData.Attachment.OpenFolder" xml:space="preserve"><value>添付フォルダーを開く</value></data>
+  <data name="Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>添付ファイルをアップロード</value></data>
+  <data name="Broker.TariffData.Attachment.Empty" xml:space="preserve"><value>添付ファイルはありません</value></data>
+  <data name="Broker.TariffData.Attachment.FileName" xml:space="preserve"><value>ファイル名</value></data>
+  <data name="Broker.TariffData.Attachment.Size" xml:space="preserve"><value>サイズ</value></data>
+  <data name="Broker.TariffData.Attachment.UploadTime" xml:space="preserve"><value>アップロード日時</value></data>
+  <data name="Broker.TariffData.Attachment.UploadUser" xml:space="preserve"><value>アップロード者</value></data>
+  <data name="Broker.TariffData.Attachment.Download" xml:space="preserve"><value>ダウンロード</value></data>
+  <data name="Broker.TariffData.Attachment.DeleteConfirm" xml:space="preserve"><value>この添付ファイルを削除しますか？</value></data>
+  <data name="Broker.TariffData.Attachment.UploadSuccess" xml:space="preserve"><value>添付ファイルをアップロードしました。</value></data>
 </root>

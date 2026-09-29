@@ -271,6 +271,18 @@
         }
     };
 
+    app.resetHeaderFilters = function () {
+        if (headerTableInstance && headerTableInstance.clearFilters) {
+            headerTableInstance.clearFilters();
+        }
+    };
+
+    app.resetDetailFilters = function () {
+        if (app.state.selectedHeaderKey && detailTableInstance && detailTableInstance.clearFilters) {
+            detailTableInstance.clearFilters();
+        }
+    };
+
     function collectHeaderFilterPayload() {
         var filtersApi = getFiltersApi();
         if (!filtersApi || !filtersApi.getProTableFilterValues || !filtersApi.buildProTableQueryPayload) {
@@ -368,5 +380,13 @@
                 alert((app.messages && app.messages.downloadFailed) || 'Download failed');
             }
         });
+
+        $('#btnReportHeaderResetFilters')
+            .off('click.reportHeaderResetFilters')
+            .on('click.reportHeaderResetFilters', app.resetHeaderFilters);
+
+        $('#btnReportDetailResetFilters')
+            .off('click.reportDetailResetFilters')
+            .on('click.reportDetailResetFilters', app.resetDetailFilters);
     };
 })(window, window.jQuery);

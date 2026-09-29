@@ -4,6 +4,7 @@
     var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
     var maxSizeHint = string.Format(Localizer["Broker.TariffData.MaxSizeHint"].Value, maxSizeMb);
     var tariffTableConfigJson = ViewData["TariffTableConfigJson"] as string ?? "{}";
+    var brokerRoles = ViewData["BrokerRoles"] as IReadOnlyList<string> ?? [];
 }
 
 @section Styles {
@@ -39,8 +40,10 @@
                 data-i18n-key="Views.Broker.TariffData.Export">
             <i class="bi bi-file-earmark-excel me-1"></i>@Localizer["Report.DownloadExcel"]
         </button>
-        <div data-permissions="Views.Broker.TariffData.UploadCustomsData"
-             data-i18n-key="Views.Broker.TariffData.UploadCustomsData">
+        <button type="button" class="btn btn-outline-secondary align-self-center" id="btnTariffDataResetFilters">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>@Localizer["Common.ClearAllFilters"]
+        </button>
+        <div data-permissions="Views.Broker.TariffData.UploadCustomsData" data-i18n-key="Views.Broker.TariffData.UploadCustomsData">
             <div id="customsDataUploader"></div>
         </div>
         <a asp-action="DownloadTemplate"
@@ -61,6 +64,60 @@
     </div>
 
     <div id="DataDiv"></div>
+    <form id="tariffDeleteToken" class="d-none">@Html.AntiForgeryToken()</form>
+</div>
+
+<div class="modal fade" id="tariffBrokerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Localizer["Broker.TariffData.BrokerRole"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label for="tariffBrokerRole" class="form-label">@Localizer["Broker.TariffData.SelectBrokerRole"]</label>
+                <select id="tariffBrokerRole" class="form-select">
+                    <option value="">@Localizer["Broker.TariffData.SelectBrokerRole"]</option>
+                    @foreach (var role in brokerRoles)
+                    {
+                        <option value="@role" selected="@(brokerRoles.Count == 1 ? "selected" : null)">@role</option>
+                    }
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Common.Cancel"]</button>
+                <button type="button" class="btn btn-primary" id="btnTariffBrokerConfirm">@Localizer["Common.Confirm"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tariffAttachmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><span id="tariffAttachmentTitle"></span> — <span id="tariffAttachmentHawb"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="tariffAttachmentEmpty" class="text-muted text-center py-4 d-none">
+                    @Localizer["Broker.TariffData.Attachment.Empty"]
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered align-middle" id="tariffAttachmentTable">
+                        <thead><tr>
+                            <th>@Localizer["Broker.TariffData.Attachment.FileName"]</th>
+                            <th>@Localizer["Broker.TariffData.Attachment.Size"]</th>
+                            <th>@Localizer["Broker.TariffData.Attachment.UploadTime"]</th>
+                            <th>@Localizer["Broker.TariffData.Attachment.UploadUser"]</th>
+                            <th>@Localizer["Broker.TariffData.Column.Actions"]</th>
+                        </tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="d-none" aria-hidden="true">
@@ -86,6 +143,7 @@
         $(function () {
             var maxSizeMb = @maxSizeMb;
             var maxSizeHint = @Html.Raw(JsonSerializer.Serialize(maxSizeHint));
+            var selectedBrokerRole = '';
             var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
             var tariffTableConfig = @Html.Raw(tariffTableConfigJson);
             var tariffFilterFieldMap = window.TariffProTable
@@ -136,6 +194,13 @@
                 });
             }
 
+            function applyTariffActionPermissions($container) {
+                ($container || $('#DataDiv')).find('[data-permissions]').each(function () {
+                    var $element = $(this);
+                    $element.prop('hidden', !hasPermission($element.attr('data-permissions')));
+                });
+            }
+
             var tableInstance = null;
 
             if (window.ProDataTables && ProDataTables.initUsers && hasPermission('Views.Broker.TariffData.View')) {
@@ -149,8 +214,10 @@
                     onDraw: function () {
                         syncTariffStickyHeaderOffset();
                         renumberTariffRowNo();
+                        applyTariffActionPermissions($('#DataDiv'));
                     },
                     onAfterRender: function ($div) {
+                        applyTariffActionPermissions($div);
                         if (window.ProTableFilters && ProTableFilters.updateAllProTableFilterCounts) {
                             ProTableFilters.updateAllProTableFilterCounts($div, tariffFilterFieldMap);
                         }
@@ -168,6 +235,45 @@
                 }
             }
 
+            $('#btnTariffDataResetFilters').on('click', function () {
+                if (tableInstance && tableInstance.clearFilters) {
+                    tableInstance.clearFilters();
+                }
+            });
+
+            function deleteTariff(url, id, kind, confirmMessage) {
+                if (!hasPermission('Views.Broker.TariffData.Delete') || !window.confirm(confirmMessage)) {
+                    return;
+                }
+
+                var payload = {
+                    id: id,
+                    __RequestVerificationToken: $('#tariffDeleteToken input[name="__RequestVerificationToken"]').val()
+                };
+                if (kind) {
+                    payload.kind = kind;
+                }
+
+                $.ajax({ url: url, type: 'POST', data: payload, dataType: 'json' })
+                    .done(function (result) {
+                        if (result && result.success) {
+                            reloadTable();
+                        }
+                        window.alert((result && result.message) || @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Delete.Failed"].Value)));
+                    })
+                    .fail(function (xhr) {
+                        window.alert((xhr.responseJSON && xhr.responseJSON.message)
+                            || @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Delete.Failed"].Value)));
+                    });
+            }
+
+            $('#DataDiv').on('click', '.tariff-delete-record', function () {
+                var $button = $(this);
+                var message = @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Delete.RecordConfirm"].Value));
+                deleteTariff('@Url.Action("DeleteRecord", "TariffData")', $button.data('record-id'), null,
+                    message.replace('{0}', $button.data('hawb')));
+            });
+
             function createTariffUploader(selector, config) {
                 if (typeof window.createUploader !== 'function') {
                     return;
@@ -184,12 +290,45 @@
             }
 
             if (hasPermission('Views.Broker.TariffData.UploadCustomsData')) {
+                var brokerModalElement = document.getElementById('tariffBrokerModal');
+                var brokerModal = bootstrap.Modal.getOrCreateInstance(brokerModalElement);
+
+                function selectBrokerBeforeUpload() {
+                    return new Promise(function (resolve) {
+                        var settled = false;
+                        function finish(result) {
+                            if (settled) return;
+                            settled = true;
+                            $('#btnTariffBrokerConfirm').off('click.tariffBroker');
+                            $(brokerModalElement).off('hidden.bs.modal.tariffBroker');
+                            resolve(result);
+                        }
+
+                        $('#btnTariffBrokerConfirm').off('click.tariffBroker').on('click.tariffBroker', function () {
+                            var broker = String($('#tariffBrokerRole').val() || '').trim();
+                            if (!broker) {
+                                window.alert(@Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.SelectBrokerRole"].Value)));
+                                return;
+                            }
+                            selectedBrokerRole = broker;
+                            finish(true);
+                            brokerModal.hide();
+                        });
+                        $(brokerModalElement).off('hidden.bs.modal.tariffBroker').on('hidden.bs.modal.tariffBroker', function () {
+                            finish(false);
+                        });
+                        brokerModal.show();
+                    });
+                }
+
                 createTariffUploader('#customsDataUploader', {
                     multiple: false,
                     title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataTitle"].Value)),
                     buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataButton"].Value)),
                     uploadUrl: '@Url.Action("UploadCustomsData", "TariffData")',
-                    fileTypes: '.xlsx,.xls'
+                    fileTypes: '.xlsx,.xls',
+                    beforeOpen: selectBrokerBeforeUpload,
+                    extraFormData: function () { return { broker: selectedBrokerRole }; }
                 });
             }
 
@@ -210,6 +349,68 @@
                     fileTypes: '.xlsx,.xls'
                 });
             }
+
+            var attachmentState = { hawb: '', kind: '' };
+            var attachmentModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('tariffAttachmentModal'));
+
+            function formatFileSize(bytes) {
+                if (!bytes) return '0 B';
+                var units = ['B', 'KB', 'MB', 'GB'];
+                var index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+                return (bytes / Math.pow(1024, index)).toFixed(index ? 1 : 0) + ' ' + units[index];
+            }
+
+            function loadAttachments() {
+                $.getJSON('@Url.Action("ListAttachments", "TariffData")', attachmentState)
+                    .done(function (result) {
+                        var files = result.files || [];
+                        var $body = $('#tariffAttachmentTable tbody').empty();
+                        files.forEach(function (file) {
+                            var $row = $('<tr>');
+                            var displayName = file.isCurrent ? file.originalFileName + ' (Current)' : file.originalFileName;
+                            $('<td>').text(displayName).appendTo($row);
+                            $('<td>').text(formatFileSize(file.fileSize)).appendTo($row);
+                            $('<td>').text(new Date(file.createTime).toLocaleString()).appendTo($row);
+                            $('<td>').text(file.createUser || '').appendTo($row);
+                            var $actions = $('<td class="text-nowrap">');
+                            $('<a class="btn btn-sm btn-outline-primary me-1">')
+                                .attr('href', '@Url.Action("DownloadAttachment", "TariffData")?hawb=' + encodeURIComponent(attachmentState.hawb) + '&kind=' + encodeURIComponent(attachmentState.kind) + '&fileName=' + encodeURIComponent(file.originalFileName))
+                                .text(@Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Attachment.Download"].Value)))
+                                .appendTo($actions);
+                            if (hasPermission('Views.Broker.TariffData.Delete')) {
+                                $('<button type="button" class="btn btn-sm btn-outline-danger tariff-modal-delete">')
+                                    .attr('data-file-name', file.originalFileName)
+                                    .text(@Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Delete.Record"].Value)))
+                                    .appendTo($actions);
+                            }
+                            $actions.appendTo($row);
+                            $body.append($row);
+                        });
+                        $('#tariffAttachmentEmpty').toggleClass('d-none', files.length !== 0);
+                        $('#tariffAttachmentTable').toggleClass('d-none', files.length === 0);
+                    })
+                    .fail(function (xhr) { window.alert(xhr.responseJSON?.message || @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Delete.Failed"].Value))); });
+            }
+
+            $('#DataDiv').on('click', '.tariff-open-folder', function () {
+                attachmentState.hawb = String($(this).data('hawb') || '');
+                attachmentState.kind = String($(this).data('kind') || '');
+                $('#tariffAttachmentHawb').text(attachmentState.hawb);
+                $('#tariffAttachmentTitle').text(attachmentState.kind === 'pdf' ? 'PDF' : 'Cost');
+                loadAttachments();
+                attachmentModal.show();
+            });
+
+            $('#tariffAttachmentTable').on('click', '.tariff-modal-delete', function () {
+                if (!window.confirm(@Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Attachment.DeleteConfirm"].Value)))) return;
+                $.post('@Url.Action("DeleteAttachment", "TariffData")', {
+                    hawb: attachmentState.hawb,
+                    kind: attachmentState.kind,
+                    fileName: $(this).data('file-name'),
+                    __RequestVerificationToken: $('#tariffDeleteToken input[name="__RequestVerificationToken"]').val()
+                }).done(function (result) { window.alert(result.message); loadAttachments(); reloadTable(); })
+                  .fail(function (xhr) { window.alert(xhr.responseJSON?.message || @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Delete.Failed"].Value))); });
+            });
 
             $('#btnTariffDataDownloadExcel').on('click', function () {
                 if (!window.TariffProTable || !TariffProTable.downloadExcel) {

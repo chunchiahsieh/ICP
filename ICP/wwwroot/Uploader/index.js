@@ -34,6 +34,8 @@ window.createUploader = function (selector, options) {
         maxSize: 10,
         maxSizeHint: '',
         fieldName: 'file',
+        extraFormData: null,
+        beforeOpen: null,
         sequentialUpload: false,
         onSuccess: null,
         onError: null,
@@ -155,7 +157,13 @@ window.createUploader = function (selector, options) {
         }, 300);
     }
 
-    $(`#${buttonId}`).on('click', openModal);
+    $(`#${buttonId}`).on('click', async function () {
+        if (typeof config.beforeOpen === 'function') {
+            const canOpen = await config.beforeOpen();
+            if (canOpen === false) return;
+        }
+        openModal();
+    });
     $modal.find('.close-modal').on('click', closeModal);
     $backdrop.on('click', closeModal);
 
@@ -374,6 +382,13 @@ window.createUploader = function (selector, options) {
 
         const formData = new FormData();
         formData.append(config.fieldName, file);
+        const extraFormData = typeof config.extraFormData === 'function'
+            ? config.extraFormData(file)
+            : config.extraFormData;
+        Object.keys(extraFormData || {}).forEach(function (key) {
+            const value = extraFormData[key];
+            if (value !== undefined && value !== null) formData.append(key, value);
+        });
 
         return new Promise(function (resolve) {
         jqXHR = $.ajax({

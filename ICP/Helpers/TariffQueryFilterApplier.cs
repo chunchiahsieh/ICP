@@ -169,6 +169,29 @@ public static class TariffQueryFilterApplier
             return query.Where(BuildStringLikeExpression(fieldName, term));
         }
 
+        object? parsed = null;
+        if (propertyType == typeof(long) && long.TryParse(term, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id))
+        {
+            parsed = id;
+        }
+        else if (propertyType == typeof(decimal) && decimal.TryParse(term, NumberStyles.Number, CultureInfo.InvariantCulture, out var amount))
+        {
+            parsed = amount;
+        }
+        else if (propertyType == typeof(Guid) && Guid.TryParse(term, out var guid))
+        {
+            parsed = guid;
+        }
+
+        if (parsed is not null)
+        {
+            var parameter = Expression.Parameter(typeof(TariffData), "entity");
+            var member = Expression.Property(parameter, property);
+            var constant = Expression.Convert(Expression.Constant(parsed), member.Type);
+            var equals = Expression.Equal(member, constant);
+            return query.Where(Expression.Lambda<Func<TariffData, bool>>(equals, parameter));
+        }
+
         return query;
     }
 
@@ -182,7 +205,7 @@ public static class TariffQueryFilterApplier
             return query;
         }
 
-        return query.Where(BuildDateOnlyCompareExpression(fieldName, fromDate, greaterOrEqual: true));
+        return ApplyDateRangeFilter(query, fieldName, fromDate, isFrom: true);
     }
 
     private static IQueryable<TariffData> ApplyDateToFilter(
@@ -195,7 +218,7 @@ public static class TariffQueryFilterApplier
             return query;
         }
 
-        return query.Where(BuildDateOnlyCompareExpression(fieldName, toDate, greaterOrEqual: false));
+        return ApplyDateRangeFilter(query, fieldName, toDate, isFrom: false);
     }
 
     private static IQueryable<TariffData> ApplyExactDateFilter(
@@ -266,6 +289,41 @@ public static class TariffQueryFilterApplier
             ? Expression.GreaterThanOrEqual(property, constant)
             : Expression.LessThanOrEqual(property, constant);
         return Expression.Lambda<Func<TariffData, bool>>(compare, parameter);
+    }
+
+    private static IQueryable<TariffData> ApplyDateRangeFilter(
+        IQueryable<TariffData> query,
+        string fieldName,
+        DateOnly date,
+        bool isFrom)
+    {
+        if (!Properties.TryGetValue(fieldName, out var property))
+        {
+            return query;
+        }
+
+        var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+        if (propertyType == typeof(DateOnly))
+        {
+            return query.Where(BuildDateOnlyCompareExpression(fieldName, date, greaterOrEqual: isFrom));
+        }
+
+        if (propertyType != typeof(DateTime))
+        {
+            return query;
+        }
+
+        var parameter = Expression.Parameter(typeof(TariffData), "entity");
+        var member = Expression.Property(parameter, property);
+        var midnight = date.ToDateTime(TimeOnly.MinValue);
+        var value = isFrom ? midnight : date == DateOnly.MaxValue ? DateTime.MaxValue : midnight.AddDays(1);
+        var constant = Expression.Convert(Expression.Constant(value), member.Type);
+        var comparison = isFrom
+            ? Expression.GreaterThanOrEqual(member, constant)
+            : date == DateOnly.MaxValue
+                ? Expression.LessThanOrEqual(member, constant)
+                : Expression.LessThan(member, constant);
+        return query.Where(Expression.Lambda<Func<TariffData, bool>>(comparison, parameter));
     }
 
     private static bool TryParseDateOnly(string value, out DateOnly date) =>

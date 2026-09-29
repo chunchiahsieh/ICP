@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using ICP.Models.Icp;
 using ICP.Models.Tariff;
 
@@ -6,6 +7,10 @@ namespace ICP.Helpers;
 
 public static class TariffTableViewHelper
 {
+    private static readonly IReadOnlyDictionary<string, PropertyInfo> Properties =
+        typeof(TariffData).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .ToDictionary(property => property.Name, StringComparer.OrdinalIgnoreCase);
+
     public static string ResolveHeaderLabel(TariffTableFieldMetadata field, Func<string, string> localize) =>
         localize(field.HeaderLabelKey);
 
@@ -17,25 +22,18 @@ public static class TariffTableViewHelper
             return string.Empty;
         }
 
-        return fieldName switch
+        if (!Properties.TryGetValue(fieldName, out var property))
         {
-            nameof(TariffData.MAWB) => item.MAWB,
-            nameof(TariffData.HAWB) => item.HAWB,
-            nameof(TariffData.ImportDate) => item.ImportDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-            nameof(TariffData.DeclarationDate) => item.DeclarationDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-            nameof(TariffData.ReleaseDate) => item.ReleaseDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-            nameof(TariffData.InvoiceNumber) => item.InvoiceNumber,
-            nameof(TariffData.DescriptionOfGoods) => item.DescriptionOfGoods,
-            nameof(TariffData.HTSNumber) => item.HTSNumber,
-            nameof(TariffData.EntryNumber) => item.EntryNumber,
-            nameof(TariffData.Mode) => item.Mode,
-            nameof(TariffData.PortOfDeparture) => item.PortOfDeparture,
-            nameof(TariffData.FlightNo) => item.FlightNo,
-            nameof(TariffData.Shipper) => item.Shipper ?? string.Empty,
-            nameof(TariffData.Broker) => item.Broker ?? string.Empty,
-            nameof(TariffData.AirSea) => item.AirSea,
-            nameof(TariffData.CreateDate) => item.CreateDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-            _ => string.Empty
+            return string.Empty;
+        }
+
+        return property.GetValue(item) switch
+        {
+            null => string.Empty,
+            DateOnly date => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            DateTime dateTime => dateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+            IFormattable value => value.ToString(null, CultureInfo.InvariantCulture) ?? string.Empty,
+            var value => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty
         };
     }
 }

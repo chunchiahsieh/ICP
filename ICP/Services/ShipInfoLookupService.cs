@@ -40,14 +40,24 @@ public class ShipInfoLookupService
             .AsNoTracking()
             .Where(x => !x.IsDeleted && x.Category == normalizedCategory)
             .OrderBy(x => x.Key1)
-            .Select(x => new ShipInfoLookupOption
+            .Select(x => new
             {
-                Value = x.Key1,
-                Text = string.IsNullOrWhiteSpace(x.Value1) ? x.Key1 : x.Value1!
+                x.Key1,
+                x.Value1,
+                x.Value4
             })
             .ToListAsync(cancellationToken);
 
-        return rows;
+        var isDeliveryTo = normalizedCategory.Equals("DeliveryToList", StringComparison.OrdinalIgnoreCase);
+        return rows.Select(x => new ShipInfoLookupOption
+        {
+            Value = x.Key1,
+            // DeliveryTo stores the setting key for ARUR ShipToCode, while users need
+            // to see the actual delivery address maintained in DeliveryToList.Value4.
+            Text = isDeliveryTo && !string.IsNullOrWhiteSpace(x.Value4)
+                ? x.Value4!
+                : string.IsNullOrWhiteSpace(x.Value1) ? x.Key1 : x.Value1!
+        }).ToList();
     }
 
     private IReadOnlyList<ShipInfoLookupOption> BuildCaseStatusOptions()

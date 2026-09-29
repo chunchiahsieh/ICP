@@ -7,6 +7,8 @@
     }
 
     function bindEvents() {
+        $('#btnShipInfoHeaderResetFilters').on('click', app.resetHeaderFilters);
+        $('#btnShipInfoDetailResetFilters').on('click', app.resetDetailFilters);
         $('#btnShipInfoViewEdit').on('click', app.enterEditMode);
         $('#btnShipInfoViewSave').on('click', app.saveViewModal);
         $('#btnShipInfoViewCancelEdit').on('click', app.cancelViewEdit);

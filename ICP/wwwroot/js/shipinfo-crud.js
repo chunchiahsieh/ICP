@@ -45,23 +45,32 @@
     }
 
     function validateDetailNumericRules(values) {
-        var decimalFields = ['Price', 'Amount'];
-        var integerFields = ['Qty', 'CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight'];
+        var decimalFields = [
+            { name: 'Qty', places: 3, required: true },
+            { name: 'Price', places: 2, required: true },
+            { name: 'Amount', places: 2, required: true },
+            { name: 'Rate', places: 4, required: false }
+        ];
+        var integerFields = ['CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight'];
 
         if (Object.prototype.hasOwnProperty.call(values, 'InvoiceSeq')
             && String(values.InvoiceSeq || '').trim() !== ''
-            && !/^\d+(?:\.\d+)?$/.test(String(values.InvoiceSeq).trim())) {
-            return 'Invoice Seq must be a non-negative number.';
+            && !/^[1-9]\d*$/.test(String(values.InvoiceSeq).trim())) {
+            return 'Invoice Seq must be an integer greater than 0.';
         }
 
         for (var i = 0; i < decimalFields.length; i++) {
-            var decimalField = decimalFields[i];
-            if (!Object.prototype.hasOwnProperty.call(values, decimalField)) {
+            var rule = decimalFields[i];
+            if (!Object.prototype.hasOwnProperty.call(values, rule.name)) {
                 continue;
             }
-
-            if (!/^\d+(?:\.\d{1,2})?$/.test(String(values[decimalField] || '').trim())) {
-                return decimalField + ' must be a non-negative number with up to 2 decimal places.';
+            var decimalValue = String(values[rule.name] || '').trim();
+            if (!decimalValue && !rule.required) {
+                continue;
+            }
+            var pattern = new RegExp('^\\d+(?:\\.\\d{1,' + rule.places + '})?$');
+            if (!pattern.test(decimalValue)) {
+                return rule.name + ' must be a non-negative number with up to ' + rule.places + ' decimal places.';
             }
         }
 
@@ -77,6 +86,44 @@
         }
 
         return null;
+    }
+
+    function initializeDetailNumericControls($form) {
+        function getControl(name) {
+            return $form.find('.shipinfo-control[data-field="' + name + '"]');
+        }
+
+        function formatControl(name, places) {
+            var $control = getControl(name);
+            var value = String($control.val() || '').trim();
+            if (value !== '' && Number.isFinite(Number(value))) {
+                $control.val(Number(value).toFixed(places));
+            }
+        }
+
+        function calculateAmount() {
+            var qty = Number(getControl('Qty').val());
+            var price = Number(getControl('Price').val());
+            if (Number.isFinite(qty) && Number.isFinite(price)) {
+                getControl('Amount').val((qty * price).toFixed(2));
+            }
+        }
+
+        getControl('InvoiceSeq').attr({ step: '1', min: '1' });
+        getControl('Qty').attr({ step: '0.001', min: '0' });
+        getControl('Price').attr({ step: '0.01', min: '0' });
+        getControl('Amount').attr({ step: '0.01', min: '0' });
+        getControl('Rate').attr({ step: '0.0001', min: '0' });
+
+        getControl('Qty').add(getControl('Price')).add(getControl('Amount'))
+            .off('.shipinfoDetailCalculation')
+            .on('input.shipinfoDetailCalculation change.shipinfoDetailCalculation', calculateAmount);
+
+        [['Qty', 3], ['Price', 2], ['Amount', 2], ['Rate', 4]].forEach(function (setting) {
+            getControl(setting[0]).off('blur.shipinfoDetailFormat').on('blur.shipinfoDetailFormat', function () {
+                formatControl(setting[0], setting[1]);
+            });
+        });
     }
 
     function getStatusSource() {
@@ -132,6 +179,9 @@
                 mode: state.viewModalEditing ? 'edit' : 'view'
             }));
             state.detailFormEffectiveFields = rendered.fields;
+            if (state.viewModalEditing) {
+                initializeDetailNumericControls($('#shipInfoViewForm'));
+            }
         } catch (error) {
             state.detailFormEffectiveFields = [];
             $('#shipInfoViewForm').empty().append('<div class="alert alert-danger mb-0">明細表單設定載入失敗，請聯絡系統管理員。</div>');

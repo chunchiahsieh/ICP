@@ -22,8 +22,7 @@
   "detail": {
     "tableUi": {
       "stickyHeader": true,
-      "stickyLeftColumns": true,
-      "frozenFields": ["DepositCaseStatus", "ArurCaseStatus"]
+      "stickyLeftColumns": true
     },
     "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
     "list": {

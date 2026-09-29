@@ -16,10 +16,15 @@ public class IntegrationOptions
 public class ExportClientOptions
 {
     /// <summary>
-    /// Shared output root with FileGenerator (same host).
-    /// Default: folder <c>ICPFileGenerator</c> under the ICP project ContentRoot.
+    /// Shared input root with FileGenerator (same host).
+    /// Default: folder <c>ICPFileGenerator/Input</c> under the ICP project ContentRoot.
     /// </summary>
-    public string OutputDirectory { get; set; } = "ICPFileGenerator";
+    public string InputDirectory { get; set; } = @"ICPFileGenerator\Input";
+    /// <summary>
+    /// Shared output root with FileGenerator (same host).
+    /// Default: folder <c>ICPFileGenerator/Output</c> under the ICP project ContentRoot.
+    /// </summary>
+    public string OutputDirectory { get; set; } = @"ICPFileGenerator\Output";
 }
 
 public class HubClientOptions

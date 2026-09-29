@@ -77,35 +77,47 @@
                                 : "text-center";
                             <td class="@rowNoClass">@rowIndex</td>
                         }
+                        else if (string.Equals(field.FieldName, "Actions", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <td class="text-center">
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger tariff-delete-record"
+                                        data-record-id="@item.Id"
+                                        data-hawb="@item.HAWB"
+                                        data-permissions="Views.Broker.TariffData.Delete"
+                                        title="@Localizer["Broker.TariffData.Delete.Record"]"
+                                        aria-label="@Localizer["Broker.TariffData.Delete.Record"]">
+                                    <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        }
                         else if (string.Equals(field.FieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase))
                         {
-                            var pdfPath = TariffAttachmentHelper.FindDeclarationPdfPath(Model.StorageRoot, item);
+                            var hasPdf = !string.IsNullOrWhiteSpace(item.HAWB)
+                                && TariffAttachmentHelper.FindDeclarationPdfPath(Model.StorageRoot, item) is not null;
                             <td class="text-center">
-                                @if (pdfPath is not null && !string.IsNullOrWhiteSpace(item.HAWB))
+                                @if (hasPdf)
                                 {
-                                    <a href="@Url.Action("DownloadAttachment", "TariffData", new { kind = "pdf", hawb = item.HAWB })"
-                                       target="_blank"
-                                       rel="noopener"
-                                       title="PDF"
-                                       aria-label="PDF">
-                                        <i class="fas fa-file-pdf text-danger"></i>
-                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary tariff-open-folder"
+                                            data-hawb="@item.HAWB" data-kind="pdf"
+                                            title="@Localizer["Broker.TariffData.Attachment.OpenFolder"]">
+                                        <i class="fas fa-folder-open text-warning" aria-hidden="true"></i> PDF
+                                    </button>
                                 }
                             </td>
                         }
                         else if (string.Equals(field.FieldName, "CostFile", StringComparison.OrdinalIgnoreCase))
                         {
-                            var costPath = TariffAttachmentHelper.FindCostFilePath(Model.StorageRoot, item);
+                            var hasCost = !string.IsNullOrWhiteSpace(item.HAWB)
+                                && TariffAttachmentHelper.FindCostFilePath(Model.StorageRoot, item) is not null;
                             <td class="text-center">
-                                @if (costPath is not null && !string.IsNullOrWhiteSpace(item.HAWB))
+                                @if (hasCost)
                                 {
-                                    <a href="@Url.Action("DownloadAttachment", "TariffData", new { kind = "cost", hawb = item.HAWB })"
-                                       target="_blank"
-                                       rel="noopener"
-                                       title="Cost"
-                                       aria-label="Cost">
-                                        <i class="fas fa-file-excel text-success"></i>
-                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary tariff-open-folder"
+                                            data-hawb="@item.HAWB" data-kind="cost"
+                                            title="@Localizer["Broker.TariffData.Attachment.OpenFolder"]">
+                                        <i class="fas fa-folder-open text-warning" aria-hidden="true"></i> Cost
+                                    </button>
                                 }
                             </td>
                         }

@@ -309,6 +309,7 @@ public class ShipInfoService : IShipInfoService
             throw new ShipInfoBusinessException(string.Join(' ', validationErrors));
         }
 
+        NormalizeDetailCalculatedValues(values);
         var changes = ShipInfoEntityMapper.DetectChanges(detail, values, fields);
         ShipInfoEntityMapper.ApplyEditableValues(detail, values, fields);
         CrudAuditHelper.ApplyUpdateAudit(detail, userName);
@@ -411,6 +412,20 @@ public class ShipInfoService : IShipInfoService
             validationMessages.AddRange(await _attachmentService.ValidateArurAsync(header.Id, cancellationToken));
         }
 
+        var mappedHeader = ShipInfoEntityMapper.MapEntity(header);
+        if (normalizedCaseType == ShipInfoCaseTypes.Arur && !string.IsNullOrWhiteSpace(header.DeliveryTo))
+        {
+            var deliveryOptions = await _lookupService.GetOptionsAsync("DeliveryToList", cancellationToken);
+            var deliveryLocation = deliveryOptions.FirstOrDefault(option =>
+                string.Equals(option.Value, header.DeliveryTo, StringComparison.OrdinalIgnoreCase))?.Text;
+            if (!string.IsNullOrWhiteSpace(deliveryLocation))
+            {
+                // Keep ICP_HEADER.DELIVERY_TO as the ARUR ShipToCode. The drawer is a
+                // verification view, so display its configured delivery address instead.
+                mappedHeader[nameof(header.DeliveryTo)] = deliveryLocation;
+            }
+        }
+
         LogOperation("QueryCaseDrawer", headerKey: invoiceKey, extra: normalizedCaseType);
 
         return new ShipInfoCaseDrawerData
@@ -418,7 +433,7 @@ public class ShipInfoService : IShipInfoService
             HeaderKey = header.Id.ToString("D"),
             CaseType = normalizedCaseType,
             HeaderSummary = ShipInfoDetailSummaryCalculator.BuildHeaderSummary(header),
-            Header = ShipInfoEntityMapper.MapEntity(header),
+            Header = mappedHeader,
             DetailSummary = ShipInfoDetailSummaryCalculator.Calculate(details),
             Details = details.Select(ShipInfoEntityMapper.MapEntity).ToList(),
             CanSubmit = validationMessages.Count == 0,
@@ -800,16 +815,47 @@ public class ShipInfoService : IShipInfoService
     private static IReadOnlyList<string> ValidateDetailBusinessRules(IReadOnlyDictionary<string, string?> values)
     {
         var errors = new List<string>();
-        AddOptionalNonNegativeNumberError(values, "InvoiceSeq", errors);
+        AddOptionalPositiveIntegerError(values, "InvoiceSeq", errors);
+        AddNonNegativeDecimalError(values, "Qty", 3, errors);
         AddNonNegativeDecimalError(values, "Price", 2, errors);
         AddNonNegativeDecimalError(values, "Amount", 2, errors);
+        AddOptionalNonNegativeDecimalError(values, "Rate", 4, errors);
 
-        foreach (var fieldName in new[] { "Qty", "CartonNo", "Length", "Width", "Hight", "GrossWeight" })
+        foreach (var fieldName in new[] { "CartonNo", "Length", "Width", "Hight", "GrossWeight" })
         {
             AddNonNegativeIntegerError(values, fieldName, errors);
         }
 
         return errors;
+    }
+
+    private static void AddOptionalPositiveIntegerError(
+        IReadOnlyDictionary<string, string?> values,
+        string fieldName,
+        ICollection<string> errors)
+    {
+        if (!values.TryGetValue(fieldName, out var value) || string.IsNullOrWhiteSpace(value)) return;
+        if (!decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var number)
+            || number <= 0
+            || number != decimal.Truncate(number))
+        {
+            errors.Add($"{fieldName} must be an integer greater than 0.");
+        }
+    }
+
+    private static void AddOptionalNonNegativeDecimalError(
+        IReadOnlyDictionary<string, string?> values,
+        string fieldName,
+        int decimalPlaces,
+        ICollection<string> errors)
+    {
+        if (!values.TryGetValue(fieldName, out var value) || string.IsNullOrWhiteSpace(value)) return;
+        if (!decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var number)
+            || number < 0
+            || decimal.Round(number, decimalPlaces) != number)
+        {
+            errors.Add($"{fieldName} must be a non-negative number with up to {decimalPlaces} decimal places.");
+        }
     }
 
     private static void AddOptionalNonNegativeNumberError(
@@ -874,6 +920,26 @@ public class ShipInfoService : IShipInfoService
 
     private static Dictionary<string, string?> NormalizeValues(IReadOnlyDictionary<string, string?> values) =>
         values.ToDictionary(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
+
+    private static void NormalizeDetailCalculatedValues(IDictionary<string, string?> values)
+    {
+        if (values.TryGetValue("Qty", out var qtyValue)
+            && values.TryGetValue("Price", out var priceValue)
+            && decimal.TryParse(qtyValue, NumberStyles.Number, CultureInfo.InvariantCulture, out var qty)
+            && decimal.TryParse(priceValue, NumberStyles.Number, CultureInfo.InvariantCulture, out var price))
+        {
+            values["Qty"] = qty.ToString("0.000", CultureInfo.InvariantCulture);
+            values["Price"] = price.ToString("0.00", CultureInfo.InvariantCulture);
+            values["Amount"] = decimal.Round(qty * price, 2, MidpointRounding.AwayFromZero)
+                .ToString("0.00", CultureInfo.InvariantCulture);
+        }
+
+        if (values.TryGetValue("Rate", out var rateValue)
+            && decimal.TryParse(rateValue, NumberStyles.Number, CultureInfo.InvariantCulture, out var rate))
+        {
+            values["Rate"] = rate.ToString("0.0000", CultureInfo.InvariantCulture);
+        }
+    }
 
     private static Dictionary<string, string?> NormalizeHeaderSaveValues(IReadOnlyDictionary<string, string?> values)
     {

@@ -1,10 +1,11 @@
-using System.IO.Compression;
-using System.Net.Http.Json;
+using Azure.Core;
 using ICP.Data;
 using ICP.Models.Icp;
 using ICP.Models.Integration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.IO.Compression;
+using System.Net.Http.Json;
 
 namespace ICP.Services;
 
@@ -86,7 +87,7 @@ public sealed class ExportService : IExportService
         }
 
         var requestId = Guid.NewGuid();
-        var uploadRoot = Path.Combine(_env.ContentRootPath, "uploads", "export");
+        var uploadRoot = ResolveInputRoot();
         Directory.CreateDirectory(uploadRoot);
         var safeName = Path.GetFileName(file.FileName);
         var storedName = $"{requestId:N}_{safeName}";
@@ -135,6 +136,20 @@ public sealed class ExportService : IExportService
         }
 
         return entity;
+    }
+
+    private string ResolveInputRoot()
+    {
+        var configured = _export.InputDirectory?.Trim();
+        if (string.IsNullOrWhiteSpace(configured))
+        {
+            configured = @"ICPFileGenerator\Input";
+        }
+
+        return Path.IsPathRooted(configured)
+            ? configured
+            : Path.GetFullPath(Path.Combine(_env.ContentRootPath, configured));
+
     }
 
     public async Task<IReadOnlyList<ExportOutputFileInfo>> ListOutputFilesAsync(

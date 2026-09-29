@@ -18,11 +18,16 @@ public class TariffDataImportService
     }
 
     private readonly ApplicationDbContext _db;
+    private readonly IWebHostEnvironment _environment;
     private readonly TariffDataOptions _options;
 
-    public TariffDataImportService(ApplicationDbContext db, IOptions<TariffDataOptions> options)
+    public TariffDataImportService(
+        ApplicationDbContext db,
+        IWebHostEnvironment environment,
+        IOptions<TariffDataOptions> options)
     {
         _db = db;
+        _environment = environment;
         _options = options.Value;
     }
 
@@ -60,15 +65,17 @@ public class TariffDataImportService
     public async Task<TariffDataImportResult> ImportCustomsDataAsync(
         string storedFilePath,
         string importFileName,
+        string broker,
         string createUser,
         CancellationToken cancellationToken = default)
     {
-        var broker = TariffCustomsImportRules.ResolveBroker(importFileName, _options);
         var rows = ParseCustomsExcel(storedFilePath, importFileName, broker);
         if (rows.Count == 0)
         {
             throw new InvalidOperationException("檔案中沒有可匯入的資料列");
         }
+
+        ApplyExistingAttachments(rows);
 
         var duplicateInvoices = rows
             .GroupBy(r => r.InvoiceNumber, StringComparer.OrdinalIgnoreCase)
@@ -157,6 +164,28 @@ public class TariffDataImportService
         {
             await transaction.RollbackAsync(cancellationToken);
             throw;
+        }
+    }
+
+    private void ApplyExistingAttachments(IEnumerable<TariffData> rows)
+    {
+        var storageRoot = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options);
+        foreach (var row in rows)
+        {
+            var stem = TariffAttachmentHelper.SanitizeHawbFileStem(row.HAWB);
+            if (string.IsNullOrWhiteSpace(stem)) continue;
+
+            var pdfName = stem + ".pdf";
+            if (System.IO.File.Exists(Path.Combine(storageRoot, TariffAttachmentHelper.DeclarationPdfFolder, pdfName)))
+                row.DeclarationFile = $"{TariffAttachmentHelper.DeclarationPdfFolder}/{pdfName}";
+
+            foreach (var extension in new[] { ".xlsx", ".xls" })
+            {
+                var costName = stem + extension;
+                if (!System.IO.File.Exists(Path.Combine(storageRoot, TariffAttachmentHelper.CostFolder, costName))) continue;
+                row.Cost = costName;
+                break;
+            }
         }
     }
 

@@ -109,29 +109,6 @@ public static class TariffCustomsImportRules
         }
     }
 
-    public static string ResolveBroker(string importFileName, TariffDataOptions options)
-    {
-        var fileName = Path.GetFileName(importFileName);
-        var upper = fileName.ToUpperInvariant();
-
-        if (ContainsAnyKeyword(upper, options.BrokerKeywords.KWE))
-        {
-            return "KWE";
-        }
-
-        if (ContainsAnyKeyword(upper, options.BrokerKeywords.YUANFAN))
-        {
-            return "YUANFAN";
-        }
-
-        if (upper.Contains("TARIFFCUSTOMSDATATEMPLATE", StringComparison.Ordinal))
-        {
-            return "KWE";
-        }
-
-        throw new InvalidOperationException($"無法依檔名判斷報關行（Broker）：{fileName}");
-    }
-
     public static string ResolveHawb(string? hawb, string mawb) =>
         string.IsNullOrEmpty(NormalizeCellText(hawb)) ? mawb : NormalizeCellText(hawb)!;
 
@@ -321,6 +298,10 @@ public static class TariffCustomsImportRules
         entity.TotalAmountTWD = source.TotalAmountTWD;
         entity.DeclarationAmountTWD = source.DeclarationAmountTWD;
         entity.CreateDate = source.CreateDate;
+        if (!string.IsNullOrWhiteSpace(source.DeclarationFile))
+            entity.DeclarationFile = source.DeclarationFile;
+        if (!string.IsNullOrWhiteSpace(source.Cost))
+            entity.Cost = source.Cost;
         entity.ImportBatchId = source.ImportBatchId;
         entity.ImportFileName = source.ImportFileName;
     }
@@ -378,24 +359,6 @@ public static class TariffCustomsImportRules
             throw new InvalidOperationException(string.Join("；", errors.Take(20))
                 + (errors.Count > 20 ? $"…等 {errors.Count} 項錯誤" : string.Empty));
         }
-    }
-
-    private static bool ContainsAnyKeyword(string fileNameUpper, IReadOnlyList<string> keywords)
-    {
-        foreach (var keyword in keywords)
-        {
-            if (string.IsNullOrWhiteSpace(keyword))
-            {
-                continue;
-            }
-
-            if (fileNameUpper.Contains(keyword.ToUpperInvariant(), StringComparison.Ordinal))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static string? RequireCellValue(

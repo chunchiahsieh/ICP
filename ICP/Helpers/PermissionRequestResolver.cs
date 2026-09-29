@@ -33,6 +33,18 @@ public static class PermissionRequestResolver
 
         if (controller.Equals("TariffData", StringComparison.OrdinalIgnoreCase))
         {
+            if (action.Equals("DeleteRecord", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.Delete");
+            }
+
+            if (action.Equals("DeleteAttachment", StringComparison.OrdinalIgnoreCase)
+                && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                return ResolveIfRegistered(registry, "Views.Broker.TariffData.Delete");
+            }
+
             if (action.Equals("UploadCustomsData", StringComparison.OrdinalIgnoreCase)
                 && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
             {
@@ -57,7 +69,8 @@ public static class PermissionRequestResolver
                 return ResolveIfRegistered(registry, "Views.Broker.TariffData.UploadCustomsData");
             }
 
-            if (action.Equals("DownloadAttachment", StringComparison.OrdinalIgnoreCase)
+            if ((action.Equals("DownloadAttachment", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("ListAttachments", StringComparison.OrdinalIgnoreCase))
                 && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
                 return "Views.Broker.TariffData.View";

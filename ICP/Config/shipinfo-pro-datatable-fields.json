@@ -40,8 +40,6 @@
     "list": {
       "fields": [
         {"fieldName": "Id", "labelKey": "ShipInfo.Detail.Field.Id", "visible": false, "searchable": false, "filterType": "Checkbox"},
-        {"fieldName": "DepositCaseStatus", "labelKey": "ShipInfo.Detail.Field.DepositCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox"},
-        {"fieldName": "ArurCaseStatus", "labelKey": "ShipInfo.Detail.Field.ArurCaseStatus", "visible": true, "searchable": true, "filterType": "Checkbox"},
         {"fieldName": "InvoiceNo", "labelKey": "ShipInfo.Detail.Field.InvoiceNo", "visible": true, "searchable": true, "filterType": "Text"},
         {"fieldName": "InvoiceSeq", "labelKey": "ShipInfo.Detail.Field.InvoiceSeq", "visible": true, "searchable": true, "filterType": "Text"},
         {"fieldName": "TetPo", "labelKey": "ShipInfo.Detail.Field.TetPo", "visible": true, "searchable": true, "filterType": "Text"},
