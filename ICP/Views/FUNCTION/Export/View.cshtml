@@ -1,5 +1,5 @@
 @model IReadOnlyList<ICP.Models.Icp.ExportRequest>
-@using System.Globalization
+@using ICP.Helpers
 @using ICP.Models.Icp
 @inject ICP.Services.ExportRuntimeTranslations ExportTranslations
 @{
@@ -64,8 +64,8 @@
                         <td><code>@item.Id.ToString("D")</code></td>
                         <td>@item.FileName</td>
                         <td>@item.Status</td>
-                        <td>@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)</td>
-                        <td>@(item.UpdateTime?.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) ?? "-")</td>
+                        <td>@TaipeiTime.FormatUtc(item.CreateTime)</td>
+                        <td>@(item.UpdateTime.HasValue ? TaipeiTime.FormatUtc(item.UpdateTime.Value) : "-")</td>
                         <td class="small text-danger">@(item.ErrorMessage ?? "-")</td>
                         <td>
                             @if (string.Equals(item.Status, ExportRequestStatuses.Completed, StringComparison.OrdinalIgnoreCase))

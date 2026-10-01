@@ -43,9 +43,10 @@ public static class CaseMarkPdfGenerator
                 .Select((row, index) => new
                 {
                     Row = row,
+                    // Keep the original grouping key independent of C/NO display formatting.
                     Key = string.IsNullOrWhiteSpace(row.CnoDisplay)
                         ? $"__empty_carton_{index}"
-                        : row.CnoDisplay
+                        : $"{row.CartonNo}/{row.TotalCartons}"
                 })
                 .GroupBy(item => item.Key, StringComparer.OrdinalIgnoreCase)
                 .Select(carton => new
@@ -114,9 +115,9 @@ public static class CaseMarkPdfGenerator
 
     private static void BuildCharge(ColumnDescriptor col, ShippingAdviceRow row)
     {
-        col.Item().Text("Tokyo Electron America, Inc.");
-        col.Item().Text("PORT OF DISCHARGE : USA");
-        col.Item().Text($"TEA PO NO. : {row.TeaPoE}");
+        col.Item().Text(row.SoldToCompany);
+        col.Item().Text($"PORT OF DISCHARGE : {row.PortOfDischargeAu}");
+        col.Item().Text($"PO NO. : {row.TeaPoE}");
         col.Item().Text($"TET SO NO. : {row.TetSoG}");
         col.Item().Text($"CUST PO NO. : {row.CustPoJ}");
         col.Item().Text($"INV NO. : {row.InvoiceNo}").Bold().FontSize(18);

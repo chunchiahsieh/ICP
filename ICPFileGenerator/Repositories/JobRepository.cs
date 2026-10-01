@@ -231,15 +231,18 @@ public sealed class JobRepository : IJobRepository
             ErrorMessage = reader.IsDBNull(reader.GetOrdinal("ErrorMessage"))
                 ? null
                 : reader.GetString(reader.GetOrdinal("ErrorMessage")),
-            CreateTime = reader.GetDateTime(reader.GetOrdinal("CreateTime")),
+            CreateTime = ReadUtc(reader, "CreateTime"),
             StartTime = reader.IsDBNull(reader.GetOrdinal("StartTime"))
                 ? null
-                : reader.GetDateTime(reader.GetOrdinal("StartTime")),
+                : ReadUtc(reader, "StartTime"),
             CompleteTime = reader.IsDBNull(reader.GetOrdinal("CompleteTime"))
                 ? null
-                : reader.GetDateTime(reader.GetOrdinal("CompleteTime")),
+                : ReadUtc(reader, "CompleteTime"),
             UpdateTime = reader.IsDBNull(reader.GetOrdinal("UpdateTime"))
                 ? null
-                : reader.GetDateTime(reader.GetOrdinal("UpdateTime"))
+                : ReadUtc(reader, "UpdateTime")
         };
+
+    private static DateTime ReadUtc(SqlDataReader reader, string columnName)
+        => DateTime.SpecifyKind(reader.GetDateTime(reader.GetOrdinal(columnName)), DateTimeKind.Utc);
 }

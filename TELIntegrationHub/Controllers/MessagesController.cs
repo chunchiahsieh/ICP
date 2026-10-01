@@ -1,5 +1,5 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
+using TEL.IntegrationHub.Helpers;
 using TEL.IntegrationHub.Models;
 using TEL.IntegrationHub.Services;
 
@@ -38,8 +38,8 @@ public class MessagesController : ControllerBase
             TargetSystem = targetSystem,
             EventType = eventType,
             Status = parsedStatus,
-            From = from,
-            To = to,
+            From = from.HasValue ? TaipeiTime.ToUtc(from.Value) : null,
+            To = to.HasValue ? TaipeiTime.ToUtc(to.Value) : null,
             Take = take
         }, cancellationToken);
 
@@ -79,10 +79,10 @@ public class MessagesController : ControllerBase
         x.Status,
         x.RetryCount,
         x.ErrorMessage,
-        ReceivedAt = x.ReceivedAt.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-        ProcessedAt = x.ProcessedAt?.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-        CreateTime = x.CreateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-        UpdateTime = x.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+        ReceivedAt = TaipeiTime.FormatUtc(x.ReceivedAt),
+        ProcessedAt = x.ProcessedAt.HasValue ? TaipeiTime.FormatUtc(x.ProcessedAt.Value) : null,
+        CreateTime = TaipeiTime.FormatUtc(x.CreateTime),
+        UpdateTime = TaipeiTime.FormatUtc(x.UpdateTime),
         x.Payload
     };
 }

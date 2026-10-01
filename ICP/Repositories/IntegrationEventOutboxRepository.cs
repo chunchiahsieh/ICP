@@ -31,9 +31,10 @@ public class IntegrationEventOutboxRepository : IIntegrationEventOutboxRepositor
             CaseNo = integrationEvent.Payload.CaseNo,
             PayloadJson = payloadJson,
             Status = IntegrationEventOutboxStatuses.Pending,
-            RetryCount = 0
+            RetryCount = 0,
+            CreateTime = DateTime.UtcNow,
+            CreateUser = userName
         };
-        CrudAuditHelper.ApplyCreateAudit(entry, userName);
         _db.IntegrationEventOutboxes.Add(entry);
         await _db.SaveChangesAsync(cancellationToken);
     }
@@ -62,7 +63,7 @@ public class IntegrationEventOutboxRepository : IIntegrationEventOutboxRepositor
         entry.Status = IntegrationEventOutboxStatuses.Published;
         entry.PublishedAt = DateTime.UtcNow;
         entry.LastError = null;
-        entry.UpdateTime = DateTime.Now;
+        entry.UpdateTime = DateTime.UtcNow;
         await _db.SaveChangesAsync(cancellationToken);
     }
 
@@ -82,7 +83,7 @@ public class IntegrationEventOutboxRepository : IIntegrationEventOutboxRepositor
         entry.RetryCount = retryCount;
         entry.LastError = error.Length > 4000 ? error[..4000] : error;
         entry.Status = permanent ? IntegrationEventOutboxStatuses.Failed : IntegrationEventOutboxStatuses.Pending;
-        entry.UpdateTime = DateTime.Now;
+        entry.UpdateTime = DateTime.UtcNow;
         await _db.SaveChangesAsync(cancellationToken);
     }
 
@@ -113,7 +114,8 @@ public class IntegrationEventOutboxRepository : IIntegrationEventOutboxRepositor
         entry.Status = IntegrationEventOutboxStatuses.Pending;
         entry.RetryCount = 0;
         entry.LastError = null;
-        CrudAuditHelper.ApplyUpdateAudit(entry, userName);
+        entry.UpdateTime = DateTime.UtcNow;
+        entry.UpdateUser = userName;
         await _db.SaveChangesAsync(cancellationToken);
         return true;
     }

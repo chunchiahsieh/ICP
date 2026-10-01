@@ -5,9 +5,7 @@ namespace ICPFileGenerator.Services;
 
 public static class ShippingAdviceSheetReader
 {
-    public const string SourceSheetName = "to BE Shipping advice Report";
-
-    public const int DataStartRow = 4;
+    public const int DataStartRow = 2;
 
     public static IReadOnlyList<ShippingAdviceRow> Read(string inputFilePath)
     {
@@ -17,10 +15,12 @@ public static class ShippingAdviceSheetReader
         }
 
         using var workbook = new XLWorkbook(inputFilePath);
-        if (!workbook.Worksheets.TryGetWorksheet(SourceSheetName, out var sheet))
+        if (workbook.Worksheets.Count == 0)
         {
-            throw new InvalidOperationException($"Worksheet '{SourceSheetName}' was not found.");
+            throw new InvalidOperationException("The uploaded workbook does not contain any worksheets.");
         }
+
+        var sheet = workbook.Worksheet(1);
 
         var columns = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         foreach (var cell in sheet.Row(1).CellsUsed())
@@ -48,7 +48,7 @@ public static class ShippingAdviceSheetReader
             "Invoice No.", "Ship-to Party Address", "End User", "RMA#", "SLOC",
             "Delivery No", "Carton No.", "Total Cartons", "Length", "Width",
             "Height", "Weight", "Carton Name", "No Charge Flag",
-            "Ship-to Party", "Port of Entry", "Forwarder", "PO#", "SO#",
+            "Ship-to Party", "Sold-to Party", "Port of Entry", "Forwarder", "PO#", "SO#",
             "Customer PO No.", "Country of Origin"
         };
         foreach (var title in required)
@@ -92,6 +92,7 @@ public static class ShippingAdviceSheetReader
                 PackingMethod = Value(r, "Carton Name"),
                 AhFlag = Value(r, "No Charge Flag"),
                 CompanyNameBf = Value(r, "Ship-to Party"),
+                SoldToCompany = Value(r, "Sold-to Party"),
                 PortOfDischargeAu = Value(r, "Port of Entry"),
                 ForwarderBl = Value(r, "Forwarder"),
                 TeaPoE = Value(r, "PO#"),

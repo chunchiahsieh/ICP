@@ -41,7 +41,7 @@ public sealed class FileGenerationService : IFileGenerationService
             if (rows.Count == 0)
             {
                 return FileGenerationResult.Fail(
-                    $"No data rows found in sheet '{ShippingAdviceSheetReader.SourceSheetName}' (from row {ShippingAdviceSheetReader.DataStartRow}).");
+                    $"No data rows found in the first worksheet (from row {ShippingAdviceSheetReader.DataStartRow}).");
             }
 
             var countries = await _countryOfOriginLookup.LoadAsync(cancellationToken);

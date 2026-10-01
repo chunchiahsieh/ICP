@@ -61,7 +61,7 @@ public sealed class IcpOutboxCompletionService : IIcpOutboxCompletionService
             }
 
             entry.Status = IcpOutboxStatuses.Completed;
-            entry.UpdateTime = DateTime.Now;
+            entry.UpdateTime = DateTime.UtcNow;
             entry.UpdateUser = "HUB";
             await UpdateCaseStatusAsync(entry, "Initiated", actualCaseNo ?? entry.CaseNo, cancellationToken);
             await _db.SaveChangesAsync(cancellationToken);
@@ -105,7 +105,7 @@ public sealed class IcpOutboxCompletionService : IIcpOutboxCompletionService
 
         entry.Status = IcpOutboxStatuses.Failed;
         entry.LastError = error.Length > 4000 ? error[..4000] : error;
-        entry.UpdateTime = DateTime.Now;
+        entry.UpdateTime = DateTime.UtcNow;
         entry.UpdateUser = "HUB";
         await UpdateCaseStatusAsync(entry, "Failed", null, cancellationToken);
         await _db.SaveChangesAsync(cancellationToken);

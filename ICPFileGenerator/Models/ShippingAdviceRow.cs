@@ -32,6 +32,8 @@ public sealed class ShippingAdviceRow
 
     public string CompanyNameBf { get; init; } = string.Empty;
 
+    public string SoldToCompany { get; init; } = string.Empty;
+
     public string PortOfDischargeAu { get; init; } = string.Empty;
 
     public string ForwarderBl { get; init; } = string.Empty;
@@ -49,10 +51,25 @@ public sealed class ShippingAdviceRow
     public bool IsNoCharge =>
         string.Equals(AhFlag.Trim(), "X", StringComparison.OrdinalIgnoreCase);
 
-    public string CnoDisplay =>
-        string.IsNullOrWhiteSpace(CartonNo) && string.IsNullOrWhiteSpace(TotalCartons)
-            ? string.Empty
-            : $"{CartonNo}/{TotalCartons}";
+    public string CnoDisplay
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(CartonNo) && string.IsNullOrWhiteSpace(TotalCartons))
+            {
+                return string.Empty;
+            }
+
+            var cartonNo = CartonNo.Trim();
+            if (cartonNo.Length > 0 && cartonNo.All(c => c is >= '0' and <= '9'))
+            {
+                cartonNo = cartonNo.TrimStart('0');
+                return $"{(cartonNo.Length == 0 ? "0" : cartonNo)}/{TotalCartons}";
+            }
+
+            return $"{CartonNo}/{TotalCartons}";
+        }
+    }
 
     public string SizeDisplay
     {

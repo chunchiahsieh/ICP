@@ -31,7 +31,8 @@
 
 ## 產檔內容
 
-來源 sheet：`to BE Shipping advice Report`（自第 4 列）
+來源 sheet：上傳 Excel 的第一個工作表（依分頁順序，名稱不限）。第 1 列為欄位標題，資料自第 2 列開始；Invoice No. 與 Carton No. 都空白的列略過。
+請將要匯出的資料放在第一個工作表；若第一個工作表缺少必要欄位或沒有資料，該次 Export 失敗，不會改讀其他工作表。
 
 輸出資料夾：
 
@@ -43,9 +44,12 @@
 ```
 
 - Excel sheet：`to BE New Pick up notice`（依 Invoice No. → Carton No. 排序）
+- Pickup Notice 每張 Invoice 的每個 Carton No. 只保留來源檔第一筆；不同 Invoice 的相同箱號分別保留。
+- Ship to address 直接使用來源的 `Ship-to Party Address`，保留完整地址。
 - 提貨地點／Contact Person／Phone No.：以 Shipping Advice **欄位 C（SLOC）** 對照 ICP `SystemConfigs`（`Category=PickUpLocation`，`Key1`=SLOC → `Value1`／`Value2`／`Value3`）；找不到則空白
 - AH=`X` → NoCharge Case Mark PDF；否則 Charge
 - 不同 Invoice 各一份 PDF；每個 Carton No. 一頁
+- Charge Case Mark：公司名稱取 `Sold-to Party`；`PORT OF DISCHARGE` 取 `Port of Entry`；`PO NO.` 取 `PO#`（不再顯示 TEA 前綴）。
 
 ## 操作
 

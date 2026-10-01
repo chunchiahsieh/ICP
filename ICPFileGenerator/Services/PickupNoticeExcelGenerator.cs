@@ -37,7 +37,7 @@ public static class PickupNoticeExcelGenerator
         var datePart = stampDate.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
         var filePath = Path.Combine(outputDirectory, $"PickupNotice_{datePart}.xlsx");
 
-        var ordered = rows
+        var ordered = KeepFirstRowPerCarton(rows)
             .OrderBy(r => r.InvoiceNo, StringComparer.OrdinalIgnoreCase)
             .ThenBy(r => ParseCartonSortKey(r.CartonNo))
             .ThenBy(r => r.CartonNo, StringComparer.OrdinalIgnoreCase)
@@ -67,6 +67,7 @@ public static class PickupNoticeExcelGenerator
             sheet.Cell(excelRow, 7).Value = contact;
             sheet.Cell(excelRow, 8).Value = phone;
             sheet.Cell(excelRow, 9).Value = row.TetDo;
+            sheet.Cell(excelRow, 10).Style.NumberFormat.Format = "@";
             sheet.Cell(excelRow, 10).Value = row.CnoDisplay;
             sheet.Cell(excelRow, 11).Value = row.Length;
             sheet.Cell(excelRow, 12).Value = row.Width;
@@ -78,6 +79,36 @@ public static class PickupNoticeExcelGenerator
         sheet.Columns().AdjustToContents();
         workbook.SaveAs(filePath);
         return filePath;
+    }
+
+    private static IEnumerable<ShippingAdviceRow> KeepFirstRowPerCarton(IEnumerable<ShippingAdviceRow> rows)
+    {
+        var seen = new HashSet<(string InvoiceNo, string CartonNo)>();
+
+        // Select in source order so sorting cannot change which duplicate row is retained.
+        foreach (var row in rows)
+        {
+            var cartonNo = row.CartonNo.Trim();
+            if (cartonNo.Length == 0)
+            {
+                yield return row;
+                continue;
+            }
+
+            if (cartonNo.All(c => c is >= '0' and <= '9'))
+            {
+                cartonNo = cartonNo.TrimStart('0');
+                if (cartonNo.Length == 0)
+                {
+                    cartonNo = "0";
+                }
+            }
+
+            if (seen.Add((row.InvoiceNo.Trim(), cartonNo)))
+            {
+                yield return row;
+            }
+        }
     }
 
     private static void ResolvePickUp(
