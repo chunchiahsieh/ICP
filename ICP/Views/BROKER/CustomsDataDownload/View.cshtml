@@ -91,11 +91,19 @@
             if (window.ProDataTables && ProDataTables.initUsers && hasPermission('Views.Broker.CustomsDataDownload.View')) {
                 var sortColumn = tableConfig.initialSortColumn ?? 0;
                 var sortDirection = tableConfig.initialSortDirection || 'desc';
+                var initialSort = Array.isArray(tableConfig.initialSort) && tableConfig.initialSort.length
+                    ? tableConfig.initialSort
+                    : [[sortColumn, sortDirection]];
                 tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig($.extend({
                     filterOptionsUrl: '@Url.Action("GetFilterOptions", "CustomsDataDownload")',
                     queryUrl: '@Url.Action("Query", "CustomsDataDownload")',
                     pageLength: 10,
-                    initialSort: [[sortColumn, sortDirection]],
+                    initialSort: initialSort,
+                    dataTableOptions: {
+                        columnDefs: window.CustomsDataDownloadProTable && CustomsDataDownloadProTable.buildSortColumnDefs
+                            ? CustomsDataDownloadProTable.buildSortColumnDefs(tableConfig.fields || [])
+                            : []
+                    },
                     onDraw: function () {
                         syncStickyHeaderOffset();
                     },

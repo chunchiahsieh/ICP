@@ -21,6 +21,7 @@ public class TariffTableMetadataProvider
             ["ReleaseDate"] = "Broker.TariffData.Column.ReleaseDate",
             ["InvoiceNumber"] = "Broker.TariffData.Column.InvoiceNumber",
             ["DescriptionOfGoods"] = "Broker.TariffData.Column.DescriptionOfGoods",
+            ["LOGRemarks"] = "Broker.TariffData.Column.LOGRemarks",
             ["HTSNumber"] = "Broker.TariffData.Column.HTSNumber",
             ["EntryNumber"] = "Broker.TariffData.Column.EntryNumber",
             ["Mode"] = "Broker.TariffData.Column.Mode",

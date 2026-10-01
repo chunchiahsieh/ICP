@@ -145,7 +145,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.PartNumber).HasMaxLength(100).IsRequired();
             entity.Property(e => e.InvoiceNumber).HasMaxLength(100).IsRequired();
             entity.Property(e => e.PONumber).HasMaxLength(100);
-            entity.Property(e => e.DescriptionOfGoods).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.DescriptionOfGoods).HasMaxLength(TariffData.DescriptionOfGoodsMaxLength).IsRequired();
+            entity.Property(e => e.LOGRemarks).HasMaxLength(TariffData.LogRemarksMaxLength);
             entity.Property(e => e.Quantity).HasMaxLength(50).IsRequired();
             entity.Property(e => e.UOM).HasMaxLength(50).IsRequired();
             entity.Property(e => e.NetWeightKg).HasMaxLength(50).IsRequired();

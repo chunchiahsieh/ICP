@@ -89,7 +89,7 @@ public static class ShipInfoRowDtoMapper
             WasteDisposal = header.WasteDisposal,
             DriverDetails = header.DriverDetails,
             OrderReason = header.OrderReason,
-            ArrivalNoticeFlag = header.ArrivalNoticeFlag,
+            ArrivalNoticeFlag = string.IsNullOrWhiteSpace(header.ArrivalNotice) ? header.ArrivalNoticeFlag : "Y",
             ArrivalNotice = header.ArrivalNotice,
             ReasonForDeliveryDelay = header.ReasonForDeliveryDelay,
             DelayNotificationDate = header.DelayNotificationDate,

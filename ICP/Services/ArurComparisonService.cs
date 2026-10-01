@@ -80,7 +80,7 @@ public sealed class ArurComparisonService(ApplicationDbContext db, IlcDbContext 
                 {
                     targets.TryGetValue(Clean(h.RtNo), out var matches);
                     var target = matches?.Count == 1 ? matches[0] : null;
-                    var address = addresses.FirstOrDefault(a => a.Key1 == h.DeliveryTo)?.Value4;
+                    var address = addresses.FirstOrDefault(a => a.Key1 == h.DeliveryTo)?.Value3;
                     var files = attachments.Where(a => a.AttachmentOwnerId == h.Id.ToString("D")).Select(a => a.RelativePath).ToArray();
                     foreach (var (field, column, value) in Map(h, address, files))
                     {

@@ -6,6 +6,7 @@ using ICP.Models.Tariff;
 using ICP.Services;
 using System.Text.Json;
 using System.Globalization;
+using System.Data.Common;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace ICP.Controllers;
 public class TariffDataController : Controller
 {
     private const string TemplateFileName = "KWE_TariffCustomsDataTemplate.xls";
+    private const string TemplateDownloadFileName = "CustomsDataUploadTemplate.xls";
 
     private static readonly HashSet<string> ExcelExtensions = new(StringComparer.OrdinalIgnoreCase) { ".xlsx", ".xls" };
     private static readonly HashSet<string> PdfExtensions = new(StringComparer.OrdinalIgnoreCase) { ".pdf" };
@@ -60,10 +62,9 @@ public class TariffDataController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
+    public IActionResult Index()
     {
         ViewData["MaxSizeMb"] = _options.MaxSizeMb;
-        ViewData["BrokerRoles"] = await GetCurrentUserRoleNamesAsync(cancellationToken);
         var tableConfig = _tableMetadataProvider.GetPageConfig();
         ViewData["TariffTableConfigJson"] = JsonSerializer.Serialize(new
         {
@@ -74,6 +75,7 @@ public class TariffDataController : Controller
                 searchable = field.Searchable,
                 filterType = field.FilterType
             }),
+            initialSort = tableConfig.ResolveInitialSortColumns(),
             initialSortColumn = tableConfig.ResolveInitialSortColumnIndex() ?? 0,
             initialSortDirection = string.IsNullOrWhiteSpace(tableConfig.InitialSort?.Direction)
                 ? "desc"
@@ -96,7 +98,7 @@ public class TariffDataController : Controller
         return PhysicalFile(
             templatePath,
             "application/vnd.ms-excel",
-            TemplateFileName);
+            TemplateDownloadFileName);
     }
 
     [HttpPost]
@@ -106,6 +108,88 @@ public class TariffDataController : Controller
     {
         var list = await QueryTariffDataAsync(criteria, cancellationToken);
         return PartialView("~/Views/BROKER/TariffData/View.List.cshtml", CreateListViewModel(list));
+    }
+
+    private bool CanEditLogRemarks() =>
+        _permissionService.HasPermission(TariffDataPermissionCodes.View)
+        && _permissionService.HasPermission(TariffDataPermissionCodes.Edit);
+
+    [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> GetLogRemarks(long id, CancellationToken cancellationToken = default)
+    {
+        if (!CanEditLogRemarks())
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { success = false, message = _localizer["Broker.TariffData.LogRemarks.Forbidden"].Value });
+
+        var row = await BaseQuery().Where(item => item.Id == id)
+            .Select(item => new { item.Id, item.InvoiceNumber, item.LOGRemarks })
+            .FirstOrDefaultAsync(cancellationToken);
+        if (row is null)
+            return NotFound(new { success = false, message = _localizer["Broker.TariffData.LogRemarks.NotFound"].Value });
+
+        return Json(new
+        {
+            success = true,
+            id = row.Id.ToString(CultureInfo.InvariantCulture),
+            invoiceNumber = row.InvoiceNumber,
+            logRemarks = row.LOGRemarks ?? string.Empty
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveLogRemarks(
+        [FromForm] TariffLogRemarksEditModel request,
+        CancellationToken cancellationToken = default)
+    {
+        if (!CanEditLogRemarks())
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { success = false, message = _localizer["Broker.TariffData.LogRemarks.Forbidden"].Value });
+
+        if ((request.LOGRemarks?.Length ?? 0) > TariffData.LogRemarksMaxLength
+            || (request.OriginalLOGRemarks?.Length ?? 0) > TariffData.LogRemarksMaxLength)
+            return BadRequest(new { success = false, message = _localizer["Broker.TariffData.LogRemarks.TooLong"].Value });
+
+        if (!ModelState.IsValid || request.Id <= 0)
+            return BadRequest(new { success = false, message = _localizer["Broker.TariffData.LogRemarks.SaveFailed"].Value });
+
+        var original = request.OriginalLOGRemarks ?? string.Empty;
+        var remarks = string.IsNullOrEmpty(request.LOGRemarks) ? null : request.LOGRemarks;
+        var user = CrudAuditHelper.ResolveUserName(User.Identity?.Name);
+        if (user.Length > 50) user = user[..50];
+        var updatedAt = DateTime.Now;
+
+        try
+        {
+            // Update only the remarks/audit fields and only within the current user's data scope.
+            // Binary comparison plus byte length prevents overwriting stale case/whitespace edits.
+            var rows = _scope.Apply(_db.TariffDataRecords).Where(item => item.Id == request.Id);
+            var updated = await rows.Where(item =>
+                    EF.Functions.Collate(item.LOGRemarks ?? string.Empty, "Latin1_General_100_BIN2") == original
+                    && EF.Functions.DataLength(item.LOGRemarks ?? string.Empty) == original.Length * 2)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(item => item.LOGRemarks, remarks)
+                    .SetProperty(item => item.UpdateTime, updatedAt)
+                    .SetProperty(item => item.UpdateUser, user), cancellationToken);
+
+            if (updated == 0)
+            {
+                if (!await rows.AnyAsync(cancellationToken))
+                    return NotFound(new { success = false, message = _localizer["Broker.TariffData.LogRemarks.NotFound"].Value });
+
+                return Conflict(new { success = false, message = _localizer["Broker.TariffData.LogRemarks.Conflict"].Value });
+            }
+
+            _logger.LogInformation("Tariff LOGRemarks updated: Id={Id}, User={User}", request.Id, user);
+            return Json(new { success = true, message = _localizer["Broker.TariffData.LogRemarks.SaveSuccess"].Value });
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogError(ex, "Tariff LOGRemarks update failed: Id={Id}", request.Id);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new { success = false, message = _localizer["Broker.TariffData.LogRemarks.SaveFailed"].Value });
+        }
     }
 
     [HttpPost]
@@ -199,20 +283,18 @@ public class TariffDataController : Controller
     [RequestSizeLimit(57_671_680)]
     public async Task<IActionResult> UploadCustomsData(
         IFormFile? file,
-        string? broker,
         CancellationToken cancellationToken = default)
     {
+        if (!_permissionService.HasPermission(TariffDataPermissionCodes.View)
+            || !_permissionService.HasPermission("Views.Broker.TariffData.UploadCustomsData"))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { success = false, message = _localizer["Permission.AccessDenied"].Value });
+        }
+
         if (file is null || file.Length == 0)
         {
             return Json(new { success = false, message = _localizer["Broker.TariffData.NoFileSelected"].Value });
-        }
-
-        var roles = await GetCurrentUserRoleNamesAsync(cancellationToken);
-        var selectedBroker = roles.FirstOrDefault(role =>
-            string.Equals(role, broker?.Trim(), StringComparison.OrdinalIgnoreCase));
-        if (selectedBroker is null)
-        {
-            return Json(new { success = false, message = _localizer["Broker.TariffData.BrokerRoleInvalid"].Value });
         }
 
         if (file.Length > _options.MaxSizeBytes)
@@ -249,20 +331,22 @@ public class TariffDataController : Controller
                 await file.CopyToAsync(stream, cancellationToken);
             }
 
-            var createUser = CrudAuditHelper.ResolveUserName(User.Identity?.Name);
+            var sessionTelId = _userAuthService.GetSessionUserInfo()?.TelId;
+            var createUser = CrudAuditHelper.ResolveUserName(
+                string.IsNullOrWhiteSpace(sessionTelId) ? User.Identity?.Name : sessionTelId.Trim());
             var importResult = await _importService.ImportCustomsDataAsync(
                 storedPath,
                 safeFileName,
-                selectedBroker,
                 createUser,
                 cancellationToken);
 
             _logger.LogInformation(
-                "Tariff customs data imported: {FileName} -> {StoredPath}, inserted {Inserted}, updated {Updated}",
+                "Tariff customs data imported: {FileName} -> {StoredPath}, inserted {Inserted}, updated {Updated}, User={User}",
                 safeFileName,
                 storedPath,
                 importResult.ImportedCount,
-                importResult.UpdatedCount);
+                importResult.UpdatedCount,
+                createUser);
 
             var message = string.Format(
                 _localizer["Broker.TariffData.UploadCustomsDataSuccess"].Value,
@@ -521,6 +605,7 @@ public class TariffDataController : Controller
             Fields = tableConfig.Fields,
             TableUi = tableConfig.TableUi,
             HasFilterRow = tableConfig.HasFilterRow,
+            CanEditLogRemarks = CanEditLogRemarks(),
             StorageRoot = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options)
         };
     }
@@ -563,12 +648,31 @@ public class TariffDataController : Controller
         CancellationToken cancellationToken)
     {
         var tableConfig = _tableMetadataProvider.GetPageConfig();
-        var query = TariffQueryFilterApplier.ApplyFilters(BaseQuery(), criteria, tableConfig.Fields);
+        var query = TariffQueryFilterApplier.ApplyFilters(BaseQuery(), criteria, tableConfig.Fields,
+            deferCreateUserTextFilter: true);
         query = await ApplyAttachmentPresenceFiltersAsync(query, criteria, tableConfig.Fields, cancellationToken);
 
-        return await query
+        var list = await query
             .OrderByDescending(e => e.Id)
             .ToListAsync(cancellationToken);
+        if (list.Count > 0 && tableConfig.Fields.Any(field =>
+            string.Equals(field.FieldName, nameof(TariffData.CreateUser), StringComparison.OrdinalIgnoreCase)))
+        {
+            try
+            {
+                var displayNames = await _userAuthService.GetUserDisplayNamesAsync(list.Select(row => row.CreateUser), cancellationToken);
+                foreach (var row in list)
+                    row.CreateUserDisplayName = UserDisplayNameHelper.ResolveDisplayName(row.CreateUser, displayNames);
+            }
+            catch (Exception ex) when (ex is DbException or TimeoutException)
+            {
+                // Directory availability must not prevent viewing customs data. Retain raw audit accounts.
+                _logger.LogWarning(ex, "Tariff creator display names could not be loaded; using stored accounts.");
+            }
+        }
+
+        list = TariffQueryFilterApplier.ApplyCreateUserTextFilter(list, criteria, tableConfig.Fields);
+        return TariffTableSortHelper.Apply(list, tableConfig);
     }
 
     private async Task<IQueryable<TariffData>> ApplyAttachmentPresenceFiltersAsync(
@@ -702,20 +806,6 @@ public class TariffDataController : Controller
             "CreateDate" => await SearchFilterHelper.DistinctDateOnlyAsync(query.Select(e => e.CreateDate), search, cancellationToken),
             _ => []
         };
-    }
-
-    private async Task<List<string>> GetCurrentUserRoleNamesAsync(CancellationToken cancellationToken)
-    {
-        var user = _userAuthService.GetSessionUserInfo();
-        if (user is null) return [];
-        var assignments = (await _permissionService.BuildPermissionsResponseAsync(user, cancellationToken)).RoleAssignments;
-        return assignments.RoleTelIds.Select(item => item.RoleName)
-            .Concat(assignments.RoleDepIds.Select(item => item.RoleName))
-            .Concat(assignments.RoleMailGroups.Select(item => item.RoleName))
-            .Where(name => !string.IsNullOrWhiteSpace(name))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
-            .ToList();
     }
 
     private static (string Hawb, string Kind)? NormalizeAttachmentRequest(string? hawb, string? kind)

@@ -126,6 +126,23 @@
         });
     }
 
+    function validateDelayPair($form, values) {
+        var $reason = $form.find('.shipinfo-control[data-field="ReasonForDeliveryDelay"]');
+        var $date = $form.find('.shipinfo-control[data-field="DelayNotificationDate"]');
+        var $group = $reason.closest('.shipinfo-form-group');
+        $group.find('.shipinfo-delay-pair-error').remove();
+        $reason.add($date).removeClass('is-invalid').removeAttr('aria-invalid');
+        var hasReason = String(values.ReasonForDeliveryDelay || '').trim() !== '';
+        var hasDate = String(values.DelayNotificationDate || '').trim() !== '';
+        if (hasReason === hasDate) return true;
+
+        var message = messages.delayPairRequired || 'Reason for Delivery Delay and Delay Notification Date must both be filled in, or both be left blank.';
+        $reason.add($date).addClass('is-invalid').attr('aria-invalid', 'true');
+        $group.find('.row').first().before($('<div class="alert alert-danger shipinfo-delay-pair-error" role="alert"></div>').text(message));
+        ($reason.length ? $reason : $date).trigger('focus');
+        return false;
+    }
+
     function getStatusSource() {
         return state.viewModalKind === 'header'
             ? state.viewModalData
@@ -300,6 +317,9 @@
         }
 
         var values = renderApi.collectControlValues($form);
+        if (state.viewModalKind === 'header' && !validateDelayPair($form, values)) {
+            return;
+        }
         if (Object.prototype.hasOwnProperty.call(values, 'TotalCartons')
             && !/^\d+$/.test(String(values.TotalCartons || '').trim())) {
             app.showToast(messages.totalCartonsInteger || 'Total Cartons must be a non-negative integer.', 'warning');

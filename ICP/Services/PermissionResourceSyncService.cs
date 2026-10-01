@@ -60,12 +60,9 @@ public class PermissionResourceSyncService
 
         var inserted = 0;
         var updated = 0;
-        var reactivated = 0;
         var resourceCodes = new List<string>();
 
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-        var scannedCodes = distinctItems.Select(x => x.ResourceCode).ToList();
-        var disabled = await DisableResourcesNotInScanAsync(scannedCodes, actor, cancellationToken);
 
         foreach (var item in distinctItems)
         {
@@ -95,7 +92,6 @@ public class PermissionResourceSyncService
                     CreateUser = actor
                 });
                 inserted++;
-                await DisableLegacyCodeIfAnyAsync(item.ResourceCode, actor, cancellationToken);
                 continue;
             }
 
@@ -104,25 +100,12 @@ public class PermissionResourceSyncService
             existing.Route = item.Route;
             existing.Description = item.Description;
             existing.ModuleCode = ResolveModuleCode(item.ResourceCode);
-            if (!existing.IsEnabled)
-            {
-                existing.IsEnabled = true;
-                reactivated++;
-            }
             existing.UpdateTime = DateTime.Now;
             existing.UpdateUser = actor;
             updated++;
-
-            await DisableLegacyCodeIfAnyAsync(item.ResourceCode, actor, cancellationToken);
         }
 
         await RepairCorruptedResourceNamesAsync(actor, cancellationToken);
-
-        var (disabledLegacyCount, migratedRolePermissionCount) =
-            await MigrateAndDisableAllLegacyResourcesAsync(actor, cancellationToken);
-
-        var (disabledIcpPermissionCount, migratedFromIcpPermissionCount) =
-            await MigrateAndDisableIcpPermissionResourcesAsync(actor, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
@@ -132,10 +115,10 @@ public class PermissionResourceSyncService
             ScannedCount = scannedItems.Count,
             InsertedCount = inserted,
             UpdatedCount = updated,
-            DisabledCount = disabled,
-            ReactivatedCount = reactivated,
-            DisabledLegacyCount = disabledLegacyCount + disabledIcpPermissionCount,
-            MigratedRolePermissionCount = migratedRolePermissionCount + migratedFromIcpPermissionCount,
+            DisabledCount = 0,
+            ReactivatedCount = 0,
+            DisabledLegacyCount = 0,
+            MigratedRolePermissionCount = 0,
             ResourceCodes = resourceCodes
         };
     }

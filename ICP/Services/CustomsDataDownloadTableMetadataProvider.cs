@@ -7,17 +7,22 @@ namespace ICP.Services;
 
 public class CustomsDataDownloadTableMetadataProvider
 {
+    private static readonly HashSet<string> TextFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "InvoiceNo", "Mawb", "Hawb", "Flt", "PoNo", "PoLine", "InvoiceSeq", "ItemNo",
+        "Description", "Qty", "Price", "Amount", "CartonNo", "Length", "Width", "Hight",
+        "GrossWeight", "TotalCartons", "NetWeightOfTheItem", "ShipToPartyAddress", "SapRemarks"
+    };
+
     private static readonly string[] DefaultFieldOrder =
     [
-        "RunId", "FileCode", "SourceFileName", "SourceFileDate", "CreatedUtc",
+        "CreatedUtc",
         "InvoiceNo", "Forwarder", "Etd", "Eta", "InvoiceDate", "Mawb", "Hawb", "Flt",
         "DestinationPort", "DestinationCountry", "InvoiceType", "Incoterms", "Bu",
-        "PoNo", "PoLine", "OrderPriority", "InvoiceSeq", "ItemNo", "Description",
+        "PoNo", "PoLine", "InvoiceSeq", "ItemNo", "Description",
         "Qty", "Uom", "Coo", "Price", "Amount", "Currency", "PackingType", "CartonNo",
         "Length", "Width", "Hight", "GrossWeight", "TotalCartons", "NetWeightOfTheItem",
-        "NcdrNo", "EndUserCode", "EndUser", "MachineNo", "MachineType", "ShipReason",
-        "DeliveryNo", "DeliveryLineNo", "SoldToPartyCode", "SoldToParty",
-        "ShipToPartyCode", "ShipToParty", "ShipToPartyAddress", "Hazmat", "WbsElement",
+        "ShipToParty", "ShipToPartyAddress", "Hazmat",
         "SapRemarks"
     ];
 
@@ -51,7 +56,18 @@ public class CustomsDataDownloadTableMetadataProvider
         {
             Fields = fields,
             TableUi = CustomsDataDownloadTableUiOptions.MergeDefaults(options.TableUi),
-            InitialSort = options.InitialSort
+            InitialSort = options.InitialSort ?? new CustomsDataDownloadTableInitialSort
+            {
+                FieldName = "CreatedUtc",
+                Direction = "desc",
+                ThenBy =
+                [
+                    new() { FieldName = "Mawb", Direction = "asc" },
+                    new() { FieldName = "Hawb", Direction = "asc" },
+                    new() { FieldName = "InvoiceNo", Direction = "asc" },
+                    new() { FieldName = "InvoiceSeq", Direction = "asc" }
+                ]
+            }
         };
     }
 
@@ -83,7 +99,9 @@ public class CustomsDataDownloadTableMetadataProvider
                 FieldName = fieldName,
                 Visible = true,
                 Searchable = true,
-                FilterType = "Checkbox",
+                FilterType = fieldName is "CreatedUtc" or "Etd" or "Eta"
+                    ? "DateRange"
+                    : TextFields.Contains(fieldName) ? "Text" : "Checkbox",
                 HeaderLabelKey = $"Broker.CustomsDataDownload.Column.{fieldName}"
             })
             .ToList();

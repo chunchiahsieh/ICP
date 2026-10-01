@@ -1,5 +1,6 @@
 using System.Text.Json;
 using ICP.Data;
+using ICP.Helpers;
 using ICP.Infrastructure;
 using ICP.Models.Auth;
 using ICP.Models.Ilc;
@@ -70,6 +71,28 @@ public class UserAuthService
         }
 
         return UserInfo;
+    }
+
+    /// <summary>Batch directory lookup for audit-account display; never changes the stored account.</summary>
+    public async Task<IReadOnlyDictionary<string, string>> GetUserDisplayNamesAsync(
+        IEnumerable<string?> accounts,
+        CancellationToken cancellationToken = default)
+    {
+        var telIds = accounts.Select(UserDisplayNameHelper.NormalizeAccount)
+            .Where(value => value.Length > 0)
+            .Select(value => value.ToUpperInvariant())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var users = new List<UserInfoAd>();
+        // Bound query parameters and avoid one database query per displayed row.
+        foreach (var batch in telIds.Chunk(500))
+        {
+            users.AddRange(await _ilcDb.UserInfoAd.AsNoTracking()
+                .Where(user => user.TelId != null && batch.Contains(user.TelId.Trim().ToUpper()))
+                .Select(user => new UserInfoAd { TelId = user.TelId, DisplayName = user.DisplayName })
+                .ToListAsync(cancellationToken));
+        }
+        return UserDisplayNameHelper.BuildDisplayNameMap(users);
     }
 
     /// <summary>SuperUser 關閉時，僅允許與主機 Windows 身分在 ILC 中對應的 TELID 登入。</summary>

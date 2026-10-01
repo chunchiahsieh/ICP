@@ -24,8 +24,8 @@ public class AdminController : Controller
     public async Task<IActionResult> PermissionScan(CancellationToken cancellationToken)
     {
         var scanned = _scannerService.Scan();
-        // ResourceCode is the stable identity: update in place, create only when missing,
-        // and disable resources absent from the scan without deleting their role permissions.
+        // PermissionScan is additive: preserve existing resource activation and role grants,
+        // including resources absent from the current view scan.
         var result = await _syncService.UpsertAsync(
             scanned,
             User.Identity?.Name,

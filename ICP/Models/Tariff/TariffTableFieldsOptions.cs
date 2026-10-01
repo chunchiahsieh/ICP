@@ -42,6 +42,9 @@ public class TariffTableInitialSort
 
     [JsonPropertyName("direction")]
     public string Direction { get; set; } = "asc";
+
+    [JsonPropertyName("thenBy")]
+    public List<TariffTableInitialSort> ThenBy { get; set; } = [];
 }
 
 public class TariffTableUiOptions
@@ -89,19 +92,39 @@ public class TariffTablePageConfig
 
     public int? ResolveInitialSortColumnIndex()
     {
-        if (InitialSort is null || string.IsNullOrWhiteSpace(InitialSort.FieldName))
+        var columns = ResolveInitialSortColumns();
+        return columns.Count == 0 ? null : (int)columns[0][0];
+    }
+
+    public IReadOnlyList<object[]> ResolveInitialSortColumns()
+    {
+        if (InitialSort is null)
         {
-            return null;
+            return [];
         }
 
-        for (var index = 0; index < Fields.Count; index++)
+        var fields = Fields.Where(field => field.Visible).ToList();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var columns = new List<object[]>();
+        foreach (var sort in new[] { InitialSort }.Concat(InitialSort.ThenBy ?? []))
         {
-            if (string.Equals(Fields[index].FieldName, InitialSort.FieldName, StringComparison.OrdinalIgnoreCase))
+            var fieldName = sort?.FieldName?.Trim();
+            if (string.IsNullOrEmpty(fieldName) || !seen.Add(fieldName))
             {
-                return index;
+                continue;
+            }
+
+            var index = fields.FindIndex(field =>
+                string.Equals(field.FieldName, fieldName, StringComparison.OrdinalIgnoreCase));
+            if (index >= 0)
+            {
+                var direction = string.Equals(sort!.Direction?.Trim(), "desc", StringComparison.OrdinalIgnoreCase)
+                    ? "desc"
+                    : "asc";
+                columns.Add([index, direction]);
             }
         }
 
-        return null;
+        return columns;
     }
 }

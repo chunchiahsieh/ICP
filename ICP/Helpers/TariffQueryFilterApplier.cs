@@ -17,7 +17,8 @@ public static class TariffQueryFilterApplier
     public static IQueryable<TariffData> ApplyFilters(
         IQueryable<TariffData> query,
         TariffDataQueryModel criteria,
-        IReadOnlyList<TariffTableFieldMetadata> fields)
+        IReadOnlyList<TariffTableFieldMetadata> fields,
+        bool deferCreateUserTextFilter = false)
     {
         var searchable = fields
             .Where(field => field.Searchable && !TariffMetadataHelper.IsVirtualField(field.FieldName))
@@ -45,6 +46,12 @@ public static class TariffQueryFilterApplier
 
         foreach (var (fieldName, term) in criteria.Text)
         {
+            if (deferCreateUserTextFilter
+                && string.Equals(fieldName, nameof(TariffData.CreateUser), StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
             if (string.IsNullOrWhiteSpace(term) || !searchable.TryGetValue(fieldName, out var meta))
             {
                 continue;
@@ -151,6 +158,31 @@ public static class TariffQueryFilterApplier
         }
 
         return query;
+    }
+
+    public static List<TariffData> ApplyCreateUserTextFilter(
+        IEnumerable<TariffData> rows,
+        TariffDataQueryModel criteria,
+        IReadOnlyList<TariffTableFieldMetadata> fields)
+    {
+        if (!fields.Any(field => field.Visible && field.Searchable
+            && string.Equals(field.FieldName, nameof(TariffData.CreateUser), StringComparison.OrdinalIgnoreCase)
+            && string.Equals(TariffMetadataHelper.ResolveFilterType(field), ShipInfoFilterTypes.Text, StringComparison.OrdinalIgnoreCase)))
+        {
+            return rows.ToList();
+        }
+
+        foreach (var term in criteria.Text
+            .Where(pair => string.Equals(pair.Key, nameof(TariffData.CreateUser), StringComparison.OrdinalIgnoreCase))
+            .Select(pair => pair.Value?.Trim())
+            .Where(value => !string.IsNullOrEmpty(value)))
+        {
+            rows = rows.Where(row =>
+                TariffTableViewHelper.FormatCellValue(row, nameof(TariffData.CreateUser)).Contains(term!, StringComparison.OrdinalIgnoreCase)
+                || (row.CreateUser ?? string.Empty).Contains(term!, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return rows.ToList();
     }
 
     private static IQueryable<TariffData> ApplyTextFilter(

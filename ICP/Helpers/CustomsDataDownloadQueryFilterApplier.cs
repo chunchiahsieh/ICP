@@ -10,6 +10,8 @@ namespace ICP.Helpers;
 
 public static class CustomsDataDownloadQueryFilterApplier
 {
+    public const string BlankFilterValue = "__ICP_BLANK__";
+
     private static readonly Dictionary<string, PropertyInfo> Properties =
         typeof(StgRawShippingAdvice).GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
@@ -205,7 +207,8 @@ public static class CustomsDataDownloadQueryFilterApplier
         var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
         if (propertyType == typeof(string))
         {
-            return query.Where(BuildStringCompareExpression(fieldName, toDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), greaterOrEqual: false));
+            return query.Where(BuildStringCompareExpression(fieldName,
+                toDate.AddDays(1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), greaterOrEqual: false));
         }
 
         if (propertyType == typeof(DateTime))
@@ -258,9 +261,20 @@ public static class CustomsDataDownloadQueryFilterApplier
         var parameter = Expression.Parameter(typeof(StgRawShippingAdvice), "entity");
         var property = Expression.Property(parameter, fieldName);
         var notNull = Expression.NotEqual(property, Expression.Constant(null, typeof(string)));
+        var includeBlank = (fieldName.Equals(nameof(StgRawShippingAdvice.InvoiceDate), StringComparison.OrdinalIgnoreCase)
+            || fieldName.Equals(nameof(StgRawShippingAdvice.Hazmat), StringComparison.OrdinalIgnoreCase))
+            && values.Contains(BlankFilterValue, StringComparer.Ordinal);
+        var actualValues = values.Where(value => !string.Equals(value, BlankFilterValue, StringComparison.Ordinal)).ToList();
         var containsMethod = typeof(List<string>).GetMethod(nameof(List<string>.Contains), [typeof(string)])!;
-        var callContains = Expression.Call(Expression.Constant(values), containsMethod, property);
-        var body = Expression.AndAlso(notNull, callContains);
+        var callContains = Expression.Call(Expression.Constant(actualValues), containsMethod, property);
+        Expression body = Expression.AndAlso(notNull, callContains);
+        if (includeBlank)
+        {
+            var trim = Expression.Call(property, nameof(string.Trim), Type.EmptyTypes);
+            var blank = Expression.OrElse(Expression.Not(notNull),
+                Expression.Equal(trim, Expression.Constant(string.Empty)));
+            body = Expression.OrElse(body, blank);
+        }
         var lambda = Expression.Lambda<Func<StgRawShippingAdvice, bool>>(body, parameter);
         return query.Where(lambda);
     }
@@ -316,10 +330,14 @@ public static class CustomsDataDownloadQueryFilterApplier
         var parameter = Expression.Parameter(typeof(StgRawShippingAdvice), "entity");
         var property = Expression.Property(parameter, fieldName);
         var notNull = Expression.NotEqual(property, Expression.Constant(null, typeof(string)));
-        var constant = Expression.Constant(compareValue);
+        // The staging feed stores these dates as text, normally yyyy-MM-dd or yyyy/MM/dd.
+        var normalized = Expression.Call(property, nameof(string.Replace), Type.EmptyTypes,
+            Expression.Constant("/"), Expression.Constant("-"));
+        var comparison = Expression.Call(typeof(string).GetMethod(nameof(string.Compare),
+            [typeof(string), typeof(string)])!, normalized, Expression.Constant(compareValue));
         var compare = greaterOrEqual
-            ? Expression.GreaterThanOrEqual(property, constant)
-            : Expression.LessThanOrEqual(property, constant);
+            ? Expression.GreaterThanOrEqual(comparison, Expression.Constant(0))
+            : Expression.LessThan(comparison, Expression.Constant(0));
         var body = Expression.AndAlso(notNull, compare);
         return Expression.Lambda<Func<StgRawShippingAdvice, bool>>(body, parameter);
     }

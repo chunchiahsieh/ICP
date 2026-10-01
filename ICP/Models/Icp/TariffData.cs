@@ -6,6 +6,9 @@ namespace ICP.Models.Icp;
 [Table("TariffData")]
 public class TariffData
 {
+    public const int DescriptionOfGoodsMaxLength = 500;
+    public const int LogRemarksMaxLength = 100;
+
     [Key]
     public long Id { get; set; }
 
@@ -33,8 +36,11 @@ public class TariffData
     [MaxLength(100)]
     public string? PONumber { get; set; }
 
-    [MaxLength(200)]
+    [MaxLength(DescriptionOfGoodsMaxLength)]
     public string DescriptionOfGoods { get; set; } = string.Empty;
+
+    [MaxLength(LogRemarksMaxLength)]
+    public string? LOGRemarks { get; set; }
 
     [MaxLength(50)]
     public string Quantity { get; set; } = string.Empty;
@@ -149,6 +155,9 @@ public class TariffData
 
     [MaxLength(50)]
     public string CreateUser { get; set; } = string.Empty;
+
+    [NotMapped]
+    public string? CreateUserDisplayName { get; set; }
 
     public DateTime? UpdateTime { get; set; }
 

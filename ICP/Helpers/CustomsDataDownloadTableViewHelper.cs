@@ -33,6 +33,16 @@ public static class CustomsDataDownloadTableViewHelper
             return string.Empty;
         }
 
+        var decimals = fieldName.ToUpperInvariant() switch
+        {
+            "QTY" => 3,
+            "PRICE" or "AMOUNT" => 2,
+            "GROSSWEIGHT" or "NETWEIGHTOFTHEITEM" => 4,
+            _ => (int?)null
+        };
+        if (decimals.HasValue && value is IFormattable number)
+            return number.ToString($"F{decimals.Value}", CultureInfo.InvariantCulture) ?? string.Empty;
+
         return value switch
         {
             DateTime dateTime => dateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),

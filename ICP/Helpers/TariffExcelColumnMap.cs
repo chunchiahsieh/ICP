@@ -169,6 +169,7 @@ public static class TariffExcelColumnMap
         FreightCharge,
         TotalPieces,
         GrossWeightKg,
+        Broker,
         AirSea,
         DeclarationAmountTWD
     };

@@ -4,7 +4,6 @@
     var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
     var maxSizeHint = string.Format(Localizer["Broker.TariffData.MaxSizeHint"].Value, maxSizeMb);
     var tariffTableConfigJson = ViewData["TariffTableConfigJson"] as string ?? "{}";
-    var brokerRoles = ViewData["BrokerRoles"] as IReadOnlyList<string> ?? [];
 }
 
 @section Styles {
@@ -67,26 +66,30 @@
     <form id="tariffDeleteToken" class="d-none">@Html.AntiForgeryToken()</form>
 </div>
 
-<div class="modal fade" id="tariffBrokerModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="tariffLogRemarksModal" tabindex="-1" aria-labelledby="tariffLogRemarksTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">@Localizer["Broker.TariffData.BrokerRole"]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="tariffLogRemarksTitle">@Localizer["Broker.TariffData.LogRemarks.Title"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Common.Close"]"></button>
             </div>
             <div class="modal-body">
-                <label for="tariffBrokerRole" class="form-label">@Localizer["Broker.TariffData.SelectBrokerRole"]</label>
-                <select id="tariffBrokerRole" class="form-select">
-                    <option value="">@Localizer["Broker.TariffData.SelectBrokerRole"]</option>
-                    @foreach (var role in brokerRoles)
-                    {
-                        <option value="@role" selected="@(brokerRoles.Count == 1 ? "selected" : null)">@role</option>
-                    }
-                </select>
+                <div id="tariffLogRemarksError" class="alert alert-danger d-none" role="alert"></div>
+                <div class="mb-3">
+                    <label for="tariffLogRemarksInvoice" class="form-label">@Localizer["Broker.TariffData.Column.InvoiceNumber"]</label>
+                    <input type="text" class="form-control" id="tariffLogRemarksInvoice" readonly />
+                </div>
+                <label for="tariffLogRemarksValue" class="form-label">@Localizer["Broker.TariffData.Column.LOGRemarks"]</label>
+                <textarea class="form-control" id="tariffLogRemarksValue" rows="4" maxlength="100"
+                          aria-describedby="tariffLogRemarksHint tariffLogRemarksCount" disabled></textarea>
+                <div class="d-flex justify-content-between gap-2 mt-1 text-muted small">
+                    <span id="tariffLogRemarksHint">@Localizer["Broker.TariffData.LogRemarks.Hint"]</span>
+                    <span id="tariffLogRemarksCount" aria-live="polite">0 / 100</span>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Common.Cancel"]</button>
-                <button type="button" class="btn btn-primary" id="btnTariffBrokerConfirm">@Localizer["Common.Confirm"]</button>
+                <button type="button" class="btn btn-primary" id="btnTariffLogRemarksSave" disabled>@Localizer["Common.Save"]</button>
             </div>
         </div>
     </div>
@@ -143,7 +146,6 @@
         $(function () {
             var maxSizeMb = @maxSizeMb;
             var maxSizeHint = @Html.Raw(JsonSerializer.Serialize(maxSizeHint));
-            var selectedBrokerRole = '';
             var uploaderButtonClass = 'btn btn-primary align-self-center d-inline-flex align-items-center gap-2';
             var tariffTableConfig = @Html.Raw(tariffTableConfigJson);
             var tariffFilterFieldMap = window.TariffProTable
@@ -206,11 +208,19 @@
             if (window.ProDataTables && ProDataTables.initUsers && hasPermission('Views.Broker.TariffData.View')) {
                 var sortColumn = tariffTableConfig.initialSortColumn ?? 0;
                 var sortDirection = tariffTableConfig.initialSortDirection || 'desc';
+                var initialSort = Array.isArray(tariffTableConfig.initialSort) && tariffTableConfig.initialSort.length
+                    ? tariffTableConfig.initialSort
+                    : [[sortColumn, sortDirection]];
                 tableInstance = ProDataTables.initUsers(ProDataTables.buildConfig($.extend({
                     filterOptionsUrl: '@Url.Action("GetFilterOptions", "TariffData")',
                     queryUrl: '@Url.Action("Query", "TariffData")',
                     pageLength: 10,
-                    initialSort: [[sortColumn, sortDirection]],
+                    initialSort: initialSort,
+                    dataTableOptions: {
+                        columnDefs: window.TariffProTable && TariffProTable.buildTariffSortColumnDefs
+                            ? TariffProTable.buildTariffSortColumnDefs(tariffTableConfig.fields || [])
+                            : []
+                    },
                     onDraw: function () {
                         syncTariffStickyHeaderOffset();
                         renumberTariffRowNo();
@@ -239,6 +249,143 @@
                 if (tableInstance && tableInstance.clearFilters) {
                     tableInstance.clearFilters();
                 }
+            });
+
+            var logRemarksState = { id: '', original: '', loaded: false, saving: false, version: 0, request: null };
+            var $logRemarksModal = $('#tariffLogRemarksModal');
+            var logRemarksModal = bootstrap.Modal.getOrCreateInstance($logRemarksModal[0]);
+            var $logRemarksValue = $('#tariffLogRemarksValue');
+            var $logRemarksSave = $('#btnTariffLogRemarksSave');
+            var logRemarksMessages = {
+                tooLong: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.LogRemarks.TooLong"].Value)),
+                loadFailed: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.LogRemarks.LoadFailed"].Value)),
+                saveFailed: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.LogRemarks.SaveFailed"].Value)),
+                saveSuccess: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.LogRemarks.SaveSuccess"].Value)),
+                forbidden: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.LogRemarks.Forbidden"].Value))
+            };
+
+            function canEditLogRemarks() {
+                return hasPermission('Views.Broker.TariffData.View') && hasPermission('Views.Broker.TariffData.Edit');
+            }
+
+            function showLogRemarksError(message) {
+                $('#tariffLogRemarksError').text(message || '').toggleClass('d-none', !message);
+            }
+
+            function updateLogRemarksControls() {
+                var disabled = !logRemarksState.loaded || logRemarksState.saving;
+                $logRemarksValue.prop('disabled', disabled);
+                $logRemarksSave.prop('disabled', disabled);
+                $logRemarksModal.find('[data-bs-dismiss="modal"]').prop('disabled', logRemarksState.saving);
+                $logRemarksModal.attr('aria-busy', logRemarksState.request || logRemarksState.saving ? 'true' : 'false');
+                $('#tariffLogRemarksCount').text(String($logRemarksValue.val() || '').length + ' / 100');
+            }
+
+            $logRemarksValue.on('input', function () {
+                $('#tariffLogRemarksCount').text(String($(this).val() || '').length + ' / 100');
+            });
+
+            $logRemarksModal.on('hide.bs.modal', function (event) {
+                if (logRemarksState.saving) event.preventDefault();
+            }).on('hidden.bs.modal', function () {
+                logRemarksState.version++;
+                if (logRemarksState.request) logRemarksState.request.abort();
+                logRemarksState.request = null;
+                logRemarksState.id = '';
+                logRemarksState.original = '';
+                logRemarksState.loaded = false;
+                updateLogRemarksControls();
+            });
+
+            $('#DataDiv').on('click', '.tariff-edit-log-remarks', function () {
+                if (!canEditLogRemarks() || logRemarksState.saving) return;
+                var recordId = $(this).attr('data-record-id');
+                if (!recordId) return;
+
+                var version = ++logRemarksState.version;
+                if (logRemarksState.request) logRemarksState.request.abort();
+                logRemarksState.id = recordId;
+                logRemarksState.original = '';
+                logRemarksState.loaded = false;
+                $('#tariffLogRemarksInvoice').val('');
+                $logRemarksValue.val('');
+                showLogRemarksError('');
+                updateLogRemarksControls();
+                logRemarksModal.show();
+
+                logRemarksState.request = $.ajax({
+                    url: '@Url.Action("GetLogRemarks", "TariffData")',
+                    type: 'GET',
+                    data: { id: recordId },
+                    dataType: 'json',
+                    cache: false
+                }).done(function (result) {
+                    if (version !== logRemarksState.version) return;
+                    if (!result || !result.success) {
+                        showLogRemarksError((result && result.message) || logRemarksMessages.loadFailed);
+                        return;
+                    }
+                    logRemarksState.original = result.logRemarks == null ? '' : String(result.logRemarks);
+                    logRemarksState.loaded = true;
+                    $('#tariffLogRemarksInvoice').val(result.invoiceNumber || '');
+                    $logRemarksValue.val(logRemarksState.original);
+                }).fail(function (xhr, status) {
+                    if (version !== logRemarksState.version || status === 'abort') return;
+                    showLogRemarksError((xhr.responseJSON && xhr.responseJSON.message) || logRemarksMessages.loadFailed);
+                }).always(function () {
+                    if (version !== logRemarksState.version) return;
+                    logRemarksState.request = null;
+                    updateLogRemarksControls();
+                    if (logRemarksState.loaded) $logRemarksValue.trigger('focus');
+                });
+                updateLogRemarksControls();
+            });
+
+            $logRemarksSave.on('click', function () {
+                if (logRemarksState.saving || !logRemarksState.loaded || !logRemarksState.id) return;
+                if (!canEditLogRemarks()) {
+                    showLogRemarksError(logRemarksMessages.forbidden);
+                    return;
+                }
+                var remarks = String($logRemarksValue.val() || '');
+                if (remarks.length > 100) {
+                    showLogRemarksError(logRemarksMessages.tooLong);
+                    return;
+                }
+
+                logRemarksState.saving = true;
+                showLogRemarksError('');
+                updateLogRemarksControls();
+                $.ajax({
+                    url: '@Url.Action("SaveLogRemarks", "TariffData")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        Id: logRemarksState.id,
+                        LOGRemarks: remarks,
+                        OriginalLOGRemarks: logRemarksState.original,
+                        __RequestVerificationToken: $('#tariffDeleteToken input[name="__RequestVerificationToken"]').val()
+                    }
+                }).done(function (result) {
+                    if (!result || !result.success) {
+                        showLogRemarksError((result && result.message) || logRemarksMessages.saveFailed);
+                        return;
+                    }
+                    logRemarksState.saving = false;
+                    logRemarksState.loaded = false;
+                    updateLogRemarksControls();
+                    logRemarksModal.hide();
+                    reloadTable();
+                    window.alert(result.message || logRemarksMessages.saveSuccess);
+                }).fail(function (xhr) {
+                    if (xhr.status === 403 || xhr.status === 404 || xhr.status === 409) {
+                        logRemarksState.loaded = false;
+                    }
+                    showLogRemarksError((xhr.responseJSON && xhr.responseJSON.message) || logRemarksMessages.saveFailed);
+                }).always(function () {
+                    logRemarksState.saving = false;
+                    updateLogRemarksControls();
+                });
             });
 
             function deleteTariff(url, id, kind, confirmMessage) {
@@ -290,46 +437,16 @@
             }
 
             if (hasPermission('Views.Broker.TariffData.UploadCustomsData')) {
-                var brokerModalElement = document.getElementById('tariffBrokerModal');
-                var brokerModal = bootstrap.Modal.getOrCreateInstance(brokerModalElement);
-
-                function selectBrokerBeforeUpload() {
-                    return new Promise(function (resolve) {
-                        var settled = false;
-                        function finish(result) {
-                            if (settled) return;
-                            settled = true;
-                            $('#btnTariffBrokerConfirm').off('click.tariffBroker');
-                            $(brokerModalElement).off('hidden.bs.modal.tariffBroker');
-                            resolve(result);
-                        }
-
-                        $('#btnTariffBrokerConfirm').off('click.tariffBroker').on('click.tariffBroker', function () {
-                            var broker = String($('#tariffBrokerRole').val() || '').trim();
-                            if (!broker) {
-                                window.alert(@Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.SelectBrokerRole"].Value)));
-                                return;
-                            }
-                            selectedBrokerRole = broker;
-                            finish(true);
-                            brokerModal.hide();
-                        });
-                        $(brokerModalElement).off('hidden.bs.modal.tariffBroker').on('hidden.bs.modal.tariffBroker', function () {
-                            finish(false);
-                        });
-                        brokerModal.show();
-                    });
-                }
-
+                // The shared uploader appends its modal to body synchronously.
+                var $existingUploaderModals = $('body > .uploader-modal-root');
                 createTariffUploader('#customsDataUploader', {
                     multiple: false,
                     title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataTitle"].Value)),
                     buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataButton"].Value)),
                     uploadUrl: '@Url.Action("UploadCustomsData", "TariffData")',
-                    fileTypes: '.xlsx,.xls',
-                    beforeOpen: selectBrokerBeforeUpload,
-                    extraFormData: function () { return { broker: selectedBrokerRole }; }
+                    fileTypes: '.xlsx,.xls'
                 });
+                $('body > .uploader-modal-root').not($existingUploaderModals).addClass('tariff-customs-uploader');
             }
 
             if (hasPermission('Views.Broker.TariffData.UploadDeclarationPdf')) {

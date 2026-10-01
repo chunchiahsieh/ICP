@@ -12,6 +12,7 @@ public static class TariffCustomsImportRules
         TariffExcelColumnMap.InvoiceNumber,
         TariffExcelColumnMap.MAWB,
         TariffExcelColumnMap.HAWB,
+        TariffExcelColumnMap.Broker,
         TariffExcelColumnMap.AirSea,
         TariffExcelColumnMap.DeclarationAmountTWD
     ];
@@ -48,6 +49,7 @@ public static class TariffCustomsImportRules
         TariffExcelColumnMap.FreightCharge,
         TariffExcelColumnMap.TotalPieces,
         TariffExcelColumnMap.GrossWeightKg,
+        TariffExcelColumnMap.Broker,
         TariffExcelColumnMap.AirSea,
         TariffExcelColumnMap.DeclarationAmountTWD
     };
@@ -60,7 +62,7 @@ public static class TariffCustomsImportRules
         [TariffExcelColumnMap.PartNumber] = 100,
         [TariffExcelColumnMap.InvoiceNumber] = 100,
         [TariffExcelColumnMap.PONumber] = 100,
-        [TariffExcelColumnMap.DescriptionOfGoods] = 200,
+        [TariffExcelColumnMap.DescriptionOfGoods] = TariffData.DescriptionOfGoodsMaxLength,
         [TariffExcelColumnMap.Quantity] = 50,
         [TariffExcelColumnMap.UOM] = 50,
         [TariffExcelColumnMap.NetWeightKg] = 50,
@@ -104,7 +106,7 @@ public static class TariffCustomsImportRules
         {
             if (!columnMap.ContainsKey(propertyName))
             {
-                errors.Add($"標題列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
+                AddError(errors, $"標題列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
             }
         }
     }
@@ -133,7 +135,7 @@ public static class TariffCustomsImportRules
 
             if (!knownHawbs.Contains(row.HAWB))
             {
-                errors.Add($"Invoice Number {row.InvoiceNumber} 的 HAWB {row.HAWB} 不存在於 ICP 關稅資料");
+                AddError(errors, $"Invoice Number {row.InvoiceNumber} 的 HAWB {row.HAWB} 不存在於 ICP 報關資料");
             }
         }
     }
@@ -144,10 +146,11 @@ public static class TariffCustomsImportRules
         string importFileName,
         Guid importBatchId,
         DateOnly createDate,
-        string broker,
         int rowNumber,
         List<string> errors)
     {
+        var allErrors = errors;
+        errors = [];
         var mawb = RequireCellValue(values, columnMap, TariffExcelColumnMap.MAWB, rowNumber, errors);
         var hawbRaw = GetCellValue(values, columnMap, TariffExcelColumnMap.HAWB);
         var hawb = ValidateAndTrim(
@@ -204,7 +207,7 @@ public static class TariffCustomsImportRules
             }
         }
 
-        return new TariffData
+        var row = new TariffData
         {
             MAWB = ValidateAndTrim(mawb, TariffExcelColumnMap.MAWB, rowNumber, errors)!,
             HAWB = hawb ?? string.Empty,
@@ -243,7 +246,7 @@ public static class TariffCustomsImportRules
             FreightCharge = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.FreightCharge), TariffExcelColumnMap.FreightCharge, rowNumber, errors)!,
             TotalPieces = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.TotalPieces), TariffExcelColumnMap.TotalPieces, rowNumber, errors)!,
             GrossWeightKg = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.GrossWeightKg), TariffExcelColumnMap.GrossWeightKg, rowNumber, errors)!,
-            Broker = ValidateAndTrim(broker, TariffExcelColumnMap.Broker, rowNumber, errors)!,
+            Broker = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.Broker), TariffExcelColumnMap.Broker, rowNumber, errors)!,
             AirSea = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.AirSea), TariffExcelColumnMap.AirSea, rowNumber, errors)!,
             TotalAmountForeignCurrency = totalAmountForeignCurrency,
             TotalAmountTWD = totalAmountTwd,
@@ -252,10 +255,13 @@ public static class TariffCustomsImportRules
             ImportBatchId = importBatchId,
             ImportFileName = ValidateAndTrim(importFileName, nameof(TariffData.ImportFileName), rowNumber, errors, maxLengthOverride: 255)!
         };
+        allErrors.AddRange(errors);
+        return row;
     }
 
     public static void ApplyImportRow(TariffData entity, TariffData source)
     {
+        // LOGRemarks is maintained by permission-controlled editing, never by broker uploads.
         entity.MAWB = source.MAWB;
         entity.HAWB = source.HAWB;
         entity.ImportDate = source.ImportDate;
@@ -354,11 +360,22 @@ public static class TariffCustomsImportRules
 
     public static void ThrowIfErrors(List<string> errors)
     {
-        if (errors.Count > 0)
+        var message = TariffImportErrorFormatter.Format(errors);
+        if (message.Length > 0)
         {
-            throw new InvalidOperationException(string.Join("；", errors.Take(20))
-                + (errors.Count > 20 ? $"…等 {errors.Count} 項錯誤" : string.Empty));
+            throw new InvalidOperationException(message);
         }
+    }
+
+    private static void AddError(List<string> errors, string message)
+    {
+        // Several validators inspect the same cell; report the same issue only once per row.
+        // MapRow uses a row-local buffer, avoiding scans of all preceding rows in large uploads.
+        for (var index = errors.Count - 1; index >= 0; index--)
+        {
+            if (string.Equals(errors[index], message, StringComparison.Ordinal)) return;
+        }
+        errors.Add(message);
     }
 
     private static string? RequireCellValue(
@@ -371,7 +388,7 @@ public static class TariffCustomsImportRules
         var value = GetCellValue(values, columnMap, propertyName);
         if (string.IsNullOrEmpty(value))
         {
-            errors.Add($"第 {rowNumber} 列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
+            AddError(errors, $"第 {rowNumber} 列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
         }
 
         return value;
@@ -404,7 +421,7 @@ public static class TariffCustomsImportRules
         {
             if (required)
             {
-                errors.Add($"第 {rowNumber} 列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
+                AddError(errors, $"第 {rowNumber} 列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
             }
 
             return required ? string.Empty : null;
@@ -413,7 +430,7 @@ public static class TariffCustomsImportRules
         var maxLength = maxLengthOverride ?? GetMaxLength(propertyName);
         if (normalized.Length > maxLength)
         {
-            errors.Add($"第 {rowNumber} 列 {TariffExcelColumnMap.GetDisplayName(propertyName)} 超過 {maxLength} 字元");
+            AddError(errors, $"第 {rowNumber} 列 {TariffExcelColumnMap.GetDisplayName(propertyName)} 超過 {maxLength} 字元");
         }
 
         return normalized;
@@ -432,7 +449,7 @@ public static class TariffCustomsImportRules
         var text = GetCellValue(values, columnMap, propertyName);
         if (string.IsNullOrEmpty(text))
         {
-            errors.Add($"第 {rowNumber} 列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
+            AddError(errors, $"第 {rowNumber} 列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
             return default;
         }
 
@@ -441,7 +458,7 @@ public static class TariffCustomsImportRules
             return parsed;
         }
 
-        errors.Add($"第 {rowNumber} 列 {TariffExcelColumnMap.GetDisplayName(propertyName)} 日期格式須為 YYYY/MM/DD");
+        AddError(errors, $"第 {rowNumber} 列 {TariffExcelColumnMap.GetDisplayName(propertyName)} 日期格式須為 YYYY/MM/DD");
         return default;
     }
 
@@ -455,7 +472,7 @@ public static class TariffCustomsImportRules
         var text = GetCellValue(values, columnMap, propertyName);
         if (string.IsNullOrEmpty(text))
         {
-            errors.Add($"第 {rowNumber} 列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
+            AddError(errors, $"第 {rowNumber} 列缺少必填欄位 {TariffExcelColumnMap.GetDisplayName(propertyName)}");
             return null;
         }
 
@@ -465,7 +482,7 @@ public static class TariffCustomsImportRules
             return parsed;
         }
 
-        errors.Add($"第 {rowNumber} 列 {TariffExcelColumnMap.GetDisplayName(propertyName)} 格式不正確");
+        AddError(errors, $"第 {rowNumber} 列 {TariffExcelColumnMap.GetDisplayName(propertyName)} 格式不正確");
         return null;
     }
 

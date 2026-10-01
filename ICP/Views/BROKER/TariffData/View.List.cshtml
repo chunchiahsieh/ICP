@@ -80,6 +80,18 @@
                         else if (string.Equals(field.FieldName, "Actions", StringComparison.OrdinalIgnoreCase))
                         {
                             <td class="text-center">
+                                @if (Model.CanEditLogRemarks)
+                                {
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-primary tariff-edit-log-remarks"
+                                            data-record-id="@item.Id"
+                                            data-permissions="Views.Broker.TariffData.Edit"
+                                            data-i18n-key="Views.Broker.TariffData.Edit"
+                                            title="@Localizer["Broker.TariffData.LogRemarks.Title"]"
+                                            aria-label="@Localizer["Broker.TariffData.LogRemarks.Title"]">
+                                        <i class="fas fa-pencil-alt" aria-hidden="true"></i>
+                                    </button>
+                                }
                                 <button type="button"
                                         class="btn btn-sm btn-outline-danger tariff-delete-record"
                                         data-record-id="@item.Id"
@@ -123,7 +135,15 @@
                         }
                         else
                         {
-                            <td>@TariffTableViewHelper.FormatCellValue(item, field.FieldName)</td>
+                            var cellValue = TariffTableViewHelper.FormatCellValue(item, field.FieldName);
+                            if (new[] { "MAWB", "HAWB", "InvoiceNumber", "LineNo" }.Contains(field.FieldName, StringComparer.OrdinalIgnoreCase))
+                            {
+                                <td data-order="@cellValue">@cellValue</td>
+                            }
+                            else
+                            {
+                                <td>@cellValue</td>
+                            }
                         }
                     }
                 </tr>

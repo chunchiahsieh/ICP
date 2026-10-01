@@ -13,5 +13,7 @@ public class TariffDataSearchListViewModel
 
     public bool HasFilterRow { get; init; }
 
+    public bool CanEditLogRemarks { get; init; }
+
     public string StorageRoot { get; init; } = string.Empty;
 }

@@ -25,7 +25,7 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
         var person = await _fiesta.MailGroups.AsNoTracking().Where(x => x.EmpId == empId).OrderBy(x => x.Uid).FirstOrDefaultAsync(ct);
         if (person is null || string.IsNullOrWhiteSpace(person.EmpId) || string.IsNullOrWhiteSpace(person.Address)) throw new InvalidOperationException($"MailGroup operator not found or incomplete for EmpID '{empId}'.");
         var deliveryTo = Get(h, "DeliveryTo");
-        var shipTo = await _icp.SystemConfigs.AsNoTracking().Where(x => !x.IsDeleted && x.Category == "DeliveryToList" && x.Key1 == deliveryTo).Select(x => x.Value4).FirstOrDefaultAsync(ct);
+        var shipTo = await _icp.SystemConfigs.AsNoTracking().Where(x => !x.IsDeleted && x.Category == "DeliveryToList" && x.Key1 == deliveryTo).Select(x => x.Value3).FirstOrDefaultAsync(ct);
         if (string.IsNullOrWhiteSpace(shipTo)) throw new InvalidOperationException($"DeliveryToList address not found for DeliveryTo '{deliveryTo ?? "(null)"}'.");
         var now = DateTime.Now; var tetPo = Get(h, "TetPo", "TETPO"); var invoiceNo = Get(h, "InvoiceNo"); var forklift = IsY(Get(h, "Forklift")); var driver = IsY(Get(h, "DriverDetails")); var waste = IsY(Get(h, "WasteDisposal"));
         var attachment = await BuildAttachmentAsync(Get(h, "RowId"), ct);

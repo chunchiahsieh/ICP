@@ -980,7 +980,7 @@
     <value>ICP 與 AR/UR 比對</value>
   </data>
   <data name="Nav.CustomsDataDownload" xml:space="preserve">
-    <value>關務資料下載</value>
+    <value>進口原始資料</value>
   </data>
   <data name="Nav.DefaultDeliveryWh" xml:space="preserve">
     <value>預設交貨倉庫</value>
@@ -1064,7 +1064,7 @@
     <value>船務報表</value>
   </data>
   <data name="Nav.TariffData" xml:space="preserve">
-    <value>關稅資料</value>
+    <value>報關資料</value>
   </data>
   <data name="Nav.WhCode" xml:space="preserve">
     <value>倉庫代碼</value>
@@ -1079,16 +1079,16 @@
     <value>報關</value>
   </data>
   <data name="Views.Broker.CustomsDataDownload.View" xml:space="preserve">
-    <value>關務資料下載查詢</value>
+    <value>進口原始資料查詢</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
-    <value>關務資料下載</value>
+    <value>進口原始資料</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
-    <value>關稅資料</value>
+    <value>報關資料</value>
   </data>
   <data name="Broker.TariffData.Title" xml:space="preserve">
-    <value>關稅資料</value>
+    <value>報關資料</value>
   </data>
   <data name="Broker.TariffData.MaxSizeHint" xml:space="preserve">
     <value>單檔大小上限：{0} MB</value>
@@ -1133,7 +1133,7 @@
     <value>Cost 檔案 {0} 上傳成功</value>
   </data>
   <data name="Broker.TariffData.HawbNotFound" xml:space="preserve">
-    <value>HAWB {0} 不存在於關稅資料，無法上傳</value>
+    <value>HAWB {0} 不存在於報關資料，無法上傳</value>
   </data>
   <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
     <value>All</value>
@@ -1142,13 +1142,13 @@
     <value>Download Template</value>
   </data>
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
-    <value>關稅資料查詢</value>
+    <value>報關資料查詢</value>
   </data>
   <data name="Views.Broker.TariffData.Export" xml:space="preserve">
-    <value>下載關稅資料</value>
+    <value>下載報關資料</value>
   </data>
   <data name="Broker.TariffData.ExportAllConfirm" xml:space="preserve">
-    <value>尚未設定篩選條件，確定要下載全部關稅資料嗎？</value>
+    <value>尚未設定篩選條件，確定要下載全部報關資料嗎？</value>
   </data>
   <data name="Broker.TariffData.Export.Yes" xml:space="preserve">
     <value>有</value>
@@ -1778,7 +1778,7 @@
   <data name="DataScope.Self" xml:space="preserve"><value>僅本人資料</value></data>
   <data name="DataScope.SelfHint" xml:space="preserve"><value>僅可存取使用者本人建立或申請的資料。</value></data>
   <data name="Message.InvalidDataScope" xml:space="preserve"><value>資料範圍無效。</value></data>
-  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>自訂資料範圍僅能套用至 Customs Data Download 資源。</value></data>
+  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>自訂資料範圍僅能套用至 Import Raw Data Download 資源。</value></data>
   <data name="Message.DataScopeValueRequired" xml:space="preserve"><value>每個資料範圍條件至少要輸入一個值。</value></data>
   <data name="DataScope.RestrictData" xml:space="preserve"><value>限制可查看資料</value></data>
   <data name="DataScope.ConditionHint" xml:space="preserve"><value>同一條件中的多個值以逗號分隔；多個條件需同時符合。</value></data>
@@ -2320,7 +2320,7 @@
   <data name="Setting.CountryOfOrigin.Title" xml:space="preserve"><value>原產國</value></data>
   <data name="Setting.Shipper.Title" xml:space="preserve"><value>出貨人</value></data>
   <data name="DataScope.SupportedPagesTitle" xml:space="preserve"><value>目前支援 DataScope 的頁面：</value></data>
-  <data name="DataScope.SupportedPages" xml:space="preserve"><value>Customs Data Download、Ship Info、Tariff Data、Shipping Report、Mass Data Report、Customized。</value></data>
+  <data name="DataScope.SupportedPages" xml:space="preserve"><value>Import Raw Data Download、Ship Info、Customs Clearance Data、Shipping Report、Mass Data Report、Customized。</value></data>
   <data name="Common.ClearAllFilters" xml:space="preserve"><value>重設搜尋</value></data>
   <data name="ShipInfo.Field.Time" xml:space="preserve"><value>時間</value></data>
   <data name="ShipInfo.Field.WarehouseShort" xml:space="preserve"><value>W/H</value></data>
@@ -2679,7 +2679,7 @@
   <data name="Broker.TariffData.Column.CreateUser" xml:space="preserve"><value>建立者</value></data>
   <data name="Broker.TariffData.Column.UpdateTime" xml:space="preserve"><value>更新時間</value></data>
   <data name="Broker.TariffData.Column.UpdateUser" xml:space="preserve"><value>更新者</value></data>
-  <data name="Views.Broker.TariffData.Delete" xml:space="preserve"><value>刪除關稅資料</value></data>
+  <data name="Views.Broker.TariffData.Delete" xml:space="preserve"><value>刪除報關資料</value></data>
   <data name="Broker.TariffData.Column.Actions" xml:space="preserve"><value>操作</value></data>
   <data name="Broker.TariffData.Delete.Record" xml:space="preserve"><value>刪除資料</value></data>
   <data name="Broker.TariffData.Delete.Pdf" xml:space="preserve"><value>刪除 PDF</value></data>
@@ -2697,7 +2697,7 @@
   <data name="Broker.TariffData.BrokerRole" xml:space="preserve"><value>報關行角色</value></data>
   <data name="Broker.TariffData.SelectBrokerRole" xml:space="preserve"><value>請選擇 Broker 角色</value></data>
   <data name="Broker.TariffData.BrokerRoleInvalid" xml:space="preserve"><value>請選擇登入者擁有的 Broker 角色</value></data>
-  <data name="Views.Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>上傳關稅附件</value></data>
+  <data name="Views.Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>上傳報關附件</value></data>
   <data name="Broker.TariffData.Attachment.OpenFolder" xml:space="preserve"><value>開啟附件資料夾</value></data>
   <data name="Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>上傳附件</value></data>
   <data name="Broker.TariffData.Attachment.Empty" xml:space="preserve"><value>目前沒有附件</value></data>
@@ -2708,4 +2708,19 @@
   <data name="Broker.TariffData.Attachment.Download" xml:space="preserve"><value>下載</value></data>
   <data name="Broker.TariffData.Attachment.DeleteConfirm" xml:space="preserve"><value>確定刪除此附件嗎？</value></data>
   <data name="Broker.TariffData.Attachment.UploadSuccess" xml:space="preserve"><value>附件上傳成功</value></data>
+  <data name="Views.Broker.TariffData.Edit" xml:space="preserve"><value>編輯報關資料 LOG 備註</value></data>
+  <data name="Broker.TariffData.Column.LOGRemarks" xml:space="preserve"><value>LOG 備註</value></data>
+  <data name="Broker.TariffData.LogRemarks.Title" xml:space="preserve"><value>編輯 LOG 備註</value></data>
+  <data name="Broker.TariffData.LogRemarks.Hint" xml:space="preserve"><value>自由輸入，最多 100 個字元。清空欄位即可移除備註。</value></data>
+  <data name="Broker.TariffData.LogRemarks.TooLong" xml:space="preserve"><value>LOG 備註不得超過 100 個字元。</value></data>
+  <data name="Broker.TariffData.LogRemarks.NotFound" xml:space="preserve"><value>找不到此報關資料，或資料已無法存取。</value></data>
+  <data name="Broker.TariffData.LogRemarks.Conflict" xml:space="preserve"><value>LOG 備註在開啟編輯視窗後已被修改。請關閉並重新開啟視窗，載入最新內容後再試。</value></data>
+  <data name="Broker.TariffData.LogRemarks.SaveSuccess" xml:space="preserve"><value>LOG 備註儲存成功。</value></data>
+  <data name="Broker.TariffData.LogRemarks.SaveFailed" xml:space="preserve"><value>無法儲存 LOG 備註，請再試一次。</value></data>
+  <data name="Broker.TariffData.LogRemarks.LoadFailed" xml:space="preserve"><value>無法載入 LOG 備註，請關閉編輯視窗後再試。</value></data>
+  <data name="Broker.TariffData.LogRemarks.Forbidden" xml:space="preserve"><value>您沒有編輯 LOG 備註的權限。</value></data>
+  <data name="ShipInfo.Option.Yes" xml:space="preserve"><value>是</value></data>
+  <data name="ShipInfo.Option.No" xml:space="preserve"><value>否</value></data>
+  <data name="ShipInfo.DelayPairRequired" xml:space="preserve"><value>延遲原因與通知日期必須同時填寫，或兩欄都留空。</value></data>
+  <data name="Setting.DeliveryToList.Field.City" xml:space="preserve"><value>城市</value></data>
 </root>

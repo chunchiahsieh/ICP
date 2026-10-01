@@ -980,7 +980,7 @@
     <value>Compare ICP vs AR/UR</value>
   </data>
   <data name="Nav.CustomsDataDownload" xml:space="preserve">
-    <value>Customs Data Download</value>
+    <value>Import Raw Data Download</value>
   </data>
   <data name="Nav.DefaultDeliveryWh" xml:space="preserve">
     <value>Default Delivery W/H</value>
@@ -1064,7 +1064,7 @@
     <value>Shipping Report</value>
   </data>
   <data name="Nav.TariffData" xml:space="preserve">
-    <value>Tariff Data</value>
+    <value>Customs Clearance Data</value>
   </data>
   <data name="Nav.WhCode" xml:space="preserve">
     <value>W/H Code</value>
@@ -1079,16 +1079,16 @@
     <value>Broker</value>
   </data>
   <data name="Views.Broker.CustomsDataDownload.View" xml:space="preserve">
-    <value>Customs Data Download View</value>
+    <value>Import Raw Data Download View</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
-    <value>Customs Data Download</value>
+    <value>Import Raw Data Download</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
-    <value>Tariff Data</value>
+    <value>Customs Clearance Data</value>
   </data>
   <data name="Broker.TariffData.Title" xml:space="preserve">
-    <value>Tariff Data</value>
+    <value>Customs Clearance Data</value>
   </data>
   <data name="Broker.TariffData.MaxSizeHint" xml:space="preserve">
     <value>Max file size: {0} MB</value>
@@ -1133,7 +1133,7 @@
     <value>Cost file {0} uploaded successfully</value>
   </data>
   <data name="Broker.TariffData.HawbNotFound" xml:space="preserve">
-    <value>HAWB {0} does not exist in tariff data and cannot be uploaded</value>
+    <value>HAWB {0} does not exist in customs clearance data and cannot be uploaded</value>
   </data>
   <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
     <value>All</value>
@@ -1142,13 +1142,13 @@
     <value>Download Template</value>
   </data>
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
-    <value>Tariff Data View</value>
+    <value>Customs Clearance Data View</value>
   </data>
   <data name="Views.Broker.TariffData.Export" xml:space="preserve">
-    <value>Download tariff data</value>
+    <value>Download customs clearance data</value>
   </data>
   <data name="Broker.TariffData.ExportAllConfirm" xml:space="preserve">
-    <value>No filters are selected. Download all tariff data?</value>
+    <value>No filters are selected. Download all customs clearance data?</value>
   </data>
   <data name="Broker.TariffData.Export.Yes" xml:space="preserve">
     <value>Yes</value>
@@ -1768,7 +1768,7 @@
   <data name="DataScope.Self" xml:space="preserve"><value>Own data only</value></data>
   <data name="DataScope.SelfHint" xml:space="preserve"><value>Access data created or requested by the user only.</value></data>
   <data name="Message.InvalidDataScope" xml:space="preserve"><value>The data scope is invalid.</value></data>
-  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>Custom data scopes can only be applied to Customs Data Download.</value></data>
+  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>Custom data scopes can only be applied to Import Raw Data Download.</value></data>
   <data name="Message.DataScopeValueRequired" xml:space="preserve"><value>Enter at least one value for each data scope condition.</value></data>
   <data name="DataScope.RestrictData" xml:space="preserve"><value>Restrict visible data</value></data>
   <data name="DataScope.ConditionHint" xml:space="preserve"><value>Separate multiple values in one condition with commas. All conditions must match.</value></data>
@@ -2132,7 +2132,7 @@
   <data name="Setting.CountryOfOrigin.Title" xml:space="preserve"><value>Country of Origin</value></data>
   <data name="Setting.Shipper.Title" xml:space="preserve"><value>Shipper</value></data>
   <data name="DataScope.SupportedPagesTitle" xml:space="preserve"><value>Pages currently supporting DataScope:</value></data>
-  <data name="DataScope.SupportedPages" xml:space="preserve"><value>Customs Data Download, Ship Info, Tariff Data, Shipping Report, Mass Data Report, and Customized.</value></data>
+  <data name="DataScope.SupportedPages" xml:space="preserve"><value>Import Raw Data Download, Ship Info, Customs Clearance Data, Shipping Report, Mass Data Report, and Customized.</value></data>
   <data name="Common.ClearAllFilters" xml:space="preserve"><value>Reset Filters</value></data>
   <data name="ShipInfo.Field.Time" xml:space="preserve"><value>Time</value></data>
   <data name="ShipInfo.Field.WarehouseShort" xml:space="preserve"><value>W/H</value></data>
@@ -2496,7 +2496,7 @@
   <data name="Broker.TariffData.Column.CreateUser" xml:space="preserve"><value>Create User</value></data>
   <data name="Broker.TariffData.Column.UpdateTime" xml:space="preserve"><value>Update Time</value></data>
   <data name="Broker.TariffData.Column.UpdateUser" xml:space="preserve"><value>Update User</value></data>
-  <data name="Views.Broker.TariffData.Delete" xml:space="preserve"><value>Delete tariff data</value></data>
+  <data name="Views.Broker.TariffData.Delete" xml:space="preserve"><value>Delete customs clearance data</value></data>
   <data name="Broker.TariffData.Column.Actions" xml:space="preserve"><value>Actions</value></data>
   <data name="Broker.TariffData.Delete.Record" xml:space="preserve"><value>Delete record</value></data>
   <data name="Broker.TariffData.Delete.Pdf" xml:space="preserve"><value>Delete PDF</value></data>
@@ -2514,7 +2514,7 @@
   <data name="Broker.TariffData.BrokerRole" xml:space="preserve"><value>Broker role</value></data>
   <data name="Broker.TariffData.SelectBrokerRole" xml:space="preserve"><value>Select a Broker role</value></data>
   <data name="Broker.TariffData.BrokerRoleInvalid" xml:space="preserve"><value>Select one of your assigned Broker roles.</value></data>
-  <data name="Views.Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>Upload tariff attachment</value></data>
+  <data name="Views.Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>Upload customs clearance attachment</value></data>
   <data name="Broker.TariffData.Attachment.OpenFolder" xml:space="preserve"><value>Open attachment folder</value></data>
   <data name="Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>Upload attachment</value></data>
   <data name="Broker.TariffData.Attachment.Empty" xml:space="preserve"><value>No attachments</value></data>
@@ -2525,4 +2525,19 @@
   <data name="Broker.TariffData.Attachment.Download" xml:space="preserve"><value>Download</value></data>
   <data name="Broker.TariffData.Attachment.DeleteConfirm" xml:space="preserve"><value>Delete this attachment?</value></data>
   <data name="Broker.TariffData.Attachment.UploadSuccess" xml:space="preserve"><value>Attachment uploaded successfully.</value></data>
+  <data name="Views.Broker.TariffData.Edit" xml:space="preserve"><value>Edit customs clearance LOG Remarks</value></data>
+  <data name="Broker.TariffData.Column.LOGRemarks" xml:space="preserve"><value>LOG Remarks</value></data>
+  <data name="Broker.TariffData.LogRemarks.Title" xml:space="preserve"><value>Edit LOG Remarks</value></data>
+  <data name="Broker.TariffData.LogRemarks.Hint" xml:space="preserve"><value>Free text, up to 100 characters. Clear the field to remove the remarks.</value></data>
+  <data name="Broker.TariffData.LogRemarks.TooLong" xml:space="preserve"><value>LOG Remarks must not exceed 100 characters.</value></data>
+  <data name="Broker.TariffData.LogRemarks.NotFound" xml:space="preserve"><value>The customs clearance record was not found or is no longer available.</value></data>
+  <data name="Broker.TariffData.LogRemarks.Conflict" xml:space="preserve"><value>LOG Remarks changed after this editor was opened. Close and reopen it to load the latest value, then try again.</value></data>
+  <data name="Broker.TariffData.LogRemarks.SaveSuccess" xml:space="preserve"><value>LOG Remarks saved successfully.</value></data>
+  <data name="Broker.TariffData.LogRemarks.SaveFailed" xml:space="preserve"><value>Could not save LOG Remarks. Please try again.</value></data>
+  <data name="Broker.TariffData.LogRemarks.LoadFailed" xml:space="preserve"><value>Could not load LOG Remarks. Close this editor and try again.</value></data>
+  <data name="Broker.TariffData.LogRemarks.Forbidden" xml:space="preserve"><value>You do not have permission to edit LOG Remarks.</value></data>
+  <data name="ShipInfo.Option.Yes" xml:space="preserve"><value>Yes</value></data>
+  <data name="ShipInfo.Option.No" xml:space="preserve"><value>No</value></data>
+  <data name="ShipInfo.DelayPairRequired" xml:space="preserve"><value>Reason for Delivery Delay and Delay Notification Date must both be filled in, or both be left blank.</value></data>
+  <data name="Setting.DeliveryToList.Field.City" xml:space="preserve"><value>City</value></data>
 </root>

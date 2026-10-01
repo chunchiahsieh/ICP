@@ -77,7 +77,20 @@
                     @foreach (var field in Model.Fields)
                     {
                         var cellClass = ResolveHeaderCellClass(field, cellIndex);
-                        <td class="@cellClass">@CustomsDataDownloadTableViewHelper.FormatCellValue(item, field.FieldName)</td>
+                        var cellValue = CustomsDataDownloadTableViewHelper.FormatCellValue(item, field.FieldName);
+                        if (string.Equals(field.FieldName, "CreatedUtc", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var sortValue = item.CreatedUtc.ToString("yyyy-MM-ddTHH:mm:ss.fffffff", System.Globalization.CultureInfo.InvariantCulture);
+                            <td class="@cellClass" data-order="@sortValue">@cellValue</td>
+                        }
+                        else if (new[] { "Mawb", "Hawb", "InvoiceNo", "InvoiceSeq" }.Contains(field.FieldName, StringComparer.OrdinalIgnoreCase))
+                        {
+                            <td class="@cellClass" data-order="@cellValue">@cellValue</td>
+                        }
+                        else
+                        {
+                            <td class="@cellClass">@cellValue</td>
+                        }
                         cellIndex++;
                     }
                 </tr>

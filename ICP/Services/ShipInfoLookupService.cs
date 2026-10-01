@@ -44,7 +44,7 @@ public class ShipInfoLookupService
             {
                 x.Key1,
                 x.Value1,
-                x.Value4
+                x.Value3
             })
             .ToListAsync(cancellationToken);
 
@@ -53,9 +53,9 @@ public class ShipInfoLookupService
         {
             Value = x.Key1,
             // DeliveryTo stores the setting key for ARUR ShipToCode, while users need
-            // to see the actual delivery address maintained in DeliveryToList.Value4.
-            Text = isDeliveryTo && !string.IsNullOrWhiteSpace(x.Value4)
-                ? x.Value4!
+            // to see the street address maintained in DeliveryToList.Value3.
+            Text = isDeliveryTo && !string.IsNullOrWhiteSpace(x.Value3)
+                ? x.Value3!
                 : string.IsNullOrWhiteSpace(x.Value1) ? x.Key1 : x.Value1!
         }).ToList();
     }

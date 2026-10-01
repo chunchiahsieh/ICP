@@ -10,6 +10,7 @@ public sealed class IcpSystemConfig
     public int Id { get; set; }
     public string Category { get; set; } = string.Empty;
     public string Key1 { get; set; } = string.Empty;
+    public string? Value3 { get; set; }
     public string? Value4 { get; set; }
     public bool IsDeleted { get; set; }
 }

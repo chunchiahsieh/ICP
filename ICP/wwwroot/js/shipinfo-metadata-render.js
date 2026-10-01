@@ -212,12 +212,17 @@
     function renderSelect($select, options, selectedValue) {
         $select.empty();
         $select.append('<option value=""></option>');
+        var hasSelectedValue = false;
         (options || []).forEach(function (option) {
             var value = option.value || option.Value || '';
             var text = option.text || option.Text || option.label || option.Label || value;
             var selected = String(selectedValue || '') === String(value) ? ' selected' : '';
+            if (selected) hasSelectedValue = true;
             $select.append('<option value="' + escapeHtml(value) + '"' + selected + '>' + escapeHtml(text) + '</option>');
         });
+        if (!hasSelectedValue && String(selectedValue || '').trim()) {
+            $select.append('<option value="' + escapeHtml(selectedValue) + '" selected>' + escapeHtml(selectedValue) + '</option>');
+        }
     }
 
     function createInputControl(field, options) {
@@ -281,11 +286,19 @@
 
             var staticOptions = getField(field, 'Options') || getField(field, 'options');
             var category = getField(field, 'LookupCategory') || getField(field, 'lookupCategory');
+            if (['CarMethod', 'DriverDetails', 'Forklift', 'WasteDisposal'].indexOf(fieldName) >= 0 && !String(value || '').trim()) {
+                value = 'N';
+            }
             if (Array.isArray(staticOptions)) {
                 renderSelect($select, staticOptions, value);
             } else if (category && options.lookupUrl) {
                 $select.append('<option value="">' + escapeHtml(options.loadingText || '...') + '</option>');
                 loadLookupOptions(category, options.lookupUrl).done(function (lookupItems) {
+                    if (fieldName === 'Shipper') {
+                        lookupItems = lookupItems.slice().sort(function (a, b) {
+                            return String(a.text || a.Text || '').localeCompare(String(b.text || b.Text || ''), 'en', { sensitivity: 'base' });
+                        });
+                    }
                     renderSelect($select, lookupItems, value);
                 });
             } else {
@@ -317,6 +330,38 @@
                     .prop('checked', checked)
                     .prop('disabled', lockControl)
             );
+        }
+
+        if (fieldName === 'ArriveTime' && options.mode === 'edit') {
+            var dateTimeText = normalizeDateTimeInputValue(value);
+            if (!String(value || '').trim() || /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(dateTimeText)) {
+                var parts = dateTimeText ? dateTimeText.split(/[ :]/) : [];
+                var $date = $('<input type="date" class="form-control" aria-label="Date" />')
+                    .val(parts[0] || '');
+                var $hour = $('<select class="form-select" aria-label="Hour (24-hour)" style="max-width:5rem"></select>');
+                var $minute = $('<select class="form-select" aria-label="Minute" style="max-width:5rem"></select>');
+                for (var hour = 0; hour < 24; hour++) $hour.append($('<option></option>').val(pad2(hour)).text(pad2(hour)));
+                for (var minute = 0; minute < 60; minute++) $minute.append($('<option></option>').val(pad2(minute)).text(pad2(minute)));
+                $hour.val(parts[1] || '00');
+                $minute.val(parts[2] || '00');
+                var $value = $('<input type="hidden" class="shipinfo-control" />')
+                    .attr('data-field', fieldName)
+                    .attr('data-control-type', 'Text');
+                var updateValue = function () {
+                    $value.val($date.val() ? $date.val() + ' ' + $hour.val() + ':' + $minute.val() : '');
+                };
+                $date.add($hour).add($minute).on('change input', updateValue).prop('disabled', lockControl);
+                updateValue();
+                return $('<div class="input-group shipinfo-24h-datetime"></div>')
+                    .append($date, $hour, $('<span class="input-group-text">:</span>'), $minute, $value);
+            }
+            // Keep an older free-text value visible so opening Edit cannot silently erase it.
+            return $('<input type="text" class="form-control shipinfo-control" />')
+                .attr('data-field', fieldName)
+                .attr('data-control-type', 'Text')
+                .attr('title', 'Existing time is not in yyyy-MM-dd HH:mm format; update it using that format.')
+                .prop('disabled', lockControl)
+                .val(value);
         }
 
         if (controlType === 'Date' && options.mode !== 'view') {

@@ -239,6 +239,13 @@ public class ShipInfoService : IShipInfoService
             .ToDictionary(x => x.Key, x => x.Value?.ToString(), StringComparer.OrdinalIgnoreCase);
         var validationErrors = CollectValidationErrors(fields, values, currentValues).ToList();
         validationErrors.AddRange(ValidateHeaderBusinessRules(values));
+        if (values.TryGetValue("ArriveTime", out var arriveTime)
+            && !string.IsNullOrWhiteSpace(arriveTime)
+            && !string.Equals(arriveTime, header.ArriveTime, StringComparison.Ordinal)
+            && !DateTime.TryParseExact(arriveTime, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+        {
+            validationErrors.Add("Time must use yyyy-MM-dd HH:mm format.");
+        }
         if (validationErrors.Count > 0)
         {
             throw new ShipInfoBusinessException(string.Join(' ', validationErrors));
@@ -247,6 +254,7 @@ public class ShipInfoService : IShipInfoService
         var previousTetPo = header.TetPo;
         var changes = ShipInfoEntityMapper.DetectChanges(header, values, fields);
         ShipInfoEntityMapper.ApplyEditableValues(header, values, fields);
+        header.ArrivalNoticeFlag = string.IsNullOrWhiteSpace(header.ArrivalNotice) ? "N" : "Y";
         CrudAuditHelper.ApplyUpdateAudit(header, userName);
 
         var relatedDetails = string.Equals(previousTetPo, header.TetPo, StringComparison.Ordinal)
@@ -795,9 +803,9 @@ public class ShipInfoService : IShipInfoService
         var errors = new List<string>();
         values.TryGetValue("ReasonForDeliveryDelay", out var delayReason);
         values.TryGetValue("DelayNotificationDate", out var delayNotificationDate);
-        if (!string.IsNullOrWhiteSpace(delayReason) && string.IsNullOrWhiteSpace(delayNotificationDate))
+        if (string.IsNullOrWhiteSpace(delayReason) != string.IsNullOrWhiteSpace(delayNotificationDate))
         {
-            errors.Add("Delay Notification Date is required when Reason for Delivery Delay is provided.");
+            errors.Add("Reason for Delivery Delay and Delay Notification Date must both be filled in, or both be left blank.");
         }
 
         values.TryGetValue("TotalCartons", out var totalCartons);

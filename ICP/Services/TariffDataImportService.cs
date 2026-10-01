@@ -65,11 +65,10 @@ public class TariffDataImportService
     public async Task<TariffDataImportResult> ImportCustomsDataAsync(
         string storedFilePath,
         string importFileName,
-        string broker,
         string createUser,
         CancellationToken cancellationToken = default)
     {
-        var rows = ParseCustomsExcel(storedFilePath, importFileName, broker);
+        var rows = ParseCustomsExcel(storedFilePath, importFileName);
         if (rows.Count == 0)
         {
             throw new InvalidOperationException("檔案中沒有可匯入的資料列");
@@ -189,7 +188,7 @@ public class TariffDataImportService
         }
     }
 
-    private static List<TariffData> ParseCustomsExcel(string storedFilePath, string importFileName, string broker)
+    private static List<TariffData> ParseCustomsExcel(string storedFilePath, string importFileName)
     {
         var extension = Path.GetExtension(storedFilePath);
         if (!extension.Equals(".xlsx", StringComparison.OrdinalIgnoreCase)
@@ -239,7 +238,6 @@ public class TariffDataImportService
                 importFileName,
                 importBatchId,
                 createDate,
-                broker,
                 rowNumber,
                 errors));
         }

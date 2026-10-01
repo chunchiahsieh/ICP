@@ -9,6 +9,59 @@
         return field.searchable !== false && field.Searchable !== false;
     }
 
+    function compareNatural(left, right) {
+        left = left == null ? '' : String(left);
+        right = right == null ? '' : String(right);
+        var leftIndex = 0;
+        var rightIndex = 0;
+        function isDigit(value) { return value >= '0' && value <= '9'; }
+
+        while (leftIndex < left.length && rightIndex < right.length) {
+            if (isDigit(left[leftIndex]) && isDigit(right[rightIndex])) {
+                var leftEnd = leftIndex;
+                var rightEnd = rightIndex;
+                while (leftEnd < left.length && isDigit(left[leftEnd])) leftEnd++;
+                while (rightEnd < right.length && isDigit(right[rightEnd])) rightEnd++;
+                while (leftIndex < leftEnd && left[leftIndex] === '0') leftIndex++;
+                while (rightIndex < rightEnd && right[rightIndex] === '0') rightIndex++;
+                var leftDigits = left.slice(leftIndex, leftEnd);
+                var rightDigits = right.slice(rightIndex, rightEnd);
+                if (leftDigits.length !== rightDigits.length)
+                    return leftDigits.length < rightDigits.length ? -1 : 1;
+                if (leftDigits !== rightDigits) return leftDigits < rightDigits ? -1 : 1;
+                leftIndex = leftEnd;
+                rightIndex = rightEnd;
+            } else {
+                var leftChar = left[leftIndex].toUpperCase();
+                var rightChar = right[rightIndex].toUpperCase();
+                if (leftChar.length !== 1) leftChar = left[leftIndex];
+                if (rightChar.length !== 1) rightChar = right[rightIndex];
+                if (leftChar !== rightChar) return leftChar < rightChar ? -1 : 1;
+                leftIndex++;
+                rightIndex++;
+            }
+        }
+        return (left.length - leftIndex) - (right.length - rightIndex);
+    }
+
+    function buildSortColumnDefs(fields) {
+        var dataTable = $ && $.fn && $.fn.dataTable;
+        if (!dataTable || !dataTable.ext || !dataTable.ext.type) return [];
+
+        var typeName = 'customs-download-natural-v1';
+        dataTable.ext.type.order[typeName + '-asc'] = compareNatural;
+        dataTable.ext.type.order[typeName + '-desc'] = function (left, right) {
+            return -compareNatural(left, right);
+        };
+        var naturalFields = ['mawb', 'hawb', 'invoiceno'];
+        var targets = [];
+        (fields || []).filter(isFieldVisible).forEach(function (field, index) {
+            var name = field.fieldName || field.FieldName || '';
+            if (naturalFields.indexOf(name.toLowerCase()) >= 0) targets.push(index);
+        });
+        return targets.length ? [{ targets: targets, type: typeName }] : [];
+    }
+
     function buildFilterFieldMap(fields) {
         var map = {};
         var filtersApi = global.ProTableFilters;
@@ -93,6 +146,7 @@
     }
 
     global.CustomsDataDownloadProTable = {
+        buildSortColumnDefs: buildSortColumnDefs,
         buildFilterFieldMap: buildFilterFieldMap,
         buildFilterHooks: buildFilterHooks,
         bindFilterActions: bindFilterActions,

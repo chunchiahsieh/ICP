@@ -27,6 +27,11 @@ public static class TariffTableViewHelper
             return string.Empty;
         }
 
+        if (string.Equals(fieldName, nameof(TariffData.CreateUser), StringComparison.OrdinalIgnoreCase))
+        {
+            return string.IsNullOrWhiteSpace(item.CreateUserDisplayName) ? item.CreateUser ?? string.Empty : item.CreateUserDisplayName;
+        }
+
         return property.GetValue(item) switch
         {
             null => string.Empty,

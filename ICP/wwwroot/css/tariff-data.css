@@ -2,10 +2,19 @@
     --protable-chrome-offset: 16rem;
 }
 
-.tariff-data-page .tariff-broker-select {
-    width: auto;
-    min-width: 14rem;
-    max-width: 24rem;
+.tariff-customs-uploader [data-status="error"] .status-text {
+    display: block;
+}
+
+.tariff-customs-uploader [data-status="error"] .status-text > span:last-child {
+    display: block;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.tariff-customs-uploader [data-status="error"] .status-text > span:last-child > svg {
+    display: inline;
+    vertical-align: text-bottom;
 }
 
 .tariff-data-page .tariff-table-wrap {

@@ -18,7 +18,6 @@
         {"fieldName": "TetPo", "labelKey": "ShipInfo.Header.Field.TetPo", "visible": true, "searchable": true, "filterType": "Text"},
         {"fieldName": "DeliveryTo", "labelKey": "ShipInfo.Header.Field.DeliveryTo", "visible": true, "searchable": true, "filterType": "Checkbox"},
         {"fieldName": "DeliveryDate", "labelKey": "ShipInfo.Header.Field.DeliveryDate", "visible": true, "searchable": true, "filterType": "DateRange"},
-        {"fieldName": "ArriveTime", "labelKey": "ShipInfo.Header.Field.Time", "visible": true, "searchable": true, "filterType": "Text"},
         {"fieldName": "NcdrNo", "labelKey": "ShipInfo.Header.Field.NcdrNo", "visible": true, "searchable": true, "filterType": "Text"},
         {"fieldName": "NcdrRequestor", "labelKey": "ShipInfo.Header.Field.NcdrRequestor", "visible": true, "searchable": true, "filterType": "Text"},
         {"fieldName": "EndUser", "labelKey": "ShipInfo.Header.Field.EndUser", "visible": true, "searchable": true, "filterType": "Text"},

@@ -1,4 +1,5 @@
 using ICP.Models;
+using ICP.Models.Tariff;
 using ICP.Services;
 using Microsoft.AspNetCore.Routing;
 
@@ -33,6 +34,13 @@ public static class PermissionRequestResolver
 
         if (controller.Equals("TariffData", StringComparison.OrdinalIgnoreCase))
         {
+            if (action.Equals("GetLogRemarks", StringComparison.OrdinalIgnoreCase)
+                || action.Equals("SaveLogRemarks", StringComparison.OrdinalIgnoreCase))
+            {
+                // This must fail closed even before the new resource has been scanned.
+                return TariffDataPermissionCodes.Edit;
+            }
+
             if (action.Equals("DeleteRecord", StringComparison.OrdinalIgnoreCase)
                 && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
             {

@@ -42,6 +42,9 @@ public class CustomsDataDownloadTableInitialSort
 
     [JsonPropertyName("direction")]
     public string Direction { get; set; } = "asc";
+
+    [JsonPropertyName("thenBy")]
+    public List<CustomsDataDownloadTableInitialSort> ThenBy { get; set; } = [];
 }
 
 public class CustomsDataDownloadTableUiOptions
@@ -90,20 +93,32 @@ public class CustomsDataDownloadTablePageConfig
 
     public int? ResolveInitialSortColumnIndex()
     {
-        if (InitialSort is null || string.IsNullOrWhiteSpace(InitialSort.FieldName))
+        var columns = ResolveInitialSortColumns();
+        return columns.Count == 0 ? null : (int)columns[0][0];
+    }
+
+    public IReadOnlyList<object[]> ResolveInitialSortColumns()
+    {
+        if (InitialSort is null) return [];
+
+        var visible = Fields.Where(field => field.Visible).ToList();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var columns = new List<object[]>();
+        foreach (var sort in new[] { InitialSort }.Concat(InitialSort.ThenBy ?? []))
         {
-            return null;
+            var name = sort?.FieldName?.Trim();
+            if (string.IsNullOrEmpty(name) || !seen.Add(name)) continue;
+
+            var index = visible.FindIndex(field =>
+                string.Equals(field.FieldName, name, StringComparison.OrdinalIgnoreCase));
+            if (index < 0) continue;
+
+            columns.Add([index,
+                string.Equals(sort!.Direction?.Trim(), "desc", StringComparison.OrdinalIgnoreCase)
+                    ? "desc" : "asc"]);
         }
 
-        for (var index = 0; index < Fields.Count; index++)
-        {
-            if (string.Equals(Fields[index].FieldName, InitialSort.FieldName, StringComparison.OrdinalIgnoreCase))
-            {
-                return index;
-            }
-        }
-
-        return null;
+        return columns;
     }
 }
 

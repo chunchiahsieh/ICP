@@ -980,7 +980,7 @@
     <value>ICP と AR/UR 比較</value>
   </data>
   <data name="Nav.CustomsDataDownload" xml:space="preserve">
-    <value>通関データダウンロード</value>
+    <value>輸入ローデータ</value>
   </data>
   <data name="Nav.DefaultDeliveryWh" xml:space="preserve">
     <value>既定納入倉庫</value>
@@ -1064,7 +1064,7 @@
     <value>船積レポート</value>
   </data>
   <data name="Nav.TariffData" xml:space="preserve">
-    <value>関税データ</value>
+    <value>通関データ</value>
   </data>
   <data name="Nav.WhCode" xml:space="preserve">
     <value>倉庫コード</value>
@@ -1079,16 +1079,16 @@
     <value>通関</value>
   </data>
   <data name="Views.Broker.CustomsDataDownload.View" xml:space="preserve">
-    <value>通関データダウンロード照会</value>
+    <value>輸入ローデータ照会</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.CustomsDataDownload" xml:space="preserve">
-    <value>通関データダウンロード</value>
+    <value>輸入ローデータ</value>
   </data>
   <data name="Views.Shared._SidebarNav.Broker.TariffData" xml:space="preserve">
-    <value>関税データ</value>
+    <value>通関データ</value>
   </data>
   <data name="Broker.TariffData.Title" xml:space="preserve">
-    <value>関税データ</value>
+    <value>通関データ</value>
   </data>
   <data name="Broker.TariffData.MaxSizeHint" xml:space="preserve">
     <value>ファイルサイズ上限：{0} MB</value>
@@ -1133,7 +1133,7 @@
     <value>Cost ファイル {0} のアップロードに成功しました</value>
   </data>
   <data name="Broker.TariffData.HawbNotFound" xml:space="preserve">
-    <value>HAWB {0} は関税データに存在しないためアップロードできません</value>
+    <value>HAWB {0} は通関データに存在しないためアップロードできません</value>
   </data>
   <data name="Broker.TariffData.LengthMenuAll" xml:space="preserve">
     <value>すべて</value>
@@ -1142,13 +1142,13 @@
     <value>テンプレートをダウンロード</value>
   </data>
   <data name="Views.Broker.TariffData.View" xml:space="preserve">
-    <value>関税データ照会</value>
+    <value>通関データ照会</value>
   </data>
   <data name="Views.Broker.TariffData.Export" xml:space="preserve">
-    <value>関税データをダウンロード</value>
+    <value>通関データをダウンロード</value>
   </data>
   <data name="Broker.TariffData.ExportAllConfirm" xml:space="preserve">
-    <value>フィルターが未設定です。すべての関税データをダウンロードしますか？</value>
+    <value>フィルターが未設定です。すべての通関データをダウンロードしますか？</value>
   </data>
   <data name="Broker.TariffData.Export.Yes" xml:space="preserve">
     <value>あり</value>
@@ -1768,7 +1768,7 @@
   <data name="DataScope.Self" xml:space="preserve"><value>本人のデータのみ</value></data>
   <data name="DataScope.SelfHint" xml:space="preserve"><value>ユーザー本人が作成または申請したデータのみアクセスできます。</value></data>
   <data name="Message.InvalidDataScope" xml:space="preserve"><value>データ範囲が無効です。</value></data>
-  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>カスタムデータ範囲は Customs Data Download リソースにのみ適用できます。</value></data>
+  <data name="Message.DataScopeOnlyForCustomsDownload" xml:space="preserve"><value>カスタムデータ範囲は Import Raw Data Download リソースにのみ適用できます。</value></data>
   <data name="Message.DataScopeValueRequired" xml:space="preserve"><value>各データ範囲条件に少なくとも1つの値を入力してください。</value></data>
   <data name="DataScope.RestrictData" xml:space="preserve"><value>表示データを制限する</value></data>
   <data name="DataScope.ConditionHint" xml:space="preserve"><value>同じ条件の複数の値はカンマで区切ります。すべての条件が一致する必要があります。</value></data>
@@ -2132,7 +2132,7 @@
   <data name="Setting.CountryOfOrigin.Title" xml:space="preserve"><value>原産国</value></data>
   <data name="Setting.Shipper.Title" xml:space="preserve"><value>荷送人</value></data>
   <data name="DataScope.SupportedPagesTitle" xml:space="preserve"><value>現在 DataScope をサポートしているページ：</value></data>
-  <data name="DataScope.SupportedPages" xml:space="preserve"><value>Customs Data Download、Ship Info、Tariff Data、Shipping Report、Mass Data Report、Customized。</value></data>
+  <data name="DataScope.SupportedPages" xml:space="preserve"><value>Import Raw Data Download、Ship Info、Customs Clearance Data、Shipping Report、Mass Data Report、Customized。</value></data>
   <data name="Common.ClearAllFilters" xml:space="preserve"><value>検索クリア</value></data>
   <data name="ShipInfo.Field.Time" xml:space="preserve"><value>時間</value></data>
   <data name="ShipInfo.Field.WarehouseShort" xml:space="preserve"><value>W/H</value></data>
@@ -2491,7 +2491,7 @@
   <data name="Broker.TariffData.Column.CreateUser" xml:space="preserve"><value>作成者</value></data>
   <data name="Broker.TariffData.Column.UpdateTime" xml:space="preserve"><value>更新日時</value></data>
   <data name="Broker.TariffData.Column.UpdateUser" xml:space="preserve"><value>更新者</value></data>
-  <data name="Views.Broker.TariffData.Delete" xml:space="preserve"><value>関税データを削除</value></data>
+  <data name="Views.Broker.TariffData.Delete" xml:space="preserve"><value>通関データを削除</value></data>
   <data name="Broker.TariffData.Column.Actions" xml:space="preserve"><value>操作</value></data>
   <data name="Broker.TariffData.Delete.Record" xml:space="preserve"><value>データを削除</value></data>
   <data name="Broker.TariffData.Delete.Pdf" xml:space="preserve"><value>PDF を削除</value></data>
@@ -2509,7 +2509,7 @@
   <data name="Broker.TariffData.BrokerRole" xml:space="preserve"><value>通関業者ロール</value></data>
   <data name="Broker.TariffData.SelectBrokerRole" xml:space="preserve"><value>Broker ロールを選択</value></data>
   <data name="Broker.TariffData.BrokerRoleInvalid" xml:space="preserve"><value>割り当てられている Broker ロールを選択してください。</value></data>
-  <data name="Views.Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>関税添付ファイルをアップロード</value></data>
+  <data name="Views.Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>通関添付ファイルをアップロード</value></data>
   <data name="Broker.TariffData.Attachment.OpenFolder" xml:space="preserve"><value>添付フォルダーを開く</value></data>
   <data name="Broker.TariffData.Attachment.Upload" xml:space="preserve"><value>添付ファイルをアップロード</value></data>
   <data name="Broker.TariffData.Attachment.Empty" xml:space="preserve"><value>添付ファイルはありません</value></data>
@@ -2520,4 +2520,19 @@
   <data name="Broker.TariffData.Attachment.Download" xml:space="preserve"><value>ダウンロード</value></data>
   <data name="Broker.TariffData.Attachment.DeleteConfirm" xml:space="preserve"><value>この添付ファイルを削除しますか？</value></data>
   <data name="Broker.TariffData.Attachment.UploadSuccess" xml:space="preserve"><value>添付ファイルをアップロードしました。</value></data>
+  <data name="Views.Broker.TariffData.Edit" xml:space="preserve"><value>通関データのLOG備考を編集</value></data>
+  <data name="Broker.TariffData.Column.LOGRemarks" xml:space="preserve"><value>LOG備考</value></data>
+  <data name="Broker.TariffData.LogRemarks.Title" xml:space="preserve"><value>LOG備考を編集</value></data>
+  <data name="Broker.TariffData.LogRemarks.Hint" xml:space="preserve"><value>100文字以内で自由に入力できます。備考を削除する場合は空欄にしてください。</value></data>
+  <data name="Broker.TariffData.LogRemarks.TooLong" xml:space="preserve"><value>LOG備考は100文字以内で入力してください。</value></data>
+  <data name="Broker.TariffData.LogRemarks.NotFound" xml:space="preserve"><value>通関データが見つからないか、現在利用できません。</value></data>
+  <data name="Broker.TariffData.LogRemarks.Conflict" xml:space="preserve"><value>編集画面を開いた後にLOG備考が変更されました。画面を閉じて開き直し、最新の内容を確認してから再試行してください。</value></data>
+  <data name="Broker.TariffData.LogRemarks.SaveSuccess" xml:space="preserve"><value>LOG備考を保存しました。</value></data>
+  <data name="Broker.TariffData.LogRemarks.SaveFailed" xml:space="preserve"><value>LOG備考を保存できませんでした。再試行してください。</value></data>
+  <data name="Broker.TariffData.LogRemarks.LoadFailed" xml:space="preserve"><value>LOG備考を読み込めませんでした。編集画面を閉じて再試行してください。</value></data>
+  <data name="Broker.TariffData.LogRemarks.Forbidden" xml:space="preserve"><value>LOG備考を編集する権限がありません。</value></data>
+  <data name="ShipInfo.Option.Yes" xml:space="preserve"><value>はい</value></data>
+  <data name="ShipInfo.Option.No" xml:space="preserve"><value>いいえ</value></data>
+  <data name="ShipInfo.DelayPairRequired" xml:space="preserve"><value>配送遅延理由と通知日は両方入力するか、両方空欄にしてください。</value></data>
+  <data name="Setting.DeliveryToList.Field.City" xml:space="preserve"><value>都市</value></data>
 </root>

@@ -45,6 +45,7 @@ public class CustomsDataDownloadController : Controller
                 searchable = field.Searchable,
                 filterType = field.FilterType
             }),
+            initialSort = tableConfig.ResolveInitialSortColumns(),
             initialSortColumn = tableConfig.ResolveInitialSortColumnIndex() ?? 0,
             initialSortDirection = string.IsNullOrWhiteSpace(tableConfig.InitialSort?.Direction)
                 ? "desc"
@@ -77,6 +78,21 @@ public class CustomsDataDownloadController : Controller
         }
 
         var options = await GetDistinctColumnValuesAsync(column, search, cancellationToken);
+        if (column.Equals(nameof(StgRawShippingAdvice.InvoiceDate), StringComparison.OrdinalIgnoreCase)
+            || column.Equals(nameof(StgRawShippingAdvice.Hazmat), StringComparison.OrdinalIgnoreCase))
+        {
+            var blankLabel = _localizer["ShipInfo.Blank"].Value;
+            var withLabels = options.Where(value => !string.IsNullOrWhiteSpace(value))
+                .Select(value => new { value, label = value }).ToList();
+            var scopedQuery = CustomsDataDownloadDataScopeService.Apply(BaseQuery(), GetDataScopes());
+            var hasBlank = column.Equals(nameof(StgRawShippingAdvice.InvoiceDate), StringComparison.OrdinalIgnoreCase)
+                ? await scopedQuery.AnyAsync(row => row.InvoiceDate == null || row.InvoiceDate.Trim() == "", cancellationToken)
+                : await scopedQuery.AnyAsync(row => row.Hazmat == null || row.Hazmat.Trim() == "", cancellationToken);
+            if (hasBlank && (string.IsNullOrWhiteSpace(search)
+                || blankLabel.Contains(search, StringComparison.CurrentCultureIgnoreCase)))
+                withLabels.Add(new { value = CustomsDataDownloadQueryFilterApplier.BlankFilterValue, label = blankLabel });
+            return Json(withLabels);
+        }
         return Json(options);
     }
 
@@ -143,9 +159,12 @@ public class CustomsDataDownloadController : Controller
         var tableConfig = _tableMetadataProvider.GetPageConfig();
         var query = CustomsDataDownloadQueryFilterApplier.ApplyFilters(BaseQuery(), criteria, tableConfig.Fields);
         query = CustomsDataDownloadDataScopeService.Apply(query, GetDataScopes());
-        return await query
+        var rows = await query
             .OrderByDescending(e => e.CreatedUtc)
             .ToListAsync(cancellationToken);
+        return tableConfig.ResolveInitialSortColumns().Count > 0
+            ? CustomsDataDownloadSortHelper.Apply(rows, tableConfig)
+            : rows;
     }
 
     private async Task<List<string>> GetDistinctColumnValuesAsync(
@@ -158,6 +177,7 @@ public class CustomsDataDownloadController : Controller
         {
             nameof(StgRawShippingAdvice.FileCode) => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => (string?)e.FileCode), search, cancellationToken),
             nameof(StgRawShippingAdvice.InvoiceNo) => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.InvoiceNo), search, cancellationToken),
+            nameof(StgRawShippingAdvice.InvoiceDate) => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.InvoiceDate), search, cancellationToken),
             nameof(StgRawShippingAdvice.Forwarder) => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Forwarder), search, cancellationToken),
             nameof(StgRawShippingAdvice.Mawb) => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Mawb), search, cancellationToken),
             nameof(StgRawShippingAdvice.Hawb) => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Hawb), search, cancellationToken),
