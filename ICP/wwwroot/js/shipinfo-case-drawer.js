@@ -11,6 +11,28 @@
     var urls = app.urls;
     var messages = app.messages;
 
+    // Deposit verification uses a compact, fixed set of fields. ARUR keeps its
+    // existing full-field report and ordering.
+    var depositHeaderOrder = [
+        'Mawb', 'Hawb', 'Broker',
+        'InvoiceNo', 'DeliveryTo', 'DeliveryDate',
+        'Shipper', 'CreateTime', 'CreateUser'
+    ];
+    var depositDetailOrder = [
+        'InvoiceNo', 'InvoiceSeq', 'ItemNo', 'Description',
+        'Qty', 'Price', 'Amount', 'Currency'
+    ];
+
+    function depositFieldsInOrder(fields, names) {
+        var all = renderApi.getAllFields(fields);
+        return names.map(function (name, index) {
+            var field = all.find(function (candidate) {
+                return getFieldName(candidate).toLowerCase() === name.toLowerCase();
+            });
+            return field ? Object.assign({}, field, { displayOrder: index + 1, DisplayOrder: index + 1 }) : null;
+        }).filter(Boolean);
+    }
+
     function formatSummaryValue(value) {
         if (value === undefined || value === null || value === '') {
             return '-';
@@ -37,6 +59,10 @@
 
     function formatDrawerValue(fieldName, value) {
         var normalizedFieldName = (fieldName || '').toLowerCase();
+        if (!isArurDrawer() && normalizedFieldName === 'createtime' && value) {
+            // Keep the server's wall-clock time; only remove ISO separators and fractions.
+            return String(value).replace('T', ' ').slice(0, 19);
+        }
         if (normalizedFieldName === 'status') {
             return app.formatStatusLabel(value);
         }
@@ -230,16 +256,23 @@
         var details = (data && data.details) || [];
         var invalidHeaderFields = isArurDrawer() ? getArurInvalidFieldNames(header) : new Set();
 
+        var headerFields = app.getCaseDrawerHeaderFields();
+        var detailFields = app.getDetailFields();
+        if (!isArurDrawer()) {
+            headerFields = depositFieldsInOrder(headerFields, depositHeaderOrder);
+            detailFields = depositFieldsInOrder(detailFields, depositDetailOrder);
+        }
+
         $('#shipInfoCaseHeaderSummaryTitle').text(messages.headerInformation || messages.drawerHeader || 'Header Information');
         $('#shipInfoCaseHeaderSummaryWrap')
             .empty()
-            .append(renderHeaderReportTable(app.getCaseDrawerHeaderFields(), header, invalidHeaderFields));
+            .append(renderHeaderReportTable(headerFields, header, invalidHeaderFields));
 
         var $detailContent;
         if (!details.length) {
             $detailContent = $('<p class="text-muted mb-0 p-3"></p>').text(messages.noDetailData || '');
         } else {
-            $detailContent = renderDetailReportTable(app.getDetailFields(), details);
+            $detailContent = renderDetailReportTable(detailFields, details);
         }
 
         $('#shipInfoCaseDetailTitle').text(messages.detailInformation || messages.drawerDetail || 'Detail Information');

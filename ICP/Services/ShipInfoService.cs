@@ -86,6 +86,17 @@ public class ShipInfoService : IShipInfoService
         var config = _metadataProvider.GetPageConfig(CultureInfo.CurrentUICulture.Name);
         var items = (await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken)).ToList();
         await ApplyOutboxFailedFlagsAsync(items, cancellationToken);
+        var deliveryOptions = await _lookupService.GetOptionsAsync("DeliveryToList", cancellationToken);
+        var deliveryNames = deliveryOptions.ToDictionary(x => x.Value, x => x.Text, StringComparer.OrdinalIgnoreCase);
+        foreach (var item in items)
+        {
+            if (item.TryGetValue("DeliveryTo", out var deliveryTo)
+                && deliveryTo is not null
+                && deliveryNames.TryGetValue(Convert.ToString(deliveryTo) ?? string.Empty, out var customerCode))
+            {
+                item["DeliveryToDisplay"] = customerCode;
+            }
+        }
         return new ShipInfoTableListViewModel
         {
             TableId = "shipInfoHeaderTable",
@@ -234,6 +245,14 @@ public class ShipInfoService : IShipInfoService
 
         EnsureStatusAllows(header, permission => permission.Edit, "Header cannot be edited in current status.");
         EnsureConcurrency(header, request.UpdateTime);
+
+        if (string.Equals(header.Forklift?.Trim(), "N", StringComparison.OrdinalIgnoreCase)
+            && values.TryGetValue("Forklift", out var newForklift)
+            && (string.IsNullOrWhiteSpace(newForklift)
+                || string.Equals(newForklift.Trim(), "Y", StringComparison.OrdinalIgnoreCase)))
+        {
+            values["MovingLabor"] = null;
+        }
 
         var currentValues = ShipInfoEntityMapper.MapEntity(header)
             .ToDictionary(x => x.Key, x => x.Value?.ToString(), StringComparer.OrdinalIgnoreCase);
@@ -421,16 +440,15 @@ public class ShipInfoService : IShipInfoService
         }
 
         var mappedHeader = ShipInfoEntityMapper.MapEntity(header);
-        if (normalizedCaseType == ShipInfoCaseTypes.Arur && !string.IsNullOrWhiteSpace(header.DeliveryTo))
+        if (!string.IsNullOrWhiteSpace(header.DeliveryTo))
         {
             var deliveryOptions = await _lookupService.GetOptionsAsync("DeliveryToList", cancellationToken);
-            var deliveryLocation = deliveryOptions.FirstOrDefault(option =>
+            var customerCode = deliveryOptions.FirstOrDefault(option =>
                 string.Equals(option.Value, header.DeliveryTo, StringComparison.OrdinalIgnoreCase))?.Text;
-            if (!string.IsNullOrWhiteSpace(deliveryLocation))
+            if (!string.IsNullOrWhiteSpace(customerCode))
             {
-                // Keep ICP_HEADER.DELIVERY_TO as the ARUR ShipToCode. The drawer is a
-                // verification view, so display its configured delivery address instead.
-                mappedHeader[nameof(header.DeliveryTo)] = deliveryLocation;
+                // Both case drawers show the customer code; the database keeps Key1.
+                mappedHeader[nameof(header.DeliveryTo)] = customerCode;
             }
         }
 
@@ -828,6 +846,7 @@ public class ShipInfoService : IShipInfoService
         AddNonNegativeDecimalError(values, "Price", 2, errors);
         AddNonNegativeDecimalError(values, "Amount", 2, errors);
         AddOptionalNonNegativeDecimalError(values, "Rate", 4, errors);
+        AddOptionalNonNegativeDecimalError(values, "NetWeightOfTheItem", 3, errors);
 
         foreach (var fieldName in new[] { "CartonNo", "Length", "Width", "Hight", "GrossWeight" })
         {
@@ -946,6 +965,12 @@ public class ShipInfoService : IShipInfoService
             && decimal.TryParse(rateValue, NumberStyles.Number, CultureInfo.InvariantCulture, out var rate))
         {
             values["Rate"] = rate.ToString("0.0000", CultureInfo.InvariantCulture);
+        }
+
+        if (values.TryGetValue("NetWeightOfTheItem", out var netWeightValue)
+            && decimal.TryParse(netWeightValue, NumberStyles.Number, CultureInfo.InvariantCulture, out var netWeight))
+        {
+            values["NetWeightOfTheItem"] = netWeight.ToString("0.000", CultureInfo.InvariantCulture);
         }
     }
 

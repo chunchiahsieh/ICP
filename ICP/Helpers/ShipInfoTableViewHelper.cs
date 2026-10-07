@@ -38,6 +38,13 @@ public static class ShipInfoTableViewHelper
             return string.Empty;
         }
 
+        if (string.Equals(field.FieldName, "NetWeightOfTheItem", StringComparison.OrdinalIgnoreCase)
+            && decimal.TryParse(Convert.ToString(value, CultureInfo.InvariantCulture),
+                NumberStyles.Number, CultureInfo.InvariantCulture, out var netWeight))
+        {
+            return netWeight.ToString("0.000", CultureInfo.InvariantCulture);
+        }
+
         if (field.ControlType is ShipInfoControlTypes.Date or ShipInfoControlTypes.DateRange or ShipInfoControlTypes.DateTime)
         {
             if (value is DateTime dateTime)

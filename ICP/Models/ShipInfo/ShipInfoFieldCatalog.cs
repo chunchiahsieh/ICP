@@ -63,6 +63,8 @@ public static class ShipInfoFieldCatalog
         ["InvoiceSeq"] = new(ShipInfoControlTypes.Number, editable: false, minValue: 1, group: "Basic"),
         ["Description"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 60, group: "Basic"),
         ["Qty"] = new(ShipInfoControlTypes.Decimal, editable: false, required: true, minValue: 0, group: "Basic"),
+        ["Rate"] = new(ShipInfoControlTypes.Decimal, editable: false, minValue: 0, group: "Basic"),
+        ["NetWeightOfTheItem"] = new(ShipInfoControlTypes.Decimal, editable: false, minValue: 0, group: "Basic"),
         ["Uom"] = new(ShipInfoControlTypes.Text, editable: false, maxLength: 10, group: "Basic"),
         ["Coo"] = new(ShipInfoControlTypes.Select, editable: false, maxLength: 50, lookupCategory: "Country of Origin", group: "Basic"),
         ["CartonNo"] = new(ShipInfoControlTypes.Decimal, editable: false, group: "Packing"),

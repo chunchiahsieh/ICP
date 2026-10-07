@@ -43,20 +43,15 @@ public class ShipInfoLookupService
             .Select(x => new
             {
                 x.Key1,
-                x.Value1,
-                x.Value3
+                x.Value1
             })
             .ToListAsync(cancellationToken);
 
-        var isDeliveryTo = normalizedCategory.Equals("DeliveryToList", StringComparison.OrdinalIgnoreCase);
         return rows.Select(x => new ShipInfoLookupOption
         {
             Value = x.Key1,
-            // DeliveryTo stores the setting key for ARUR ShipToCode, while users need
-            // to see the street address maintained in DeliveryToList.Value3.
-            Text = isDeliveryTo && !string.IsNullOrWhiteSpace(x.Value3)
-                ? x.Value3!
-                : string.IsNullOrWhiteSpace(x.Value1) ? x.Key1 : x.Value1!
+            // Keep Key1 as the stored value; display the configured customer code (Value1).
+            Text = string.IsNullOrWhiteSpace(x.Value1) ? x.Key1 : x.Value1!
         }).ToList();
     }
 

@@ -336,24 +336,32 @@
             var dateTimeText = normalizeDateTimeInputValue(value);
             if (!String(value || '').trim() || /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(dateTimeText)) {
                 var parts = dateTimeText ? dateTimeText.split(/[ :]/) : [];
-                var $date = $('<input type="date" class="form-control" aria-label="Date" />')
-                    .val(parts[0] || '');
-                var $hour = $('<select class="form-select" aria-label="Hour (24-hour)" style="max-width:5rem"></select>');
-                var $minute = $('<select class="form-select" aria-label="Minute" style="max-width:5rem"></select>');
+                var deliveryDate = options.values && (options.values.DeliveryDate || options.values.deliveryDate);
+                var originalDate = parts[0] || '';
+                var $hour = $('<select class="form-select" aria-label="Hour (24-hour)" data-time-part="hour" style="max-width:5rem"></select>');
+                var $minute = $('<select class="form-select" aria-label="Minute" data-time-part="minute" style="max-width:5rem"></select>');
+                $hour.append($('<option></option>').val('').text('--'));
                 for (var hour = 0; hour < 24; hour++) $hour.append($('<option></option>').val(pad2(hour)).text(pad2(hour)));
                 for (var minute = 0; minute < 60; minute++) $minute.append($('<option></option>').val(pad2(minute)).text(pad2(minute)));
-                $hour.val(parts[1] || '00');
+                $hour.val(parts[1] || '');
                 $minute.val(parts[2] || '00');
                 var $value = $('<input type="hidden" class="shipinfo-control" />')
                     .attr('data-field', fieldName)
-                    .attr('data-control-type', 'Text');
+                    .attr('data-control-type', 'Text')
+                    .val(dateTimeText);
+                var $timeGroup = $('<div class="input-group shipinfo-24h-datetime"></div>')
+                    .attr('data-original-date', originalDate);
                 var updateValue = function () {
-                    $value.val($date.val() ? $date.val() + ' ' + $hour.val() + ':' + $minute.val() : '');
+                    var date = normalizeDateInputValue(deliveryDate) || originalDate;
+                    $value.val(date && $hour.val()
+                        ? date + ' ' + $hour.val() + ':' + $minute.val()
+                        : '');
                 };
-                $date.add($hour).add($minute).on('change input', updateValue).prop('disabled', lockControl);
-                updateValue();
-                return $('<div class="input-group shipinfo-24h-datetime"></div>')
-                    .append($date, $hour, $('<span class="input-group-text">:</span>'), $minute, $value);
+                $hour.add($minute).on('change input', function () {
+                    $timeGroup.data('time-touched', true);
+                    updateValue();
+                }).prop('disabled', lockControl);
+                return $timeGroup.append($hour, $('<span class="input-group-text">:</span>'), $minute, $value);
             }
             // Keep an older free-text value visible so opening Edit cannot silently erase it.
             return $('<input type="text" class="form-control shipinfo-control" />')
@@ -412,13 +420,17 @@
         }
 
         var displayValue = value == null ? '' : value;
-        if (controlType === 'Date') {
+        if (fieldName === 'ArriveTime' && options.mode === 'view' && displayValue !== '') {
+            var normalizedTime = normalizeDateTimeInputValue(displayValue);
+            var timeOnly = normalizedTime.match(/\b(\d{2}:\d{2})$/);
+            displayValue = timeOnly ? timeOnly[1] : displayValue;
+        } else if (controlType === 'Date') {
             displayValue = normalizeDateInputValue(displayValue);
         } else if (controlType === 'DateTime') {
             displayValue = normalizeDateTimeInputValue(displayValue);
-        } else if (['Qty', 'Price', 'Amount', 'Rate'].indexOf(fieldName) >= 0
+        } else if (['Qty', 'Price', 'Amount', 'Rate', 'NetWeightOfTheItem'].indexOf(fieldName) >= 0
             && displayValue !== '' && Number.isFinite(Number(displayValue))) {
-            var decimalPlaces = fieldName === 'Qty' ? 3 : (fieldName === 'Rate' ? 4 : 2);
+            var decimalPlaces = fieldName === 'Qty' || fieldName === 'NetWeightOfTheItem' ? 3 : (fieldName === 'Rate' ? 4 : 2);
             displayValue = Number(displayValue).toFixed(decimalPlaces);
         }
 
@@ -441,6 +453,8 @@
             $input.attr('step', '0.001').attr('min', '0');
         } else if (fieldName === 'Rate') {
             $input.attr('step', '0.0001').attr('min', '0');
+        } else if (fieldName === 'NetWeightOfTheItem') {
+            $input.attr('step', '0.001').attr('min', '0');
         } else if (['Price', 'Amount'].indexOf(fieldName) >= 0) {
             $input.attr('step', '0.01').attr('min', '0');
         } else if (['CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight', 'TotalCartons'].indexOf(fieldName) >= 0) {
@@ -647,6 +661,22 @@
             }
 
             values[fieldName] = raw;
+        });
+
+        // Time is edited as HH:mm; its date comes from Delivery Date when changed.
+        $container.find('.shipinfo-24h-datetime').each(function () {
+            var $time = $(this);
+            var fieldName = $time.find('.shipinfo-control[data-field]').attr('data-field');
+            if (!fieldName) return;
+            var existingValue = String($time.find('.shipinfo-control[data-field]').val() || '').trim();
+            if (!$time.data('time-touched')) {
+                values[fieldName] = existingValue;
+                return;
+            }
+            var date = normalizeDateInputValue(values.DeliveryDate || $time.attr('data-original-date') || '');
+            var hour = String($time.find('[data-time-part="hour"]').val() || '');
+            var minute = String($time.find('[data-time-part="minute"]').val() || '00');
+            values[fieldName] = date && hour ? date + ' ' + hour + ':' + minute : '';
         });
 
         $container.find('.shipinfo-date-range').each(function () {

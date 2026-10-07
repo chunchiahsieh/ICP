@@ -143,6 +143,19 @@
         return false;
     }
 
+    function initializeForkliftMovingLabor($form) {
+        var $forklift = $form.find('.shipinfo-control[data-field="Forklift"]');
+        var $movingLabor = $form.find('.shipinfo-control[data-field="MovingLabor"]');
+        var previousValue = String($forklift.val() || '').toUpperCase();
+        $forklift.off('change.shipinfoMovingLabor').on('change.shipinfoMovingLabor', function () {
+            var currentValue = String($forklift.val() || '').toUpperCase();
+            if (previousValue === 'N' && (currentValue === '' || currentValue === 'Y')) {
+                $movingLabor.val('').trigger('input');
+            }
+            previousValue = currentValue;
+        });
+    }
+
     function getStatusSource() {
         return state.viewModalKind === 'header'
             ? state.viewModalData
@@ -177,6 +190,9 @@
                     mode: state.viewModalEditing ? 'edit' : 'view'
                 }));
                 state.headerFormEffectiveFields = rendered.fields;
+                if (state.viewModalEditing) {
+                    initializeForkliftMovingLabor($('#shipInfoViewForm'));
+                }
                 if (typeof app.renderHeaderAttachments === 'function') {
                     app.renderHeaderAttachments(
                         state.viewModalKey,

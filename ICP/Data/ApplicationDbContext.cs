@@ -290,12 +290,12 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.MachineNo).HasMaxLength(50);
             entity.Property(e => e.MachineType).HasMaxLength(50);
             entity.Property(e => e.ShipReason).HasMaxLength(50);
-            entity.Property(e => e.Forklift).HasMaxLength(50);
-            entity.Property(e => e.MovingLabor).HasMaxLength(50);
+            entity.Property(e => e.Forklift).HasMaxLength(50).HasDefaultValue("N");
+            entity.Property(e => e.MovingLabor).HasMaxLength(50).HasDefaultValue("0人");
             entity.Property(e => e.CarMethod).HasMaxLength(50);
             entity.Property(e => e.ArriveTime).HasMaxLength(50);
-            entity.Property(e => e.WasteDisposal).HasMaxLength(50);
-            entity.Property(e => e.DriverDetails).HasMaxLength(50);
+            entity.Property(e => e.WasteDisposal).HasMaxLength(50).HasDefaultValue("N");
+            entity.Property(e => e.DriverDetails).HasMaxLength(50).HasDefaultValue("N");
             entity.Property(e => e.OrderReason).HasMaxLength(50);
             entity.Property(e => e.ArrivalNoticeFlag).HasMaxLength(5);
             entity.Property(e => e.ArrivalNotice).HasMaxLength(100);

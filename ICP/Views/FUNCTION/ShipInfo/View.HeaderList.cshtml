@@ -33,6 +33,12 @@
 
     string FormatCell(IReadOnlyDictionary<string, object?> item, ShipInfoFieldMetadata field)
     {
+        if (string.Equals(field.FieldName, "DeliveryTo", StringComparison.OrdinalIgnoreCase)
+            && item.TryGetValue("DeliveryToDisplay", out var deliveryToDisplay)
+            && !string.IsNullOrWhiteSpace(Convert.ToString(deliveryToDisplay)))
+        {
+            return Convert.ToString(deliveryToDisplay) ?? string.Empty;
+        }
         var value = ShipInfoTableViewHelper.GetItemValue(item, field.FieldName);
         if (string.Equals(field.FieldName, "Status", StringComparison.OrdinalIgnoreCase)
             && !string.IsNullOrWhiteSpace(Convert.ToString(value)))
