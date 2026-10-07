@@ -2496,7 +2496,7 @@
   <data name="Broker.TariffData.Delete.Record" xml:space="preserve"><value>データを削除</value></data>
   <data name="Broker.TariffData.Delete.Pdf" xml:space="preserve"><value>PDF を削除</value></data>
   <data name="Broker.TariffData.Delete.Excel" xml:space="preserve"><value>Excel を削除</value></data>
-  <data name="Broker.TariffData.Delete.RecordConfirm" xml:space="preserve"><value>このデータ（HAWB: {0}）を削除しますか？添付ファイルは残ります。</value></data>
+  <data name="Broker.TariffData.Delete.RecordConfirm" xml:space="preserve"><value>Invoice No. {0} のすべてのデータを削除しますか？アップロードファイルと添付ファイルは残ります。</value></data>
   <data name="Broker.TariffData.Delete.PdfConfirm" xml:space="preserve"><value>HAWB {0} で共有される PDF を削除しますか？</value></data>
   <data name="Broker.TariffData.Delete.ExcelConfirm" xml:space="preserve"><value>HAWB {0} で共有される Excel を削除しますか？</value></data>
   <data name="Broker.TariffData.Delete.RecordSuccess" xml:space="preserve"><value>データを削除しました。</value></data>

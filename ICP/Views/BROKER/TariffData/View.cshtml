@@ -388,13 +388,13 @@
                 });
             });
 
-            function deleteTariff(url, id, kind, confirmMessage) {
+            function deleteTariff(url, invoiceNumber, kind, confirmMessage) {
                 if (!hasPermission('Views.Broker.TariffData.Delete') || !window.confirm(confirmMessage)) {
                     return;
                 }
 
                 var payload = {
-                    id: id,
+                    invoiceNumber: invoiceNumber,
                     __RequestVerificationToken: $('#tariffDeleteToken input[name="__RequestVerificationToken"]').val()
                 };
                 if (kind) {
@@ -417,8 +417,8 @@
             $('#DataDiv').on('click', '.tariff-delete-record', function () {
                 var $button = $(this);
                 var message = @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.Delete.RecordConfirm"].Value));
-                deleteTariff('@Url.Action("DeleteRecord", "TariffData")', $button.data('record-id'), null,
-                    message.replace('{0}', $button.data('hawb')));
+                deleteTariff('@Url.Action("DeleteRecord", "TariffData")', $button.attr('data-invoice-number'), null,
+                    message.replace('{0}', $button.attr('data-invoice-number')));
             });
 
             function createTariffUploader(selector, config) {

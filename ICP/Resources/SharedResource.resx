@@ -2684,7 +2684,7 @@
   <data name="Broker.TariffData.Delete.Record" xml:space="preserve"><value>刪除資料</value></data>
   <data name="Broker.TariffData.Delete.Pdf" xml:space="preserve"><value>刪除 PDF</value></data>
   <data name="Broker.TariffData.Delete.Excel" xml:space="preserve"><value>刪除 Excel</value></data>
-  <data name="Broker.TariffData.Delete.RecordConfirm" xml:space="preserve"><value>確定刪除此筆資料（HAWB：{0}）？附件仍會保留。</value></data>
+  <data name="Broker.TariffData.Delete.RecordConfirm" xml:space="preserve"><value>確定刪除 Invoice No. {0} 的所有資料？上傳檔與附件仍會保留。</value></data>
   <data name="Broker.TariffData.Delete.PdfConfirm" xml:space="preserve"><value>確定刪除 HAWB {0} 共用的 PDF？</value></data>
   <data name="Broker.TariffData.Delete.ExcelConfirm" xml:space="preserve"><value>確定刪除 HAWB {0} 共用的 Excel？</value></data>
   <data name="Broker.TariffData.Delete.RecordSuccess" xml:space="preserve"><value>資料已刪除。</value></data>

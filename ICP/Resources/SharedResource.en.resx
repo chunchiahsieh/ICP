@@ -2501,7 +2501,7 @@
   <data name="Broker.TariffData.Delete.Record" xml:space="preserve"><value>Delete record</value></data>
   <data name="Broker.TariffData.Delete.Pdf" xml:space="preserve"><value>Delete PDF</value></data>
   <data name="Broker.TariffData.Delete.Excel" xml:space="preserve"><value>Delete Excel</value></data>
-  <data name="Broker.TariffData.Delete.RecordConfirm" xml:space="preserve"><value>Delete this record (HAWB: {0})? Attachments will be kept.</value></data>
+  <data name="Broker.TariffData.Delete.RecordConfirm" xml:space="preserve"><value>Delete all records for Invoice No. {0}? Uploaded files and attachments will be kept.</value></data>
   <data name="Broker.TariffData.Delete.PdfConfirm" xml:space="preserve"><value>Delete the PDF shared by HAWB {0}?</value></data>
   <data name="Broker.TariffData.Delete.ExcelConfirm" xml:space="preserve"><value>Delete the Excel file shared by HAWB {0}?</value></data>
   <data name="Broker.TariffData.Delete.RecordSuccess" xml:space="preserve"><value>Record deleted.</value></data>

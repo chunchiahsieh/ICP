@@ -105,7 +105,7 @@ public class CustomsDataDownloadController : Controller
         var tableConfig = _tableMetadataProvider.GetPageConfig();
         var list = await QueryRowsAsync(criteria, cancellationToken);
         using var workbook = new XLWorkbook();
-        var worksheet = workbook.Worksheets.Add("CustomsData");
+        var worksheet = workbook.Worksheets.Add("ImportRawDataDownload");
 
         for (var index = 0; index < tableConfig.Fields.Count; index++)
         {
@@ -130,7 +130,7 @@ public class CustomsDataDownloadController : Controller
         worksheet.SheetView.FreezeRows(1);
         using var stream = new MemoryStream();
         workbook.SaveAs(stream);
-        var fileName = $"CustomsDataDownload_{DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}.xlsx";
+        var fileName = $"ImportRawDataDownload_{DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}.xlsx";
         return File(
             stream.ToArray(),
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

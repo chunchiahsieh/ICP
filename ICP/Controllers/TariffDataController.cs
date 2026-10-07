@@ -514,19 +514,31 @@ public class TariffDataController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteRecord(long id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> DeleteRecord(string? invoiceNumber, CancellationToken cancellationToken = default)
     {
-        var row = await _scope.Apply(_db.TariffDataRecords)
-            .FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
-        if (row is null)
+        if (!_permissionService.HasPermission(TariffDataPermissionCodes.View)
+            || !_permissionService.HasPermission("Views.Broker.TariffData.Delete"))
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { success = false, message = _localizer["Permission.AccessDenied"].Value });
+
+        invoiceNumber = invoiceNumber?.Trim();
+        if (string.IsNullOrWhiteSpace(invoiceNumber))
+            return BadRequest(new { success = false, message = _localizer["Broker.TariffData.Delete.NotFound"].Value });
+
+        await using var transaction = await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, cancellationToken);
+        var rows = await _db.TariffDataRecords
+            .Where(item => item.InvoiceNumber == invoiceNumber)
+            .ToListAsync(cancellationToken);
+        if (rows.Count == 0)
         {
             return NotFound(new { success = false, message = _localizer["Broker.TariffData.Delete.NotFound"].Value });
         }
 
-        _db.TariffDataRecords.Remove(row);
+        _db.TariffDataRecords.RemoveRange(rows);
         await _db.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("Tariff data row deleted: Id={Id}, HAWB={Hawb}, User={User}",
-            id, row.HAWB, CrudAuditHelper.ResolveUserName(User.Identity?.Name));
+        await transaction.CommitAsync(cancellationToken);
+        _logger.LogInformation("Tariff data deleted by invoice: InvoiceNumber={InvoiceNumber}, Rows={Count}, User={User}",
+            invoiceNumber, rows.Count, CrudAuditHelper.ResolveUserName(User.Identity?.Name));
         return Json(new { success = true, message = _localizer["Broker.TariffData.Delete.RecordSuccess"].Value });
     }
 
