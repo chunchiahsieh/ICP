@@ -53,6 +53,19 @@ public class ShipInfoRepository : IShipInfoRepository
     {
         var query = Headers().AsNoTracking();
         query = ShipInfoQueryFilterApplier.ApplyHeaderFilters(query, criteria, fields);
+        if (!string.IsNullOrWhiteSpace(criteria.InvoiceNo))
+            query = query.Where(h => h.InvoiceNo == criteria.InvoiceNo.Trim());
+        if (!string.IsNullOrWhiteSpace(criteria.DelayNotificationDate))
+        {
+            if (!DateOnly.TryParseExact(criteria.DelayNotificationDate, "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out var date))
+                return [];
+
+            var dashDate = date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            var slashDate = date.ToString("yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture);
+            query = query.Where(h => h.DelayNotificationDate == dashDate || h.DelayNotificationDate == slashDate);
+        }
 
         var headers = await query
             .OrderByDescending(x => x.SaDate)

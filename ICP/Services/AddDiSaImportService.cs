@@ -6,7 +6,10 @@ using ICP.Data;
 using ICP.Helpers;
 using ICP.Models.Icp;
 using ICP.Models.ShipInfo;
+using ICP.Services.NotificationMail;
+using ICP.Models.NotificationMail;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace ICP.Services;
 
@@ -18,10 +21,13 @@ public class AddDiSaImportService
     }
 
     private readonly ApplicationDbContext _db;
+    private readonly IOptionsMonitor<NotificationMailOptions> _notificationOptions;
 
-    public AddDiSaImportService(ApplicationDbContext db)
+    public AddDiSaImportService(ApplicationDbContext db,
+        IOptionsMonitor<NotificationMailOptions> notificationOptions)
     {
         _db = db;
+        _notificationOptions = notificationOptions;
     }
 
     public static string ResolveStorageDirectory(IWebHostEnvironment environment) =>
@@ -162,18 +168,43 @@ public class AddDiSaImportService
             details.Add(detail);
         }
 
+        var controlledGoodsSchedules = new List<ControlledGoodsNoticeSchedule>();
+        var skippedControlledGoodsEta = 0;
+        var nowUtc = DateTime.UtcNow;
+        foreach (var header in headers)
+        {
+            if (!details.Any(detail => detail.InvoiceNo == header.InvoiceNo
+                    && detail.TetPo == header.TetPo && !string.IsNullOrWhiteSpace(detail.ElFlag)))
+                continue;
+            if (!ControlledGoodsNoticeContent.TryScheduleUtc(header.Eta, nowUtc,
+                    _notificationOptions.CurrentValue.ControlledGoodsArrival.SendTimes, out var sendAt))
+            {
+                skippedControlledGoodsEta++;
+                continue;
+            }
+            controlledGoodsSchedules.Add(new ControlledGoodsNoticeSchedule
+            {
+                Id = Guid.NewGuid(), HeaderId = header.Id, InvoiceNo = header.InvoiceNo,
+                Eta = header.Eta!, ScheduledAtUtc = sendAt, State = "Pending",
+                CreatedUtc = nowUtc, CreatedUser = user
+            });
+        }
+
         await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
         try
         {
             _db.IcpHeaders.AddRange(headers);
             _db.IcpDetails.AddRange(details);
+            _db.ControlledGoodsNoticeSchedules.AddRange(controlledGoodsSchedules);
             await _db.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
             return new AddDiSaImportResult
             {
                 HeaderCount = headers.Count,
-                DetailCount = details.Count
+                DetailCount = details.Count,
+                ControlledGoodsScheduledCount = controlledGoodsSchedules.Count,
+                ControlledGoodsSkippedEtaCount = skippedControlledGoodsEta
             };
         }
         catch

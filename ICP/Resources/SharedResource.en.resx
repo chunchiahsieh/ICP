@@ -2540,4 +2540,93 @@
   <data name="ShipInfo.Option.No" xml:space="preserve"><value>No</value></data>
   <data name="ShipInfo.DelayPairRequired" xml:space="preserve"><value>Reason for Delivery Delay and Delay Notification Date must both be filled in, or both be left blank.</value></data>
   <data name="Setting.DeliveryToList.Field.City" xml:space="preserve"><value>City</value></data>
+  <data name="Views.Shared._SidebarNav.Systems.NotificationMail" xml:space="preserve"><value>Notification Mail</value></data>
+  <data name="NotificationMail.Title" xml:space="preserve"><value>Notification Mail Settings</value></data>
+  <data name="NotificationMail.ReadOnlyHint" xml:space="preserve"><value>Read-only view. Configure notifications and SMTP in appsettings. Passwords are hidden. Delivery delay, Arrival notice, and controlled-goods arrival mail are connected.</value></data>
+  <data name="NotificationMail.Smtp" xml:space="preserve"><value>SMTP Settings</value></data>
+  <data name="NotificationMail.Host" xml:space="preserve"><value>Host</value></data>
+  <data name="NotificationMail.Port" xml:space="preserve"><value>Port</value></data>
+  <data name="NotificationMail.Ssl" xml:space="preserve"><value>SSL/TLS</value></data>
+  <data name="NotificationMail.From" xml:space="preserve"><value>From</value></data>
+  <data name="NotificationMail.UserName" xml:space="preserve"><value>Username</value></data>
+  <data name="NotificationMail.Type" xml:space="preserve"><value>Type</value></data>
+  <data name="NotificationMail.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="NotificationMail.SearchPlaceholder" xml:space="preserve"><value>Search invoice or recipient</value></data>
+  <data name="NotificationMail.PreviewAction" xml:space="preserve"><value>Preview</value></data>
+  <data name="NotificationMail.PreviewLoadFailed" xml:space="preserve"><value>Preview could not be loaded.</value></data>
+  <data name="NotificationMail.ListAndPreview" xml:space="preserve"><value>List and preview</value></data>
+    <data name="NotificationMail.DelayNotificationDatePreviewHint" xml:space="preserve"><value>Find records by Delay Notification Date. The subject and body below are previews generated from the current settings.</value></data>
+    <data name="NotificationMail.NoSelectedNotificationDateMail" xml:space="preserve"><value>No matching records for the selected Delay Notification Date.</value></data>
+  <data name="NotificationMail.ScheduledTimeTaipei" xml:space="preserve"><value>Scheduled send time (Taipei)</value></data>
+  <data name="NotificationMail.PreviewNotAvailable" xml:space="preserve"><value>Sending rules and an email template have not been defined for this type; no preview is available.</value></data>
+  <data name="NotificationMail.PreviewCount" xml:space="preserve"><value>Email previews</value></data>
+  <data name="NotificationMail.StatusUnknown" xml:space="preserve"><value>Unavailable</value></data>
+  <data name="NotificationMail.StatusNotSent" xml:space="preserve"><value>Not sent</value></data>
+  <data name="NotificationMail.ControlledGoodsSkippedEta" xml:space="preserve"><value>{0} newly added controlled-goods records have a past ETA or today's 10:00 has passed. Data was saved, but no notification was scheduled.</value></data>
+  <data name="NotificationMail.ControlledGoodsEmpty" xml:space="preserve"><value>No controlled-goods notice schedules for the selected ETA.</value></data>
+  <data name="NotificationMail.ControlledGoodsEligibility" xml:space="preserve"><value>At least one Ship Info Detail must have a non-empty EL Flag before scheduling.</value></data>
+  <data name="NotificationMail.ControlledGoodsEtaUnavailable" xml:space="preserve"><value>ETA has passed or today's 10:00 has passed; the notice cannot be scheduled.</value></data>
+  <data name="NotificationMail.ControlledGoodsAlreadyScheduled" xml:space="preserve"><value>This Invoice already has a pending controlled-goods arrival notice.</value></data>
+  <data name="NotificationMail.ControlledGoodsPreview" xml:space="preserve"><value>Controlled-goods arrival email preview</value></data>
+  <data name="NotificationMail.ControlledGoodsTableMissing" xml:space="preserve"><value>The controlled-goods schedule table is missing. Run 015_CreateControlledGoodsNoticeSchedule.sql first.</value></data>
+  <data name="NotificationMail.Enabled" xml:space="preserve"><value>Enabled</value></data>
+  <data name="NotificationMail.Frequency" xml:space="preserve"><value>Frequency</value></data>
+  <data name="NotificationMail.SendTimes" xml:space="preserve"><value>Send Times</value></data>
+  <data name="NotificationMail.MailTitle" xml:space="preserve"><value>Subject</value></data>
+  <data name="NotificationMail.MailTo" xml:space="preserve"><value>To</value></data>
+  <data name="NotificationMail.CcTo" xml:space="preserve"><value>CC</value></data>
+  <data name="NotificationMail.Daily" xml:space="preserve"><value>Daily</value></data>
+  <data name="NotificationMail.Immediate" xml:space="preserve"><value>Immediate</value></data>
+  <data name="NotificationMail.DeliveryDelay" xml:space="preserve"><value>Delivery Delay</value></data>
+  <data name="NotificationMail.TodayPreview" xml:space="preserve"><value>Today's mail preview</value></data>
+  <data name="NotificationMail.TodayCount" xml:space="preserve"><value>Matching records</value></data>
+  <data name="NotificationMail.CannotSendHint" xml:space="preserve"><value>Mail cannot be sent yet. Configure:</value></data>
+  <data name="NotificationMail.ConfigReadyHint" xml:space="preserve"><value>Mail settings are complete. Actual delivery still depends on the schedule and SMTP connection.</value></data>
+  <data name="NotificationMail.NoTodayMail" xml:space="preserve"><value>No delivery delay records match today's sending criteria.</value></data>
+  <data name="NotificationMail.ArrivalNoticeMailToSource" xml:space="preserve"><value>Ship Info Arrival Notice field</value></data>
+  <data name="NotificationMail.ArrivalNoticePreview" xml:space="preserve"><value>Pending Arrival notice preview</value></data>
+  <data name="NotificationMail.PendingGroups" xml:space="preserve"><value>Pending mail groups</value></data>
+  <data name="NotificationMail.InvalidArrivalAddresses" xml:space="preserve"><value>Invalid Arrival Notice addresses; cannot send these invoices</value></data>
+  <data name="NotificationMail.NoArrivalNoticeMail" xml:space="preserve"><value>No pending Arrival notice records.</value></data>
+  <data name="NotificationMail.SendHistory" xml:space="preserve"><value>Latest 100 send records</value></data>
+  <data name="NotificationMail.LogTableMissing" xml:space="preserve"><value>Mail log table is missing. Run 013_ArrivalNoticeMailAndLog.sql first.</value></data>
+  <data name="NotificationMail.ScheduleTableMissing" xml:space="preserve"><value>Arrival Notice schedule table is missing. Run 014_CreateArrivalNoticeSchedule.sql first.</value></data>
+  <data name="NotificationMail.NoHistory" xml:space="preserve"><value>No send history yet.</value></data>
+  <data name="NotificationMail.LogTime" xml:space="preserve"><value>Time (Taipei)</value></data>
+  <data name="NotificationMail.LogState" xml:space="preserve"><value>Result</value></data>
+  <data name="NotificationMail.LogError" xml:space="preserve"><value>Error</value></data>
+  <data name="NotificationMail.NoFailureDetails" xml:space="preserve"><value>No detailed error was recorded.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Button" xml:space="preserve"><value>Arrival Notice</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Section" xml:space="preserve"><value>Notification emails</value></data>
+  <data name="ShipInfo.DeliveryDelay.Title" xml:space="preserve"><value>Delivery delay notification</value></data>
+  <data name="ShipInfo.DeliveryDelay.Close" xml:space="preserve"><value>Close delivery delay</value></data>
+  <data name="ShipInfo.DeliveryDelay.DeliveryDate" xml:space="preserve"><value>Delivery Date</value></data>
+  <data name="ShipInfo.DeliveryDelay.Preview" xml:space="preserve"><value>Email preview</value></data>
+  <data name="ShipInfo.DeliveryDelay.Empty" xml:space="preserve"><value>No delivery-delay records match the selected Delay Notification Date.</value></data>
+  <data name="ShipInfo.DeliveryDelay.NoRows" xml:space="preserve"><value>No matching records for the selected date.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Title" xml:space="preserve"><value>Arrival Notice notification email</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Hint" xml:space="preserve"><value>Shows today's schedules and send results. Save the Arrival Notice addresses in the Ship Info Header before scheduling this invoice for the next send time.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Add" xml:space="preserve"><value>Add notification</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Close" xml:space="preserve"><value>Close notification email</value></data>
+  <data name="ShipInfo.ArrivalSchedule.SendAt" xml:space="preserve"><value>Scheduled send time (Taipei)</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Empty" xml:space="preserve"><value>No schedules for today.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.SaveFirst" xml:space="preserve"><value>Arrival Notice has unsaved changes. Save the Header before scheduling.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Current" xml:space="preserve"><value>Current</value></data>
+  <data name="ShipInfo.ArrivalSchedule.NotScheduled" xml:space="preserve"><value>Not scheduled</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Sending" xml:space="preserve"><value>Sending</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Sent" xml:space="preserve"><value>Sent</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailRequired" xml:space="preserve"><value>Save at least one Arrival Notice email address first.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailLegacyMarker" xml:space="preserve"><value>Remove the legacy * marker from Arrival Notice before scheduling.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailTooLong" xml:space="preserve"><value>Arrival Notice must be fewer than 300 characters.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailSeparator" xml:space="preserve"><value>Separate multiple email addresses with semicolons (;), not commas or line breaks.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailInvalid" xml:space="preserve"><value>Arrival Notice email #{0} is invalid.</value></data>
+  <data name="ShipInfo.ArrivalSchedule.PreviewTitle" xml:space="preserve"><value>Arrival Notice email preview</value></data>
+  <data name="ShipInfo.ArrivalSchedule.PreviewEmpty" xml:space="preserve"><value>Save valid Arrival Notice email addresses in the Header to display the preview.</value></data>
+  <data name="NotificationMail.ArrivalNotice" xml:space="preserve"><value>Arrival notice</value></data>
+  <data name="NotificationMail.ControlledGoodsArrival" xml:space="preserve"><value>Controlled Goods Arrival</value></data>
+  <data name="NotificationMail.DepositCase" xml:space="preserve"><value>Deposit Case Initiation</value></data>
 </root>

@@ -170,10 +170,16 @@
             && permission.delete;
         var isLastDetail = state.viewModalKind === 'detail' && app.getDetailRowCount() === 1;
         var editing = !!state.viewModalEditing;
+        var notificationPanelOpen = !$('#shipInfoArrivalSchedulePanel').hasClass('d-none')
+            || !$('#shipInfoDeliveryDelayPanel').hasClass('d-none')
+            || !$('#shipInfoControlledGoodsPanel').hasClass('d-none');
 
         $('#btnShipInfoViewEdit').toggleClass('d-none', editing || !canEdit);
-        $('#btnShipInfoViewSave').toggleClass('d-none', !editing || !canEdit);
-        $('#btnShipInfoViewCancelEdit').toggleClass('d-none', !editing || !canEdit);
+        $('#btnShipInfoViewSave').toggleClass('d-none', !editing || !canEdit)
+            .prop('disabled', !!state.actionBusy || notificationPanelOpen);
+        $('#shipInfoArrivalScheduleToolbar').toggleClass('d-none', !editing || !canEdit || state.viewModalKind !== 'header');
+        $('#btnShipInfoViewCancelEdit').toggleClass('d-none', !editing || !canEdit)
+            .prop('disabled', !!state.actionBusy || notificationPanelOpen);
         $('#btnShipInfoViewDiscard').toggleClass('d-none', editing || !canDiscard)
             .prop('disabled', !!state.actionBusy);
         $('#btnShipInfoViewDelete').toggleClass('d-none', editing || !app.hasPermission('Views.Function.ShipInfo.Delete') || !permission.delete || isLastDetail)
@@ -187,7 +193,7 @@
         if (state.viewModalKind === 'header') {
             try {
                 var rendered = renderApi.renderMetadataForm($('#shipInfoViewForm'), app.getHeaderFormMetadata(), $.extend({}, app.getRenderOptions(values), {
-                    mode: state.viewModalEditing ? 'edit' : 'view'
+                    mode: state.viewModalEditing ? 'edit' : 'view', autoFocus: false
                 }));
                 state.headerFormEffectiveFields = rendered.fields;
                 if (state.viewModalEditing) {
@@ -209,7 +215,7 @@
         }
         try {
             var rendered = renderApi.renderMetadataForm($('#shipInfoViewForm'), app.getDetailFormMetadata(), $.extend({}, app.getRenderOptions(values), {
-                mode: state.viewModalEditing ? 'edit' : 'view'
+                mode: state.viewModalEditing ? 'edit' : 'view', autoFocus: false
             }));
             state.detailFormEffectiveFields = rendered.fields;
             if (state.viewModalEditing) {
@@ -221,6 +227,12 @@
             app.showToast((error && error.message) || '明細表單設定載入失敗', 'danger');
         }
         app.initTooltips($('#shipInfoViewForm'));
+    }
+
+    function restoreViewScroll(scrollTop) {
+        var $body = $('#shipInfoViewModal .modal-body');
+        $body.scrollTop(scrollTop);
+        global.requestAnimationFrame(function () { $body.scrollTop(scrollTop); });
     }
 
     app.openViewModal = function (kind, key) {
@@ -278,9 +290,11 @@
             return;
         }
 
+        var scrollTop = $('#shipInfoViewModal .modal-body').scrollTop();
         state.viewModalEditing = true;
         renderViewForm(state.viewModalData);
         updateViewModalButtons();
+        restoreViewScroll(scrollTop);
     };
 
     app.cancelViewEdit = function () {
@@ -288,9 +302,11 @@
             return;
         }
 
+        var scrollTop = $('#shipInfoViewModal .modal-body').scrollTop();
         state.viewModalEditing = false;
         renderViewForm(state.viewModalData);
         updateViewModalButtons();
+        restoreViewScroll(scrollTop);
     };
 
     app.saveViewModal = function () {
@@ -299,6 +315,7 @@
         }
 
         var isHeader = state.viewModalKind === 'header';
+        var modalScrollTop = $('#shipInfoViewModal .modal-body').scrollTop();
         var fields = isHeader ? getEditableFieldNames().map(function (name) {
             return (state.headerFormEffectiveFields || []).filter(function (field) {
                 return String(field.fieldName || field.FieldName).toLowerCase() === String(name).toLowerCase();
@@ -321,6 +338,7 @@
                 state.viewModalData = savedData || state.viewModalData;
                 renderViewForm(state.viewModalData);
                 updateViewModalButtons();
+                restoreViewScroll(modalScrollTop);
             }
         );
     };

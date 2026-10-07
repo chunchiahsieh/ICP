@@ -220,13 +220,19 @@ public class AddDiSaController : Controller
                 _localizer["Function.AddDiSa.SaveSuccess"].Value,
                 result.HeaderCount,
                 result.DetailCount);
+            if (result.ControlledGoodsSkippedEtaCount > 0)
+                message += " " + string.Format(
+                    _localizer["NotificationMail.ControlledGoodsSkippedEta"].Value,
+                    result.ControlledGoodsSkippedEtaCount);
 
             return Json(new
             {
                 success = true,
                 message,
                 headerCount = result.HeaderCount,
-                detailCount = result.DetailCount
+                detailCount = result.DetailCount,
+                controlledGoodsScheduledCount = result.ControlledGoodsScheduledCount,
+                controlledGoodsSkippedEtaCount = result.ControlledGoodsSkippedEtaCount
             });
         }
         catch (Exception ex)

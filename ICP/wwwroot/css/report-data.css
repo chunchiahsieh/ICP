@@ -151,6 +151,14 @@
     overflow: auto;
 }
 
+/* Keep the detail horizontal scrollbar directly below its rows when only a
+   few details are present; long lists still scroll within the viewport. */
+#shipInfoDetailDataDiv .dataTables_wrapper > .row:has(table) {
+    min-height: 0;
+    height: auto;
+    max-height: min(420px, 40vh);
+}
+
 .shipinfo-page.report-split-page .report-split-pane {
     flex: 0 0 auto;
     min-height: 0;

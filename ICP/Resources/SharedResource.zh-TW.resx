@@ -2535,4 +2535,93 @@
   <data name="ShipInfo.Option.No" xml:space="preserve"><value>否</value></data>
   <data name="ShipInfo.DelayPairRequired" xml:space="preserve"><value>延遲原因與通知日期必須同時填寫，或兩欄都留空。</value></data>
   <data name="Setting.DeliveryToList.Field.City" xml:space="preserve"><value>城市</value></data>
+  <data name="Views.Shared._SidebarNav.Systems.NotificationMail" xml:space="preserve"><value>通知信</value></data>
+  <data name="NotificationMail.Title" xml:space="preserve"><value>通知信設定</value></data>
+  <data name="NotificationMail.ReadOnlyHint" xml:space="preserve"><value>此頁僅供檢視；請在 appsettings 設定通知信與 SMTP。密碼不會顯示。目前到貨延遲、Arrival notice 與管制品到貨通知已接通寄送。</value></data>
+  <data name="NotificationMail.Smtp" xml:space="preserve"><value>SMTP 設定</value></data>
+  <data name="NotificationMail.Host" xml:space="preserve"><value>主機</value></data>
+  <data name="NotificationMail.Port" xml:space="preserve"><value>連接埠</value></data>
+  <data name="NotificationMail.Ssl" xml:space="preserve"><value>SSL/TLS</value></data>
+  <data name="NotificationMail.From" xml:space="preserve"><value>寄件者</value></data>
+  <data name="NotificationMail.UserName" xml:space="preserve"><value>帳號</value></data>
+  <data name="NotificationMail.Type" xml:space="preserve"><value>通知類型</value></data>
+  <data name="NotificationMail.Search" xml:space="preserve"><value>查詢</value></data>
+  <data name="NotificationMail.SearchPlaceholder" xml:space="preserve"><value>搜尋發票號碼或收件者</value></data>
+  <data name="NotificationMail.PreviewAction" xml:space="preserve"><value>預覽</value></data>
+  <data name="NotificationMail.PreviewLoadFailed" xml:space="preserve"><value>無法載入信件預覽。</value></data>
+  <data name="NotificationMail.ListAndPreview" xml:space="preserve"><value>清單與預覽</value></data>
+    <data name="NotificationMail.DelayNotificationDatePreviewHint" xml:space="preserve"><value>依延遲通知日期查詢資料；下方主旨與內文為使用目前設定產生的預覽。</value></data>
+    <data name="NotificationMail.NoSelectedNotificationDateMail" xml:space="preserve"><value>所選延遲通知日期沒有符合條件的資料。</value></data>
+    <data name="NotificationMail.ScheduledTimeTaipei" xml:space="preserve"><value>預定發信時間（台灣）</value></data>
+  <data name="NotificationMail.PreviewNotAvailable" xml:space="preserve"><value>此類型的寄送規則與信件範本尚未建立，目前沒有預覽。</value></data>
+  <data name="NotificationMail.PreviewCount" xml:space="preserve"><value>信件預覽筆數</value></data>
+  <data name="NotificationMail.StatusUnknown" xml:space="preserve"><value>無法取得</value></data>
+  <data name="NotificationMail.StatusNotSent" xml:space="preserve"><value>未寄送</value></data>
+  <data name="NotificationMail.ControlledGoodsSkippedEta" xml:space="preserve"><value>此次新增的 {0} 筆管制品資料 ETA 已過，或當天 10:00 已過；資料已儲存，但未自動加入通知排程。</value></data>
+  <data name="NotificationMail.ControlledGoodsEmpty" xml:space="preserve"><value>所選 ETA 沒有管制品通知排程。</value></data>
+  <data name="NotificationMail.ControlledGoodsEligibility" xml:space="preserve"><value>至少一筆 Ship Info Detail 的 EL Flag 必須非空，才能新增排程。</value></data>
+  <data name="NotificationMail.ControlledGoodsEtaUnavailable" xml:space="preserve"><value>ETA 已過或當天 10:00 已過，無法新增排程。</value></data>
+  <data name="NotificationMail.ControlledGoodsAlreadyScheduled" xml:space="preserve"><value>此 Invoice 已有待寄的管制品到貨通知。</value></data>
+  <data name="NotificationMail.ControlledGoodsPreview" xml:space="preserve"><value>管制品到貨通知信件預覽</value></data>
+  <data name="NotificationMail.ControlledGoodsTableMissing" xml:space="preserve"><value>管制品通知排程資料表尚未建立，請先執行 015_CreateControlledGoodsNoticeSchedule.sql。</value></data>
+  <data name="NotificationMail.Enabled" xml:space="preserve"><value>啟用</value></data>
+  <data name="NotificationMail.Frequency" xml:space="preserve"><value>頻率</value></data>
+  <data name="NotificationMail.SendTimes" xml:space="preserve"><value>發信時間</value></data>
+  <data name="NotificationMail.MailTitle" xml:space="preserve"><value>主旨</value></data>
+  <data name="NotificationMail.MailTo" xml:space="preserve"><value>收件者</value></data>
+  <data name="NotificationMail.CcTo" xml:space="preserve"><value>副本</value></data>
+  <data name="NotificationMail.Daily" xml:space="preserve"><value>每天</value></data>
+  <data name="NotificationMail.Immediate" xml:space="preserve"><value>即時</value></data>
+  <data name="NotificationMail.DeliveryDelay" xml:space="preserve"><value>到貨延遲</value></data>
+  <data name="NotificationMail.TodayPreview" xml:space="preserve"><value>今日信件預覽</value></data>
+  <data name="NotificationMail.TodayCount" xml:space="preserve"><value>符合條件筆數</value></data>
+  <data name="NotificationMail.CannotSendHint" xml:space="preserve"><value>目前無法實際寄送；請設定：</value></data>
+  <data name="NotificationMail.ConfigReadyHint" xml:space="preserve"><value>寄信設定已齊備；實際寄送仍取決於排程與 SMTP 連線。</value></data>
+  <data name="NotificationMail.NoTodayMail" xml:space="preserve"><value>今天沒有符合寄送條件的到貨延遲資料。</value></data>
+  <data name="NotificationMail.ArrivalNoticeMailToSource" xml:space="preserve"><value>Ship Info 的 Arrival Notice 欄位</value></data>
+  <data name="NotificationMail.ArrivalNoticePreview" xml:space="preserve"><value>Arrival notice 待寄預覽</value></data>
+  <data name="NotificationMail.PendingGroups" xml:space="preserve"><value>待寄信件組數</value></data>
+  <data name="NotificationMail.InvalidArrivalAddresses" xml:space="preserve"><value>下列 Invoice 的 Arrival Notice 地址格式無效，無法寄送</value></data>
+  <data name="NotificationMail.NoArrivalNoticeMail" xml:space="preserve"><value>目前沒有待寄的 Arrival notice 資料。</value></data>
+  <data name="NotificationMail.SendHistory" xml:space="preserve"><value>最近 100 筆寄送紀錄</value></data>
+  <data name="NotificationMail.LogTableMissing" xml:space="preserve"><value>寄送紀錄資料表尚未建立，請先執行 013_ArrivalNoticeMailAndLog.sql。</value></data>
+  <data name="NotificationMail.ScheduleTableMissing" xml:space="preserve"><value>Arrival Notice 排程資料表尚未建立，請先執行 014_CreateArrivalNoticeSchedule.sql。</value></data>
+  <data name="NotificationMail.NoHistory" xml:space="preserve"><value>目前沒有寄送紀錄。</value></data>
+  <data name="NotificationMail.LogTime" xml:space="preserve"><value>時間（台灣）</value></data>
+  <data name="NotificationMail.LogState" xml:space="preserve"><value>結果</value></data>
+  <data name="NotificationMail.LogError" xml:space="preserve"><value>錯誤訊息</value></data>
+  <data name="NotificationMail.NoFailureDetails" xml:space="preserve"><value>沒有留下詳細錯誤訊息。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Button" xml:space="preserve"><value>Arrival Notice</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Section" xml:space="preserve"><value>通知信</value></data>
+  <data name="ShipInfo.DeliveryDelay.Title" xml:space="preserve"><value>到貨延遲通知信</value></data>
+  <data name="ShipInfo.DeliveryDelay.Close" xml:space="preserve"><value>關閉到貨延遲</value></data>
+  <data name="ShipInfo.DeliveryDelay.DeliveryDate" xml:space="preserve"><value>Delivery Date</value></data>
+  <data name="ShipInfo.DeliveryDelay.Preview" xml:space="preserve"><value>信件預覽</value></data>
+  <data name="ShipInfo.DeliveryDelay.Empty" xml:space="preserve"><value>所選延遲通知日期沒有符合到貨延遲條件的資料。</value></data>
+  <data name="ShipInfo.DeliveryDelay.NoRows" xml:space="preserve"><value>所選日期沒有符合條件的資料。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Title" xml:space="preserve"><value>Arrival Notice 通知信</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Hint" xml:space="preserve"><value>顯示今日排程及寄送結果；請先儲存 Ship Info Header 的 Arrival Notice 地址，再將目前 Invoice 排入下一個發信時段。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Add" xml:space="preserve"><value>新增通知信</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Close" xml:space="preserve"><value>關閉通知信</value></data>
+  <data name="ShipInfo.ArrivalSchedule.SendAt" xml:space="preserve"><value>預定發信時間（台灣）</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Empty" xml:space="preserve"><value>今日沒有排程項目。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.SaveFirst" xml:space="preserve"><value>Arrival Notice 地址有未儲存的修改，請先儲存 Header 再排入。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Current" xml:space="preserve"><value>目前這筆</value></data>
+  <data name="ShipInfo.ArrivalSchedule.NotScheduled" xml:space="preserve"><value>尚未排程</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Status" xml:space="preserve"><value>狀態</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Pending" xml:space="preserve"><value>待寄</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Sending" xml:space="preserve"><value>寄送中</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Sent" xml:space="preserve"><value>寄送成功</value></data>
+  <data name="ShipInfo.ArrivalSchedule.Failed" xml:space="preserve"><value>寄送失敗</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailRequired" xml:space="preserve"><value>請先儲存至少一個 Arrival Notice email 地址。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailLegacyMarker" xml:space="preserve"><value>Arrival Notice 開頭含舊的 * 記號，請先移除再排程。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailTooLong" xml:space="preserve"><value>Arrival Notice 最多 299 個字元。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailSeparator" xml:space="preserve"><value>多個 email 請用分號（;）分隔，不要用逗號或換行。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.MailInvalid" xml:space="preserve"><value>第 {0} 個 Arrival Notice email 格式不正確。</value></data>
+  <data name="ShipInfo.ArrivalSchedule.PreviewTitle" xml:space="preserve"><value>Arrival Notice 信件預覽</value></data>
+  <data name="ShipInfo.ArrivalSchedule.PreviewEmpty" xml:space="preserve"><value>請先在 Header 儲存有效的 Arrival Notice email 地址，才會顯示預覽。</value></data>
+  <data name="NotificationMail.ArrivalNotice" xml:space="preserve"><value>Arrival notice</value></data>
+  <data name="NotificationMail.ControlledGoodsArrival" xml:space="preserve"><value>管制品到貨通知</value></data>
+  <data name="NotificationMail.DepositCase" xml:space="preserve"><value>押金平台起案</value></data>
 </root>

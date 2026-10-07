@@ -723,12 +723,16 @@
 
         var $modalBody = $firstInvalid.closest('.modal-body');
         if ($modalBody.length) {
-            $modalBody.animate({ scrollTop: Math.max(0, $firstInvalid.position().top - 24) }, 200);
+            var targetTop = $modalBody.scrollTop()
+                + $firstInvalid.offset().top - $modalBody.offset().top - 24;
+            if ($firstInvalid[0] && typeof $firstInvalid[0].focus === 'function') {
+                $firstInvalid[0].focus({ preventScroll: true });
+            }
+            $modalBody.stop(true).animate({ scrollTop: Math.max(0, targetTop) }, 200);
         } else {
             $('html, body').animate({ scrollTop: $firstInvalid.offset().top - 120 }, 200);
+            $firstInvalid.trigger('focus');
         }
-
-        $firstInvalid.trigger('focus');
     }
 
     function validateClientFields($container, fields, culture, requiredMark) {
@@ -1055,7 +1059,7 @@
         appendConcurrencyFields($container, renderValues);
         $container.data('shipinfo-form-fields', groups.reduce(function (all, group) { return all.concat(group.fields); }, []));
         var $first = $container.find('.shipinfo-control:not([disabled])').first();
-        if ($first.length && mode !== 'view') {
+        if ($first.length && mode !== 'view' && options.autoFocus !== false) {
             $first.trigger('focus');
         }
         return { groups: groups, fields: $container.data('shipinfo-form-fields') };

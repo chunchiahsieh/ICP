@@ -127,6 +127,15 @@
                 }
             };
         } else {
+            base.extraQueryParams = function () {
+                var params = new URLSearchParams(global.location.search);
+                var date = params.get('DelayNotificationDate');
+                var invoiceNo = params.get('InvoiceNo');
+                var query = {};
+                if (date) query.DelayNotificationDate = date;
+                if (invoiceNo) query.InvoiceNo = invoiceNo;
+                return query;
+            };
             base.onAfterRender = function ($div) {
                 bindHeaderTableEvents($div);
                 app.updateHeaderActionState();

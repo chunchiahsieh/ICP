@@ -16,11 +16,13 @@ using ICP.Models.LocalizationManagement;
 using ICP.Models.Report;
 using ICP.Models.Sidebar;
 using ICP.Models.CustomsDataDownload;
+using ICP.Models.NotificationMail;
 
 using ICP.Repositories;
 
 using ICP.Services;
 using ICP.Services.Integration;
+using ICP.Services.NotificationMail;
 
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -80,6 +82,9 @@ builder.Services.Configure<ForwarderDataUploadOptions>(
 
 builder.Services.Configure<TariffDataOptions>(
     builder.Configuration.GetSection(TariffDataOptions.SectionName));
+
+builder.Services.Configure<NotificationMailOptions>(
+    builder.Configuration.GetSection(NotificationMailOptions.SectionName));
 
 builder.Services.Configure<IntegrationOptions>(
     builder.Configuration.GetSection(IntegrationOptions.SectionName));
@@ -229,6 +234,9 @@ builder.Services.AddScoped<IIntegrationEventOutboxRepository, IntegrationEventOu
 builder.Services.AddSingleton<IRabbitMqPublisher, RabbitMqPublisher>();
 builder.Services.AddSingleton<IShipInfoCaseEventFactory, ShipInfoCaseEventFactory>();
 builder.Services.AddHostedService<IntegrationEventOutboxPublisherWorker>();
+builder.Services.AddHostedService<DeliveryDelayMailWorker>();
+builder.Services.AddHostedService<ArrivalNoticeMailWorker>();
+builder.Services.AddHostedService<ControlledGoodsNoticeMailWorker>();
 builder.Services.AddScoped<ShipInfoMetadataProvider>();
 builder.Services.AddScoped<ShipInfoRuntimeTranslations>();
 builder.Services.AddScoped<ExportRuntimeTranslations>();
@@ -239,6 +247,9 @@ builder.Services.AddScoped<ForwarderTableMetadataProvider>();
 builder.Services.AddScoped<TariffTableMetadataProvider>();
 builder.Services.AddScoped<CustomsDataDownloadTableMetadataProvider>();
 builder.Services.AddScoped<ShipInfoLookupService>();
+builder.Services.AddScoped<ArrivalNoticeScheduleService>();
+builder.Services.AddScoped<DeliveryDelayPreviewService>();
+builder.Services.AddScoped<ControlledGoodsNoticeScheduleService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
 builder.Services.AddScoped<IReportDataService, ReportDataService>();
 builder.Services.AddScoped<IExportService, ExportService>();

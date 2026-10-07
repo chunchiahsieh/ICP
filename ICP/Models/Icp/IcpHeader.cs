@@ -186,7 +186,7 @@ public class IcpHeader : IcpAuditableEntity
     public string? ArrivalNoticeFlag { get; set; }
 
     [Column("ARRIVAL_NOTICE")]
-    [MaxLength(100)]
+    [MaxLength(300)]
     public string? ArrivalNotice { get; set; }
 
     [Column("REASON_FOR_DELIVERY_DELAY")]

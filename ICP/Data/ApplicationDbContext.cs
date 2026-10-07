@@ -44,10 +44,68 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<IntegrationEventOutbox> IntegrationEventOutboxes => Set<IntegrationEventOutbox>();
 
+    public DbSet<NotificationMailDispatch> NotificationMailDispatches => Set<NotificationMailDispatch>();
+
+    public DbSet<NotificationMailLog> NotificationMailLogs => Set<NotificationMailLog>();
+
+    public DbSet<ArrivalNoticeSchedule> ArrivalNoticeSchedules => Set<ArrivalNoticeSchedule>();
+
+    public DbSet<ControlledGoodsNoticeSchedule> ControlledGoodsNoticeSchedules => Set<ControlledGoodsNoticeSchedule>();
+
     public DbSet<ExportRequest> ExportRequests => Set<ExportRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<NotificationMailDispatch>(entity =>
+        {
+            entity.ToTable("NOTIFICATION_MAIL_DISPATCH");
+            entity.HasKey(e => e.EventKey);
+            entity.Property(e => e.EventKey).HasMaxLength(200);
+            entity.Property(e => e.State).HasMaxLength(20).IsRequired();
+        });
+        modelBuilder.Entity<NotificationMailLog>(entity =>
+        {
+            entity.ToTable("NOTIFICATION_MAIL_LOG");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MailType).HasMaxLength(40).IsRequired();
+            entity.Property(e => e.EventKey).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.MailTo).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.CcTo).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.Subject).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.BodyHtml).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.State).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.ErrorMessage).HasMaxLength(2000);
+            entity.HasIndex(e => e.CreatedUtc);
+        });
+        modelBuilder.Entity<ArrivalNoticeSchedule>(entity =>
+        {
+            entity.ToTable("ARRIVAL_NOTICE_SCHEDULE");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
+            entity.Property(e => e.ArrivalNoticeValue).HasMaxLength(300).IsRequired();
+            entity.Property(e => e.RecipientKey).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.State).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.CreatedUser).HasMaxLength(100);
+            entity.Property(e => e.CancelledUser).HasMaxLength(100);
+            entity.HasIndex(e => e.HeaderId).IsUnique()
+                .HasFilter("[State] = 'Pending'")
+                .HasDatabaseName("UX_ARRIVAL_NOTICE_SCHEDULE_PendingHeader");
+            entity.HasIndex(e => new { e.State, e.ScheduledAtUtc });
+        });
+        modelBuilder.Entity<ControlledGoodsNoticeSchedule>(entity =>
+        {
+            entity.ToTable("CONTROLLED_GOODS_NOTICE_SCHEDULE");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
+            entity.Property(e => e.Eta).HasMaxLength(10).IsRequired();
+            entity.Property(e => e.State).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.CreatedUser).HasMaxLength(100);
+            entity.Property(e => e.CancelledUser).HasMaxLength(100);
+            entity.HasIndex(e => e.HeaderId).IsUnique()
+                .HasFilter("[State] = 'Pending'")
+                .HasDatabaseName("UX_CONTROLLED_GOODS_NOTICE_SCHEDULE_PendingHeader");
+            entity.HasIndex(e => new { e.State, e.ScheduledAtUtc });
+        });
         modelBuilder.Entity<SystemConfig>(entity =>
         {
             entity.ToTable("SystemConfigs");
@@ -298,7 +356,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.DriverDetails).HasMaxLength(50).HasDefaultValue("N");
             entity.Property(e => e.OrderReason).HasMaxLength(50);
             entity.Property(e => e.ArrivalNoticeFlag).HasMaxLength(5);
-            entity.Property(e => e.ArrivalNotice).HasMaxLength(100);
+            entity.Property(e => e.ArrivalNotice).HasMaxLength(300);
             entity.Property(e => e.ReasonForDeliveryDelay).HasMaxLength(200);
             entity.Property(e => e.DelayNotificationDate).HasMaxLength(10);
             entity.Property(e => e.DeliveryNo).HasMaxLength(30);

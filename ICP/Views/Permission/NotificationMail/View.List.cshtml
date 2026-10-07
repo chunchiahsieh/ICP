@@ -1,0 +1,78 @@
+@model ICP.Models.NotificationMail.NotificationMailQueryViewModel
+
+<div class="table-responsive">
+    <table id="notificationMailTable-@Model.Type" class="table table-bordered table-striped table-hover align-middle w-100"
+           data-empty-table="@(Model.Type == "delay" ? Localizer["NotificationMail.NoSelectedNotificationDateMail"].Value : Model.Type == "arrival" ? Localizer["ShipInfo.ArrivalSchedule.Empty"].Value : Localizer["NotificationMail.ControlledGoodsEmpty"].Value)">
+        <thead class="table-light"><tr>
+            <th class="sorting_disabled">@Localizer["NotificationMail.PreviewAction"] / @Localizer["NotificationMail.LogError"]</th>
+            <th>@Localizer["NotificationMail.ScheduledTimeTaipei"]</th>
+            <th>@Localizer["ShipInfo.ArrivalSchedule.Status"]</th>
+            @if (Model.Type == "delay")
+            {
+                <th>Invoice No</th><th>HAWB</th><th>W/H</th><th>FLT</th><th>ETA</th>
+                <th>@Localizer["ShipInfo.Field.ReasonForDeliveryDelay"]</th>
+                <th>@Localizer["ShipInfo.Field.DelayNotificationDate"]</th>
+            }
+            else
+            {
+                <th>Invoice No</th>
+                if (Model.Type == "arrival") { <th>@Localizer["NotificationMail.MailTo"]</th> }
+                else { <th>ETA</th> }
+            }
+        </tr>
+        <tr class="users-filter-row">
+            <th class="sorting_disabled"></th>
+            <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-ScheduledAt", "ScheduledAt", "Date"))</th>
+            <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-Status", "Status", "Checkbox"))</th>
+            @if (Model.Type == "delay")
+            {
+                <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-InvoiceNo", "InvoiceNo", "Text"))</th>
+                <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-Hawb", "Hawb", "Text"))</th>
+                <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-Warehouse", "Warehouse", "Text"))</th>
+                <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-Flt", "Flt", "Text"))</th>
+                <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-Eta", "Eta", "Date"))</th>
+                <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-Reason", "Reason", "Text"))</th>
+                <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-NotificationDate", "NotificationDate", "Date"))</th>
+            }
+            else
+            {
+                <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-InvoiceNo", "InvoiceNo", "Text"))</th>
+                if (Model.Type == "arrival")
+                {
+                    <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-MailTo", "MailTo", "Text"))</th>
+                }
+                else
+                {
+                    <th class="sorting_disabled pro-table-filter-cell">@await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-{Model.Type}-Eta", "Eta", "Date"))</th>
+                }
+            }
+        </tr></thead>
+        <tbody>
+        @foreach (var row in Model.Rows)
+        {
+            <tr>
+                <td class="text-nowrap">
+                    <button type="button" class="btn btn-sm btn-outline-primary notification-mail-preview" data-type="@Model.Type" data-id="@row.Id" data-date="@row.NotificationDate" data-invoice="@row.InvoiceNo">@Localizer["NotificationMail.PreviewAction"]</button>
+                    @if (row.Status == "Failed")
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-danger notification-mail-failure" data-message="@row.FailureMessage">@Localizer["NotificationMail.LogError"]</button>
+                    }
+                </td>
+                <td>@(Model.Type == "delay" ? row.NotificationDate + " " + ViewBag.DelaySendTimes : DateTime.SpecifyKind(row.ScheduledAtUtc!.Value, DateTimeKind.Utc).AddHours(8).ToString("yyyy-MM-dd HH:mm"))</td>
+                <td><span class="badge @(row.Status switch { "Sent" => "bg-success", "Failed" => "bg-danger", "Sending" => "bg-info", _ => "bg-secondary" })">@(row.Status switch { "Pending" => Localizer["NotificationMail.StatusNotSent"].Value, "Sending" => Localizer["ShipInfo.ArrivalSchedule.Sending"].Value, "Sent" => Localizer["ShipInfo.ArrivalSchedule.Sent"].Value, "Failed" => Localizer["ShipInfo.ArrivalSchedule.Failed"].Value, _ => Localizer["NotificationMail.StatusUnknown"].Value })</span></td>
+                @if (Model.Type == "delay")
+                {
+                    <td>@row.InvoiceNo</td><td>@row.Hawb</td><td>@row.Warehouse</td>
+                    <td>@row.Flt</td><td>@row.Eta</td><td>@row.Reason</td><td>@row.NotificationDate</td>
+                }
+                else
+                {
+                    <td>@row.InvoiceNo</td>
+                    if (Model.Type == "arrival") { <td>@row.MailTo</td> }
+                    else { <td>@row.Eta</td> }
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

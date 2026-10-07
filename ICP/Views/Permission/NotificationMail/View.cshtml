@@ -1,0 +1,146 @@
+@model ICP.Models.NotificationMail.NotificationMailPageViewModel
+@using ICP.Models.NotificationMail
+@{
+    ViewData["Title"] = Localizer["NotificationMail.Title"];
+    var messages = new (string Name, NotificationMessageOptions Settings)[]
+    {
+        (Localizer["NotificationMail.DeliveryDelay"].Value, Model.Options.DeliveryDelay),
+        (Localizer["NotificationMail.ArrivalNotice"].Value, Model.Options.ArrivalNotice),
+        (Localizer["NotificationMail.ControlledGoodsArrival"].Value, Model.Options.ControlledGoodsArrival),
+        (Localizer["NotificationMail.DepositCase"].Value, Model.Options.DepositCase)
+    };
+    string ListText(IEnumerable<string>? values) => values is null ? "" : string.Join("; ", values.Where(value => !string.IsNullOrWhiteSpace(value)));
+}
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pro-table-filters.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/notification-mail.css" asp-append-version="true" />
+}
+<div class="container-fluid mt-3 notification-mail-page pro-datatables-page" data-permissions="Views.Shared._SidebarNav.Systems.NotificationMail"
+     data-i18n-key="Views.Shared._SidebarNav.Systems.NotificationMail">
+    <h4>@Localizer["NotificationMail.Title"]</h4>
+    <p class="text-muted">@Localizer["NotificationMail.ReadOnlyHint"]</p>
+    <div class="card mb-3"><div class="card-body">
+        <h5 class="card-title">@Localizer["NotificationMail.Smtp"]</h5>
+        <dl class="row mb-0">
+            <dt class="col-sm-2">@Localizer["NotificationMail.Host"]</dt><dd class="col-sm-10">@Model.Options.Smtp.Host</dd>
+            <dt class="col-sm-2">@Localizer["NotificationMail.Port"]</dt><dd class="col-sm-10">@Model.Options.Smtp.Port</dd>
+            <dt class="col-sm-2">@Localizer["NotificationMail.Ssl"]</dt><dd class="col-sm-10">@(Model.Options.Smtp.EnableSsl ? Localizer["ShipInfo.Option.Yes"] : Localizer["ShipInfo.Option.No"])</dd>
+            <dt class="col-sm-2">@Localizer["NotificationMail.From"]</dt><dd class="col-sm-10">@Model.Options.Smtp.FromName &lt;@Model.Options.Smtp.FromAddress&gt;</dd>
+            <dt class="col-sm-2">@Localizer["NotificationMail.UserName"]</dt><dd class="col-sm-10">@Model.Options.Smtp.UserName</dd>
+        </dl>
+    </div></div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead><tr>
+                <th>@Localizer["NotificationMail.Type"]</th><th>@Localizer["NotificationMail.Enabled"]</th>
+                <th>@Localizer["NotificationMail.Frequency"]</th><th>@Localizer["NotificationMail.SendTimes"]</th>
+                <th>@Localizer["NotificationMail.MailTitle"]</th><th>@Localizer["NotificationMail.MailTo"]</th><th>@Localizer["NotificationMail.CcTo"]</th>
+            </tr></thead>
+            <tbody>
+            @foreach (var message in messages)
+            {
+                <tr>
+                    <td>@message.Name</td>
+                    <td>@(message.Settings.Enabled ? Localizer["ShipInfo.Option.Yes"] : Localizer["ShipInfo.Option.No"])</td>
+                    <td>@(string.Equals(message.Settings.Frequency, "Immediate", StringComparison.OrdinalIgnoreCase) ? Localizer["NotificationMail.Immediate"] : Localizer["NotificationMail.Daily"])</td>
+                    <td>@(string.Equals(message.Settings.Frequency, "Immediate", StringComparison.OrdinalIgnoreCase) ? "—" : ListText(message.Settings.SendTimes))</td>
+                    <td>@message.Settings.Title</td>
+                    <td>@(ReferenceEquals(message.Settings, Model.Options.ArrivalNotice)
+                        ? Localizer["NotificationMail.ArrivalNoticeMailToSource"].Value
+                        : ListText(message.Settings.MailTo))</td>
+                    <td>@ListText(message.Settings.CcTo)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="card mt-3">
+        <div class="card-header">@Localizer["NotificationMail.Type"] — @Localizer["NotificationMail.ListAndPreview"]</div>
+        <div class="card-body">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation"><button class="nav-link @(Model.ActivePreviewType == "delay" ? "active" : "")" data-bs-toggle="tab" data-bs-target="#notificationPreviewDelay" type="button" role="tab" aria-controls="notificationPreviewDelay" aria-selected="@(Model.ActivePreviewType == "delay" ? "true" : "false")">@Localizer["NotificationMail.DeliveryDelay"]</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link @(Model.ActivePreviewType == "arrival" ? "active" : "")" data-bs-toggle="tab" data-bs-target="#notificationPreviewArrival" type="button" role="tab" aria-controls="notificationPreviewArrival" aria-selected="@(Model.ActivePreviewType == "arrival" ? "true" : "false")">@Localizer["NotificationMail.ArrivalNotice"]</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link @(Model.ActivePreviewType == "controlled" ? "active" : "")" data-bs-toggle="tab" data-bs-target="#notificationPreviewControlled" type="button" role="tab" aria-controls="notificationPreviewControlled" aria-selected="@(Model.ActivePreviewType == "controlled" ? "true" : "false")">@Localizer["NotificationMail.ControlledGoodsArrival"]</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link @(Model.ActivePreviewType == "deposit" ? "active" : "")" data-bs-toggle="tab" data-bs-target="#notificationPreviewDeposit" type="button" role="tab" aria-controls="notificationPreviewDeposit" aria-selected="@(Model.ActivePreviewType == "deposit" ? "true" : "false")">@Localizer["NotificationMail.DepositCase"]</button></li>
+            </ul>
+            <div class="tab-content border border-top-0 rounded-bottom p-3">
+                <div class="tab-pane fade @(Model.ActivePreviewType == "delay" ? "show active" : "")" id="notificationPreviewDelay" role="tabpanel">
+            <div id="notificationMailList-delay"></div>
+                </div>
+                <div class="tab-pane fade @(Model.ActivePreviewType == "arrival" ? "show active" : "")" id="notificationPreviewArrival" role="tabpanel">
+            @if (!Model.ArrivalScheduleAvailable)
+            {
+                <div class="alert alert-warning">@Localizer["NotificationMail.ScheduleTableMissing"]</div>
+            }
+                    <div id="notificationMailList-arrival"></div>
+            @if (Model.ArrivalNoticeMissingSettings.Count > 0)
+            {
+                <div class="alert alert-warning" role="status">
+                    @Localizer["NotificationMail.CannotSendHint"]
+                    @string.Join("、", Model.ArrivalNoticeMissingSettings)
+                </div>
+            }
+            @if (Model.ArrivalNoticeInvalidInvoiceNos.Count > 0)
+            {
+                <div class="alert alert-warning" role="status">
+                    @Localizer["NotificationMail.InvalidArrivalAddresses"]:
+                    @string.Join(" / ", Model.ArrivalNoticeInvalidInvoiceNos)
+                </div>
+            }
+                </div>
+                <div class="tab-pane fade @(Model.ActivePreviewType == "controlled" ? "show active" : "")" id="notificationPreviewControlled" role="tabpanel">
+                    <h5>@Localizer["NotificationMail.ControlledGoodsArrival"]</h5>
+                    @if (Model.ControlledGoodsMissingSettings.Count > 0)
+                    {
+                        <div class="alert alert-warning" role="status">@Localizer["NotificationMail.CannotSendHint"] @string.Join("、", Model.ControlledGoodsMissingSettings)</div>
+                    }
+                    @if (!Model.ControlledGoodsScheduleAvailable)
+                    {
+                        <div class="alert alert-warning">@Localizer["NotificationMail.ControlledGoodsTableMissing"]</div>
+                    }
+                    <div id="notificationMailList-controlled"></div>
+                </div>
+                <div class="tab-pane fade @(Model.ActivePreviewType == "deposit" ? "show active" : "")" id="notificationPreviewDeposit" role="tabpanel">
+                    <p class="text-muted mb-0">@Localizer["NotificationMail.PreviewNotAvailable"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="notificationMailFailureModal" tabindex="-1" aria-labelledby="notificationMailFailureTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title" id="notificationMailFailureTitle">@Localizer["NotificationMail.LogError"]</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body text-break" id="notificationMailFailureBody"></div>
+    </div></div>
+</div>
+<div class="offcanvas offcanvas-end notification-mail-preview-drawer" tabindex="-1" id="notificationMailPreviewDrawer" aria-labelledby="notificationMailPreviewTitle">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="notificationMailPreviewTitle">@Localizer["NotificationMail.PreviewAction"]</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="notificationMailPreviewError" class="alert alert-danger d-none" role="alert"></div>
+        <p><strong>@Localizer["NotificationMail.MailTo"]:</strong> <span id="notificationMailPreviewTo"></span></p>
+        <p><strong>@Localizer["NotificationMail.CcTo"]:</strong> <span id="notificationMailPreviewCc"></span></p>
+        <p><strong>@Localizer["NotificationMail.MailTitle"]:</strong> <span id="notificationMailPreviewSubject"></span></p>
+        <div class="table-responsive" id="notificationMailPreviewBody"></div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/js/pro-datatables.js" asp-append-version="true"></script>
+    <script src="~/js/pro-table-filters.js" asp-append-version="true"></script>
+    <script>
+        window.NotificationMailPage = {
+            queryUrl: '@Url.Action("QueryList", "NotificationMail")',
+            previewUrl: '@Url.Action("Preview", "NotificationMail")',
+            filterOptionsUrl: '@Url.Action("GetFilterOptions", "NotificationMail")',
+            previewLoadFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["NotificationMail.PreviewLoadFailed"].Value)),
+            noFailureDetails: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["NotificationMail.NoFailureDetails"].Value))
+        };
+    </script>
+    <script src="~/js/notification-mail.js" asp-append-version="true"></script>
+}

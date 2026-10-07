@@ -251,8 +251,9 @@
                                 .removeClass('text-success')
                                 .text(importResultTitleText);
                             $('#pageMessage')
-                                .removeClass('d-none alert-info alert-warning')
-                                .addClass('alert-success')
+                                .removeClass('d-none alert-info alert-warning alert-success')
+                                .addClass(response.controlledGoodsSkippedEtaCount > 0
+                                    ? 'alert-warning' : 'alert-success')
                                 .text(response.message || '');
                             $('#importResultSection').removeClass('d-none');
                             $btn.prop('disabled', true);

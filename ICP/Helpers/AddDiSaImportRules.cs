@@ -206,4 +206,8 @@ public sealed class AddDiSaImportResult
     public int HeaderCount { get; init; }
 
     public int DetailCount { get; init; }
+
+    public int ControlledGoodsScheduledCount { get; init; }
+
+    public int ControlledGoodsSkippedEtaCount { get; init; }
 }

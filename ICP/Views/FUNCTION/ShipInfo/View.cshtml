@@ -94,6 +94,18 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["ShipInfo.Close"]"></button>
                 </div>
             </div>
+            <div class="d-none border-bottom px-3 py-2 align-items-center gap-2" id="shipInfoArrivalScheduleToolbar">
+                <span class="shipinfo-notification-label"><i class="bi bi-bell me-1" aria-hidden="true"></i>@Localizer["ShipInfo.ArrivalSchedule.Section"]</span>
+                <button type="button" class="btn btn-sm btn-warning shipinfo-notification-action" id="btnShipInfoDeliveryDelayPreview" data-permissions="Views.Function.ShipInfo.Edit">
+                    <i class="bi bi-clock-history me-1" aria-hidden="true"></i>@Localizer["NotificationMail.DeliveryDelay"]
+                </button>
+                <button type="button" class="btn btn-sm btn-primary shipinfo-notification-action" id="btnShipInfoArrivalNoticeSchedule" data-permissions="Views.Function.ShipInfo.Edit">
+                    <i class="bi bi-envelope-paper me-1" aria-hidden="true"></i>【@Localizer["ShipInfo.ArrivalSchedule.Button"]】
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger shipinfo-notification-action" id="btnShipInfoControlledGoodsNotice" data-permissions="Views.Function.ShipInfo.Edit">
+                    <i class="bi bi-shield-exclamation me-1" aria-hidden="true"></i>@Localizer["NotificationMail.ControlledGoodsArrival"]
+                </button>
+            </div>
             <div class="modal-body position-relative">
                 <div class="shipinfo-modal-mask d-none" id="shipInfoViewModalMask" aria-hidden="true">
                     <div class="spinner-border text-primary" role="status">
@@ -101,6 +113,79 @@
                     </div>
                 </div>
                 <form id="shipInfoViewForm" class="row g-3" novalidate></form>
+                <div id="shipInfoArrivalSchedulePanel" class="d-none">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <h5 class="mb-0 flex-shrink-0">@Localizer["ShipInfo.ArrivalSchedule.Title"]</h5>
+                        <span id="shipInfoArrivalScheduleError" class="text-danger fw-semibold text-start flex-grow-1 d-none" role="alert"></span>
+                        <button type="button" class="btn btn-sm btn-primary text-nowrap ms-auto" id="btnShipInfoArrivalScheduleAdd">@Localizer["ShipInfo.ArrivalSchedule.Add"]</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary text-nowrap" id="btnShipInfoArrivalScheduleClose">@Localizer["ShipInfo.ArrivalSchedule.Close"]</button>
+                    </div>
+                    <div class="table-responsive shipinfo-arrival-schedule-list">
+                        <table class="table table-bordered table-striped align-middle">
+                            <thead><tr>
+                                <th>@Localizer["ShipInfo.ArrivalSchedule.SendAt"]</th>
+                                <th>Invoice No</th><th>@Localizer["NotificationMail.MailTo"]</th>
+                                <th>@Localizer["ShipInfo.ArrivalSchedule.Status"]</th><th>@Localizer["ShipInfo.Action"]</th>
+                            </tr></thead>
+                            <tbody id="shipInfoArrivalScheduleRows"></tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3" id="shipInfoArrivalSchedulePreviews"></div>
+                </div>
+                <div id="shipInfoDeliveryDelayPanel" class="d-none">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <h5 class="mb-0 flex-shrink-0">@Localizer["ShipInfo.DeliveryDelay.Title"]</h5>
+                        <span id="shipInfoDeliveryDelayError" class="text-danger fw-semibold text-start flex-grow-1 d-none" role="alert"></span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary text-nowrap ms-auto" id="btnShipInfoDeliveryDelayClose">@Localizer["ShipInfo.DeliveryDelay.Close"]</button>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <label class="form-label mb-0" for="shipInfoDeliveryDelayDate">@Localizer["ShipInfo.Field.DelayNotificationDate"]</label>
+                        <input type="date" class="form-control form-control-sm w-auto" id="shipInfoDeliveryDelayDate" />
+                    </div>
+                    <div class="table-responsive shipinfo-arrival-schedule-list">
+                        <table class="table table-bordered table-striped align-middle">
+                            <thead><tr>
+                                <th>Invoice No</th><th>HAWB</th><th>W/H</th><th>FLT</th><th>ETA</th>
+                                <th>@Localizer["ShipInfo.Field.ReasonForDeliveryDelay"]</th>
+                                <th>@Localizer["ShipInfo.Field.DelayNotificationDate"]</th>
+                                <th>@Localizer["ShipInfo.ArrivalSchedule.Status"]</th>
+                            </tr></thead>
+                            <tbody id="shipInfoDeliveryDelayRows"></tbody>
+                        </table>
+                    </div>
+                    <p class="mb-2"><strong>@Localizer["NotificationMail.SendTimes"]:</strong> <span id="shipInfoDeliveryDelaySendTimes"></span></p>
+                    <div id="shipInfoDeliveryDelayPreview" class="border rounded p-3 mt-3">
+                        <h6>@Localizer["ShipInfo.DeliveryDelay.Preview"]</h6>
+                        <p class="text-muted mb-0" id="shipInfoDeliveryDelayEmpty">@Localizer["ShipInfo.DeliveryDelay.Empty"]</p>
+                        <div id="shipInfoDeliveryDelayContent" class="d-none">
+                            <p class="mb-1"><strong>@Localizer["NotificationMail.MailTo"]:</strong> <span id="shipInfoDeliveryDelayTo"></span></p>
+                            <p class="mb-1"><strong>@Localizer["NotificationMail.CcTo"]:</strong> <span id="shipInfoDeliveryDelayCc"></span></p>
+                            <p class="mb-2"><strong>@Localizer["NotificationMail.MailTitle"]:</strong> <span id="shipInfoDeliveryDelaySubject"></span></p>
+                            <div class="table-responsive" id="shipInfoDeliveryDelayBody"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="shipInfoControlledGoodsPanel" class="d-none">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <h5 class="mb-0">@Localizer["NotificationMail.ControlledGoodsArrival"]</h5>
+                        <button type="button" class="btn btn-sm btn-danger text-nowrap ms-auto" id="btnShipInfoControlledGoodsAdd">@Localizer["ShipInfo.ArrivalSchedule.Add"]</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary text-nowrap" id="btnShipInfoControlledGoodsClose">@Localizer["ShipInfo.ArrivalSchedule.Close"]</button>
+                    </div>
+                    <div id="shipInfoControlledGoodsError" class="text-danger fw-semibold mb-3 d-none" role="alert"></div>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <label class="form-label mb-0" for="shipInfoControlledGoodsEta">ETA</label>
+                        <input type="date" class="form-control form-control-sm w-auto" id="shipInfoControlledGoodsEta" />
+                    </div>
+                    <div class="table-responsive shipinfo-arrival-schedule-list">
+                        <table class="table table-bordered table-striped align-middle">
+                            <thead><tr><th>@Localizer["ShipInfo.ArrivalSchedule.SendAt"]</th><th>Invoice No</th>
+                                <th>ETA</th><th>@Localizer["ShipInfo.ArrivalSchedule.Status"]</th>
+                                <th>@Localizer["ShipInfo.Action"]</th></tr></thead>
+                            <tbody id="shipInfoControlledGoodsRows"></tbody>
+                        </table>
+                    </div>
+                    <div id="shipInfoControlledGoodsPreviews" class="mt-3"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -218,6 +303,17 @@
                 discardHeader: '@Url.Action("DiscardHeader", "ShipInfo")',
                 deleteHeader: '@Url.Action("DeleteHeader", "ShipInfo")',
                 deleteDetail: '@Url.Action("DeleteDetail", "ShipInfo")'
+                ,arrivalScheduleToday: '@Url.Action("GetTodayArrivalNoticeSchedules", "ShipInfo")'
+                ,arrivalScheduleAdd: '@Url.Action("ScheduleArrivalNotice", "ShipInfo")'
+                ,arrivalScheduleCancel: '@Url.Action("CancelArrivalNoticeSchedule", "ShipInfo")'
+                ,arrivalSchedulePreview: '@Url.Action("GetArrivalNoticeSchedulePreview", "ShipInfo")'
+                ,arrivalScheduleQueuedPreview: '@Url.Action("GetArrivalNoticeQueuedPreview", "ShipInfo")'
+                ,deliveryDelayPreview: '@Url.Action("GetDeliveryDelayPreview", "ShipInfo")'
+                ,controlledGoodsSchedules: '@Url.Action("GetControlledGoodsNoticeSchedules", "ShipInfo")'
+                ,controlledGoodsEligibility: '@Url.Action("GetControlledGoodsNoticeEligibility", "ShipInfo")'
+                ,controlledGoodsPreview: '@Url.Action("GetControlledGoodsNoticePreview", "ShipInfo")'
+                ,controlledGoodsAdd: '@Url.Action("ScheduleControlledGoodsNotice", "ShipInfo")'
+                ,controlledGoodsCancel: '@Url.Action("CancelControlledGoodsNoticeSchedule", "ShipInfo")'
                 ,getAttachments: '@Url.Action("GetAttachments", "ShipInfo")'
                 ,uploadAttachment: '@Url.Action("UploadAttachment", "ShipInfo")'
                 ,downloadAttachment: '@Url.Action("DownloadAttachment", "ShipInfo")'
@@ -287,6 +383,33 @@
                 caseStatusProcessing = Localizer["ShipInfo.CaseStatus.Processing"].Value,
                 depositCaseStatus = Localizer["ShipInfo.DepositCaseStatus"].Value,
                 arurCaseStatus = Localizer["ShipInfo.ArurCaseStatus"].Value
+                ,arrivalScheduleCancel = Localizer["ShipInfo.ArrivalSchedule.Cancel"].Value
+                ,arrivalScheduleEmpty = Localizer["ShipInfo.ArrivalSchedule.Empty"].Value
+                ,arrivalScheduleSaveFirst = Localizer["ShipInfo.ArrivalSchedule.SaveFirst"].Value
+                ,arrivalScheduleCurrent = Localizer["ShipInfo.ArrivalSchedule.Current"].Value
+                ,arrivalScheduleNotScheduled = Localizer["ShipInfo.ArrivalSchedule.NotScheduled"].Value
+                ,arrivalScheduleButton = Localizer["ShipInfo.ArrivalSchedule.Button"].Value
+                ,arrivalSchedulePreviewTitle = Localizer["ShipInfo.ArrivalSchedule.PreviewTitle"].Value
+                ,arrivalSchedulePreviewEmpty = Localizer["ShipInfo.ArrivalSchedule.PreviewEmpty"].Value
+                ,arrivalSchedulePreviewToLabel = Localizer["NotificationMail.MailTo"].Value
+                ,arrivalSchedulePreviewSubjectLabel = Localizer["NotificationMail.MailTitle"].Value
+                ,arrivalSchedulePending = Localizer["ShipInfo.ArrivalSchedule.Pending"].Value
+                ,arrivalScheduleSending = Localizer["ShipInfo.ArrivalSchedule.Sending"].Value
+                ,arrivalScheduleSent = Localizer["ShipInfo.ArrivalSchedule.Sent"].Value
+                ,arrivalScheduleFailed = Localizer["ShipInfo.ArrivalSchedule.Failed"].Value
+                ,arrivalScheduleMailRequired = Localizer["ShipInfo.ArrivalSchedule.MailRequired"].Value
+                ,arrivalScheduleMailLegacyMarker = Localizer["ShipInfo.ArrivalSchedule.MailLegacyMarker"].Value
+                ,arrivalScheduleMailTooLong = Localizer["ShipInfo.ArrivalSchedule.MailTooLong"].Value
+                ,arrivalScheduleMailSeparator = Localizer["ShipInfo.ArrivalSchedule.MailSeparator"].Value
+                ,arrivalScheduleMailInvalid = Localizer["ShipInfo.ArrivalSchedule.MailInvalid"].Value
+                ,deliveryDelayNoRows = Localizer["ShipInfo.DeliveryDelay.NoRows"].Value
+                ,deliveryDelayStatusUnknown = Localizer["NotificationMail.StatusUnknown"].Value
+                ,deliveryDelayStatusNotSent = Localizer["NotificationMail.StatusNotSent"].Value
+                ,controlledGoodsEmpty = Localizer["NotificationMail.ControlledGoodsEmpty"].Value
+                ,controlledGoodsEligibility = Localizer["NotificationMail.ControlledGoodsEligibility"].Value
+                ,controlledGoodsEtaUnavailable = Localizer["NotificationMail.ControlledGoodsEtaUnavailable"].Value
+                ,controlledGoodsPreview = Localizer["NotificationMail.ControlledGoodsPreview"].Value
+                ,controlledGoodsAlreadyScheduled = Localizer["NotificationMail.ControlledGoodsAlreadyScheduled"].Value
             }))
         };
     </script>
@@ -299,6 +422,9 @@
     <script src="~/js/shipinfo-protable.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-browse.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-crud.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-arrival-schedule.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-delivery-delay.js" asp-append-version="true"></script>
+    <script src="~/js/shipinfo-controlled-goods.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-case-drawer.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-discard.js" asp-append-version="true"></script>
     <script src="~/js/shipinfo-delete.js" asp-append-version="true"></script>

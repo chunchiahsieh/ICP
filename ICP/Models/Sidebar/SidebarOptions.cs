@@ -29,7 +29,7 @@ public sealed class SidebarOptionsValidator : IValidateOptions<SidebarOptions>
         "BuCode", "WhCode", "DeliveryToList", "PickUpLocation", "EtaDelDateTable",
         "DefaultDeliveryWh", "OrderType", "AirSea", "Broker", "InvoiceType", "OrderPriority", "CountryOfOrigin", "Shipper", "Customized",
         "ShippingReport", "CompareIcpVsArUr", "MassDataReport", "ForwarderDataUpload", "CustomsDataDownload", "TariffData",
-        "LocalizationManagement", "Users", "Resources", "Roles", "RolePermissions", "RoleTelIds", "RoleDepIds", "RoleMailGroups"
+        "LocalizationManagement", "Users", "Resources", "Roles", "RolePermissions", "RoleTelIds", "RoleDepIds", "RoleMailGroups", "NotificationMail"
     };
 
     public ValidateOptionsResult Validate(string? name, SidebarOptions options)

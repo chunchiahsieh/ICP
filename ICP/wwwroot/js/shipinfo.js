@@ -7,7 +7,14 @@
     }
 
     function bindEvents() {
-        $('#btnShipInfoHeaderResetFilters').on('click', app.resetHeaderFilters);
+        $('#btnShipInfoHeaderResetFilters').on('click', function () {
+            var params = new URLSearchParams(global.location.search);
+            if (params.has('DelayNotificationDate') || params.has('InvoiceNo')) {
+                global.location.href = global.location.pathname;
+                return;
+            }
+            app.resetHeaderFilters();
+        });
         $('#btnShipInfoDetailResetFilters').on('click', app.resetDetailFilters);
         $('#btnShipInfoViewEdit').on('click', app.enterEditMode);
         $('#btnShipInfoViewSave').on('click', app.saveViewModal);

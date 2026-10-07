@@ -3,6 +3,7 @@ using ICP.Models;
 using ICP.Models.ShipInfo;
 using ICP.Repositories;
 using ICP.Services;
+using ICP.Services.NotificationMail;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,12 +15,21 @@ public class ShipInfoController : Controller
     private readonly IShipInfoService _shipInfoService;
     private readonly IShipInfoRepository _repository;
     private readonly ShipInfoAttachmentService _attachments;
+    private readonly ArrivalNoticeScheduleService _arrivalNoticeSchedules;
+    private readonly DeliveryDelayPreviewService _deliveryDelayPreview;
+    private readonly ControlledGoodsNoticeScheduleService _controlledGoodsSchedules;
 
-    public ShipInfoController(IShipInfoService shipInfoService, IShipInfoRepository repository, ShipInfoAttachmentService attachments)
+    public ShipInfoController(IShipInfoService shipInfoService, IShipInfoRepository repository,
+        ShipInfoAttachmentService attachments, ArrivalNoticeScheduleService arrivalNoticeSchedules,
+        DeliveryDelayPreviewService deliveryDelayPreview,
+        ControlledGoodsNoticeScheduleService controlledGoodsSchedules)
     {
         _shipInfoService = shipInfoService;
         _repository = repository;
         _attachments = attachments;
+        _arrivalNoticeSchedules = arrivalNoticeSchedules;
+        _deliveryDelayPreview = deliveryDelayPreview;
+        _controlledGoodsSchedules = controlledGoodsSchedules;
     }
 
     [HttpGet]
@@ -166,6 +176,94 @@ public class ShipInfoController : Controller
     {
         await _shipInfoService.DiscardHeaderAsync(request?.HeaderKey ?? string.Empty, request?.Reason, User.Identity?.Name, cancellationToken);
         return Json(ApiResponse<object>.Ok(new { headerKey = request?.HeaderKey }));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetTodayArrivalNoticeSchedules(
+        Guid? currentHeaderId, CancellationToken cancellationToken = default)
+    {
+        var data = await _arrivalNoticeSchedules.ListTodayAsync(currentHeaderId, cancellationToken);
+        return Json(ApiResponse<IReadOnlyList<ArrivalNoticeScheduleRow>>.Ok(data));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDeliveryDelayPreview(
+        string delayNotificationDate, CancellationToken cancellationToken = default)
+    {
+        var data = await _deliveryDelayPreview.GetByDelayNotificationDateAsync(delayNotificationDate, cancellationToken);
+        return Json(ApiResponse<DeliveryDelayTodayPreview>.Ok(data));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetControlledGoodsNoticeSchedules(
+        string eta, CancellationToken cancellationToken = default)
+    {
+        var data = await _controlledGoodsSchedules.ListAsync(eta, cancellationToken);
+        return Json(ApiResponse<IReadOnlyList<ControlledGoodsNoticeScheduleRow>>.Ok(data));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetControlledGoodsNoticeEligibility(
+        Guid headerId, CancellationToken cancellationToken = default)
+    {
+        var data = await _controlledGoodsSchedules.CheckEligibilityAsync(headerId, cancellationToken);
+        return Json(ApiResponse<ControlledGoodsNoticeEligibility>.Ok(data));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetControlledGoodsNoticePreview(
+        Guid scheduleId, CancellationToken cancellationToken = default)
+    {
+        var data = await _controlledGoodsSchedules.PreviewAsync(scheduleId, cancellationToken);
+        return Json(ApiResponse<ControlledGoodsNoticePreview>.Ok(data));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ScheduleControlledGoodsNotice(
+        Guid headerId, CancellationToken cancellationToken = default)
+    {
+        var data = await _controlledGoodsSchedules.EnqueueAsync(headerId,
+            User.Identity?.Name, cancellationToken);
+        return Json(ApiResponse<ControlledGoodsNoticeScheduleRow>.Ok(data));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CancelControlledGoodsNoticeSchedule(
+        Guid scheduleId, CancellationToken cancellationToken = default)
+    {
+        await _controlledGoodsSchedules.CancelAsync(scheduleId,
+            User.Identity?.Name, cancellationToken);
+        return Json(ApiResponse<object>.Ok(new { scheduleId }));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetArrivalNoticeSchedulePreview(
+        Guid headerId, CancellationToken cancellationToken = default)
+    {
+        var data = await _arrivalNoticeSchedules.PreviewAsync(headerId, cancellationToken);
+        return Json(ApiResponse<ArrivalNoticeSchedulePreview?>.Ok(data));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetArrivalNoticeQueuedPreview(
+        Guid scheduleId, CancellationToken cancellationToken = default)
+    {
+        var data = await _arrivalNoticeSchedules.PreviewScheduleAsync(scheduleId, cancellationToken);
+        return Json(ApiResponse<ArrivalNoticeSchedulePreview?>.Ok(data));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ScheduleArrivalNotice(Guid headerId, CancellationToken cancellationToken = default)
+    {
+        var data = await _arrivalNoticeSchedules.EnqueueAsync(headerId, User.Identity?.Name, cancellationToken);
+        return Json(ApiResponse<ArrivalNoticeScheduleRow>.Ok(data));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CancelArrivalNoticeSchedule(Guid scheduleId, CancellationToken cancellationToken = default)
+    {
+        await _arrivalNoticeSchedules.CancelAsync(scheduleId, User.Identity?.Name, cancellationToken);
+        return Json(ApiResponse<object>.Ok(new { scheduleId }));
     }
 
     [HttpPost]
