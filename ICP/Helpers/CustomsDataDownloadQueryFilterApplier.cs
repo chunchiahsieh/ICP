@@ -262,7 +262,8 @@ public static class CustomsDataDownloadQueryFilterApplier
         var property = Expression.Property(parameter, fieldName);
         var notNull = Expression.NotEqual(property, Expression.Constant(null, typeof(string)));
         var includeBlank = (fieldName.Equals(nameof(StgRawShippingAdvice.InvoiceDate), StringComparison.OrdinalIgnoreCase)
-            || fieldName.Equals(nameof(StgRawShippingAdvice.Hazmat), StringComparison.OrdinalIgnoreCase))
+            || fieldName.Equals(nameof(StgRawShippingAdvice.Hazmat), StringComparison.OrdinalIgnoreCase)
+            || fieldName.Equals(nameof(StgRawShippingAdvice.InvoiceType), StringComparison.OrdinalIgnoreCase))
             && values.Contains(BlankFilterValue, StringComparer.Ordinal);
         var actualValues = values.Where(value => !string.Equals(value, BlankFilterValue, StringComparison.Ordinal)).ToList();
         var containsMethod = typeof(List<string>).GetMethod(nameof(List<string>.Contains), [typeof(string)])!;

@@ -89,11 +89,26 @@
             ]);
             var displayValue = formatDrawerValue(fieldName, rawValue);
             entries.push({
+                fieldName: fieldName,
                 label: renderApi.resolveLabel(field, app.getCulture()),
                 value: formatSummaryValue(displayValue),
                 invalid: invalidFields.has(fieldName.toLowerCase())
             });
         });
+
+        if (isArurDrawer()) {
+            var delayIndex = entries.findIndex(function (entry) {
+                return entry.fieldName.toLowerCase() === 'delaynotificationdate';
+            });
+            var deliveryIndex = entries.findIndex(function (entry) {
+                return entry.fieldName.toLowerCase() === 'deliveryto';
+            });
+            if (delayIndex >= 0 && deliveryIndex >= 0) {
+                var delayEntry = entries[delayIndex];
+                entries[delayIndex] = entries[deliveryIndex];
+                entries[deliveryIndex] = delayEntry;
+            }
+        }
 
         return entries;
     }
@@ -308,6 +323,7 @@
             return;
         }
 
+        $('#shipInfoDepositMailPreview').empty().addClass('d-none');
         state.caseType = normalizedType;
         state.caseHeaderRowKey = headerRowKey;
         $('#shipInfoCaseDrawerLabel').text(
@@ -334,6 +350,7 @@
             }
 
             app.renderCaseDrawer(response.data || {});
+            if (normalizedType === 'Deposit') loadDepositMailPreview();
         }).fail(function (xhr) {
             app.showToast((xhr.responseJSON && xhr.responseJSON.message) || messages.caseCreateFailed, 'danger');
         }).always(function () {
@@ -430,4 +447,22 @@
             }
         });
     };
+    function loadDepositMailPreview() {
+            if (isArurDrawer() || !state.caseHeaderRowKey || state.caseSubmitting) return;
+            var headerKey = state.caseHeaderRowKey;
+            $.getJSON(urls.depositMailPreview, { headerKey: headerKey }).done(function (response) {
+                if (state.caseHeaderRowKey !== headerKey || isArurDrawer()) return;
+                if (!response || !response.success || !response.data) {
+                    app.showToast((response && response.message) || messages.saveFailed, 'danger'); return;
+                }
+                var data = response.data;
+                var $preview = $('#shipInfoDepositMailPreview').empty().removeClass('d-none');
+                $preview.append($('<p>').text('MailTo: ' + (data.mailTo || '')),
+                    $('<p>').text('CcTo: ' + (data.ccTo || '')),
+                    $('<p>').text('Subject: ' + (data.subject || '')),
+                    $('<div class="table-responsive">').html(data.bodyHtml || ''));
+            }).fail(function (xhr) {
+                app.showToast((xhr.responseJSON && xhr.responseJSON.message) || messages.saveFailed, 'danger');
+            });
+    }
 })(window, window.jQuery);

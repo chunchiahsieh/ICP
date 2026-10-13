@@ -79,7 +79,8 @@ public class CustomsDataDownloadController : Controller
 
         var options = await GetDistinctColumnValuesAsync(column, search, cancellationToken);
         if (column.Equals(nameof(StgRawShippingAdvice.InvoiceDate), StringComparison.OrdinalIgnoreCase)
-            || column.Equals(nameof(StgRawShippingAdvice.Hazmat), StringComparison.OrdinalIgnoreCase))
+            || column.Equals(nameof(StgRawShippingAdvice.Hazmat), StringComparison.OrdinalIgnoreCase)
+            || column.Equals(nameof(StgRawShippingAdvice.InvoiceType), StringComparison.OrdinalIgnoreCase))
         {
             var blankLabel = _localizer["ShipInfo.Blank"].Value;
             var withLabels = options.Where(value => !string.IsNullOrWhiteSpace(value))
@@ -87,6 +88,8 @@ public class CustomsDataDownloadController : Controller
             var scopedQuery = CustomsDataDownloadDataScopeService.Apply(BaseQuery(), GetDataScopes());
             var hasBlank = column.Equals(nameof(StgRawShippingAdvice.InvoiceDate), StringComparison.OrdinalIgnoreCase)
                 ? await scopedQuery.AnyAsync(row => row.InvoiceDate == null || row.InvoiceDate.Trim() == "", cancellationToken)
+                : column.Equals(nameof(StgRawShippingAdvice.InvoiceType), StringComparison.OrdinalIgnoreCase)
+                    ? await scopedQuery.AnyAsync(row => row.InvoiceType == null || row.InvoiceType.Trim() == "", cancellationToken)
                 : await scopedQuery.AnyAsync(row => row.Hazmat == null || row.Hazmat.Trim() == "", cancellationToken);
             if (hasBlank && (string.IsNullOrWhiteSpace(search)
                 || blankLabel.Contains(search, StringComparison.CurrentCultureIgnoreCase)))

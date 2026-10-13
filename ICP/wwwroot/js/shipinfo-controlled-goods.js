@@ -9,10 +9,7 @@
         $('#shipInfoControlledGoodsError').text(message || '').toggleClass('d-none', !message);
     }
 
-    function currentEta() {
-        var data = app.state.viewModalData || {};
-        var eta = String(data.Eta || data.eta || '').replace(/\//g, '-').slice(0, 10);
-        if (/^\d{4}-\d{2}-\d{2}$/.test(eta)) return eta;
+    function currentScheduleDate() {
         return new Intl.DateTimeFormat('sv-SE', {
             timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit'
         }).format(new Date());
@@ -34,9 +31,8 @@
         $('#shipInfoArrivalScheduleToolbar, #shipInfoViewForm').addClass('d-none');
         $('#shipInfoControlledGoodsPanel').removeClass('d-none');
         $('#btnShipInfoViewSave, #btnShipInfoViewCancelEdit').prop('disabled', true);
-        $('#shipInfoControlledGoodsEta').val(currentEta());
+        $('#shipInfoControlledGoodsDate').val(currentScheduleDate());
         loadSchedules();
-        checkEligibility();
     }
 
     function closePanel() {
@@ -54,9 +50,9 @@
         var generation = ++loadGeneration;
         var $rows = $('#shipInfoControlledGoodsRows').empty();
         var $previews = $('#shipInfoControlledGoodsPreviews').empty();
-        var eta = $('#shipInfoControlledGoodsEta').val();
+        var eta = $('#shipInfoControlledGoodsDate').val();
         if (!eta) return;
-        $.getJSON(app.urls.controlledGoodsSchedules, { eta: eta }).done(function (response) {
+        $.getJSON(app.urls.controlledGoodsSchedules, { scheduleDate: eta }).done(function (response) {
             if (generation !== loadGeneration) return;
             if (!response || !response.success) {
                 setError((response && response.message) || app.messages.saveFailed);
@@ -131,53 +127,10 @@
         });
     }
 
-    function checkEligibility() {
-        $('#btnShipInfoControlledGoodsAdd').prop('disabled', true);
-        $.getJSON(app.urls.controlledGoodsEligibility, { headerId: app.state.viewModalKey })
-            .done(function (response) {
-                if (!response || !response.success || !response.data) {
-                    setError((response && response.message) || app.messages.saveFailed);
-                    return;
-                }
-                var data = response.data;
-                var canSchedule = data.canSchedule === true || data.CanSchedule === true;
-                var reason = data.reason || data.Reason;
-                $('#btnShipInfoControlledGoodsAdd').prop('disabled', !canSchedule);
-                if (!canSchedule) {
-                    var labels = {
-                        NoElFlag: app.messages.controlledGoodsEligibility,
-                        EtaUnavailable: app.messages.controlledGoodsEtaUnavailable,
-                        AlreadyScheduled: app.messages.controlledGoodsAlreadyScheduled,
-                        StatusUnavailable: app.messages.statusNotAllowed
-                    };
-                    setError(labels[reason] || reason);
-                } else setError('');
-            }).fail(function (xhr) {
-                setError((xhr.responseJSON && xhr.responseJSON.message) || app.messages.saveFailed);
-            });
-    }
-
     $(function () {
         $('#btnShipInfoControlledGoodsNotice').on('click', showPanel);
         $('#btnShipInfoControlledGoodsClose').on('click', closePanel);
-        $('#shipInfoControlledGoodsEta').on('change', loadSchedules);
-        $('#btnShipInfoControlledGoodsAdd').on('click', function () {
-            setError('');
-            var $button = $(this).prop('disabled', true);
-            $.post(app.urls.controlledGoodsAdd, { headerId: app.state.viewModalKey })
-                .done(function (response) {
-                    if (!response || !response.success) {
-                        setError((response && response.message) || app.messages.saveFailed);
-                        return;
-                    }
-                    var row = response.data || {};
-                    $('#shipInfoControlledGoodsEta').val(row.eta || row.Eta || currentEta());
-                    loadSchedules();
-                    checkEligibility();
-                }).fail(function (xhr) {
-                    setError((xhr.responseJSON && xhr.responseJSON.message) || app.messages.saveFailed);
-                }).always(function () { $button.prop('disabled', false); });
-        });
+        $('#shipInfoControlledGoodsDate').on('change', loadSchedules);
         $('#shipInfoControlledGoodsRows').on('click', '[data-controlled-schedule-id]', function () {
             var $button = $(this).prop('disabled', true);
             $.post(app.urls.controlledGoodsCancel,
@@ -187,8 +140,17 @@
                         setError((response && response.message) || app.messages.saveFailed);
                         return;
                     }
+                    var data = response.data || {};
+                    if (String(data.headerId || data.HeaderId || '').toLowerCase() === String(app.state.viewModalKey || '').toLowerCase()) {
+                        $.getJSON(app.urls.getHeader, { headerKey: app.state.viewModalKey }).done(function (result) {
+                            if (!result || !result.success || !result.data) return;
+                            app.state.viewModalData = result.data;
+                            $('#shipInfoViewForm .shipinfo-control[data-field="ControlledGoodsNoticeFlag"]').val(result.data.ControlledGoodsNoticeFlag || result.data.controlledGoodsNoticeFlag || 'Y');
+                            $('#shipInfoViewForm .shipinfo-control[data-field="ControlledGoodsNoticeReason"]').val(result.data.ControlledGoodsNoticeReason || result.data.controlledGoodsNoticeReason || '管制品到貨');
+                            $('#shipInfoViewForm [data-meta-field="updateTime"]').val(result.data.UpdateTime || result.data.updateTime || '');
+                        });
+                    }
                     loadSchedules();
-                    checkEligibility();
                 }).fail(function (xhr) {
                     setError((xhr.responseJSON && xhr.responseJSON.message) || app.messages.saveFailed);
                 }).always(function () { $button.prop('disabled', false); });

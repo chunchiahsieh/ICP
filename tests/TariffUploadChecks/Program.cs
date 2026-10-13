@@ -179,7 +179,78 @@ foreach (var (type, methodName) in new[]
         $"{type.Name}.{methodName} accepts no form or role Broker override");
 }
 
-Console.WriteLine($"{count} checks passed; no database connections or workbook files were used.");
+foreach (var field in new[] { "PONumber", "FreightCharge", "TotalPieces", "GrossWeightKg" })
+{
+    Check(!TariffCustomsImportRules.IsRequiredCellColumn(field) && !TariffExcelColumnMap.IsRequiredColumn(field),
+        field + " is optional in upload and template metadata");
+    var cells = ValidCells();
+    cells[field] = "   ";
+    Check(Map(cells).Errors.Count == 0, field + " accepts blank cells");
+    cells.Remove(field);
+    Check(Map(cells).Errors.Count == 0, field + " accepts absent columns");
+}
+var shipperErrors = new List<string>();
+var allowedShippers = new HashSet<string>(StringComparer.Ordinal) { "TEL" };
+TariffCustomsImportRules.ValidateShipper(" TEL ", allowedShippers, 7, shipperErrors);
+Check(shipperErrors.Count == 0, "Shipper accepts matching Value after trimming");
+TariffCustomsImportRules.ValidateShipper("UNKNOWN", allowedShippers, 8, shipperErrors);
+Check(Rejects(shipperErrors) && shipperErrors[0].Contains("第 8 列") && shipperErrors[0].Contains("UNKNOWN"),
+    "Unknown Shipper rejects upload and identifies row and value");
+var displayRow = new TariffData { ExchangeRate = "1.23445", NetWeightKg = "1.2345", UnitValue = "1.235" };
+Check(TariffTableViewHelper.FormatCellValue(displayRow, "ExchangeRate") == "1.2345"
+    && TariffTableViewHelper.FormatCellValue(displayRow, "NetWeightKg") == "1.235"
+    && TariffTableViewHelper.FormatCellValue(displayRow, "UnitValue") == "1.24", "Decimal displays round half away from zero");
+displayRow.UnitValue = "2";
+Check(TariffTableViewHelper.FormatCellValue(displayRow, "UnitValue") == "2.00" && displayRow.UnitValue == "2",
+    "Display pads zeroes without changing stored value");
+displayRow.UnitValue = "invalid";
+Check(TariffTableViewHelper.FormatCellValue(displayRow, "UnitValue") == "invalid", "Non-numeric legacy values are preserved");
+foreach (var configName in new[] { "tariff-table-fields.json", "tariff-table-fields.example.json" })
+{
+    using var config = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine("ICP", "Config", configName)));
+    var fields = config.RootElement.GetProperty("list").GetProperty("fields").EnumerateArray()
+        .ToDictionary(x => x.GetProperty("fieldName").GetString()!, x => x.TryGetProperty("filterType", out var filter) ? filter.GetString() : null);
+    Check(fields["CreateDate"] == "DateRange" && new[] { "TermsOfTrade", "Currency", "COO" }.All(x => fields[x] == "Checkbox"),
+        configName + " has requested filter types");
+}
+
+var protector = new Microsoft.AspNetCore.DataProtection.EphemeralDataProtectionProvider().CreateProtector("test");
+var token = TariffOverwriteConfirmation.Create(protector, "hash", "user", "snapshot");
+Check(TariffOverwriteConfirmation.IsValid(protector, token, "hash", "user", "snapshot"), "Confirmation accepts matching file, user and snapshot");
+Check(!TariffOverwriteConfirmation.IsValid(protector, token, "other", "user", "snapshot")
+    && !TariffOverwriteConfirmation.IsValid(protector, token, "hash", "other", "snapshot")
+    && !TariffOverwriteConfirmation.IsValid(protector, token, "hash", "user", "changed")
+    && !TariffOverwriteConfirmation.IsValid(protector, "invalid", "hash", "user", "snapshot"),
+    "Confirmation rejects a different file, user, changed data and invalid tokens");
+var parse = typeof(TariffDataImportService).GetMethod("ParseCustomsExcel", BindingFlags.NonPublic | BindingFlags.Static)!;
+var templatePath = Path.GetFullPath(Path.Combine("ICP", "Files", "CustomsDataUploadTemplate.xlsx"));
+Check(((List<TariffData>)parse.Invoke(null, new object[] { templatePath, "template.xlsx", allowedShippers })!).Count == 0,
+    "New template headers parse successfully and empty rows are skipped");
+var testPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
+try
+{
+    using (var workbook = new ClosedXML.Excel.XLWorkbook(templatePath))
+    {
+        workbook.Worksheet(1).Name = "Wrong Sheet";
+        workbook.SaveAs(testPath);
+    }
+    bool invalidSheet = false;
+    try { parse.Invoke(null, new object[] { testPath, "wrong.xlsx", allowedShippers }); }
+    catch (TargetInvocationException ex) { invalidSheet = ex.InnerException is InvalidOperationException && ex.InnerException.Message.Contains("Upload Data"); }
+    Check(invalidSheet, "Wrong first sheet name is rejected");
+    using (var workbook = new ClosedXML.Excel.XLWorkbook(templatePath))
+    {
+        workbook.Worksheet(1).Cell("AO1").Value = "Invoice Number";
+        workbook.SaveAs(testPath);
+    }
+    bool duplicateHeader = false;
+    try { parse.Invoke(null, new object[] { testPath, "duplicate.xlsx", allowedShippers }); }
+    catch (TargetInvocationException ex) { duplicateHeader = ex.InnerException is InvalidOperationException && ex.InnerException.Message.Contains("重複"); }
+    Check(duplicateHeader, "Duplicate mapped headers are rejected");
+}
+finally { File.Delete(testPath); }
+
+Console.WriteLine($"{count} checks passed; no database connections were used.");
 
 static bool Rejects(List<string> errors, string? expectedMessage = null)
 {

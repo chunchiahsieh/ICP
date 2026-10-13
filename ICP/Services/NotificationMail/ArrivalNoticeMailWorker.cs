@@ -82,6 +82,24 @@ public sealed class ArrivalNoticeMailWorker : BackgroundService
                     .ExecuteDeleteAsync(cancellationToken);
                 continue;
             }
+            // A save may have changed a Pending schedule after the initial snapshot.
+            // Once reserved as Sending, saves are rejected until this send completes.
+            var currentHeaders = await db.IcpHeaders.AsNoTracking()
+                .Where(h => group.Headers.Select(header => header.Id).Contains(h.Id))
+                .ToListAsync(cancellationToken);
+            if (currentHeaders.Count != group.Headers.Count || group.Headers.Any(header =>
+                !currentHeaders.Any(current => current.Id == header.Id
+                    && string.Equals(current.ArrivalNoticeFlag, "N", StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(current.ArrivalNotice?.Trim(), header.ArrivalNotice?.Trim(), StringComparison.Ordinal))))
+            {
+                await db.ArrivalNoticeSchedules.Where(row => scheduleIds.Contains(row.Id)
+                        && row.State == "Sending" && row.SendingUtc == claimTime)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(row => row.State, "Pending")
+                        .SetProperty(row => row.SendingUtc, (DateTime?)null), cancellationToken);
+                await db.NotificationMailDispatches.Where(d => d.EventKey == key && d.State == "Sending"
+                        && d.UpdatedUtc == claimTime).ExecuteDeleteAsync(cancellationToken);
+                continue;
+            }
             var smtpAccepted = false;
             try
             {
@@ -92,6 +110,16 @@ public sealed class ArrivalNoticeMailWorker : BackgroundService
                     group.MailTo, mail.CcTo.Where(address => !string.IsNullOrWhiteSpace(address)).ToList(),
                     subject, body, cancellationToken);
                 smtpAccepted = true;
+                foreach (var header in group.Headers)
+                {
+                    await db.IcpHeaders.Where(h => h.Id == header.Id && h.ArrivalNoticeFlag == "N"
+                            && h.ArrivalNotice == header.ArrivalNotice)
+                        .ExecuteUpdateAsync(setters => setters
+                            .SetProperty(h => h.ArrivalNoticeFlag, "Y")
+                            .SetProperty(h => h.UpdateTime, DateTime.Now)
+                            .SetProperty(h => h.UpdateUser, "ArrivalNoticeMailWorker"), cancellationToken);
+                }
+
 
                 await db.ArrivalNoticeSchedules.Where(row => scheduleIds.Contains(row.Id) && row.State == "Sending")
                     .ExecuteUpdateAsync(setters => setters

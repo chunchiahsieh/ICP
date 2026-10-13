@@ -80,9 +80,10 @@ public sealed class ArurComparisonService(ApplicationDbContext db, IlcDbContext 
                 {
                     targets.TryGetValue(Clean(h.RtNo), out var matches);
                     var target = matches?.Count == 1 ? matches[0] : null;
-                    var address = addresses.FirstOrDefault(a => a.Key1 == h.DeliveryTo)?.Value3;
+                    var deliverySetting = addresses.FirstOrDefault(a => a.Key1 == h.DeliveryTo);
+                    var address = deliverySetting?.Value3;
                     var files = attachments.Where(a => a.AttachmentOwnerId == h.Id.ToString("D")).Select(a => a.RelativePath).ToArray();
-                    foreach (var (field, column, value) in Map(h, address, files))
+                    foreach (var (field, column, value) in Map(h, address, files, deliverySetting?.Value1))
                     {
                         if (!string.IsNullOrEmpty(query.Field) && query.Field != field) continue;
                         var actual = target?.GetValueOrDefault(column) ?? "";
@@ -118,7 +119,7 @@ public sealed class ArurComparisonService(ApplicationDbContext db, IlcDbContext 
             throw new ArurComparisonDataSourceException();
     }
 
-    private static IEnumerable<(string Field, string Column, string? Value)> Map(IcpHeader h, string? address, string[] files)
+    private static IEnumerable<(string Field, string Column, string? Value)> Map(IcpHeader h, string? address, string[] files, string? shipToCode)
     {
         yield return ("InvoiceNo", "InvoiceNo", h.InvoiceNo);
         yield return ("TetPo", "TETPO", h.TetPo);
@@ -126,7 +127,7 @@ public sealed class ArurComparisonService(ApplicationDbContext db, IlcDbContext 
         yield return ("Hawb", "HAWB", h.Hawb);
         yield return ("Flt", "FLT", h.Flt);
         yield return ("Eta", "ETA", DisplayDate(h.Eta, true));
-        yield return ("DeliveryTo", "ShipToCode", h.DeliveryTo);
+        yield return ("DeliveryTo", "ShipToCode", shipToCode);
         yield return ("Warehouse", "WHCode", h.Warehouse);
         yield return ("ArriveTime", "ArriveDate", DisplayDate(h.ArriveTime, false));
         yield return ("Receiver", "ReceiptInfo", h.Receiver);
@@ -142,11 +143,11 @@ public sealed class ArurComparisonService(ApplicationDbContext db, IlcDbContext 
     public static string BuildRemark(IcpHeader h)
     {
         var parts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(h.Notes)) parts.Add(h.Notes.Trim());
         if (IsY(h.Forklift)) parts.Add("請安排堆高機");
+        if (!string.IsNullOrWhiteSpace(h.MovingLabor)) parts.Add($"({h.MovingLabor.Trim()})");
         if (IsY(h.WasteDisposal)) parts.Add("請處理廢棄物");
         if (IsY(h.DriverDetails)) parts.Add("請回報司機資訊");
-        if (!string.IsNullOrWhiteSpace(h.MovingLabor)) parts.Add($"({h.MovingLabor.Trim()})");
+        if (!string.IsNullOrWhiteSpace(h.Notes)) parts.Add(h.Notes.Trim());
         return string.Join('\n', parts);
     }
     public static string DisplayDate(string? value, bool dateOnly) => DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var date)

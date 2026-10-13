@@ -29,15 +29,6 @@ public sealed class ControlledGoodsNoticeMailWorker(
         var mail = current.ControlledGoodsArrival;
         using var scope = scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var todayTaipei = DateOnly.FromDateTime(DateTimeOffset.UtcNow
-            .ToOffset(TimeSpan.FromHours(8)).Date);
-        var todayText = todayTaipei.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-        var todayStartUtc = new DateTimeOffset(todayTaipei.Year, todayTaipei.Month,
-            todayTaipei.Day, 0, 0, 0, TimeSpan.FromHours(8)).UtcDateTime;
-        // ETA is the send date. Never send an old pending notice on a later day.
-        await db.ControlledGoodsNoticeSchedules.Where(row => row.State == "Pending"
-                && row.ScheduledAtUtc < todayStartUtc)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(row => row.State, "Failed"), cancellationToken);
         await db.ControlledGoodsNoticeSchedules.Where(row => row.State == "Sending"
                 && row.SendingUtc < DateTime.UtcNow.AddMinutes(-10))
             .ExecuteUpdateAsync(setters => setters
@@ -49,8 +40,7 @@ public sealed class ControlledGoodsNoticeMailWorker(
             || string.IsNullOrWhiteSpace(current.Smtp.FromAddress)
             || !mail.MailTo.Any(address => !string.IsNullOrWhiteSpace(address))) return;
         var due = await db.ControlledGoodsNoticeSchedules.AsNoTracking()
-            .Where(row => row.State == "Pending" && row.Eta == todayText
-                && row.ScheduledAtUtc <= DateTime.UtcNow)
+            .Where(row => row.State == "Pending" && row.ScheduledAtUtc <= DateTime.UtcNow)
             .OrderBy(row => row.ScheduledAtUtc).ThenBy(row => row.InvoiceNo)
             .ToListAsync(cancellationToken);
         foreach (var schedule in due)
@@ -68,12 +58,12 @@ public sealed class ControlledGoodsNoticeMailWorker(
                 var header = await db.IcpHeaders.AsNoTracking()
                     .FirstOrDefaultAsync(h => h.Id == schedule.HeaderId, cancellationToken);
                 if (header is null) throw new InvalidOperationException("Ship Info header no longer exists.");
-                if (!string.Equals(header.Eta?.Replace('/', '-'), schedule.Eta, StringComparison.Ordinal))
-                    throw new InvalidOperationException("ETA changed after this notice was scheduled.");
+                if (!string.Equals(header.ControlledGoodsNoticeFlag, "N", StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("Controlled goods notice Flag is not N.");
                 var eligible = await db.IcpDetails.AsNoTracking()
                     .AnyAsync(d => d.InvoiceNo == header.InvoiceNo && d.TetPo == header.TetPo
-                        && d.ElFlag != null && d.ElFlag.Trim() != "", cancellationToken);
-                if (!eligible) throw new InvalidOperationException("EL Flag is no longer present.");
+                        && d.ElFlag != null && d.ElFlag.Trim() == "2", cancellationToken);
+                if (!eligible) throw new InvalidOperationException("EL Flag 2 is no longer present.");
                 var body = await ControlledGoodsNoticeContent.BuildBodyAsync(db, header,
                     current.ShipInfoUrl, cancellationToken);
                 await NotificationMailSender.SendAsync(db, current.Smtp,
@@ -82,6 +72,10 @@ public sealed class ControlledGoodsNoticeMailWorker(
                     mail.CcTo.Where(address => !string.IsNullOrWhiteSpace(address)).ToList(),
                     ControlledGoodsNoticeContent.BuildSubject(mail.Title, header.Eta), body, cancellationToken);
                 smtpAccepted = true;
+                await db.IcpHeaders.Where(h => h.Id == header.Id && h.ControlledGoodsNoticeFlag == "N")
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(h => h.ControlledGoodsNoticeFlag, "Y")
+                        .SetProperty(h => h.UpdateTime, DateTime.Now)
+                        .SetProperty(h => h.UpdateUser, "ControlledGoodsNoticeMailWorker"), cancellationToken);
                 await db.ControlledGoodsNoticeSchedules.Where(row => row.Id == schedule.Id && row.State == "Sending")
                     .ExecuteUpdateAsync(setters => setters
                         .SetProperty(row => row.State, "Sent")

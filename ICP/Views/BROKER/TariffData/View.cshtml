@@ -1,4 +1,4 @@
-﻿@using System.Text.Json
+@using System.Text.Json
 @{
     ViewData["Title"] = Localizer["Broker.TariffData.Title"];
     var maxSizeMb = ViewData["MaxSizeMb"] as int? ?? 50;
@@ -436,6 +436,46 @@
                 }, config));
             }
 
+            function confirmInvoiceOverwrite(response) {
+                return new Promise(function (resolve) {
+                    var dialog = document.createElement('dialog');
+                    dialog.style.cssText = 'max-width:560px;width:90%;border:0;border-radius:8px;padding:24px;';
+                    var $dialog = $(dialog);
+                    $('<p>').text(response.message).appendTo($dialog);
+                    $('<p>').text('重複 Invoice：' + response.invoices.length + ' 筆').appendTo($dialog);
+                    $('<div>').css({ maxHeight: '240px', overflow: 'auto', whiteSpace: 'pre-wrap' })
+                        .text(response.invoices.join('\n')).appendTo($dialog);
+                    var $buttons = $('<div class="d-flex gap-2 mt-3">').appendTo($dialog);
+                    function finish(confirmed) { dialog.close(); $dialog.remove(); resolve(confirmed); }
+                    $('<button type="button" class="btn btn-primary">').text('確定覆蓋')
+                        .on('click', function () { finish(true); }).appendTo($buttons);
+                    $('<button type="button" class="btn btn-secondary">').text('取消上傳')
+                        .on('click', function () { finish(false); }).appendTo($buttons);
+                    dialog.addEventListener('cancel', function (event) { event.preventDefault(); finish(false); });
+                    document.body.appendChild(dialog);
+                    dialog.showModal();
+                    $buttons.find('button').last().trigger('focus');
+                });
+            }
+
+            async function resolveCustomsUpload(response, file) {
+                while (response && response.requiresConfirmation) {
+                    if (!await confirmInvoiceOverwrite(response))
+                        return { success: false, message: '已取消上傳，未變更任何資料' };
+                    var payload = new FormData();
+                    payload.append('file', file);
+                    payload.append('overwriteToken', response.overwriteToken);
+                    payload.append('__RequestVerificationToken', $('#tariffDeleteToken input[name="__RequestVerificationToken"]').val());
+                    try {
+                        response = await $.ajax({ url: '@Url.Action("UploadCustomsData", "TariffData")',
+                            type: 'POST', data: payload, processData: false, contentType: false, dataType: 'json' });
+                    } catch (xhr) {
+                        return { success: false, message: (xhr.responseJSON && xhr.responseJSON.message) || '上傳失敗' };
+                    }
+                }
+                return response;
+            }
+
             if (hasPermission('Views.Broker.TariffData.UploadCustomsData')) {
                 // The shared uploader appends its modal to body synchronously.
                 var $existingUploaderModals = $('body > .uploader-modal-root');
@@ -444,6 +484,8 @@
                     title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataTitle"].Value)),
                     buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCustomsDataButton"].Value)),
                     uploadUrl: '@Url.Action("UploadCustomsData", "TariffData")',
+                    resolveResponse: resolveCustomsUpload,
+                    extraFormData: function () { return { __RequestVerificationToken: $('#tariffDeleteToken input[name="__RequestVerificationToken"]').val() }; },
                     fileTypes: '.xlsx,.xls'
                 });
                 $('body > .uploader-modal-root').not($existingUploaderModals).addClass('tariff-customs-uploader');

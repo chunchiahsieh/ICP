@@ -183,7 +183,15 @@ public class IcpHeader : IcpAuditableEntity
 
     [Column("ARRIVAL_NOTICE_FLAG")]
     [MaxLength(5)]
-    public string? ArrivalNoticeFlag { get; set; }
+    public string? ArrivalNoticeFlag { get; set; } = "N";
+
+    [Column("CONTROLLED_GOODS_NOTICE_FLAG")]
+    [MaxLength(5)]
+    public string ControlledGoodsNoticeFlag { get; set; } = "N";
+
+    [Column("CONTROLLED_GOODS_NOTICE_REASON")]
+    [MaxLength(300)]
+    public string ControlledGoodsNoticeReason { get; set; } = "管制品到貨";
 
     [Column("ARRIVAL_NOTICE")]
     [MaxLength(300)]

@@ -26,7 +26,6 @@ public static class TariffCustomsImportRules
         TariffExcelColumnMap.LineNo,
         TariffExcelColumnMap.PartNumber,
         TariffExcelColumnMap.InvoiceNumber,
-        TariffExcelColumnMap.PONumber,
         TariffExcelColumnMap.DescriptionOfGoods,
         TariffExcelColumnMap.Quantity,
         TariffExcelColumnMap.UOM,
@@ -46,9 +45,6 @@ public static class TariffCustomsImportRules
         TariffExcelColumnMap.Currency,
         TariffExcelColumnMap.ExchangeRate,
         TariffExcelColumnMap.CIFValue,
-        TariffExcelColumnMap.FreightCharge,
-        TariffExcelColumnMap.TotalPieces,
-        TariffExcelColumnMap.GrossWeightKg,
         TariffExcelColumnMap.Broker,
         TariffExcelColumnMap.AirSea,
         TariffExcelColumnMap.DeclarationAmountTWD
@@ -111,6 +107,14 @@ public static class TariffCustomsImportRules
         }
     }
 
+    public static void ValidateShipper(string? shipper, IReadOnlySet<string> allowedValues, int rowNumber, List<string> errors)
+    {
+        if (!allowedValues.Contains(NormalizeCellText(shipper)))
+        {
+            AddError(errors, $"第 {rowNumber} 列 Shipper「{shipper}」不存在於 Setting Shipper 的 Value");
+        }
+    }
+
     public static string ResolveHawb(string? hawb, string mawb) =>
         string.IsNullOrEmpty(NormalizeCellText(hawb)) ? mawb : NormalizeCellText(hawb)!;
 
@@ -166,7 +170,6 @@ public static class TariffCustomsImportRules
         RequireCellValue(values, columnMap, TariffExcelColumnMap.LineNo, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.PartNumber, rowNumber, errors);
         var invoiceNumber = RequireCellValue(values, columnMap, TariffExcelColumnMap.InvoiceNumber, rowNumber, errors);
-        RequireCellValue(values, columnMap, TariffExcelColumnMap.PONumber, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.DescriptionOfGoods, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.Quantity, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.UOM, rowNumber, errors);
@@ -186,9 +189,6 @@ public static class TariffCustomsImportRules
         RequireCellValue(values, columnMap, TariffExcelColumnMap.Currency, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.ExchangeRate, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.CIFValue, rowNumber, errors);
-        RequireCellValue(values, columnMap, TariffExcelColumnMap.FreightCharge, rowNumber, errors);
-        RequireCellValue(values, columnMap, TariffExcelColumnMap.TotalPieces, rowNumber, errors);
-        RequireCellValue(values, columnMap, TariffExcelColumnMap.GrossWeightKg, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.AirSea, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.DeclarationAmountTWD, rowNumber, errors);
 
@@ -243,9 +243,9 @@ public static class TariffCustomsImportRules
             Currency = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.Currency), TariffExcelColumnMap.Currency, rowNumber, errors)!,
             ExchangeRate = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.ExchangeRate), TariffExcelColumnMap.ExchangeRate, rowNumber, errors)!,
             CIFValue = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.CIFValue), TariffExcelColumnMap.CIFValue, rowNumber, errors)!,
-            FreightCharge = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.FreightCharge), TariffExcelColumnMap.FreightCharge, rowNumber, errors)!,
-            TotalPieces = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.TotalPieces), TariffExcelColumnMap.TotalPieces, rowNumber, errors)!,
-            GrossWeightKg = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.GrossWeightKg), TariffExcelColumnMap.GrossWeightKg, rowNumber, errors)!,
+            FreightCharge = ValidateOptionalTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.FreightCharge), TariffExcelColumnMap.FreightCharge, rowNumber, errors),
+            TotalPieces = ValidateOptionalTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.TotalPieces), TariffExcelColumnMap.TotalPieces, rowNumber, errors),
+            GrossWeightKg = ValidateOptionalTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.GrossWeightKg), TariffExcelColumnMap.GrossWeightKg, rowNumber, errors),
             Broker = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.Broker), TariffExcelColumnMap.Broker, rowNumber, errors)!,
             AirSea = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.AirSea), TariffExcelColumnMap.AirSea, rowNumber, errors)!,
             TotalAmountForeignCurrency = totalAmountForeignCurrency,

@@ -22,6 +22,47 @@ public sealed class ArrivalNoticeScheduleService(
 {
     private static readonly TimeSpan TaipeiOffset = TimeSpan.FromHours(8);
 
+    // Called within the Ship Info save transaction; saving and scheduling commit together.
+    public async Task SyncAfterSaveAsync(IcpHeader header, string? userName, CancellationToken cancellationToken)
+    {
+        var active = await db.ArrivalNoticeSchedules
+            .Where(row => row.HeaderId == header.Id && (row.State == "Pending" || row.State == "Sending"))
+            .ToListAsync(cancellationToken);
+        if (active.Any(row => row.State == "Sending"))
+            throw new ShipInfoConcurrencyException("Arrival Notice is being sent. Refresh and try again.");
+        var shouldSchedule = string.Equals(header.ArrivalNoticeFlag, "N", StringComparison.OrdinalIgnoreCase)
+            && !string.IsNullOrWhiteSpace(header.ArrivalNotice);
+        IReadOnlyList<string> mailTo = [];
+        if (shouldSchedule && !ArrivalNoticeMailContent.TryParseMailTo(header.ArrivalNotice, out mailTo, out var error))
+            throw new ShipInfoBusinessException(error);
+        foreach (var row in active)
+        {
+            if (shouldSchedule)
+            {
+                row.ArrivalNoticeValue = header.ArrivalNotice!.Trim();
+                row.RecipientKey = string.Join(";", mailTo).ToLowerInvariant();
+            }
+            else
+            {
+                row.State = "Cancelled";
+                row.CancelledUtc = DateTime.UtcNow;
+                row.CancelledUser = userName;
+            }
+        }
+        if (shouldSchedule && active.Count == 0)
+        {
+            db.ArrivalNoticeSchedules.Add(new ArrivalNoticeSchedule
+            {
+                Id = Guid.NewGuid(), HeaderId = header.Id, InvoiceNo = header.InvoiceNo,
+                ArrivalNoticeValue = header.ArrivalNotice!.Trim(),
+                RecipientKey = string.Join(";", mailTo).ToLowerInvariant(),
+                ScheduledAtUtc = NextSlotUtc(options.CurrentValue.ArrivalNotice.SendTimes),
+                State = "Pending", CreatedUtc = DateTime.UtcNow, CreatedUser = userName
+            });
+        }
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<ArrivalNoticeScheduleRow> EnqueueAsync(
         Guid headerId, string? userName, CancellationToken cancellationToken)
     {
@@ -31,6 +72,8 @@ public sealed class ArrivalNoticeScheduleService(
             ?? throw new ShipInfoNotFoundException("Ship Info header not found.");
         if (!ShipInfoStatusRules.Resolve(ShipInfoStatusResolver.Resolve(header)).Edit)
             throw new ShipInfoBusinessException("Ship Info header cannot be edited in its current status.");
+        if (!string.Equals(header.ArrivalNoticeFlag, "N", StringComparison.OrdinalIgnoreCase))
+            throw new ShipInfoBusinessException("Only Arrival Notice Flag N can be scheduled.");
         if (!ArrivalNoticeMailContent.TryParseMailTo(header.ArrivalNotice, out var mailTo, out var emailError))
             throw new ShipInfoBusinessException(emailError);
 
@@ -66,15 +109,27 @@ public sealed class ArrivalNoticeScheduleService(
         var header = await scope.Apply(db.IcpHeaders).AsNoTracking()
             .FirstOrDefaultAsync(h => h.Id == schedule.HeaderId, cancellationToken)
             ?? throw new ShipInfoNotFoundException("Ship Info header not found.");
-        var cancelled = await db.ArrivalNoticeSchedules
-            .Where(row => row.Id == scheduleId && row.State == "Pending")
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(row => row.State, "Cancelled")
-                .SetProperty(row => row.CancelledUtc, DateTime.UtcNow)
-                .SetProperty(row => row.CancelledUser, userName), cancellationToken);
-        if (cancelled != 1)
-            throw new ShipInfoConcurrencyException("Arrival Notice schedule is already being sent. Refresh and try again.");
-        // Arrival Notice remains unchanged, so the user can explicitly schedule it again.
+        var strategy = db.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+            var cancelled = await db.ArrivalNoticeSchedules
+                .Where(row => row.Id == scheduleId && row.State == "Pending")
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(row => row.State, "Cancelled")
+                    .SetProperty(row => row.CancelledUtc, DateTime.UtcNow)
+                    .SetProperty(row => row.CancelledUser, userName), cancellationToken);
+            if (cancelled != 1)
+                throw new ShipInfoConcurrencyException("Arrival Notice schedule is already being sent. Refresh and try again.");
+
+            await db.IcpHeaders.Where(h => h.Id == schedule.HeaderId)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(h => h.ArrivalNoticeFlag, "N")
+                    .SetProperty(h => h.ArrivalNotice, (string?)null)
+                    .SetProperty(h => h.UpdateTime, DateTime.Now)
+                    .SetProperty(h => h.UpdateUser, userName), cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        });
     }
 
     public async Task<IReadOnlyList<ArrivalNoticeScheduleRow>> ListTodayAsync(

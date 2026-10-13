@@ -37,6 +37,7 @@ window.createUploader = function (selector, options) {
         extraFormData: null,
         beforeOpen: null,
         sequentialUpload: false,
+        resolveResponse: null,
         onSuccess: null,
         onError: null,
         onRemove: null
@@ -409,9 +410,14 @@ window.createUploader = function (selector, options) {
                 }, false);
                 return xhr;
             },
-            success: function (response) {
+            success: async function (response) {
                 activeRequests.delete(jqXHR);
                 if (destroyed) { resolve(); return; }
+                if (typeof config.resolveResponse === 'function') {
+                    try { response = await config.resolveResponse(response, file); }
+                    catch (error) { response = { success: false, message: error.message || '上傳失敗' }; }
+                    if (destroyed) { resolve(); return; }
+                }
                 $fileItem.find('.progress-bar').css('width', '100%');
                 if (response.success) {
                     $fileItem.attr('data-status', 'success');

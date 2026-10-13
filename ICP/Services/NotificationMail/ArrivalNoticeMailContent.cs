@@ -42,7 +42,8 @@ public static class ArrivalNoticeMailContent
         foreach (var schedule in schedules)
         {
             if (!headers.TryGetValue(schedule.HeaderId, out var header)
-                || !string.Equals(header.ArrivalNotice, schedule.ArrivalNoticeValue, StringComparison.Ordinal)
+                || !string.Equals(header.ArrivalNoticeFlag, "N", StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(header.ArrivalNotice?.Trim(), schedule.ArrivalNoticeValue, StringComparison.Ordinal)
                 || !ShipInfoStatusRules.Resolve(ShipInfoStatusResolver.Resolve(header)).Edit)
             {
                 invalid.Add(schedule.InvoiceNo);

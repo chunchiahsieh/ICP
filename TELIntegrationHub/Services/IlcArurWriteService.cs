@@ -25,15 +25,24 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
         var person = await _fiesta.MailGroups.AsNoTracking().Where(x => x.EmpId == empId).OrderBy(x => x.Uid).FirstOrDefaultAsync(ct);
         if (person is null || string.IsNullOrWhiteSpace(person.EmpId) || string.IsNullOrWhiteSpace(person.Address)) throw new InvalidOperationException($"MailGroup operator not found or incomplete for EmpID '{empId}'.");
         var deliveryTo = Get(h, "DeliveryTo");
-        var shipTo = await _icp.SystemConfigs.AsNoTracking().Where(x => !x.IsDeleted && x.Category == "DeliveryToList" && x.Key1 == deliveryTo).Select(x => x.Value3).FirstOrDefaultAsync(ct);
+        var deliverySetting = await _icp.SystemConfigs.AsNoTracking().Where(x => !x.IsDeleted && x.Category == "DeliveryToList" && x.Key1 == deliveryTo).Select(x => new { x.Value1, x.Value3 }).FirstOrDefaultAsync(ct);
+        var shipToCode = ResolveShipToCode(deliverySetting?.Value1, deliveryTo);
+        var shipTo = deliverySetting?.Value3;
         if (string.IsNullOrWhiteSpace(shipTo)) throw new InvalidOperationException($"DeliveryToList address not found for DeliveryTo '{deliveryTo ?? "(null)"}'.");
         var now = DateTime.Now; var tetPo = Get(h, "TetPo", "TETPO"); var invoiceNo = Get(h, "InvoiceNo"); var forklift = IsY(Get(h, "Forklift")); var driver = IsY(Get(h, "DriverDetails")); var waste = IsY(Get(h, "WasteDisposal"));
         var attachment = await BuildAttachmentAsync(Get(h, "RowId"), ct);
-        var row = new IlcRtArurHeader { Subject = $"AR {tetPo} {invoiceNo}", CreateBy = person.EmpId.Trim(), CreateDate = now, EditBy = person.EmpId.Trim(), EditDate = now, EmailTo = person.Address.Trim(), ShipToCode = deliveryTo, ShipTo = shipTo.Trim(), ArriveDate = ParseDate(Get(h, "ArriveTime")), ReceiptInfo = Get(h, "Receiver"), WhCode = Get(h, "Warehouse"), TetPo = tetPo, InvoiceNo = invoiceNo, Attachment = attachment, Mawb = Get(h, "Mawb", "MAWB"), Hawb = Get(h, "Hawb", "HAWB"), Flt = Get(h, "Flt", "FLT"), Eta = Get(h, "Eta", "ETA"), Remark = Remark(Get(h, "Notes"), forklift, Get(h, "MovingLabor"), waste, driver), IsSDriver = driver ? "Y" : "N", IsSStacker = forklift ? "Y" : "N", ArrivalType = "1", DependType = "1", RequestType = "2", Status = "5", A1Start = "A8", CreateSys = "ICP" };
+        var row = new IlcRtArurHeader { Subject = $"AR {tetPo} {invoiceNo}", CreateBy = person.EmpId.Trim(), CreateDate = now, EditBy = person.EmpId.Trim(), EditDate = now, EmailTo = person.Address.Trim(), ShipToCode = shipToCode, ShipTo = shipTo.Trim(), ArriveDate = ParseDate(Get(h, "ArriveTime")), ReceiptInfo = Get(h, "Receiver"), WhCode = Get(h, "Warehouse"), TetPo = tetPo, InvoiceNo = invoiceNo, Attachment = attachment, Mawb = Get(h, "Mawb", "MAWB"), Hawb = Get(h, "Hawb", "HAWB"), Flt = Get(h, "Flt", "FLT"), Eta = Get(h, "Eta", "ETA"), Remark = Remark(Get(h, "Notes"), forklift, Get(h, "MovingLabor"), waste, driver), IsSDriver = driver ? "Y" : "N", IsSStacker = forklift ? "Y" : "N", ArrivalType = "1", DependType = "1", RequestType = "2", Status = "5", A1Start = "A8", CreateSys = "ICP" };
         Validate(row);
         await using var conn = new SqlConnection(_ilc); await conn.OpenAsync(ct); await using var tx = (SqlTransaction)await conn.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         try { row.RtNo = await ClaimAsync(conn, tx, now, ct); await InsertAsync(conn, tx, row, ct); await tx.CommitAsync(ct); _logger.LogInformation("ILC RT_ARUR_HEADER written RT_NO={RtNo}", row.RtNo); return new IlcArurWriteResult { RtNo = row.RtNo }; }
         catch { await tx.RollbackAsync(CancellationToken.None); throw; }
+    }
+
+    public static string ResolveShipToCode(string? value1, string? deliveryTo)
+    {
+        if (string.IsNullOrWhiteSpace(value1))
+            throw new InvalidOperationException($"DeliveryToList Value1 (ShipToCode) not found for DeliveryTo '{deliveryTo ?? "(null)"}'.");
+        return value1.Trim();
     }
 
     private static async Task<string> ClaimAsync(SqlConnection c, SqlTransaction tx, DateTime now, CancellationToken ct)
@@ -96,7 +105,16 @@ public sealed class IlcArurWriteService : IIlcArurWriteService
         if (result.Length > 1000) throw new InvalidOperationException($"ARUR attachment validation failed: Attachment source length {result.Length} exceeds maximum 1000.");
         return result;
     }
-    private static string Remark(string? notes,bool forklift,string? labor,bool waste,bool driver){var p=new List<string>();if(!string.IsNullOrWhiteSpace(notes))p.Add(notes.Trim());if(forklift)p.Add("請安排堆高機");if(waste)p.Add("請處理廢棄物");if(driver)p.Add("請回報司機資訊");if(!string.IsNullOrWhiteSpace(labor))p.Add($"({labor.Trim()})");return string.Join(Environment.NewLine,p);}
+    private static string Remark(string? notes, bool forklift, string? labor, bool waste, bool driver)
+    {
+        var parts = new List<string>();
+        if (forklift) parts.Add("請安排堆高機");
+        if (!string.IsNullOrWhiteSpace(labor)) parts.Add($"({labor.Trim()})");
+        if (waste) parts.Add("請處理廢棄物");
+        if (driver) parts.Add("請回報司機資訊");
+        if (!string.IsNullOrWhiteSpace(notes)) parts.Add(notes.Trim());
+        return string.Join(Environment.NewLine, parts);
+    }
     private static DateTime? ParseDate(string? v)=>DateTime.TryParse(v,CultureInfo.InvariantCulture,DateTimeStyles.AssumeLocal,out var d)?d:null;
     private static bool IsY(string? v)=>string.Equals(v?.Trim(),"Y",StringComparison.OrdinalIgnoreCase);
     private static bool TryHeader(object? raw,out Dictionary<string,string?> h){h=new(StringComparer.OrdinalIgnoreCase);if(raw is null)return false;using var d=raw switch{JsonElement element=>JsonDocument.Parse(element.GetRawText()),JsonDocument document=>JsonDocument.Parse(document.RootElement.GetRawText()),_=>JsonDocument.Parse(JsonSerializer.Serialize(raw))};if(!d.RootElement.TryGetProperty("header",out var headerElement)&&!d.RootElement.TryGetProperty("Header",out headerElement))return false;if(headerElement.ValueKind!=JsonValueKind.Object)return false;foreach(var p in headerElement.EnumerateObject())h[p.Name]=p.Value.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined?null:p.Value.ToString();return h.Count>0;}

@@ -34,7 +34,8 @@ public sealed class ShipInfoFormMetadataProvider
             ["orderType"] = "OrderType",
             ["pickUpLocation"] = "PickUpLocation",
             ["shipper"] = "Shipper",
-            ["warehouse"] = "WhCode"
+            ["warehouse"] = "WhCode",
+            ["yesNo"] = "YesNo"
         };
     private const string FileUploaderComponent = "fileUploader";
     private const string HeaderAttachmentsAdapter = "shipInfoHeaderAttachments";

@@ -174,7 +174,7 @@ public class AddDiSaImportService
         foreach (var header in headers)
         {
             if (!details.Any(detail => detail.InvoiceNo == header.InvoiceNo
-                    && detail.TetPo == header.TetPo && !string.IsNullOrWhiteSpace(detail.ElFlag)))
+                    && detail.TetPo == header.TetPo && detail.ElFlag?.Trim() == "2"))
                 continue;
             if (!ControlledGoodsNoticeContent.TryScheduleUtc(header.Eta, nowUtc,
                     _notificationOptions.CurrentValue.ControlledGoodsArrival.SendTimes, out var sendAt))
@@ -185,7 +185,7 @@ public class AddDiSaImportService
             controlledGoodsSchedules.Add(new ControlledGoodsNoticeSchedule
             {
                 Id = Guid.NewGuid(), HeaderId = header.Id, InvoiceNo = header.InvoiceNo,
-                Eta = header.Eta!, ScheduledAtUtc = sendAt, State = "Pending",
+                Eta = (header.Eta ?? "").Replace('/', '-'), ScheduledAtUtc = sendAt, State = "Pending",
                 CreatedUtc = nowUtc, CreatedUser = user
             });
         }
@@ -431,7 +431,7 @@ public class AddDiSaImportService
             WasteDisposal = Trim(values, "WasteDisposal", 50) is { Length: > 0 } wasteDisposal ? wasteDisposal : "N",
             DriverDetails = Trim(values, "DriverDetails", 50) is { Length: > 0 } driverDetails ? driverDetails : "N",
             OrderReason = Trim(values, "OrderReason", 50),
-            ArrivalNoticeFlag = Trim(values, "ArrivalNoticeFlag", 5),
+            ArrivalNoticeFlag = Trim(values, "ArrivalNoticeFlag", 5) ?? "N",
             ArrivalNotice = Trim(values, "ArrivalNotice", 100),
             ReasonForDeliveryDelay = Trim(values, "ReasonForDeliveryDelay", 200),
             DelayNotificationDate = Trim(values, "DelayNotificationDate", 10),
@@ -527,6 +527,8 @@ public class AddDiSaImportService
             OrderReason = source.OrderReason,
             ArrivalNoticeFlag = source.ArrivalNoticeFlag,
             ArrivalNotice = source.ArrivalNotice,
+            ControlledGoodsNoticeFlag = source.ControlledGoodsNoticeFlag,
+            ControlledGoodsNoticeReason = source.ControlledGoodsNoticeReason,
             ReasonForDeliveryDelay = source.ReasonForDeliveryDelay,
             DelayNotificationDate = source.DelayNotificationDate,
             DeliveryNo = source.DeliveryNo,

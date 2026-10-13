@@ -12,6 +12,7 @@ namespace ICP.Controllers;
 [ServiceFilter(typeof(ShipInfoApiExceptionFilter))]
 public class ShipInfoController : Controller
 {
+    private readonly DepositCaseMailService _depositMail;
     private readonly IShipInfoService _shipInfoService;
     private readonly IShipInfoRepository _repository;
     private readonly ShipInfoAttachmentService _attachments;
@@ -22,7 +23,8 @@ public class ShipInfoController : Controller
     public ShipInfoController(IShipInfoService shipInfoService, IShipInfoRepository repository,
         ShipInfoAttachmentService attachments, ArrivalNoticeScheduleService arrivalNoticeSchedules,
         DeliveryDelayPreviewService deliveryDelayPreview,
-        ControlledGoodsNoticeScheduleService controlledGoodsSchedules)
+        ControlledGoodsNoticeScheduleService controlledGoodsSchedules,
+        DepositCaseMailService depositMail)
     {
         _shipInfoService = shipInfoService;
         _repository = repository;
@@ -30,6 +32,7 @@ public class ShipInfoController : Controller
         _arrivalNoticeSchedules = arrivalNoticeSchedules;
         _deliveryDelayPreview = deliveryDelayPreview;
         _controlledGoodsSchedules = controlledGoodsSchedules;
+        _depositMail = depositMail;
     }
 
     [HttpGet]
@@ -196,9 +199,9 @@ public class ShipInfoController : Controller
 
     [HttpGet]
     public async Task<IActionResult> GetControlledGoodsNoticeSchedules(
-        string eta, CancellationToken cancellationToken = default)
+        string scheduleDate, CancellationToken cancellationToken = default)
     {
-        var data = await _controlledGoodsSchedules.ListAsync(eta, cancellationToken);
+        var data = await _controlledGoodsSchedules.ListAsync(scheduleDate, cancellationToken);
         return Json(ApiResponse<IReadOnlyList<ControlledGoodsNoticeScheduleRow>>.Ok(data));
     }
 
@@ -285,6 +288,13 @@ public class ShipInfoController : Controller
     {
         var data = await _shipInfoService.GetCaseDrawerDataAsync(headerKey, caseType, cancellationToken);
         return Json(ApiResponse<ShipInfoCaseDrawerData>.Ok(data));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDepositMailPreview(string headerKey, CancellationToken cancellationToken = default)
+    {
+        var data = await _shipInfoService.GetCaseDrawerDataAsync(headerKey, ShipInfoCaseTypes.Deposit, cancellationToken);
+        return Json(ApiResponse<object>.Ok(_depositMail.Preview(data.Header, data.Details)));
     }
 
     [HttpPost]

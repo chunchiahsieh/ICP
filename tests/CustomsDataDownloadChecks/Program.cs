@@ -101,4 +101,13 @@ Check(sql.Contains("REPLACE", StringComparison.OrdinalIgnoreCase)
     && sql.Contains("HAZMAT", StringComparison.Ordinal),
     "SQL Server translates text date ranges and both blank checkbox filters");
 
+var invoiceTypeRows = new[] { new StgRawShippingAdvice { InvoiceType = "X" }, new StgRawShippingAdvice { InvoiceType = null }, new StgRawShippingAdvice { InvoiceType = "" }, new StgRawShippingAdvice { InvoiceType = " " } };
+var invoiceTypeFields = new[] { new CustomsDataDownloadTableFieldMetadata { FieldName = "InvoiceType", Searchable = true, FilterType = "Checkbox" } };
+var blanksOnly = CustomsDataDownloadQueryFilterApplier.ApplyFilters(invoiceTypeRows.AsQueryable(), new() { Checkbox = new() { ["InvoiceType"] = [blank] } }, invoiceTypeFields).ToList();
+Check(blanksOnly.SequenceEqual(invoiceTypeRows.Skip(1)), "Invoice type blank matches null, empty and whitespace");
+Check(CustomsDataDownloadQueryFilterApplier.ApplyFilters(invoiceTypeRows.AsQueryable(), new() { Checkbox = new() { ["InvoiceType"] = [blank, "X"] } }, invoiceTypeFields).Count() == 4, "Invoice type supports blank plus X");
+Check(CustomsDataDownloadTableViewHelper.IsNumericCell(new() { Qty = 2 }, "Qty")
+    && CustomsDataDownloadTableViewHelper.IsNumericCell(new() { PoLine = "001" }, "PoLine")
+    && !CustomsDataDownloadTableViewHelper.IsNumericCell(new() { InvoiceType = "X" }, "InvoiceType"), "Numbers and numeric text align right; ordinary text does not");
+
 Console.WriteLine($"{count} checks passed without a database connection.");

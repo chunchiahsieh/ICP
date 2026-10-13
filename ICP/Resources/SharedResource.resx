@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -2745,10 +2745,10 @@
   <data name="NotificationMail.PreviewCount" xml:space="preserve"><value>信件預覽筆數</value></data>
   <data name="NotificationMail.StatusUnknown" xml:space="preserve"><value>無法取得</value></data>
   <data name="NotificationMail.StatusNotSent" xml:space="preserve"><value>未寄送</value></data>
-  <data name="NotificationMail.ControlledGoodsSkippedEta" xml:space="preserve"><value>此次新增的 {0} 筆管制品資料 ETA 已過，或當天 10:00 已過；資料已儲存，但未自動加入通知排程。</value></data>
-  <data name="NotificationMail.ControlledGoodsEmpty" xml:space="preserve"><value>所選 ETA 沒有管制品通知排程。</value></data>
-  <data name="NotificationMail.ControlledGoodsEligibility" xml:space="preserve"><value>至少一筆 Ship Info Detail 的 EL Flag 必須非空，才能新增排程。</value></data>
-  <data name="NotificationMail.ControlledGoodsEtaUnavailable" xml:space="preserve"><value>ETA 已過或當天 10:00 已過，無法新增排程。</value></data>
+  <data name="NotificationMail.ControlledGoodsSkippedEta" xml:space="preserve"><value>管制品資料 {0} 筆已儲存，但未設定寄送時段，未加入排程。</value></data>
+  <data name="NotificationMail.ControlledGoodsEmpty" xml:space="preserve"><value>所選排程日期沒有管制品通知。</value></data>
+  <data name="NotificationMail.ControlledGoodsEligibility" xml:space="preserve"><value>至少一筆 Ship Info 明細的 EL_FLAG 必須為 2。</value></data>
+  <data name="NotificationMail.ControlledGoodsEtaUnavailable" xml:space="preserve"><value>尚未設定管制品通知寄送時段。</value></data>
   <data name="NotificationMail.ControlledGoodsAlreadyScheduled" xml:space="preserve"><value>此 Invoice 已有待寄的管制品到貨通知。</value></data>
   <data name="NotificationMail.ControlledGoodsPreview" xml:space="preserve"><value>管制品到貨通知信件預覽</value></data>
   <data name="NotificationMail.ControlledGoodsTableMissing" xml:space="preserve"><value>管制品通知排程資料表尚未建立，請先執行 015_CreateControlledGoodsNoticeSchedule.sql。</value></data>
@@ -2812,4 +2812,11 @@
   <data name="NotificationMail.ArrivalNotice" xml:space="preserve"><value>Arrival notice</value></data>
   <data name="NotificationMail.ControlledGoodsArrival" xml:space="preserve"><value>管制品到貨通知</value></data>
   <data name="NotificationMail.DepositCase" xml:space="preserve"><value>押金平台起案</value></data>
+  <data name="ShipInfo.Header.Field.ControlledGoodsNoticeFlag" xml:space="preserve"><value>管制品發信 Flag</value></data>
+  <data name="ShipInfo.Field.ControlledGoodsNoticeFlag" xml:space="preserve"><value>管制品發信 Flag</value></data>
+  <data name="ShipInfo.Header.Field.ControlledGoodsNoticeReason" xml:space="preserve"><value>管制品通知原因</value></data>
+  <data name="ShipInfo.Field.ControlledGoodsNoticeReason" xml:space="preserve"><value>管制品通知原因</value></data>
+  <data name="NotificationMail.ControlledGoodsAlreadySent" xml:space="preserve"><value>管制品發信 Flag 為 Y；改為 N 並儲存後可再次發信。</value></data>
+  <data name="NotificationMail.ScheduleDate" xml:space="preserve"><value>排程日期</value></data>
+  <data name="NotificationMail.DepositPreview" xml:space="preserve"><value>郵件預覽</value></data>
 </root>

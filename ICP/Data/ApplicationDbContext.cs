@@ -356,6 +356,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.DriverDetails).HasMaxLength(50).HasDefaultValue("N");
             entity.Property(e => e.OrderReason).HasMaxLength(50);
             entity.Property(e => e.ArrivalNoticeFlag).HasMaxLength(5);
+            entity.Property(e => e.ControlledGoodsNoticeFlag).HasMaxLength(5).IsRequired();
+            entity.Property(e => e.ControlledGoodsNoticeReason).HasMaxLength(300).IsRequired();
             entity.Property(e => e.ArrivalNotice).HasMaxLength(300);
             entity.Property(e => e.ReasonForDeliveryDelay).HasMaxLength(200);
             entity.Property(e => e.DelayNotificationDate).HasMaxLength(10);

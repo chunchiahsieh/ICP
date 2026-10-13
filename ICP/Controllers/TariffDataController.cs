@@ -17,8 +17,8 @@ namespace ICP.Controllers;
 
 public class TariffDataController : Controller
 {
-    private const string TemplateFileName = "KWE_TariffCustomsDataTemplate.xls";
-    private const string TemplateDownloadFileName = "CustomsDataUploadTemplate.xls";
+    private const string TemplateFileName = "CustomsDataUploadTemplate.xlsx";
+    private const string TemplateDownloadFileName = "CustomsDataUploadTemplate.xlsx";
 
     private static readonly HashSet<string> ExcelExtensions = new(StringComparer.OrdinalIgnoreCase) { ".xlsx", ".xls" };
     private static readonly HashSet<string> PdfExtensions = new(StringComparer.OrdinalIgnoreCase) { ".pdf" };
@@ -97,7 +97,7 @@ public class TariffDataController : Controller
 
         return PhysicalFile(
             templatePath,
-            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             TemplateDownloadFileName);
     }
 
@@ -283,7 +283,8 @@ public class TariffDataController : Controller
     [RequestSizeLimit(57_671_680)]
     public async Task<IActionResult> UploadCustomsData(
         IFormFile? file,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? overwriteToken = null)
     {
         if (!_permissionService.HasPermission(TariffDataPermissionCodes.View)
             || !_permissionService.HasPermission("Views.Broker.TariffData.UploadCustomsData"))
@@ -338,7 +339,8 @@ public class TariffDataController : Controller
                 storedPath,
                 safeFileName,
                 createUser,
-                cancellationToken);
+                cancellationToken,
+                overwriteToken);
 
             _logger.LogInformation(
                 "Tariff customs data imported: {FileName} -> {StoredPath}, inserted {Inserted}, updated {Updated}, User={User}",
@@ -361,6 +363,13 @@ public class TariffDataController : Controller
                 importedCount = importResult.ImportedCount,
                 updatedCount = importResult.UpdatedCount
             });
+        }
+        catch (TariffOverwriteConfirmationException ex)
+        {
+            if (System.IO.File.Exists(storedPath)) System.IO.File.Delete(storedPath);
+            return Json(new { success = false, requiresConfirmation = true,
+                message = "此筆Invoice No已存在，確認是否要覆蓋舊有資料",
+                invoices = ex.Invoices, overwriteToken = ex.Token });
         }
         catch (Exception ex)
         {

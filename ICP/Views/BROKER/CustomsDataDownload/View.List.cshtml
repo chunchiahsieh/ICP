@@ -77,6 +77,10 @@
                     @foreach (var field in Model.Fields)
                     {
                         var cellClass = ResolveHeaderCellClass(field, cellIndex);
+                        if (CustomsDataDownloadTableViewHelper.IsNumericCell(item, field.FieldName))
+                        {
+                            cellClass += " text-end";
+                        }
                         var cellValue = CustomsDataDownloadTableViewHelper.FormatCellValue(item, field.FieldName);
                         if (string.Equals(field.FieldName, "CreatedUtc", StringComparison.OrdinalIgnoreCase))
                         {

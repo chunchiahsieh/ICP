@@ -15,16 +15,23 @@ public static class ControlledGoodsNoticeContent
         IReadOnlyList<string> sendTimes, out DateTime scheduledUtc)
     {
         scheduledUtc = default;
-        if (!DateOnly.TryParseExact(eta, ["yyyy-MM-dd", "yyyy/MM/dd"],
-                CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)) return false;
         var slots = sendTimes.Select(text => TimeOnly.TryParseExact(text, "HH:mm",
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out var time) ? time : (TimeOnly?)null)
-            .Where(time => time.HasValue).Select(time => time!.Value).Order().ToList();
-        if (slots.Count == 0) return false;
-        var slot = slots[0];
-        scheduledUtc = new DateTimeOffset(date.Year, date.Month, date.Day,
-            slot.Hour, slot.Minute, 0, TaipeiOffset).UtcDateTime;
-        return scheduledUtc > nowUtc;
+            .Where(time => time.HasValue).Select(time => time!.Value).Distinct().Order().ToList();
+        var now = new DateTimeOffset(DateTime.SpecifyKind(nowUtc, DateTimeKind.Utc)).ToOffset(TaipeiOffset);
+        foreach (var dayOffset in new[] { 0, 1 })
+        {
+            var day = now.Date.AddDays(dayOffset);
+            foreach (var slot in slots)
+            {
+                var candidate = new DateTimeOffset(day.Year, day.Month, day.Day,
+                    slot.Hour, slot.Minute, 0, TaipeiOffset).UtcDateTime;
+                if (candidate <= nowUtc) continue;
+                scheduledUtc = candidate;
+                return true;
+            }
+        }
+        return false;
     }
 
     public static string BuildSubject(string configuredTitle, string? eta)
@@ -32,9 +39,9 @@ public static class ControlledGoodsNoticeContent
         var title = string.IsNullOrWhiteSpace(configuredTitle)
             ? "【通知】管制品到貨 - ETA:"
             : configuredTitle.Trim();
-        var date = DateOnly.ParseExact(eta ?? string.Empty, ["yyyy-MM-dd", "yyyy/MM/dd"],
-            CultureInfo.InvariantCulture, DateTimeStyles.None);
-        return title + date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        return title + (DateOnly.TryParseExact(eta, ["yyyy-MM-dd", "yyyy/MM/dd"],
+            CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+            ? date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : eta?.Trim() ?? string.Empty);
     }
 
     public static async Task<string> BuildBodyAsync(ApplicationDbContext db, IcpHeader header,
@@ -47,7 +54,7 @@ public static class ControlledGoodsNoticeContent
         const string cell = "border:1px solid #333;padding:5px 7px;vertical-align:top";
         var details = await db.IcpDetails.AsNoTracking()
             .Where(d => d.InvoiceNo == header.InvoiceNo && d.TetPo == header.TetPo
-                && d.ElFlag != null && d.ElFlag.Trim() != "")
+                && d.ElFlag != null && d.ElFlag.Trim() == "2")
             .OrderBy(d => d.InvoiceSeq).ToListAsync(cancellationToken);
         var deliveryTo = header.DeliveryTo;
         if (!string.IsNullOrWhiteSpace(deliveryTo))
@@ -59,7 +66,7 @@ public static class ControlledGoodsNoticeContent
             if (!string.IsNullOrWhiteSpace(configuredName)) deliveryTo = configuredName;
         }
         var html = new StringBuilder("<div style=\"font-family:Arial,sans-serif;font-size:14px\">")
-            .Append("<p>管制品到貨通知</p>");
+            .Append("<p>").Append(E(header.ControlledGoodsNoticeReason)).Append("</p>");
         if (Uri.TryCreate(shipInfoUrl, UriKind.Absolute, out var url)
             && (url.Scheme == Uri.UriSchemeHttps || url.Scheme == Uri.UriSchemeHttp))
         {
@@ -72,7 +79,7 @@ public static class ControlledGoodsNoticeContent
         foreach (var label in new[] { "Invoice No", "ETA", "MAWB", "HAWB", "FLT", "W/H",
                      "Order Type", "Delivery Date", "Delivery To", "BU", "TET PO", "PO Line",
                      "Invoice Seq", "Item No", "Description", "QTY",
-                     "ILSTW: Customer / ICP: End User", "Sold-to Party", "Ship-to Party", "ECCN" })
+                     "ILSTW: Customer / ICP: End User", "Sold-to Party", "Ship-to Party", "ECCN", "EL_FLAG" })
             html.Append("<th style=\"").Append(heading).Append("\">").Append(E(label)).Append("</th>");
         html.Append("</tr></thead><tbody>");
         foreach (var detail in details)
@@ -83,7 +90,7 @@ public static class ControlledGoodsNoticeContent
                          header.DeliveryDate, deliveryTo, header.Bu, header.TetPo,
                          detail.TetPoLine, detail.InvoiceSeq, detail.ItemNo, detail.Description,
                          detail.Qty, header.EndUser, header.SoldToParty, header.ShipToParty,
-                         detail.Eccn })
+                         detail.Eccn, detail.ElFlag })
                 html.Append("<td style=\"").Append(cell).Append("\">").Append(E(value)).Append("</td>");
             html.Append("</tr>");
         }

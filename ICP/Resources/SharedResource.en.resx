@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -2436,7 +2436,7 @@
   <data name="Export.Upload.Label" xml:space="preserve"><value>Upload Shipping advice Excel</value></data>
   <data name="Export.Upload.Button" xml:space="preserve"><value>Upload &amp; notify Hub</value></data>
   <data name="Export.Flow" xml:space="preserve"><value>Flow: ICP upload → Hub Job (ShippingAdvice) → FileGenerator writes PickupNotice Excel + Case Mark PDFs under shared OutputDirectory/{RequestId}/ → Completed → View files.</value></data>
-  <data name="Export.Column.RequestId" xml:space="preserve"><value>Request ID</value></data><data name="Export.Column.FileName" xml:space="preserve"><value>File Name13333</value></data><data name="Export.Column.Status" xml:space="preserve"><value>Status</value></data><data name="Export.Column.CreateTime" xml:space="preserve"><value>Create Time</value></data><data name="Export.Column.UpdateTime" xml:space="preserve"><value>Update Time</value></data><data name="Export.Column.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Export.Column.RequestId" xml:space="preserve"><value>Request ID</value></data><data name="Export.Column.FileName" xml:space="preserve"><value>File Name</value></data><data name="Export.Column.Status" xml:space="preserve"><value>Status</value></data><data name="Export.Column.CreateTime" xml:space="preserve"><value>Create Time</value></data><data name="Export.Column.UpdateTime" xml:space="preserve"><value>Update Time</value></data><data name="Export.Column.Error" xml:space="preserve"><value>Error</value></data>
   <data name="Export.Empty" xml:space="preserve"><value>No export requests yet.</value></data><data name="Export.ViewFiles" xml:space="preserve"><value>View files</value></data><data name="Export.Modal.Title" xml:space="preserve"><value>Export output files</value></data><data name="Export.Close" xml:space="preserve"><value>Close</value></data><data name="Export.DownloadAll" xml:space="preserve"><value>Download all (zip)</value></data><data name="Export.Column.File" xml:space="preserve"><value>File</value></data><data name="Export.Column.Type" xml:space="preserve"><value>Type</value></data><data name="Export.Column.Size" xml:space="preserve"><value>Size</value></data><data name="Export.Files.Empty" xml:space="preserve"><value>No files found in output folder.</value></data><data name="Export.Files.Loading" xml:space="preserve"><value>Loading...</value></data><data name="Export.Files.RequestId" xml:space="preserve"><value>Request ID: </value></data><data name="Export.Files.LoadFailed" xml:space="preserve"><value>Failed to load files ({0})</value></data><data name="Export.Download" xml:space="preserve"><value>Download</value></data><data name="Export.Error.SelectFile" xml:space="preserve"><value>Please select a file.</value></data><data name="Export.Success.Uploaded" xml:space="preserve"><value>Uploaded {0}. RequestId={1}. Hub notified (Pending → Processing by Hub).</value></data>
   <data name="Forwarder.ForwarderDataUpload.Column.Type" xml:space="preserve"><value>Type</value></data>
   <data name="Forwarder.ForwarderDataUpload.Column.InvoiceNo" xml:space="preserve"><value>Invoice No.</value></data>
@@ -2562,10 +2562,10 @@
   <data name="NotificationMail.PreviewCount" xml:space="preserve"><value>Email previews</value></data>
   <data name="NotificationMail.StatusUnknown" xml:space="preserve"><value>Unavailable</value></data>
   <data name="NotificationMail.StatusNotSent" xml:space="preserve"><value>Not sent</value></data>
-  <data name="NotificationMail.ControlledGoodsSkippedEta" xml:space="preserve"><value>{0} newly added controlled-goods records have a past ETA or today's 10:00 has passed. Data was saved, but no notification was scheduled.</value></data>
-  <data name="NotificationMail.ControlledGoodsEmpty" xml:space="preserve"><value>No controlled-goods notice schedules for the selected ETA.</value></data>
-  <data name="NotificationMail.ControlledGoodsEligibility" xml:space="preserve"><value>At least one Ship Info Detail must have a non-empty EL Flag before scheduling.</value></data>
-  <data name="NotificationMail.ControlledGoodsEtaUnavailable" xml:space="preserve"><value>ETA has passed or today's 10:00 has passed; the notice cannot be scheduled.</value></data>
+  <data name="NotificationMail.ControlledGoodsSkippedEta" xml:space="preserve"><value>{0} controlled-goods records were saved but not scheduled because send times are not configured.</value></data>
+  <data name="NotificationMail.ControlledGoodsEmpty" xml:space="preserve"><value>No controlled-goods notices for the selected schedule date.</value></data>
+  <data name="NotificationMail.ControlledGoodsEligibility" xml:space="preserve"><value>At least one Ship Info Detail must have EL_FLAG = 2.</value></data>
+  <data name="NotificationMail.ControlledGoodsEtaUnavailable" xml:space="preserve"><value>Controlled goods notice send times are not configured.</value></data>
   <data name="NotificationMail.ControlledGoodsAlreadyScheduled" xml:space="preserve"><value>This Invoice already has a pending controlled-goods arrival notice.</value></data>
   <data name="NotificationMail.ControlledGoodsPreview" xml:space="preserve"><value>Controlled-goods arrival email preview</value></data>
   <data name="NotificationMail.ControlledGoodsTableMissing" xml:space="preserve"><value>The controlled-goods schedule table is missing. Run 015_CreateControlledGoodsNoticeSchedule.sql first.</value></data>
@@ -2629,4 +2629,11 @@
   <data name="NotificationMail.ArrivalNotice" xml:space="preserve"><value>Arrival notice</value></data>
   <data name="NotificationMail.ControlledGoodsArrival" xml:space="preserve"><value>Controlled Goods Arrival</value></data>
   <data name="NotificationMail.DepositCase" xml:space="preserve"><value>Deposit Case Initiation</value></data>
+  <data name="ShipInfo.Header.Field.ControlledGoodsNoticeFlag" xml:space="preserve"><value>Controlled Goods Mail Flag</value></data>
+  <data name="ShipInfo.Field.ControlledGoodsNoticeFlag" xml:space="preserve"><value>Controlled Goods Mail Flag</value></data>
+  <data name="ShipInfo.Header.Field.ControlledGoodsNoticeReason" xml:space="preserve"><value>Controlled Goods Notice Reason</value></data>
+  <data name="ShipInfo.Field.ControlledGoodsNoticeReason" xml:space="preserve"><value>Controlled Goods Notice Reason</value></data>
+  <data name="NotificationMail.ControlledGoodsAlreadySent" xml:space="preserve"><value>Mail Flag is Y. Change it to N and save to send again.</value></data>
+  <data name="NotificationMail.ScheduleDate" xml:space="preserve"><value>Schedule Date</value></data>
+  <data name="NotificationMail.DepositPreview" xml:space="preserve"><value>Email Preview</value></data>
 </root>

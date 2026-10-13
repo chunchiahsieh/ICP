@@ -1,0 +1,96 @@
+using ICP.Data;
+using ICP.Models.Icp;
+using ICP.Models.NotificationMail;
+using ICP.Services.NotificationMail;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Text.Json;
+using var db = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+var service = new ArrivalNoticeScheduleService(db, null!, null!, new Monitor());
+var header = new IcpHeader { Id = Guid.NewGuid(), InvoiceNo = "TEST", ArrivalNoticeFlag = "N" };
+int checks = 0;
+void Check(bool condition, string name) { if (!condition) throw new Exception(name); Console.WriteLine("PASS: " + name); checks++; }
+await service.SyncAfterSaveAsync(header, "tester", default);
+Check(!db.ArrivalNoticeSchedules.Any(), "Default N and blank email do not schedule");
+header.ArrivalNotice = "test@example.com";
+await service.SyncAfterSaveAsync(header, "tester", default);
+Check(db.ArrivalNoticeSchedules.Count(x => x.State == "Pending") == 1, "N and valid email automatically schedule");
+await service.SyncAfterSaveAsync(header, "tester", default);
+Check(db.ArrivalNoticeSchedules.Count(x => x.State == "Pending") == 1, "Repeated save does not duplicate schedule");
+header.ArrivalNotice = "other@example.com";
+await service.SyncAfterSaveAsync(header, "tester", default);
+Check(db.ArrivalNoticeSchedules.Single().ArrivalNoticeValue == header.ArrivalNotice, "Email edits update Pending recipient");
+header.ArrivalNoticeFlag = "Y";
+await service.SyncAfterSaveAsync(header, "tester", default);
+Check(!db.ArrivalNoticeSchedules.Any(x => x.State == "Pending") && header.ArrivalNotice == "other@example.com", "Y cancels Pending without clearing email");
+header.ArrivalNoticeFlag = "N"; header.ArrivalNotice = null;
+await service.SyncAfterSaveAsync(header, "tester", default);
+Check(!db.ArrivalNoticeSchedules.Any(x => x.State == "Pending"), "Cleared email does not reschedule");
+header.ArrivalNotice = "invalid";
+bool rejected = false;
+try { await service.SyncAfterSaveAsync(header, "tester", default); } catch (ICP.Services.ShipInfoBusinessException) { rejected = true; }
+Check(rejected && !db.ArrivalNoticeSchedules.Any(x => x.State == "Pending"), "Invalid email rejects scheduling");
+ICP.Services.ShipInfoFormMetadataProvider.ValidateAtStartup(Path.GetFullPath("ICP"));
+Check(true, "Production startup validates both form metadata files");
+using var config = JsonDocument.Parse(File.ReadAllText("ICP/Config/shipinfo-header-form-fields.json"));
+var field = config.RootElement.GetProperty("fields").GetProperty("ArrivalNoticeFlag");
+Check(field.GetProperty("type").GetString() == "select" && field.GetProperty("optionsSource").GetString() == "yesNo", "Flag is a Y/N dropdown");
+header.ArrivalNotice = "test@example.com";
+await service.SyncAfterSaveAsync(header, "tester", default);
+var sending = db.ArrivalNoticeSchedules.Single(x => x.State == "Pending"); sending.State = "Sending"; await db.SaveChangesAsync();
+bool busyRejected = false;
+try { await service.SyncAfterSaveAsync(header, "tester", default); } catch (ICP.Services.ShipInfoConcurrencyException) { busyRejected = true; }
+Check(busyRejected, "Saves cannot change a Sending notice");
+Check(!File.ReadAllText("ICP/Views/FUNCTION/ShipInfo/View.cshtml").Contains("btnShipInfoArrivalScheduleAdd"), "Manual Add button is removed");
+db.SystemConfigs.AddRange(new SystemConfig { Category = "YesNo", Key1 = "Y", Value1 = "Yes" },
+    new SystemConfig { Category = "YesNo", Key1 = "N", Value1 = "No" },
+    new SystemConfig { Category = "YesNo", Key1 = "DELETED", Value1 = "Hidden", IsDeleted = true });
+await db.SaveChangesAsync();
+var lookup = await new ICP.Services.ShipInfoLookupService(db, null!).GetOptionsAsync("YesNo");
+Check(lookup.Count == 2 && lookup.Single(x => x.Value == "Y").Text == "Yes"
+    && lookup.Single(x => x.Value == "N").Text == "No", "Customized YesNo stores Key1, displays Value1 and excludes deleted settings");
+var controlled = new ControlledGoodsNoticeScheduleService(db, null!, null!, new Monitor());
+var controlledHeader = new IcpHeader { Id = Guid.NewGuid(), InvoiceNo = "CONTROL", TetPo = "PO", Eta = DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd") };
+Check(controlledHeader.ControlledGoodsNoticeFlag == "N" && controlledHeader.ControlledGoodsNoticeReason == "管制品到貨", "Controlled goods header defaults are N and 管制品到貨");
+var nonControlled = new IcpDetail { Id = Guid.NewGuid(), InvoiceNo = "CONTROL", TetPo = "PO", ElFlag = "1", Eccn = "NONCONTROLLED" };
+db.IcpDetails.Add(nonControlled); await db.SaveChangesAsync();
+await controlled.SyncAfterSaveAsync(controlledHeader, "tester", default);
+Check(!db.ControlledGoodsNoticeSchedules.Any(), "EL_FLAG 1 cannot schedule");
+var detail = new IcpDetail { Id = Guid.NewGuid(), InvoiceNo = "CONTROL", TetPo = "PO", ElFlag = "2", Eccn = "ECCN2" };
+db.IcpDetails.Add(detail); await db.SaveChangesAsync();
+await controlled.SyncAfterSaveAsync(controlledHeader, "tester", default);
+await controlled.SyncAfterSaveAsync(controlledHeader, "tester", default);
+Check(db.ControlledGoodsNoticeSchedules.Count(x => x.State == "Pending") == 1, "N plus EL_FLAG 2 schedules once");
+var originalTime = db.ControlledGoodsNoticeSchedules.Single().ScheduledAtUtc;
+controlledHeader.Eta = "2000-01-01";
+await controlled.SyncAfterSaveAsync(controlledHeader, "tester", default);
+Check(db.ControlledGoodsNoticeSchedules.Single().ScheduledAtUtc == originalTime, "ETA changes do not move the Pending send slot");
+var firstNotice = db.ControlledGoodsNoticeSchedules.Single(); firstNotice.State = "Sent"; controlledHeader.ControlledGoodsNoticeFlag = "Y"; await db.SaveChangesAsync();
+await controlled.SyncAfterSaveAsync(controlledHeader, "tester", default);
+Check(db.ControlledGoodsNoticeSchedules.Count() == 1, "Y does not resend");
+controlledHeader.ControlledGoodsNoticeFlag = "N";
+await controlled.SyncAfterSaveAsync(controlledHeader, "tester", default);
+Check(db.ControlledGoodsNoticeSchedules.Count() == 2 && db.ControlledGoodsNoticeSchedules.Count(x => x.State == "Pending") == 1, "Changing Y to N schedules a new notice for the same ETA");
+var html = await ControlledGoodsNoticeContent.BuildBodyAsync(db, controlledHeader, "", default);
+Check(html.Contains("EL_FLAG") && html.Contains("ECCN2") && !html.Contains("NONCONTROLLED"), "Mail includes EL_FLAG after ECCN and only eligible details");
+Check(ControlledGoodsNoticeContent.BuildSubject("【通知】管制品到貨 - ETA:", "2026/10/14") == "【通知】管制品到貨 - ETA:2026-10-14", "Subject uses normalized ETA");
+Check(ControlledGoodsNoticeContent.TryScheduleUtc("2026-10-14", new DateTime(2026,10,14,8,0,0,DateTimeKind.Utc), ["10:00"], out var resendAt) && resendAt == new DateTime(2026,10,15,2,0,0,DateTimeKind.Utc), "Save after the last slot schedules tomorrow");
+Check(ControlledGoodsNoticeContent.TryScheduleUtc("2000-01-01", new DateTime(2026,10,14,0,0,0,DateTimeKind.Utc), ["10:00", "17:00"], out var nextSlot) && nextSlot == new DateTime(2026,10,14,2,0,0,DateTimeKind.Utc), "Old ETA does not affect next-slot scheduling");
+Check(ControlledGoodsNoticeContent.TryScheduleUtc(null, new DateTime(2026,10,14,2,0,0,DateTimeKind.Utc), ["10:00", "17:00"], out var afterSlot) && afterSlot == new DateTime(2026,10,14,9,0,0,DateTimeKind.Utc), "At a slot boundary, choose the next slot");
+var mappedHeader = ICP.Repositories.ShipInfoRowDtoMapper.MapHeader(new IcpHeader { ArrivalNoticeFlag = "N", ArrivalNotice = "test@example.com" });
+Check((string?)mappedHeader["ArrivalNoticeFlag"] == "N", "Header display no longer changes Arrival Notice N to Y when email exists");
+Check(config.RootElement.GetProperty("fields").GetProperty("ControlledGoodsNoticeFlag").GetProperty("optionsSource").GetString() == "yesNo", "Controlled flag uses Customized YesNo");
+var depositHeader = new Dictionary<string, object?> { ["EndUser"] = "TEK", ["Mawb"] = "MAWB001", ["Hawb"] = "HAWB001", ["InvoiceNo"] = "INV001", ["Flt"] = "CI123" };
+var depositDetails = new[] { new Dictionary<string, object?> { ["ItemNo"] = "ITEM001", ["Description"] = "<script>unsafe</script>", ["Qty"] = 2 } };
+var depositBody = DepositCaseMailContent.BuildBody(depositHeader, depositDetails);
+Check(DepositCaseMailContent.BuildSubject("INV001") == "Deposit 起案通知 - Invoice#INV001", "Deposit notification subject includes Invoice number");
+Check(depositBody.Contains("TEK") && depositBody.Contains("MAWB001") && depositBody.Contains("HAWB001") && depositBody.Contains("CI123") && depositBody.Contains("ITEM001"), "Deposit mail maps End User, airway bills, FLT and item details");
+Check(depositBody.Contains("&lt;script&gt;") && !depositBody.Contains("<script>"), "Deposit mail safely encodes field contents");
+Check(new[] { "Customer", "MAWB", "HAWB", "Invoice No", "Flight", "Item No", "Description", "QTY" }.Select(x => depositBody.IndexOf(">" + x + "</th>")).SequenceEqual(new[] { "Customer", "MAWB", "HAWB", "Invoice No", "Flight", "Item No", "Description", "QTY" }.Select(x => depositBody.IndexOf(">" + x + "</th>")).Order()), "Deposit mail has requested column order");
+Console.WriteLine($"{checks} checks passed without SMTP or a production database.");
+sealed class Monitor : IOptionsMonitor<NotificationMailOptions>
+{
+    public NotificationMailOptions CurrentValue { get; } = new() { ArrivalNotice = new() { SendTimes = ["10:00", "17:00"] }, ControlledGoodsArrival = new() { SendTimes = ["10:00"] } };
+    public NotificationMailOptions Get(string? name) => CurrentValue;
+    public IDisposable? OnChange(Action<NotificationMailOptions,string?> listener) => null;
+}

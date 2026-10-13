@@ -1,3 +1,4 @@
+using ICP.Services.NotificationMail;
 using System.Globalization;
 using System.Text.Json;
 
@@ -18,6 +19,9 @@ public class ShipInfoService : IShipInfoService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
+    private readonly DepositCaseMailService _depositMail;
+    private readonly ControlledGoodsNoticeScheduleService _controlledSchedules;
+    private readonly ArrivalNoticeScheduleService _arrivalSchedules;
     private readonly IShipInfoRepository _repository;
     private readonly IIntegrationEventOutboxRepository _outboxRepository;
     private readonly IShipInfoCaseEventFactory _caseEventFactory;
@@ -39,8 +43,14 @@ public class ShipInfoService : IShipInfoService
         IHttpContextAccessor httpContextAccessor,
         ILogger<ShipInfoService> logger,
         ShipInfoAttachmentService attachmentService,
-        IOptionsMonitor<IntegrationOptions> integrationOptions)
+        IOptionsMonitor<IntegrationOptions> integrationOptions,
+        ArrivalNoticeScheduleService arrivalSchedules,
+        ControlledGoodsNoticeScheduleService controlledSchedules,
+        DepositCaseMailService depositMail)
     {
+        _arrivalSchedules = arrivalSchedules;
+        _controlledSchedules = controlledSchedules;
+        _depositMail = depositMail;
         _repository = repository;
         _outboxRepository = outboxRepository;
         _caseEventFactory = caseEventFactory;
@@ -189,7 +199,9 @@ public class ShipInfoService : IShipInfoService
         EnsurePermission(ShipInfoPermissionCodes.View);
         var header = await RequireHeaderByIdAsync(headerId, cancellationToken);
         LogOperation("QueryHeader", headerKey: ShipInfoKeyHelper.BuildHeaderKey(header));
-        return ShipInfoEntityMapper.MapEntity(header);
+        var data = ShipInfoEntityMapper.MapEntity(header);
+        if (string.IsNullOrWhiteSpace(header.ArrivalNoticeFlag)) data[nameof(header.ArrivalNoticeFlag)] = "N";
+        return data;
     }
 
     public async Task<Dictionary<string, object?>> GetDetailDataAsync(
@@ -273,7 +285,12 @@ public class ShipInfoService : IShipInfoService
         var previousTetPo = header.TetPo;
         var changes = ShipInfoEntityMapper.DetectChanges(header, values, fields);
         ShipInfoEntityMapper.ApplyEditableValues(header, values, fields);
-        header.ArrivalNoticeFlag = string.IsNullOrWhiteSpace(header.ArrivalNotice) ? "N" : "Y";
+        header.ArrivalNoticeFlag = string.IsNullOrWhiteSpace(header.ArrivalNoticeFlag) ? "N" : header.ArrivalNoticeFlag.Trim().ToUpperInvariant();
+        if (header.ArrivalNoticeFlag is not ("Y" or "N"))
+            throw new ShipInfoBusinessException("Arrival Notice Flag must be Y or N.");
+        header.ControlledGoodsNoticeReason = string.IsNullOrWhiteSpace(header.ControlledGoodsNoticeReason) ? "管制品到貨" : header.ControlledGoodsNoticeReason.Trim();
+        header.ControlledGoodsNoticeFlag = string.IsNullOrWhiteSpace(header.ControlledGoodsNoticeFlag) ? "N" : header.ControlledGoodsNoticeFlag.Trim().ToUpperInvariant();
+        if (header.ControlledGoodsNoticeFlag is not ("Y" or "N")) throw new ShipInfoBusinessException("Controlled goods notice Flag must be Y or N.");
         CrudAuditHelper.ApplyUpdateAudit(header, userName);
 
         var relatedDetails = string.Equals(previousTetPo, header.TetPo, StringComparison.Ordinal)
@@ -288,14 +305,15 @@ public class ShipInfoService : IShipInfoService
             CrudAuditHelper.ApplyUpdateAudit(detail, userName);
         }
 
-        if (relatedDetails.Count > 0)
+        await _repository.ExecuteInTransactionAsync(async () =>
         {
-            await _repository.UpdateHeaderAndDetailsAsync(header, relatedDetails, cancellationToken);
-        }
-        else
-        {
-            await _repository.UpdateHeaderAsync(header, cancellationToken);
-        }
+            if (relatedDetails.Count > 0)
+                await _repository.UpdateHeaderAndDetailsAsync(header, relatedDetails, cancellationToken);
+            else
+                await _repository.UpdateHeaderAsync(header, cancellationToken);
+            await _arrivalSchedules.SyncAfterSaveAsync(header, userName, cancellationToken);
+            await _controlledSchedules.SyncAfterSaveAsync(header, userName, cancellationToken);
+        }, cancellationToken);
 
         var invoiceKey = ShipInfoKeyHelper.BuildHeaderKey(header);
         await WriteFieldAuditAsync("Header", header.Id.ToString("D"), invoiceKey, changes, userName, cancellationToken);
@@ -341,7 +359,11 @@ public class ShipInfoService : IShipInfoService
         ShipInfoEntityMapper.ApplyEditableValues(detail, values, fields);
         CrudAuditHelper.ApplyUpdateAudit(detail, userName);
 
-        await _repository.UpdateDetailAsync(detail, cancellationToken);
+        await _repository.ExecuteInTransactionAsync(async () =>
+        {
+            await _repository.UpdateDetailAsync(detail, cancellationToken);
+            await _controlledSchedules.SyncAfterSaveAsync(header, userName, cancellationToken);
+        }, cancellationToken);
 
         await WriteFieldAuditAsync("Detail", detailKey, headerKey, changes, userName, cancellationToken);
         LogOperation("EditDetail", headerKey: headerKey, detailKey: detailKey);
@@ -559,6 +581,9 @@ public class ShipInfoService : IShipInfoService
                 await _repository.AddAuditLogsAsync([auditLog], cancellationToken);
                 await _outboxRepository.EnqueueAsync(integrationEvent, payloadJson, userName, cancellationToken);
             }, cancellationToken);
+
+            if (caseType == ShipInfoCaseTypes.Deposit)
+                await _depositMail.SendAsync(header, details, caseNo, cancellationToken);
 
             LogOperation(caseType == ShipInfoCaseTypes.Deposit ? "Deposit" : "ARUR", headerKey: invoiceKey, extra: caseNo);
 

@@ -35,36 +35,6 @@
         showScheduleError('');
     }
 
-    function fieldValue(data) {
-        return String(data && (data.ArrivalNotice || data.arrivalNotice) || '').trim();
-    }
-
-    function currentSavedAddress() {
-        var saved = fieldValue(app.state.viewModalData);
-        var $input = $('#shipInfoViewForm .shipinfo-control[data-field="ArrivalNotice"]');
-        if ($input.length && String($input.val() || '').trim() !== saved) {
-            showScheduleError(app.messages.arrivalScheduleSaveFirst);
-            return null;
-        }
-        return saved;
-    }
-
-    function validateMailTo(value) {
-        if (!value) return app.messages.arrivalScheduleMailRequired;
-        if (value.charAt(0) === '*') return app.messages.arrivalScheduleMailLegacyMarker;
-        if (value.length >= 300) return app.messages.arrivalScheduleMailTooLong;
-        var addresses = value.replace(/^mail:/i, '');
-        if (/[,\r\n]/.test(addresses)) return app.messages.arrivalScheduleMailSeparator;
-        var parts = addresses.split(';').map(function (address) { return address.trim(); })
-            .filter(function (address) { return address.length > 0; });
-        if (!parts.length) return app.messages.arrivalScheduleMailRequired;
-        for (var i = 0; i < parts.length; i++) {
-            if (!/^[^\s@<>;,]+@[^\s@<>;,]+\.[^\s@<>;,]+$/.test(parts[i]))
-                return app.messages.arrivalScheduleMailInvalid.replace('{0}', String(i + 1));
-        }
-        return null;
-    }
-
     function formatTaipei(value) {
         var date = new Date(value);
         return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat('sv-SE', {
@@ -123,11 +93,6 @@
             }
             var rows = response.data || [];
             var current = String(app.state.viewModalKey || '').toLowerCase();
-            var alreadyScheduled = rows.some(function (row) {
-                return String(row.headerId || row.HeaderId || '').toLowerCase() === current
-                    && (row.state || row.State) === 'Pending';
-            });
-            $('#btnShipInfoArrivalScheduleAdd').prop('disabled', alreadyScheduled);
             if (!rows.length) {
                 $body.append($('<tr>').append($('<td colspan="5" class="text-muted text-center">')
                     .text(app.messages.arrivalScheduleEmpty)));
@@ -183,31 +148,6 @@
                 .prop('disabled', false);
             showScheduleError('');
         });
-        $('#btnShipInfoArrivalScheduleAdd').on('click', function () {
-            showScheduleError('');
-            if (!app.state.viewModalEditing || app.state.viewModalKind !== 'header'
-                || !app.state.viewModalKey) return;
-            var savedAddress = currentSavedAddress();
-            if (savedAddress === null) return;
-            var validationError = validateMailTo(savedAddress);
-            if (validationError) {
-                showScheduleError(validationError);
-                return;
-            }
-            var $button = $(this).prop('disabled', true);
-            $.post(app.urls.arrivalScheduleAdd, { headerId: app.state.viewModalKey })
-                .done(function (response) {
-                    if (!response || !response.success) {
-                        showScheduleError((response && response.message) || app.messages.saveFailed);
-                        return;
-                    }
-                    var row = response.data || {};
-                    app.showToast(formatTaipei(row.scheduledAtUtc || row.ScheduledAtUtc), 'success');
-                    loadToday();
-                }).fail(function (xhr) {
-                    showScheduleError((xhr.responseJSON && xhr.responseJSON.message) || app.messages.saveFailed);
-                }).always(function () { $button.prop('disabled', false); });
-        });
         $('#shipInfoArrivalScheduleRows').on('click', '[data-schedule-id]', function () {
             var $button = $(this).prop('disabled', true);
             $.post(app.urls.arrivalScheduleCancel, { scheduleId: $button.attr('data-schedule-id') })
@@ -216,6 +156,14 @@
                         app.showToast((response && response.message) || app.messages.saveFailed, 'danger');
                         return;
                     }
+                    $.getJSON(app.urls.getHeader, { headerKey: app.state.viewModalKey }).done(function (result) {
+                        if (result && result.success && result.data) {
+                            app.state.viewModalData = result.data;
+                            $('#shipInfoViewForm [data-meta-field="updateTime"]').val(result.data.UpdateTime || result.data.updateTime || '');
+                            $('#shipInfoViewForm .shipinfo-control[data-field="ArrivalNoticeFlag"]').val(result.data.ArrivalNoticeFlag || result.data.arrivalNoticeFlag || 'N');
+                            $('#shipInfoViewForm .shipinfo-control[data-field="ArrivalNotice"]').val(result.data.ArrivalNotice || result.data.arrivalNotice || '');
+                        }
+                    });
                     loadToday();
                 }).fail(function (xhr) {
                     app.showToast((xhr.responseJSON && xhr.responseJSON.message) || app.messages.saveFailed, 'danger');

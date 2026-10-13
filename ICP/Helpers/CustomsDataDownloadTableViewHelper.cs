@@ -13,6 +13,17 @@ public static class CustomsDataDownloadTableViewHelper
     public static string ResolveHeaderLabel(CustomsDataDownloadTableFieldMetadata field, Func<string, string> localize) =>
         localize(field.HeaderLabelKey);
 
+    public static bool IsNumericCell(StgRawShippingAdvice item, string fieldName)
+    {
+        var property = Properties.FirstOrDefault(p => string.Equals(p.Name, fieldName, StringComparison.OrdinalIgnoreCase));
+        if (property is null) return false;
+        var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+        if (type == typeof(int) || type == typeof(double) || type == typeof(decimal) || type == typeof(float) || type == typeof(long))
+            return true;
+        return type == typeof(string) && decimal.TryParse(property.GetValue(item) as string,
+            NumberStyles.Number, CultureInfo.InvariantCulture, out _);
+    }
+
     public static string FormatCellValue(StgRawShippingAdvice item, string fieldName)
     {
         if (string.IsNullOrWhiteSpace(fieldName))

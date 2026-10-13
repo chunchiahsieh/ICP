@@ -32,7 +32,22 @@ public static class TariffTableViewHelper
             return string.IsNullOrWhiteSpace(item.CreateUserDisplayName) ? item.CreateUser ?? string.Empty : item.CreateUserDisplayName;
         }
 
-        return property.GetValue(item) switch
+        var rawValue = property.GetValue(item);
+        var decimalPlaces = fieldName.ToUpperInvariant() switch
+        {
+            "EXCHANGERATE" => 4,
+            "NETWEIGHTKG" => 3,
+            "UNITVALUE" => 2,
+            _ => -1
+        };
+        if (decimalPlaces >= 0 && decimal.TryParse(Convert.ToString(rawValue, CultureInfo.InvariantCulture),
+            NumberStyles.Number, CultureInfo.InvariantCulture, out var number))
+        {
+            return decimal.Round(number, decimalPlaces, MidpointRounding.AwayFromZero)
+                .ToString($"F{decimalPlaces}", CultureInfo.InvariantCulture);
+        }
+
+        return rawValue switch
         {
             null => string.Empty,
             DateOnly date => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),

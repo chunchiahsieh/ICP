@@ -146,7 +146,6 @@ public static class TariffExcelColumnMap
         LineNo,
         PartNumber,
         InvoiceNumber,
-        PONumber,
         DescriptionOfGoods,
         Quantity,
         UOM,
@@ -166,9 +165,6 @@ public static class TariffExcelColumnMap
         Currency,
         ExchangeRate,
         CIFValue,
-        FreightCharge,
-        TotalPieces,
-        GrossWeightKg,
         Broker,
         AirSea,
         DeclarationAmountTWD

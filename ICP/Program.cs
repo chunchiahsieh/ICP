@@ -250,6 +250,7 @@ builder.Services.AddScoped<ShipInfoLookupService>();
 builder.Services.AddScoped<ArrivalNoticeScheduleService>();
 builder.Services.AddScoped<DeliveryDelayPreviewService>();
 builder.Services.AddScoped<ControlledGoodsNoticeScheduleService>();
+builder.Services.AddScoped<DepositCaseMailService>();
 builder.Services.AddScoped<IShipInfoService, ShipInfoService>();
 builder.Services.AddScoped<IReportDataService, ReportDataService>();
 builder.Services.AddScoped<IExportService, ExportService>();

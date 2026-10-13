@@ -133,6 +133,10 @@ public class ShipInfoHeaderRowDto
 
     public string? ArrivalNotice { get; init; }
 
+    public string? ControlledGoodsNoticeFlag { get; init; }
+
+    public string? ControlledGoodsNoticeReason { get; init; }
+
     public string? ReasonForDeliveryDelay { get; init; }
 
     public string? DelayNotificationDate { get; init; }

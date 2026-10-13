@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.DataProtection;
+using System.Security.Cryptography;
+using System.Text.Json;
 using System.Data;
 using System.Text;
 using ExcelDataReader;
@@ -17,6 +20,7 @@ public class TariffDataImportService
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
+    private readonly IDataProtector _overwriteProtector;
     private readonly ApplicationDbContext _db;
     private readonly IWebHostEnvironment _environment;
     private readonly TariffDataOptions _options;
@@ -24,8 +28,10 @@ public class TariffDataImportService
     public TariffDataImportService(
         ApplicationDbContext db,
         IWebHostEnvironment environment,
-        IOptions<TariffDataOptions> options)
+        IOptions<TariffDataOptions> options,
+        IDataProtectionProvider protectionProvider)
     {
+        _overwriteProtector = protectionProvider.CreateProtector("Tariff.InvoiceOverwrite.v1");
         _db = db;
         _environment = environment;
         _options = options.Value;
@@ -66,9 +72,17 @@ public class TariffDataImportService
         string storedFilePath,
         string importFileName,
         string createUser,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? overwriteToken = null)
     {
-        var rows = ParseCustomsExcel(storedFilePath, importFileName);
+        var shipperValues = await _db.SystemConfigs.AsNoTracking()
+            .Where(x => x.Category == "Shipper" && !x.IsDeleted && x.Value1 != null)
+            .Select(x => x.Value1!)
+            .ToListAsync(cancellationToken);
+        var allowedShippers = new HashSet<string>(
+            shipperValues.Select(TariffCustomsImportRules.NormalizeCellText).Where(x => x.Length > 0),
+            StringComparer.Ordinal);
+        var rows = ParseCustomsExcel(storedFilePath, importFileName, allowedShippers);
         if (rows.Count == 0)
         {
             throw new InvalidOperationException("檔案中沒有可匯入的資料列");
@@ -87,6 +101,8 @@ public class TariffDataImportService
         {
             throw new InvalidOperationException($"檔案內 Invoice Number 重複：{string.Join("、", duplicateInvoices)}");
         }
+
+        await using var transaction = await _db.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
 
         var invoiceNumbers = rows.Select(r => r.InvoiceNumber).ToList();
         var existingInvoices = await _db.TariffDataRecords
@@ -124,12 +140,23 @@ public class TariffDataImportService
             .Where(x => invoiceNumbers.Contains(x.InvoiceNumber))
             .ToDictionaryAsync(x => x.InvoiceNumber, StringComparer.OrdinalIgnoreCase, cancellationToken);
 
+        if (existing.Count > 0)
+        {
+            var fileHash = Convert.ToHexString(SHA256.HashData(System.IO.File.ReadAllBytes(storedFilePath)));
+            var snapshot = JsonSerializer.Serialize(existing.Values.OrderBy(x => x.InvoiceNumber, StringComparer.Ordinal)
+                .Select(x => new { x.Id, x.InvoiceNumber, x.CreateTime, x.UpdateTime, x.ImportBatchId }));
+            if (!TariffOverwriteConfirmation.IsValid(_overwriteProtector, overwriteToken, fileHash, createUser, snapshot))
+            {
+                throw new TariffOverwriteConfirmationException(existing.Keys.OrderBy(x => x).ToArray(),
+                    TariffOverwriteConfirmation.Create(_overwriteProtector, fileHash, createUser, snapshot));
+            }
+        }
+
         var importedCount = 0;
         var updatedCount = 0;
         var now = DateTime.Now;
         var resolvedUser = TruncateUser(createUser);
 
-        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
         try
         {
             foreach (var row in rows)
@@ -188,7 +215,7 @@ public class TariffDataImportService
         }
     }
 
-    private static List<TariffData> ParseCustomsExcel(string storedFilePath, string importFileName)
+    private static List<TariffData> ParseCustomsExcel(string storedFilePath, string importFileName, IReadOnlySet<string> allowedShippers)
     {
         var extension = Path.GetExtension(storedFilePath);
         if (!extension.Equals(".xlsx", StringComparison.OrdinalIgnoreCase)
@@ -213,6 +240,8 @@ public class TariffDataImportService
         }
 
         var table = dataSet.Tables[0];
+        if (!string.Equals(table.TableName, "Upload Data", StringComparison.Ordinal))
+            throw new InvalidOperationException("第一個分頁名稱必須為 Upload Data，請使用新版 Template");
         var errors = new List<string>();
         var columnMap = BuildColumnMapFromDataTable(table);
         TariffCustomsImportRules.ValidateRequiredHeaders(columnMap, errors);
@@ -232,14 +261,16 @@ public class TariffDataImportService
                 continue;
             }
 
-            rows.Add(TariffCustomsImportRules.MapRow(
+            var row = TariffCustomsImportRules.MapRow(
                 values,
                 columnMap,
                 importFileName,
                 importBatchId,
                 createDate,
                 rowNumber,
-                errors));
+                errors);
+            TariffCustomsImportRules.ValidateShipper(row.Shipper, allowedShippers, rowNumber, errors);
+            rows.Add(row);
         }
 
         TariffCustomsImportRules.ThrowIfErrors(errors);
@@ -257,7 +288,8 @@ public class TariffDataImportService
                 continue;
             }
 
-            columnMap[propertyName] = i;
+            if (!columnMap.TryAdd(propertyName, i))
+                throw new InvalidOperationException($"標題列欄位重複：{TariffExcelColumnMap.GetDisplayName(propertyName)}");
         }
 
         return columnMap;

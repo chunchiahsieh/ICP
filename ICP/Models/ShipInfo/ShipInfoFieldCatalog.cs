@@ -18,6 +18,7 @@ public static class ShipInfoFieldCatalog
         "EndUserCode", "EndUser", "RtNo", "Receiver", "Owner", "MachineNo", "MachineType",
         "ShipReason", "Forklift", "MovingLabor", "CarMethod", "ArriveTime", "WasteDisposal",
         "DriverDetails", "OrderReason", "ArrivalNoticeFlag", "ArrivalNotice",
+        "ControlledGoodsNoticeFlag", "ControlledGoodsNoticeReason",
         "ReasonForDeliveryDelay", "DelayNotificationDate", "DeliveryNo",
         "SoldToPartyCode", "SoldToParty", "ShipToPartyCode", "ShipToParty", "ShipToPartyAddress",
         "EmgFlight", "WbsElement", "Deposit", "DepositCaseStatus", "ArurCaseStatus",
