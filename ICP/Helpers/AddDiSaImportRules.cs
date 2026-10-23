@@ -7,18 +7,26 @@ public static class AddDiSaImportRules
 {
     public static readonly string[] RequiredProperties =
     [
-        AddDiSaExcelColumnMap.InvoiceNo,
-        AddDiSaExcelColumnMap.TetPo,
-        AddDiSaExcelColumnMap.Shipper
+        "SaDate", "InvoiceNo", "Forwarder", "Broker", "Shipper", "Etd", "Eta", "InvoiceDate",
+        "Mawb", "Hawb", "Flt", "Freight", "DestinationPort", "DestinationCountry", "Warehouse",
+        "InvoiceType", "Incoterms", "OrderType", "DeliveryTo", "Bu", "InvoiceSeq", "ItemNo",
+        "Description", "Qty", "Uom", "Coo", "Price", "Amount", "Currency", "Rate", "TotalCartons", "CartonNo", "GrossWeight"
     ];
-
-    public static readonly string[] InvoiceConsistencyProperties =
-    [
-        AddDiSaExcelColumnMap.Mawb,
-        AddDiSaExcelColumnMap.Hawb,
-        AddDiSaExcelColumnMap.Flt,
-        AddDiSaExcelColumnMap.Eta
-    ];
+    public static readonly HashSet<string> VariableInvoiceFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "InvoiceSeq", "ItemNo", "Description", "Qty", "Uom", "Coo", "Price", "Amount",
+        "DeliveryLineNo", "Eccn", "ElFlag", "SdsFlag", "Hazmat", "WbsElement", "NetWeightOfTheItem"
+    };
+    public static readonly HashSet<string> SystemManagedFields = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "CreateDate", "RtNo", "ArrivalNoticeFlag", "ArrivalNotice", "ReasonForDeliveryDelay",
+        "DelayNotificationDate", "Deposit", "Notes", "Cancellation", "ReasonForCancellation", "AttachedFile"
+    };
+    public static readonly IReadOnlyDictionary<string, string> SettingCategories = new Dictionary<string, string>
+    {
+        ["Broker"] = "Broker", ["Shipper"] = "Shipper", ["Freight"] = "AirSea", ["Warehouse"] = "WhCode",
+        ["InvoiceType"] = "InvoiceType", ["OrderType"] = "OrderType", ["DeliveryTo"] = "DeliveryToList", ["Bu"] = "BuCode"
+    };
 
     public const int InvoiceNoMaxLength = 30;
     public const int TetPoMaxLength = 35;
@@ -30,7 +38,7 @@ public static class AddDiSaImportRules
             return;
         }
 
-        throw new InvalidOperationException(string.Join("；", errors.Take(30)));
+        throw new InvalidOperationException(string.Join(Environment.NewLine, errors.Take(30)));
     }
 
     /// <summary>
@@ -61,26 +69,9 @@ public static class AddDiSaImportRules
         }
 
         var trimmed = text.Trim();
-        if (DateOnly.TryParseExact(trimmed, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOnly)
-            || DateOnly.TryParse(trimmed, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateOnly)
-            || DateOnly.TryParse(trimmed, CultureInfo.CurrentCulture, DateTimeStyles.None, out dateOnly))
-        {
+        if (DateOnly.TryParseExact(trimmed, new[] { "yyyy-MM-dd", "yyyy/MM/dd" }, CultureInfo.InvariantCulture,
+            DateTimeStyles.None, out var dateOnly))
             return dateOnly.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        }
-
-        if (double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out var oa)
-            && oa > 20000 && oa < 60000)
-        {
-            try
-            {
-                var fromOa = DateTime.FromOADate(oa);
-                return DateOnly.FromDateTime(fromOa).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-            }
-            catch
-            {
-                // fall through
-            }
-        }
 
         errors.Add($"第 {rowNumber} 列 {fieldName} 日期格式不正確（需 yyyy-MM-dd）");
         return null;
@@ -109,68 +100,83 @@ public static class AddDiSaImportRules
         return trimmed.Length <= maxLength ? trimmed : trimmed[..maxLength];
     }
 
-    public static void ValidateInvoiceConsistency(IReadOnlyList<AddDiSaImportRow> rows, List<string> errors)
+    public static void ValidateValues(Dictionary<string, string?> values, int rowNumber, List<string> errors)
     {
-        foreach (var invoiceNo in CollectInvoiceConsistencyIssues(rows))
+        foreach (var field in RequiredProperties)
+            RequireNonEmpty(values.GetValueOrDefault(field), rowNumber, ExcelName(field), errors);
+        foreach (var (field, text) in values.ToArray())
         {
-            errors.Add($"Invoice {invoiceNo} 的 MAWB/HAWB/FLT/ETA 不一致");
+            if (string.IsNullOrWhiteSpace(text)) continue;
+            var type = AddDiSaExcelColumnMap.IsDetailProperty(field) ? typeof(IcpDetail) : typeof(IcpHeader);
+            var property = type.GetProperty(field, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.IgnoreCase);
+            if (property is null) continue;
+            var max = property.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.MaxLengthAttribute), true)
+                .Cast<System.ComponentModel.DataAnnotations.MaxLengthAttribute>().FirstOrDefault()?.Length;
+            if (max.HasValue && text.Length > max.Value)
+                errors.Add($"第 {rowNumber} 列 {ExcelName(field)} 超過 {max} 字元");
+            var numericType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+            if (numericType == typeof(decimal))
+            {
+                if (decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out var number))
+                    values[field] = number.ToString(CultureInfo.InvariantCulture);
+                else errors.Add($"第 {rowNumber} 列 {ExcelName(field)} 須為有效數字");
+            }
+            else if (numericType == typeof(double))
+            {
+                if (double.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var number) && double.IsFinite(number))
+                    values[field] = number.ToString("R", CultureInfo.InvariantCulture);
+                else errors.Add($"第 {rowNumber} 列 {ExcelName(field)} 須為有效數字");
+            }
+            else if (numericType == typeof(int) && !int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                errors.Add($"第 {rowNumber} 列 {ExcelName(field)} 須為整數");
         }
+        if (values.GetValueOrDefault("MdpFlag") is { Length: > 0 } flag && flag != "Y")
+            errors.Add($"第 {rowNumber} 列 MDP_FLAG 僅允許 Y 或空白");
     }
 
-    /// <summary>
-    /// Returns InvoiceNo values whose MAWB/HAWB/FLT/ETA are not consistent across rows (soft, no throw).
-    /// </summary>
-    public static HashSet<string> CollectInvoiceConsistencyIssues(IReadOnlyList<AddDiSaImportRow> rows)
-    {
-        var inconsistent = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    public static string ExcelName(string property) =>
+        System.Text.RegularExpressions.Regex.Replace(property, "([a-z0-9])([A-Z])", "$1_$2").ToUpperInvariant();
 
+    public static List<string> GetInvoiceConsistencyErrors(IReadOnlyList<AddDiSaImportRow> rows)
+    {
+        var errors = new List<string>();
         foreach (var group in rows.GroupBy(r => r.InvoiceNo, StringComparer.OrdinalIgnoreCase))
         {
-            var list = group.ToList();
-            if (list.Count <= 1)
+            var first = group.First();
+            foreach (var row in group.Skip(1))
             {
-                continue;
-            }
-
-            var first = list[0];
-            foreach (var prop in InvoiceConsistencyProperties)
-            {
-                var expected = GetConsistencyValue(first, prop);
-                foreach (var row in list.Skip(1))
+                foreach (var field in first.Values.Keys.Union(row.Values.Keys, StringComparer.OrdinalIgnoreCase))
                 {
-                    var actual = GetConsistencyValue(row, prop);
+                    if (VariableInvoiceFields.Contains(field) || SystemManagedFields.Contains(field)) continue;
+                    var expected = first.Values.GetValueOrDefault(field) ?? "";
+                    var actual = row.Values.GetValueOrDefault(field) ?? "";
                     if (!string.Equals(expected, actual, StringComparison.Ordinal))
-                    {
-                        inconsistent.Add(group.Key);
-                        break;
-                    }
-                }
-
-                if (inconsistent.Contains(group.Key))
-                {
-                    break;
+                        errors.Add($"Invoice {group.Key} 第 {first.RowNumber}/{row.RowNumber} 列 {ExcelName(field)} 不一致（{expected}／{actual}）");
                 }
             }
         }
+        return errors;
+    }
+    public static void ValidateInvoiceConsistency(IReadOnlyList<AddDiSaImportRow> rows, List<string> errors) =>
+        errors.AddRange(GetInvoiceConsistencyErrors(rows));
 
-        return inconsistent;
+    public static HashSet<string> CollectInvoiceConsistencyIssues(IReadOnlyList<AddDiSaImportRow> rows) =>
+        rows.GroupBy(r => r.InvoiceNo, StringComparer.OrdinalIgnoreCase)
+            .Where(group => GetInvoiceConsistencyErrors(group.ToList()).Count > 0)
+            .Select(group => group.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+    public static void ValidateDuplicateSequences(IReadOnlyList<AddDiSaImportRow> rows, List<string> errors)
+    {
+        foreach (var group in rows.GroupBy(row => (row.InvoiceNo.ToUpperInvariant(), row.Detail.InvoiceSeq)).Where(group => group.Count() > 1))
+            errors.Add($"INVOICE_NO＋INVOICE_SEQ 重複：{group.First().InvoiceNo}／{group.First().Detail.InvoiceSeq}，Excel 列 {string.Join(",", group.Select(row => row.RowNumber))}");
     }
 
-    private static string GetConsistencyValue(AddDiSaImportRow row, string property) =>
-        property switch
-        {
-            AddDiSaExcelColumnMap.Mawb => NormalizeCompare(row.Mawb),
-            AddDiSaExcelColumnMap.Hawb => NormalizeCompare(row.Hawb),
-            AddDiSaExcelColumnMap.Flt => NormalizeCompare(row.Flt),
-            AddDiSaExcelColumnMap.Eta => NormalizeCompare(row.Eta),
-            _ => string.Empty
-        };
-
-    private static string NormalizeCompare(string? value) => (value ?? string.Empty).Trim();
 }
 
 public sealed class AddDiSaImportRow
 {
+    public Dictionary<string, string?> Values { get; init; } = new(StringComparer.OrdinalIgnoreCase);
+
     public int RowNumber { get; init; }
 
     public string InvoiceNo { get; set; } = string.Empty;

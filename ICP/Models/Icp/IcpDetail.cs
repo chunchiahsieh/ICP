@@ -79,6 +79,10 @@ public class IcpDetail : IcpAuditableEntity
     [Column("DELIVERY_LINE_NO")]
     public double? DeliveryLineNo { get; set; }
 
+    [Column("WBS_ELEMENT")]
+    [MaxLength(30)]
+    public string? WbsElement { get; set; }
+
     [Column("ECCN")]
     [MaxLength(10)]
     public string? Eccn { get; set; }

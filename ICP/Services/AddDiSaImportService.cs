@@ -63,29 +63,34 @@ public class AddDiSaImportService
             throw new InvalidOperationException("檔案中沒有可匯入的資料列");
         }
 
-        await ValidateShippersAsync(rows, cancellationToken);
+        await ValidateSettingsAsync(rows, cancellationToken);
 
-        // Content validation (dates/required) already applied in ParseExcel.
-        // Invoice consistency is soft for preview; Save calls ValidateForSaveAsync.
+        // File-level required, format, sequence and consistency checks already ran in ParseExcel.
+        // Existing Invoice conflicts are highlighted in preview and rechecked during Save.
         return rows;
     }
 
-    private async Task ValidateShippersAsync(
-        IReadOnlyList<AddDiSaImportRow> rows,
-        CancellationToken cancellationToken)
+    public async Task ValidateSettingsAsync(IReadOnlyList<AddDiSaImportRow> rows, CancellationToken cancellationToken)
     {
-        var validCodes = await _db.SystemConfigs
-            .AsNoTracking()
-            .Where(config => config.Category == "Shipper"
-                && !config.IsDeleted
-                && config.Key1 != "")
-            .Select(config => config.Key1)
-            .ToListAsync(cancellationToken);
-        var validSet = new HashSet<string>(validCodes, StringComparer.OrdinalIgnoreCase);
-        var errors = rows
-            .Where(row => !validSet.Contains(row.Header.Shipper!))
-            .Select(row => $"第 {row.RowNumber} 列 SHIPPER 代碼 {row.Header.Shipper} 不在 Settings → Shipper 對照表中")
-            .ToList();
+        var categories = AddDiSaImportRules.SettingCategories.Values.Distinct().ToList();
+        var settings = await _db.SystemConfigs.AsNoTracking()
+            .Where(config => !config.IsDeleted && categories.Contains(config.Category))
+            .Select(config => new { config.Category, config.Key1, config.Value1 }).ToListAsync(cancellationToken);
+        var errors = new List<string>();
+        foreach (var (field, category) in AddDiSaImportRules.SettingCategories)
+        {
+            var useDeliveryCustomerCode = string.Equals(field, "DeliveryTo", StringComparison.OrdinalIgnoreCase);
+            var valid = settings.Where(config => config.Category == category)
+                .Select(config => useDeliveryCustomerCode ? config.Value1 : config.Key1)
+                .Where(value => !string.IsNullOrWhiteSpace(value))
+                .Select(value => value!.Trim()).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            foreach (var row in rows)
+            {
+                var value = row.Values.GetValueOrDefault(field);
+                if (!string.IsNullOrWhiteSpace(value) && !valid.Contains(value))
+                    errors.Add($"第 {row.RowNumber} 列 {AddDiSaImportRules.ExcelName(field)}「{value}」不存在於 Settings → {category} 的 {(useDeliveryCustomerCode ? "Customer Code" : "Key")}");
+            }
+        }
         AddDiSaImportRules.ThrowIfErrors(errors);
     }
 
@@ -112,6 +117,7 @@ public class AddDiSaImportService
     {
         var errors = new List<string>();
         AddDiSaImportRules.ValidateInvoiceConsistency(rows, errors);
+        AddDiSaImportRules.ValidateDuplicateSequences(rows, errors);
         AddDiSaImportRules.ThrowIfErrors(errors);
         await EnsureNoDuplicateKeysAsync(rows, errors, cancellationToken);
     }
@@ -190,9 +196,12 @@ public class AddDiSaImportService
             });
         }
 
-        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await _db.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
         try
         {
+            // Recheck while holding serializable range locks so concurrent uploads cannot
+            // introduce the same Invoice under a different optional TET_PO.
+            await ValidateForSaveAsync(rows, cancellationToken);
             _db.IcpHeaders.AddRange(headers);
             _db.IcpDetails.AddRange(details);
             _db.ControlledGoodsNoticeSchedules.AddRange(controlledGoodsSchedules);
@@ -228,7 +237,7 @@ public class AddDiSaImportService
         {
             if (existingSet.Contains(key))
             {
-                errors.Add($"InvoiceNo+TetPo 已存在：{key.InvoiceNo} / {key.TetPo}");
+                errors.Add($"INVOICE_NO 已存在：{key.InvoiceNo}");
             }
         }
 
@@ -256,9 +265,9 @@ public class AddDiSaImportService
             .Select(h => new { h.InvoiceNo, h.TetPo })
             .ToListAsync(cancellationToken);
 
+        var existingInvoices = existing.Select(x => x.InvoiceNo).ToHashSet(StringComparer.OrdinalIgnoreCase);
         return new HashSet<(string InvoiceNo, string TetPo)>(
-            existing.Select(x => (x.InvoiceNo, x.TetPo)),
-            new InvoiceTetPoComparer());
+            keys.Where(key => existingInvoices.Contains(key.InvoiceNo)), new InvoiceTetPoComparer());
     }
 
     private static List<AddDiSaImportRow> ParseExcel(Stream stream)
@@ -278,6 +287,8 @@ public class AddDiSaImportService
         }
 
         var table = dataSet.Tables[0];
+        if (table.TableName != "Upload Data")
+            throw new InvalidOperationException("第一個分頁名稱必須為 Upload Data，請使用新版 DISA_Data Upload Template.xlsx");
         if (table.Rows.Count < 2)
         {
             throw new InvalidOperationException("檔案中沒有可匯入的資料列");
@@ -294,10 +305,12 @@ public class AddDiSaImportService
             }
 
             if (!AddDiSaExcelColumnMap.TryResolve(headerText, out var propertyKey))
-            {
-                continue;
-            }
+                throw new InvalidOperationException($"標題列包含不支援的欄位 {headerText}，請使用新版範本");
 
+            if (AddDiSaImportRules.SystemManagedFields.Contains(propertyKey))
+                throw new InvalidOperationException($"上傳範本不應包含系統管理欄位 {headerText}，請使用新版範本");
+            if (columnMap.Values.Contains(propertyKey, StringComparer.OrdinalIgnoreCase))
+                throw new InvalidOperationException($"標題列欄位重複：{headerText}");
             columnMap[i] = propertyKey;
         }
 
@@ -335,30 +348,11 @@ public class AddDiSaImportService
                 }
             }
 
-            var invoiceNo = AddDiSaImportRules.TrimToMax(
-                AddDiSaImportRules.RequireNonEmpty(
-                    GetValue(values, AddDiSaExcelColumnMap.InvoiceNo),
-                    excelRowNumber,
-                    "INVOICE_NO",
-                    errors),
-                AddDiSaImportRules.InvoiceNoMaxLength) ?? string.Empty;
-            var tetPo = AddDiSaImportRules.TrimToMax(
-                AddDiSaImportRules.RequireNonEmpty(
-                    GetValue(values, AddDiSaExcelColumnMap.TetPo),
-                    excelRowNumber,
-                    "TET_PO",
-                    errors),
-                AddDiSaImportRules.TetPoMaxLength) ?? string.Empty;
-            var shipper = AddDiSaImportRules.RequireNonEmpty(
-                GetValue(values, AddDiSaExcelColumnMap.Shipper),
-                excelRowNumber,
-                "SHIPPER",
-                errors);
-
-            if (string.IsNullOrEmpty(invoiceNo) || string.IsNullOrEmpty(tetPo))
-            {
-                continue;
-            }
+            AddDiSaImportRules.ValidateValues(values, excelRowNumber, errors);
+            var invoiceNo = GetValue(values, "InvoiceNo") ?? string.Empty;
+            var tetPo = GetValue(values, "TetPo") ?? string.Empty;
+            var shipper = GetValue(values, "Shipper");
+            if (string.IsNullOrEmpty(invoiceNo)) continue;
 
             var header = BuildHeader(values);
             header.InvoiceNo = invoiceNo;
@@ -371,6 +365,7 @@ public class AddDiSaImportService
 
             rows.Add(new AddDiSaImportRow
             {
+                Values = values,
                 RowNumber = excelRowNumber,
                 InvoiceNo = invoiceNo,
                 TetPo = tetPo,
@@ -383,6 +378,8 @@ public class AddDiSaImportService
             });
         }
 
+        AddDiSaImportRules.ValidateDuplicateSequences(rows, errors);
+        AddDiSaImportRules.ValidateInvoiceConsistency(rows, errors);
         AddDiSaImportRules.ThrowIfErrors(errors);
         return rows;
     }
@@ -390,7 +387,7 @@ public class AddDiSaImportService
     private static IcpHeader BuildHeader(IReadOnlyDictionary<string, string?> values) =>
         new()
         {
-            CreateDate = Trim(values, "CreateDate", 20),
+            CreateDate = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
             SaDate = Trim(values, "SaDate", 10),
             Forwarder = Trim(values, "Forwarder", 50),
             Shipper = Trim(values, "Shipper", IcpHeader.ShipperMaxLength),
@@ -442,7 +439,7 @@ public class AddDiSaImportService
             ShipToParty = Trim(values, "ShipToParty", 100),
             ShipToPartyAddress = Trim(values, "ShipToPartyAddress", 200),
             EmgFlight = Trim(values, "EmgFlight", 5),
-            WbsElement = Trim(values, "WbsElement", 30),
+
             Deposit = Trim(values, "Deposit", IcpHeader.DepositMaxLength),
             SapRemarks = Trim(values, "SapRemarks", 1000),
             Notes = Trim(values, "Notes", 1000),
@@ -473,6 +470,7 @@ public class AddDiSaImportService
             GrossWeight = ParseDecimal(GetValue(values, "GrossWeight")),
             NetWeightOfTheItem = ParseDouble(GetValue(values, "NetWeightOfTheItem")),
             DeliveryLineNo = ParseDouble(GetValue(values, "DeliveryLineNo")),
+            WbsElement = Trim(values, "WbsElement", 30),
             Eccn = Trim(values, "Eccn", 10),
             ElFlag = Trim(values, "ElFlag", 5),
             SdsFlag = Trim(values, "SdsFlag", 5),
@@ -571,6 +569,7 @@ public class AddDiSaImportService
             GrossWeight = source.GrossWeight,
             NetWeightOfTheItem = source.NetWeightOfTheItem,
             DeliveryLineNo = source.DeliveryLineNo,
+            WbsElement = source.WbsElement,
             Eccn = source.Eccn,
             ElFlag = source.ElFlag,
             SdsFlag = source.SdsFlag,

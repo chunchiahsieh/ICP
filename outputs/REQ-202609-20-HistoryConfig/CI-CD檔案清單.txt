@@ -1,0 +1,22 @@
+Forwarder Upload History Config 與欄位過濾改修
+本次新增/更新共10個檔案；需先包含REQ-202609-20前次程式
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Program.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\ICP.csproj
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Controllers\ForwarderDataUploadController.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\PermissionRequestResolver.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ForwarderHistoryTableMetadataProvider.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\forwarder-upload-history-table-fields.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\forwarder-upload-history-table-fields.example.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\FORWARDER\ForwarderDataUpload\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\FORWARDER\ForwarderDataUpload\View.History.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\wwwroot\js\forwarder-upload-history.js
+
+設定方式：list.fields 的順序即畫面順序。
+fieldName：FileName、ImportedTime、ImportedBy、RowCount、Status、DownloadOriginal。
+visible：是否顯示；searchable：是否允許篩選；filterType：Text、Checkbox、DateRange（ImportedTime）或Date（ImportedTime）。
+預設排序由initialSort.fieldName和direction設定。
+Status的篩選值是Imported；DownloadOriginal的篩選值是Has/None；ImportedBy空白值__BLANK__。
+各欄條件AND、同一Checkbox多選值OR；匯入時間區間包含迄日全天。
+沿用ProDataTables及共用文字/日期/Checkbox篩選、重設與分頁，需帶上現有pro-table-filters.js/css。
+不需SQL；建置重新啟動ICP，瀏覽器Ctrl+F5。

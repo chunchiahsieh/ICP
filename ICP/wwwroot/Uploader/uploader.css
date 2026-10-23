@@ -30,6 +30,12 @@
   z-index: 1;
 }
 
+.uploader-error-message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
 .uploader-file-input {
   position: absolute;
   width: 1px;

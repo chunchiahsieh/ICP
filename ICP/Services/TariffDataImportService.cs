@@ -82,7 +82,14 @@ public class TariffDataImportService
         var allowedShippers = new HashSet<string>(
             shipperValues.Select(TariffCustomsImportRules.NormalizeCellText).Where(x => x.Length > 0),
             StringComparer.Ordinal);
-        var rows = ParseCustomsExcel(storedFilePath, importFileName, allowedShippers);
+        var airSeaValues = await _db.SystemConfigs.AsNoTracking()
+            .Where(x => x.Category == "AirSea" && !x.IsDeleted && x.Value1 != null)
+            .Select(x => x.Value1!)
+            .ToListAsync(cancellationToken);
+        var allowedAirSea = new HashSet<string>(
+            airSeaValues.Select(TariffCustomsImportRules.NormalizeCellText).Where(x => x.Length > 0),
+            StringComparer.Ordinal);
+        var rows = ParseCustomsExcel(storedFilePath, importFileName, allowedShippers, allowedAirSea);
         if (rows.Count == 0)
         {
             throw new InvalidOperationException("檔案中沒有可匯入的資料列");
@@ -201,9 +208,12 @@ public class TariffDataImportService
             var stem = TariffAttachmentHelper.SanitizeHawbFileStem(row.HAWB);
             if (string.IsNullOrWhiteSpace(stem)) continue;
 
-            var pdfName = stem + ".pdf";
-            if (System.IO.File.Exists(Path.Combine(storageRoot, TariffAttachmentHelper.DeclarationPdfFolder, pdfName)))
-                row.DeclarationFile = $"{TariffAttachmentHelper.DeclarationPdfFolder}/{pdfName}";
+            var declaration = TariffAttachmentHelper.FindDeclarationPdfPath(storageRoot, row);
+            if (declaration is not null)
+                row.DeclarationFile = $"{TariffAttachmentHelper.DeclarationPdfFolder}/{Path.GetFileName(declaration)}";
+            var importDoc = TariffAttachmentHelper.FindImportDocPath(storageRoot, row);
+            if (importDoc is not null)
+                row.ImportDoc = $"{TariffAttachmentHelper.ImportDocFolder}/{Path.GetFileName(importDoc)}";
 
             foreach (var extension in new[] { ".xlsx", ".xls" })
             {
@@ -215,7 +225,7 @@ public class TariffDataImportService
         }
     }
 
-    private static List<TariffData> ParseCustomsExcel(string storedFilePath, string importFileName, IReadOnlySet<string> allowedShippers)
+    private static List<TariffData> ParseCustomsExcel(string storedFilePath, string importFileName, IReadOnlySet<string> allowedShippers, IReadOnlySet<string> allowedAirSea)
     {
         var extension = Path.GetExtension(storedFilePath);
         if (!extension.Equals(".xlsx", StringComparison.OrdinalIgnoreCase)
@@ -270,6 +280,7 @@ public class TariffDataImportService
                 rowNumber,
                 errors);
             TariffCustomsImportRules.ValidateShipper(row.Shipper, allowedShippers, rowNumber, errors);
+            TariffCustomsImportRules.ValidateAirSea(row.AirSea, allowedAirSea, rowNumber, errors);
             rows.Add(row);
         }
 

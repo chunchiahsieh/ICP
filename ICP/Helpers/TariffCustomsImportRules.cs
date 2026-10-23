@@ -44,7 +44,6 @@ public static class TariffCustomsImportRules
         TariffExcelColumnMap.TermsOfTrade,
         TariffExcelColumnMap.Currency,
         TariffExcelColumnMap.ExchangeRate,
-        TariffExcelColumnMap.CIFValue,
         TariffExcelColumnMap.Broker,
         TariffExcelColumnMap.AirSea,
         TariffExcelColumnMap.DeclarationAmountTWD
@@ -113,6 +112,14 @@ public static class TariffCustomsImportRules
         {
             AddError(errors, $"第 {rowNumber} 列 Shipper「{shipper}」不存在於 Setting Shipper 的 Value");
         }
+    }
+
+    public static void ValidateAirSea(string? airSea, IReadOnlySet<string> allowedValues, int rowNumber, List<string> errors)
+    {
+        // Required-value validation is handled by MapRow.
+        var normalized = NormalizeCellText(airSea);
+        if (normalized.Length > 0 && !allowedValues.Contains(normalized))
+            AddError(errors, $"第 {rowNumber} 列 Air/Sea「{airSea}」不存在於 Setting Air/Sea 的 Value");
     }
 
     public static string ResolveHawb(string? hawb, string mawb) =>
@@ -188,10 +195,10 @@ public static class TariffCustomsImportRules
         RequireCellValue(values, columnMap, TariffExcelColumnMap.TermsOfTrade, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.Currency, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.ExchangeRate, rowNumber, errors);
-        RequireCellValue(values, columnMap, TariffExcelColumnMap.CIFValue, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.AirSea, rowNumber, errors);
         RequireCellValue(values, columnMap, TariffExcelColumnMap.DeclarationAmountTWD, rowNumber, errors);
 
+        _ = ParseRequiredDecimal(values, columnMap, TariffExcelColumnMap.DeclarationAmountTWD, rowNumber, errors);
         var unitValue = ParseRequiredDecimal(values, columnMap, TariffExcelColumnMap.UnitValue, rowNumber, errors);
         var quantity = ParseRequiredDecimal(values, columnMap, TariffExcelColumnMap.Quantity, rowNumber, errors);
         var exchangeRate = ParseRequiredDecimal(values, columnMap, TariffExcelColumnMap.ExchangeRate, rowNumber, errors);
@@ -242,7 +249,7 @@ public static class TariffCustomsImportRules
             TermsOfTrade = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.TermsOfTrade), TariffExcelColumnMap.TermsOfTrade, rowNumber, errors)!,
             Currency = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.Currency), TariffExcelColumnMap.Currency, rowNumber, errors)!,
             ExchangeRate = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.ExchangeRate), TariffExcelColumnMap.ExchangeRate, rowNumber, errors)!,
-            CIFValue = ValidateAndTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.CIFValue), TariffExcelColumnMap.CIFValue, rowNumber, errors)!,
+            CIFValue = ValidateOptionalTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.CIFValue), TariffExcelColumnMap.CIFValue, rowNumber, errors),
             FreightCharge = ValidateOptionalTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.FreightCharge), TariffExcelColumnMap.FreightCharge, rowNumber, errors),
             TotalPieces = ValidateOptionalTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.TotalPieces), TariffExcelColumnMap.TotalPieces, rowNumber, errors),
             GrossWeightKg = ValidateOptionalTrim(GetCellValue(values, columnMap, TariffExcelColumnMap.GrossWeightKg), TariffExcelColumnMap.GrossWeightKg, rowNumber, errors),

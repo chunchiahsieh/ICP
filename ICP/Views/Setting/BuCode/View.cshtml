@@ -1,4 +1,4 @@
-﻿@using System.Text.Json
+@using System.Text.Json
 @{
     ViewData["Title"] = Localizer["Setting.BuCode.Title"];
 }
@@ -12,6 +12,7 @@
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
         <h4 class="mb-0">@Localizer["Setting.BuCode.Title"]</h4>
         <div class="d-flex gap-2">
+            @await Html.PartialAsync("~/Views/Setting/Shared/_ExcelActions.cshtml", "BuCode")
             <button type="button"
                     class="btn btn-outline-danger btn-sm"
                     id="btnBatchDelete"

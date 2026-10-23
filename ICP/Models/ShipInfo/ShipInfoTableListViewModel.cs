@@ -6,6 +6,8 @@ public class ShipInfoTableListViewModel
 
     public string TableKind { get; set; } = "Header";
 
+    public bool ShowHeaderSelection { get; init; } = true;
+
     public string Culture { get; set; } = "zh-TW";
 
     public string? SelectedHeaderKey { get; set; }

@@ -80,6 +80,13 @@ public class ForwarderDataImportService
 
         var consistencyErrors = new List<string>();
         ForwarderImportRules.ValidatePerInvoiceFieldConsistency(rows, consistencyErrors);
+        var brokerKeys = (await _db.SystemConfigs.AsNoTracking()
+            .Where(setting => setting.Category == "Broker" && !setting.IsDeleted)
+            .Select(setting => setting.Key1).ToListAsync(cancellationToken))
+            .Select(key => key.Trim()).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var row in rows)
+            if (!brokerKeys.Contains(row.Cb ?? ""))
+                consistencyErrors.Add($"第 {row.UploadRowNumber} 列 C/B「{row.Cb}」不存在於 Settings → Broker 的 Key。");
         ThrowIfErrors(consistencyErrors);
 
         return rows;
@@ -267,6 +274,7 @@ public class ForwarderDataImportService
         using var reader = ExcelReaderFactory.CreateReader(stream);
         var dataSet = reader.AsDataSet(new ExcelDataSetConfiguration
         {
+            FilterSheet = (_, index) => index == 0,
             ConfigureDataTable = _ => new ExcelDataTableConfiguration
             {
                 UseHeaderRow = true
@@ -279,6 +287,8 @@ public class ForwarderDataImportService
         }
 
         var table = dataSet.Tables[0];
+        if (!string.Equals(table.TableName, "Upload Data", StringComparison.Ordinal))
+            throw new InvalidOperationException("第一個分頁名稱必須為 Upload Data。");
         var errors = new List<string>();
         var columnMap = BuildColumnMapFromDataTable(table, errors);
         ThrowIfErrors(errors);
@@ -359,14 +369,11 @@ public class ForwarderDataImportService
                 continue;
             }
 
-            columnMap[propertyName] = i;
+            if (!columnMap.TryAdd(propertyName, i)) errors.Add($"標題列重複欄位：{headers[i]}");
         }
 
-        if (!columnMap.ContainsKey(ForwarderExcelColumnMap.Type)
-            || !columnMap.ContainsKey(ForwarderExcelColumnMap.InvoiceNo))
-        {
-            errors.Add("標題列必須包含 Type 與 InvoiceNo 欄位");
-        }
+        foreach (var field in ForwarderImportRules.RequiredFields)
+            if (!columnMap.ContainsKey(field.Key)) errors.Add($"標題列缺少必填欄位 {field.Value}。");
 
         return columnMap;
     }
@@ -388,7 +395,9 @@ public class ForwarderDataImportService
         for (var i = 0; i < columnCount; i++)
         {
             var raw = dataRow[i];
-            values.Add(raw == DBNull.Value ? string.Empty : FormatCellValue(raw));
+            var isDate = ForwarderExcelColumnMap.TryResolveProperty(dataRow.Table.Columns[i].ColumnName, out var property)
+                && property is "ConfirmedCustomDate" or "Etd" or "Eta";
+            values.Add(raw == DBNull.Value ? string.Empty : FormatCellValue(raw, isDate));
         }
 
         return values;
@@ -405,9 +414,16 @@ public class ForwarderDataImportService
         var type = GetCellValue(values, columnMap, ForwarderExcelColumnMap.Type);
         var invoiceNo = GetCellValue(values, columnMap, ForwarderExcelColumnMap.InvoiceNo);
 
-        if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(invoiceNo))
+        foreach (var field in ForwarderImportRules.RequiredFields)
+            if (string.IsNullOrWhiteSpace(GetCellValue(values, columnMap, field.Key)))
+                errors.Add($"第 {rowNumber} 列 {field.Value} 為必填欄位。");
+        foreach (var field in columnMap.Keys)
         {
-            errors.Add($"第 {rowNumber} 列缺少必填欄位 Type 或 InvoiceNo");
+            var property = typeof(ForwarderDataUpload).GetProperty(field);
+            var length = property?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.MaxLengthAttribute), false)
+                .Cast<System.ComponentModel.DataAnnotations.MaxLengthAttribute>().FirstOrDefault()?.Length;
+            if (length.HasValue && GetCellValue(values, columnMap, field)?.Length > length.Value)
+                errors.Add($"第 {rowNumber} 列 {field} 不可超過 {length.Value} 個字元。");
         }
 
         decimal? quantity = ParseDecimalValue(
@@ -418,6 +434,7 @@ public class ForwarderDataImportService
 
         return new ForwarderDataUpload
         {
+            UploadRowNumber = rowNumber,
             Type = type ?? string.Empty,
             InvoiceNo = invoiceNo ?? string.Empty,
             CustomerReference = TrimToNull(GetCellValue(values, columnMap, ForwarderExcelColumnMap.CustomerReference), 100),
@@ -482,25 +499,12 @@ public class ForwarderDataImportService
             return null;
         }
 
-        if (DateTime.TryParse(text, CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsed)
-            || DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsed))
+        if (DateTime.TryParseExact(text, ["yyyy/MM/dd", "yyyy-MM-dd"], CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
         {
             return parsed.Date;
         }
 
-        if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var oaDate)
-            && oaDate is > 0 and < 100000)
-        {
-            try
-            {
-                return DateTime.FromOADate(oaDate).Date;
-            }
-            catch (ArgumentException)
-            {
-            }
-        }
-
-        errors.Add($"第 {rowNumber} 列 {fieldName} 日期格式不正確");
+        errors.Add($"第 {rowNumber} 列 {fieldName} 日期格式不正確，請使用 yyyy-MM-dd 或 yyyy/MM/dd。");
         return null;
     }
 
@@ -523,7 +527,7 @@ public class ForwarderDataImportService
     private static string NormalizeCellText(string? value) =>
         string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
 
-    private static string FormatCellValue(object? value)
+    private static string FormatCellValue(object? value, bool isDate = false)
     {
         if (value is null or DBNull)
         {
@@ -535,7 +539,7 @@ public class ForwarderDataImportService
             return dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
 
-        if (value is double number && number is > 0 and < 100000)
+        if (isDate && value is double number && number is > 0 and < 100000)
         {
             try
             {
@@ -546,7 +550,7 @@ public class ForwarderDataImportService
             }
         }
 
-        return NormalizeCellText(value.ToString());
+        return NormalizeCellText(Convert.ToString(value, CultureInfo.InvariantCulture));
     }
 
     private static string? TrimToNull(string? value, int? maxLength)
@@ -576,7 +580,7 @@ public class ForwarderDataImportService
     {
         if (errors.Count > 0)
         {
-            throw new InvalidOperationException(string.Join("；", errors));
+            throw new InvalidOperationException(string.Join(Environment.NewLine, errors.Take(30)));
         }
     }
 

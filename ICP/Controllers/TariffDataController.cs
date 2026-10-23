@@ -21,10 +21,12 @@ public class TariffDataController : Controller
     private const string TemplateDownloadFileName = "CustomsDataUploadTemplate.xlsx";
 
     private static readonly HashSet<string> ExcelExtensions = new(StringComparer.OrdinalIgnoreCase) { ".xlsx", ".xls" };
-    private static readonly HashSet<string> PdfExtensions = new(StringComparer.OrdinalIgnoreCase) { ".pdf" };
+    private static readonly HashSet<string> PdfExtensions = new(StringComparer.OrdinalIgnoreCase) { ".pdf", ".tif" };
 
     private const string PdfAttachmentType = "pdf";
     private const string CostAttachmentType = "cost";
+    private const string ImportDocAttachmentType = "import-doc";
+    private static readonly HashSet<string> ImportDocExtensions = new(StringComparer.OrdinalIgnoreCase) { ".pdf", ".xls", ".xlsx" };
 
     private readonly ApplicationDbContext _db;
     private readonly PageDataScopeService _scope;
@@ -425,6 +427,32 @@ public class TariffDataController : Controller
         CancellationToken cancellationToken = default) =>
         UploadHawbAttachmentAsync(file, CostAttachmentType, cancellationToken);
 
+    [HttpPost]
+    [RequestSizeLimit(57_671_680)]
+    public Task<IActionResult> UploadImportDoc(IFormFile? file, CancellationToken cancellationToken = default) =>
+        UploadHawbAttachmentAsync(file, ImportDocAttachmentType, cancellationToken);
+
+    private static HashSet<string> GetAttachmentExtensions(string kind) => kind switch
+    {
+        PdfAttachmentType => PdfExtensions,
+        ImportDocAttachmentType => ImportDocExtensions,
+        _ => ExcelExtensions
+    };
+
+    private static string GetAttachmentFolder(string kind) => kind switch
+    {
+        PdfAttachmentType => TariffAttachmentHelper.DeclarationPdfFolder,
+        ImportDocAttachmentType => TariffAttachmentHelper.ImportDocFolder,
+        _ => TariffAttachmentHelper.CostFolder
+    };
+
+    private static string? FindAttachmentPath(string root, TariffData row, string kind) => kind switch
+    {
+        PdfAttachmentType => TariffAttachmentHelper.FindDeclarationPdfPath(root, row),
+        ImportDocAttachmentType => TariffAttachmentHelper.FindImportDocPath(root, row),
+        _ => TariffAttachmentHelper.FindCostFilePath(root, row)
+    };
+
     private async Task<IActionResult> UploadHawbAttachmentAsync(
         IFormFile? file,
         string kind,
@@ -442,7 +470,7 @@ public class TariffDataController : Controller
 
         var originalName = Path.GetFileName(file.FileName);
         var extension = Path.GetExtension(originalName);
-        var allowed = kind == PdfAttachmentType ? PdfExtensions : ExcelExtensions;
+        var allowed = GetAttachmentExtensions(kind);
         if (string.IsNullOrWhiteSpace(originalName) || !allowed.Contains(extension))
         {
             return Json(new { success = false, message = _localizer["Broker.TariffData.InvalidFileType"].Value });
@@ -459,17 +487,13 @@ public class TariffDataController : Controller
             .ToListAsync(cancellationToken);
         if (matchingRows.Count == 0)
             return Json(new { success = false, message = _localizer["Broker.TariffData.HawbNotFound", hawb].Value });
-        var subFolder = kind == PdfAttachmentType
-            ? TariffAttachmentHelper.DeclarationPdfFolder
-            : TariffAttachmentHelper.CostFolder;
+        var subFolder = GetAttachmentFolder(kind);
         var uploadDirectory = ResolveStorageDirectory(subFolder);
         Directory.CreateDirectory(uploadDirectory);
         var storedName = TariffAttachmentHelper.SanitizeHawbFileStem(hawb) + extension.ToLowerInvariant();
         var targetPath = Path.GetFullPath(Path.Combine(uploadDirectory, storedName));
         var storageRoot = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options);
-        var existingPath = kind == PdfAttachmentType
-            ? TariffAttachmentHelper.FindDeclarationPdfPath(storageRoot, matchingRows[0])
-            : TariffAttachmentHelper.FindCostFilePath(storageRoot, matchingRows[0]);
+        var existingPath = FindAttachmentPath(storageRoot, matchingRows[0], kind);
         string? versionPath = null;
         try
         {
@@ -489,6 +513,10 @@ public class TariffDataController : Controller
                 var relativePath = $"{TariffAttachmentHelper.DeclarationPdfFolder}/{storedName}";
                 foreach (var row in matchingRows) row.DeclarationFile = relativePath;
             }
+            else if (kind == ImportDocAttachmentType)
+            {
+                foreach (var row in matchingRows) row.ImportDoc = $"{TariffAttachmentHelper.ImportDocFolder}/{storedName}";
+            }
             else
             {
                 foreach (var row in matchingRows) row.Cost = storedName;
@@ -506,7 +534,7 @@ public class TariffDataController : Controller
 
         var successKey = kind == PdfAttachmentType
             ? "Broker.TariffData.UploadDeclarationPdfSuccess"
-            : "Broker.TariffData.UploadCostSuccess";
+            : kind == ImportDocAttachmentType ? "Broker.TariffData.UploadImportDocSuccess" : "Broker.TariffData.UploadCostSuccess";
         return Json(new { success = true, message = string.Format(_localizer[successKey].Value, storedName), filePath = targetPath, hawb });
     }
 
@@ -591,6 +619,7 @@ public class TariffDataController : Controller
                     {
                         if (resolved.Value.Kind == PdfAttachmentType)
                             row.DeclarationFile = $"{TariffAttachmentHelper.DeclarationPdfFolder}/{currentName}";
+                        else if (resolved.Value.Kind == ImportDocAttachmentType) row.ImportDoc = $"{TariffAttachmentHelper.ImportDocFolder}/{currentName}";
                         else row.Cost = currentName;
                     }
                 }
@@ -599,6 +628,7 @@ public class TariffDataController : Controller
                     foreach (var row in matchingRows)
                     {
                         if (resolved.Value.Kind == PdfAttachmentType) row.DeclarationFile = null;
+                        else if (resolved.Value.Kind == ImportDocAttachmentType) row.ImportDoc = null;
                         else row.Cost = null;
                     }
                 }
@@ -650,6 +680,13 @@ public class TariffDataController : Controller
         if (string.Equals(fieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase))
         {
             return TariffAttachmentHelper.FindDeclarationPdfPath(storageRoot, item) is null
+                ? _localizer["Broker.TariffData.Export.No"].Value
+                : _localizer["Broker.TariffData.Export.Yes"].Value;
+        }
+
+        if (string.Equals(fieldName, "ImportDoc", StringComparison.OrdinalIgnoreCase))
+        {
+            return TariffAttachmentHelper.FindImportDocPath(storageRoot, item) is null
                 ? _localizer["Broker.TariffData.Export.No"].Value
                 : _localizer["Broker.TariffData.Export.Yes"].Value;
         }
@@ -718,6 +755,14 @@ public class TariffDataController : Controller
                 dbRows.Select(r => (r.HAWB, (string?)r.DeclarationFile)));
 
             query = TariffAttachmentHelper.ApplyPresenceFilter(query, pdfValues, hawbsWithPdf);
+        }
+
+        if (TryGetAttachmentCheckboxValues(criteria, fields, "ImportDoc", out var importDocValues))
+        {
+            var rows = await _scope.Apply(_db.TariffDataRecords).AsNoTracking()
+                .Where(row => row.ImportDoc != null && row.ImportDoc != "").ToListAsync(cancellationToken);
+            var hawbs = TariffAttachmentHelper.CollectHawbsWithImportDoc(storageRoot, rows);
+            query = TariffAttachmentHelper.ApplyPresenceFilter(query, importDocValues, hawbs);
         }
 
         if (TryGetAttachmentCheckboxValues(criteria, fields, "CostFile", out var costValues))
@@ -822,6 +867,12 @@ public class TariffDataController : Controller
             "PortOfDeparture" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.PortOfDeparture), search, cancellationToken),
             "FlightNo" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.FlightNo), search, cancellationToken),
             "Shipper" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Shipper), search, cancellationToken),
+            "COO" => await SearchFilterHelper.DistinctNonEmptyAsync(
+                _db.SystemConfigs.AsNoTracking()
+                    .Where(e => e.Category == "Country of Origin" && !e.IsDeleted)
+                    .Select(e => e.Key1), search, cancellationToken),
+            "TermsOfTrade" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.TermsOfTrade), search, cancellationToken),
+            "Currency" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Currency), search, cancellationToken),
             "Broker" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Broker), search, cancellationToken),
             "AirSea" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.AirSea), search, cancellationToken),
             "CreateDate" => await SearchFilterHelper.DistinctDateOnlyAsync(query.Select(e => e.CreateDate), search, cancellationToken),
@@ -834,7 +885,7 @@ public class TariffDataController : Controller
         var normalizedHawb = hawb?.Trim();
         var normalizedKind = kind?.Trim().ToLowerInvariant();
         return string.IsNullOrWhiteSpace(normalizedHawb)
-            || normalizedKind is not (PdfAttachmentType or CostAttachmentType)
+            || normalizedKind is not (PdfAttachmentType or CostAttachmentType or ImportDocAttachmentType)
             ? null
             : (normalizedHawb, normalizedKind);
     }
@@ -854,16 +905,12 @@ public class TariffDataController : Controller
             .FirstOrDefaultAsync(item => item.HAWB == normalized.Value.Hawb, cancellationToken);
         if (row is null) return [];
         var root = TariffAttachmentHelper.ResolveStorageRoot(_environment, _options);
-        var currentPath = normalized.Value.Kind == PdfAttachmentType
-            ? TariffAttachmentHelper.FindDeclarationPdfPath(root, row)
-            : TariffAttachmentHelper.FindCostFilePath(root, row);
-        var folder = ResolveStorageDirectory(normalized.Value.Kind == PdfAttachmentType
-            ? TariffAttachmentHelper.DeclarationPdfFolder
-            : TariffAttachmentHelper.CostFolder);
+        var currentPath = FindAttachmentPath(root, row, normalized.Value.Kind);
+        var folder = ResolveStorageDirectory(GetAttachmentFolder(normalized.Value.Kind));
         var stem = TariffAttachmentHelper.SanitizeHawbFileStem(normalized.Value.Hawb);
         var versions = Directory.Exists(folder)
             ? Directory.EnumerateFiles(folder, $"{stem}__v*.*")
-                .Where(path => (normalized.Value.Kind == PdfAttachmentType ? PdfExtensions : ExcelExtensions).Contains(Path.GetExtension(path)))
+                .Where(path => GetAttachmentExtensions(normalized.Value.Kind).Contains(Path.GetExtension(path)))
                 .Select(path => (Info: new FileInfo(path), IsCurrent: false))
             : [];
         var result = versions.OrderByDescending(item => item.Info.LastWriteTimeUtc).ToList();
@@ -898,6 +945,7 @@ public class TariffDataController : Controller
         extension.ToLowerInvariant() switch
         {
             ".pdf" => "application/pdf",
+            ".tif" => "image/tiff",
             ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             ".xls" => "application/vnd.ms-excel",
             _ => "application/octet-stream"

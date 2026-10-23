@@ -817,7 +817,7 @@
     <value>システムに既存のため取込不可</value>
   </data>
   <data name="Function.AddDiSa.CanUpload.InvoiceInconsistent" xml:space="preserve">
-    <value>Invoice の MAWB/HAWB/FLT/ETA が不一致</value>
+    <value>Invoice の共通項目が不一致</value>
   </data>
   <data name="Function.AddDiSa.CannotSaveMessage" xml:space="preserve">
     <value>保存できません。「取込可否」の問題を修正して再アップロードしてください</value>
@@ -1169,7 +1169,7 @@
     <value>番号</value>
   </data>
   <data name="Broker.TariffData.Column.PDF" xml:space="preserve">
-    <value>PDF</value>
+    <value>Declaration PDF</value>
   </data>
   <data name="Broker.TariffData.Column.Cost" xml:space="preserve">
     <value>Cost</value>
@@ -2631,4 +2631,24 @@
   <data name="NotificationMail.ControlledGoodsAlreadySent" xml:space="preserve"><value>管制品發信 Flag 為 Y；改為 N 並儲存後可再次發信。</value></data>
   <data name="NotificationMail.ScheduleDate" xml:space="preserve"><value>排程日期</value></data>
   <data name="NotificationMail.DepositPreview" xml:space="preserve"><value>郵件預覽</value></data>
+  <data name="ShipInfo.Detail.Field.WbsElement" xml:space="preserve"><value>WBS Element</value></data>
+  <data name="Broker.TariffData.Column.ImportDoc" xml:space="preserve"><value>Import Doc</value></data>
+  <data name="Broker.TariffData.UploadImportDocTitle" xml:space="preserve"><value>Upload Import Doc</value></data>
+  <data name="Broker.TariffData.UploadImportDocButton" xml:space="preserve"><value>Upload Import Doc</value></data>
+  <data name="Broker.TariffData.UploadImportDocSuccess" xml:space="preserve"><value>Import Doc uploaded: {0}</value></data>
+  <data name="Setting.Excel.Download" xml:space="preserve"><value>Excel ダウンロード</value></data>
+  <data name="Setting.Excel.Upload" xml:space="preserve"><value>Excel アップロード</value></data>
+  <data name="Setting.Excel.ReplaceConfirm" xml:space="preserve"><value>この設定ページの全データを置き換えます。全行の検証後に置き換えます。続行しますか？</value></data>
+  <data name="Setting.Excel.Failed" xml:space="preserve"><value>インポートに失敗しました。元のデータは保持されています。</value></data>
+  <data name="Forwarder.Upload.CheckTab" xml:space="preserve"><value>アップロード検証</value></data>
+  <data name="Forwarder.Upload.HistoryTab" xml:space="preserve"><value>アップロード履歴</value></data>
+  <data name="Forwarder.Upload.DownloadOriginal" xml:space="preserve"><value>元ファイルをダウンロード</value></data>
+  <data name="Forwarder.Upload.MissingFile" xml:space="preserve"><value>ファイルが見つかりません</value></data>
+  <data name="Forwarder.Upload.Imported" xml:space="preserve"><value>取込済み</value></data>
+  <data name="Forwarder.Upload.Refresh" xml:space="preserve"><value>更新</value></data>
+  <data name="Forwarder.Upload.FileName" xml:space="preserve"><value>ファイル名</value></data>
+  <data name="Forwarder.Upload.ImportedTime" xml:space="preserve"><value>取込日時</value></data>
+  <data name="Forwarder.Upload.ImportedBy" xml:space="preserve"><value>アップロード者</value></data>
+  <data name="Forwarder.Upload.RowCount" xml:space="preserve"><value>件数</value></data>
+  <data name="Forwarder.Upload.Status" xml:space="preserve"><value>状態</value></data>
 </root>

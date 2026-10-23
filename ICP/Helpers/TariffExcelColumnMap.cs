@@ -164,7 +164,6 @@ public static class TariffExcelColumnMap
         TermsOfTrade,
         Currency,
         ExchangeRate,
-        CIFValue,
         Broker,
         AirSea,
         DeclarationAmountTWD

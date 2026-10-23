@@ -1,0 +1,39 @@
+Settings 每頁獨立 Excel 下載與上傳取代
+原始碼與資源共 23 個檔案
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Controllers\Setting\SystemConfigControllerBase.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\SettingsExcelHelper.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\PermissionRequestResolver.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\Shared\_ExcelActions.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\wwwroot\js\pro-system-config.js
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.zh-TW.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.en.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.ja.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\AirSea\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\Broker\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\BuCode\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\CountryOfOrigin\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\Customized\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\DefaultDeliveryWh\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\DeliveryToList\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\EtaDelDateTable\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\InvoiceType\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\OrderPriority\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\OrderType\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\PickUpLocation\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\Shipper\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Setting\WhCode\View.cshtml
+
+行為：
+1. 每頁獨立下載全部有效資料，不受畫面目前篩選條件影響。
+2. Excel .xlsx；首列固定 Category、FunctionCode、Key1、Key2、Value1～Value6；先下載該頁 Excel 作為上傳範本。
+3. 上傳只取代該頁可管理範圍，不影響其他 Settings 分類；Customized 只允許自身範圍。
+4. 全檔通過格式、必填、長度、分類、資料範圍與重複鍵檢核後，才以 Serializable 交易軟刪舊資料並新增資料。
+5. 空檔不允許清空資料；匯入失敗會回復舊資料；舊資料保留 IsDeleted 歷史。
+6. 下載權限沿用該頁 View；上傳權限沿用該頁 Create；上傳有防偽權杖檢核。
+7. 支援上限50 MB及50000列；不支援xls、公式或改動欄位順序。
+
+部署：更新上述檔案，建置並重新啟動 ICP，瀏覽器 Ctrl+F5。
+無資料庫結構變更，不需執行 SQL；未操作正式資料庫。
+tests/SettingsExcelChecks 為測試程式，不需部署至主機。

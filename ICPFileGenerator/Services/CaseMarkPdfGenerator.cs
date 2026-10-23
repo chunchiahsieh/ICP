@@ -73,13 +73,13 @@ public static class CaseMarkPdfGenerator
                     {
                         page.Size(PageSizes.A4.Landscape());
                         page.Margin(40);
-                        page.DefaultTextStyle(x => x.FontSize(20).FontFamily(Fonts.Arial));
-                        page.Content().Column(col =>
+                        page.DefaultTextStyle(x => x.FontSize(30).FontFamily(Fonts.Arial));
+                        page.Content().ScaleToFit().Column(col =>
                         {
                             col.Item().Border(1).Padding(10).Column(frame =>
                             {
-                                frame.Spacing(8);
-                                frame.Item().AlignCenter().Text("**** CASE MARK ****").Bold().FontSize(26);
+                                frame.Spacing(10);
+                                frame.Item().AlignLeft().Text("**** CASE MARK ****").Bold().FontSize(36);
 
                                 if (isNoCharge)
                                 {
@@ -90,7 +90,7 @@ public static class CaseMarkPdfGenerator
                                     BuildCharge(frame, carton.Row);
                                 }
                             });
-                            col.Item().AlignRight().Text($"Made in {carton.Origins}").Bold().FontSize(20);
+                            col.Item().AlignLeft().Text($"Made in {carton.Origins}").Bold().FontSize(28);
                         });
                     });
                 }
@@ -107,7 +107,7 @@ public static class CaseMarkPdfGenerator
         col.Item().Text(row.CompanyNameBf);
         col.Item().Text($"PORT OF DISCHARGE : {row.PortOfDischargeAu}");
         col.Item().Text($"REF : {row.ColumnK}");
-        col.Item().Text($"INV NO. : {row.InvoiceNo}").Bold().FontSize(30);
+        col.Item().Text($"INV NO. : {row.InvoiceNo}").Bold().FontSize(38);
         col.Item().Text($"FORWARDER : {row.ForwarderBl}");
         col.Item().Text($"C/NO. : {row.CnoDisplay}");
         col.Item().Text($"SIZE(L*W*H) : {row.SizeDisplay}");
@@ -120,7 +120,7 @@ public static class CaseMarkPdfGenerator
         col.Item().Text($"PO NO. : {row.TeaPoE}");
         col.Item().Text($"TET SO NO. : {row.TetSoG}");
         col.Item().Text($"CUST PO NO. : {row.CustPoJ}");
-        col.Item().Text($"INV NO. : {row.InvoiceNo}").Bold().FontSize(26);
+        col.Item().Text($"INV NO. : {row.InvoiceNo}").Bold().FontSize(36);
         col.Item().Text($"FORWARDER : {row.ForwarderBl}");
         col.Item().Text($"C/NO. : {row.CnoDisplay}");
         col.Item().Text($"SIZE(L*W*H) : {row.SizeDisplay}");

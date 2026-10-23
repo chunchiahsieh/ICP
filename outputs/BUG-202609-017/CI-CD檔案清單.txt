@@ -1,0 +1,15 @@
+BUG-202609-017 Mass Data Report CI/CD 原始碼清單（本次 9 個檔案）
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\mass-data-report-table-fields.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\mass-data-report-table-fields.example.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\ShipInfo\ShipInfoTableListViewModel.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ReportMetadataProvider.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ReportDataService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Report\Shared\_ReportShell.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Report\Shared\View.HeaderList.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\wwwroot\js\report-data.js
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\wwwroot\css\report-data.css
+
+本次沿用 BUG-202609-016 多行 Text 篩選元件；若 016 尚未部署，需連同 outputs/BUG-202609-016/CI-CD檔案清單.txt 的原始碼一起提交。
+無資料庫欄位異動，不需執行 SQL。
+tests/MassDataReportChecks 為測試程式，不需部署到主機。

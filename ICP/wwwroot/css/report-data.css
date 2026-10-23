@@ -65,7 +65,7 @@
 }
 
 .report-split-panes > .report-split-pane:first-child .dataTables_wrapper > .row:has(table) {
-    min-height: 0;
+    min-height: var(--protable-body-min-height);
 }
 
 .report-split-panes > .report-split-pane:last-child .dataTables_wrapper > .row:has(table) {
@@ -98,8 +98,8 @@
     display: block;
     flex: 0 0 auto;
     margin: 0;
-    min-height: 0;
-    max-height: 420px;
+    min-height: var(--protable-body-min-height);
+    max-height: max(var(--protable-body-min-height), 420px);
     overflow: auto;
 }
 
@@ -225,4 +225,14 @@
     background: transparent;
     color: #000;
     box-shadow: none;
+}
+
+/* Mass Data Report uses the full available viewport for its single Header table. */
+.report-split-panes.report-header-only > .report-split-pane .dataTables_wrapper > .row:has(table) {
+    max-height: max(var(--protable-body-min-height), calc(100vh - 16rem));
+}
+
+/* Raise an open filter above the other report pane without changing its scroll owner. */
+.report-data-page .report-table-wrap:has(.dropdown-menu.show) {
+    z-index: 1080;
 }

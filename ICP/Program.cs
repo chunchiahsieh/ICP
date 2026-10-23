@@ -123,6 +123,14 @@ builder.Services
     .ValidateOnStart();
 
 
+var forwarderHistoryConfiguration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("Config/forwarder-upload-history-table-fields.json", optional: false, reloadOnChange: true)
+    .Build();
+builder.Services.AddOptions<ForwarderTableFieldsOptions>(ForwarderHistoryTableMetadataProvider.OptionsName)
+    .Bind(forwarderHistoryConfiguration);
+builder.Services.AddSingleton<ForwarderHistoryTableMetadataProvider>();
+
 var tariffTableFieldsConfiguration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("Config/tariff-table-fields.json", optional: false, reloadOnChange: true)

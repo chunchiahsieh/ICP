@@ -14,6 +14,15 @@ public static class TariffTableViewHelper
     public static string ResolveHeaderLabel(TariffTableFieldMetadata field, Func<string, string> localize) =>
         localize(field.HeaderLabelKey);
 
+    public static bool IsNumericField(string fieldName) => fieldName.ToUpperInvariant() switch
+    {
+        "LINENO" or "QUANTITY" or "NETWEIGHTKG" or "UNITVALUE" or "DUTYRATE"
+        or "EXCHANGERATE" or "CIFVALUE" or "FREIGHTCHARGE" or "TOTALPIECES"
+        or "GROSSWEIGHTKG" or "TOTALAMOUNTFOREIGNCURRENCY" or "TOTALAMOUNTTWD"
+        or "DECLARATIONAMOUNTTWD" => true,
+        _ => false
+    };
+
     public static string FormatCellValue(TariffData item, string fieldName)
     {
         if (string.IsNullOrWhiteSpace(fieldName)

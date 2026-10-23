@@ -52,6 +52,9 @@ public class ShipInfoTableFieldEntry
     [JsonPropertyName("filterType")]
     public string? FilterType { get; set; }
 
+    [JsonPropertyName("multiValueText")]
+    public bool? MultiValueText { get; set; }
+
     [JsonPropertyName("labelKey")]
     public string? LabelKey { get; set; }
 

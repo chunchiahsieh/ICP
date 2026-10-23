@@ -18,6 +18,7 @@
             downloadExcel: '@Url.Action("DownloadExcel", controllerName)'
         },
         messages: {
+            blank: @Html.Raw(JsonSerializer.Serialize(Localizer["ShipInfo.Blank"].Value)),
             selectHeaderFirst: @Html.Raw(JsonSerializer.Serialize(Localizer["Report.SelectHeaderFirst"].Value)),
             downloadFailed: @Html.Raw(JsonSerializer.Serialize(Localizer["Report.DownloadFailed"].Value)),
             caseStatus: {

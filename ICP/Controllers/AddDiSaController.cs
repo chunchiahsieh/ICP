@@ -9,7 +9,7 @@ namespace ICP.Controllers;
 public class AddDiSaController : Controller
 {
     private const int MaxSizeMb = 50;
-    private const string TemplateFileName = "AddDiSaTemplate.xlsx";
+    private const string TemplateFileName = "DISA_Data Upload Template.xlsx";
 
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {

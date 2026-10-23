@@ -1,0 +1,11 @@
+using ICP.Models.Icp;
+using ICP.Services.NotificationMail;
+var header=new IcpHeader {InvoiceNo="TEST",Hawb="HAWB",DeliveryDate="2026-09-09",DelayNotificationDate="2026-10-07"};
+var html=DeliveryDelayMailWorker.BuildBody(new[]{header},Array.Empty<IcpDetail>(),"https://example.test/ShipInfo",new DateOnly(2026,10,7));
+if(!html.Contains(">2026-09-09</td>")) throw new Exception("Delivery Date must use the delivery date");
+if(html.Contains(">2026-10-07</td>")) throw new Exception("Notification date must not replace delivery date");
+if(!html.Contains("DelayNotificationDate=2026-10-07")) throw new Exception("Mail link must retain notification date filtering");
+header.DeliveryDate=null;
+var empty=DeliveryDelayMailWorker.BuildBody(new[]{header},Array.Empty<IcpDetail>(),"");
+if(empty.Contains("2026-10-07")) throw new Exception("Missing delivery date must not fall back to notification date");
+Console.WriteLine("4 checks passed; no SMTP connection or email sent.");

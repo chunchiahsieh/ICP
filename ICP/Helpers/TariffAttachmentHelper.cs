@@ -7,6 +7,7 @@ public static class TariffAttachmentHelper
 {
     public const string DeclarationPdfFolder = "declaration-pdf";
     public const string CostFolder = "cost";
+    public const string ImportDocFolder = "import-doc";
     public const string PresenceHas = "Has";
     public const string PresenceNone = "None";
 
@@ -52,8 +53,28 @@ public static class TariffAttachmentHelper
             return null;
         }
 
-        var candidate = Path.Combine(storageRoot, DeclarationPdfFolder, stem + ".pdf");
-        return System.IO.File.Exists(candidate) ? Path.GetFullPath(candidate) : null;
+        return FindByStem(storageRoot, DeclarationPdfFolder, stem, [".pdf", ".tif"]);
+    }
+
+    public static string? FindImportDocPath(string storageRoot, TariffData item)
+    {
+        var fromDb = string.IsNullOrWhiteSpace(item.ImportDoc) ? null : ResolveUnderStorage(storageRoot, item.ImportDoc);
+        return fromDb ?? FindByStem(storageRoot, ImportDocFolder, SanitizeHawbFileStem(item.HAWB), [".pdf", ".xls", ".xlsx"]);
+    }
+
+    public static HashSet<string> CollectHawbsWithImportDoc(string storageRoot, IEnumerable<TariffData> rows)
+    {
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        CollectDiskStems(Path.Combine(storageRoot, ImportDocFolder), [".pdf", ".xls", ".xlsx"], set);
+        foreach (var row in rows)
+            if (!string.IsNullOrWhiteSpace(row.HAWB) && FindImportDocPath(storageRoot, row) is not null) set.Add(row.HAWB.Trim());
+        return set;
+    }
+
+    private static string? FindByStem(string root, string folder, string stem, string[] extensions)
+    {
+        if (string.IsNullOrWhiteSpace(stem)) return null;
+        return extensions.Select(ext => Path.Combine(root, folder, stem + ext)).FirstOrDefault(System.IO.File.Exists);
     }
 
     public static string? FindCostFilePath(string storageRoot, TariffData item)
@@ -99,7 +120,7 @@ public static class TariffAttachmentHelper
         IEnumerable<(string Hawb, string? DeclarationFile)> dbRows)
     {
         var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        CollectDiskStems(Path.Combine(storageRoot, DeclarationPdfFolder), [".pdf"], set);
+        CollectDiskStems(Path.Combine(storageRoot, DeclarationPdfFolder), [".pdf", ".tif"], set);
 
         foreach (var (hawb, declarationFile) in dbRows)
         {
@@ -198,7 +219,7 @@ public static class TariffAttachmentHelper
             ? Path.GetFullPath(relativeOrAbsolute)
             : Path.GetFullPath(Path.Combine(storageRoot, relativeOrAbsolute));
 
-        var rootFull = Path.GetFullPath(storageRoot);
+        var rootFull = Path.TrimEndingDirectorySeparator(Path.GetFullPath(storageRoot)) + Path.DirectorySeparatorChar;
         if (!full.StartsWith(rootFull, StringComparison.OrdinalIgnoreCase))
         {
             return null;

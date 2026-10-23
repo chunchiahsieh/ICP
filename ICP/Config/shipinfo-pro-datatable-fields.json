@@ -61,7 +61,8 @@
         {"fieldName": "Eccn", "labelKey": "ShipInfo.Detail.Field.Eccn", "visible": true, "searchable": true, "filterType": "Text"},
         {"fieldName": "ElFlag", "labelKey": "ShipInfo.Detail.Field.ElFlag", "visible": true, "searchable": true, "filterType": "Checkbox"},
         {"fieldName": "SdsFlag", "labelKey": "ShipInfo.Detail.Field.SdsFlag", "visible": true, "searchable": true, "filterType": "Checkbox"},
-        {"fieldName": "Hazmat", "labelKey": "ShipInfo.Detail.Field.Hazmat", "visible": true, "searchable": true, "filterType": "Checkbox"}
+        {"fieldName": "Hazmat", "labelKey": "ShipInfo.Detail.Field.Hazmat", "visible": true, "searchable": true, "filterType": "Checkbox"},
+        {"fieldName": "WbsElement", "labelKey": "ShipInfo.Detail.Field.WbsElement", "visible": true, "searchable": true, "filterType": "Text"}
       ]
     }
   }

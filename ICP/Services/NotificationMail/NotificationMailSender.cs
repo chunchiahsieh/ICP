@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Mail;
 using ICP.Data;
 using ICP.Models.Icp;
@@ -27,20 +26,11 @@ public static class NotificationMailSender
         {
             using var message = new MailMessage
             {
-                From = new MailAddress(smtp.FromAddress, smtp.FromName),
                 Subject = subject, Body = bodyHtml, IsBodyHtml = true
             };
             foreach (var address in mailTo) message.To.Add(address);
             foreach (var address in ccTo) message.CC.Add(address);
-            using var client = new SmtpClient(smtp.Host, smtp.Port)
-            {
-                EnableSsl = smtp.EnableSsl,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false
-            };
-            if (!string.IsNullOrWhiteSpace(smtp.UserName))
-                client.Credentials = new NetworkCredential(smtp.UserName, smtp.Password);
-            await client.SendMailAsync(message, cancellationToken);
+            await NotificationSmtpClient.SendAsync(smtp, message, cancellationToken);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {

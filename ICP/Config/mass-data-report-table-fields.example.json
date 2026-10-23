@@ -1,22 +1,26 @@
 {
   "header": {
-    "list": {
-      "fields": [
-        { "fieldName": "Id", "visible": false, "searchable": false },
-        { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "Shipper", "visible": true, "searchable": true, "filterType": "Checkbox" }
-      ]
-    }
+    "tableUi": { "stickyHeader": true, "stickyLeftColumns": true },
+    "initialSort": { "fieldName": "CreateTime", "direction": "desc" },
+    "list": { "fields": [
+      {"fieldName":"InvoiceNo","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+      {"fieldName":"NcdrNo","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+      {"fieldName":"Owner","visible":true,"searchable":true,"filterType":"Text"},
+      {"fieldName":"EndUser","visible":true,"searchable":true,"filterType":"Text"},
+      {"fieldName":"ArrivalNotice","visible":true,"searchable":true,"filterType":"Text"},
+      {"fieldName":"SaDate","visible":true,"searchable":true,"filterType":"DateRange"},
+      {"fieldName":"Forwarder","visible":true,"searchable":true,"filterType":"Checkbox"},
+      {"fieldName":"Broker","visible":true,"searchable":true,"filterType":"Checkbox"},
+      {"fieldName":"Shipper","visible":true,"searchable":true,"filterType":"Checkbox"},
+      {"fieldName":"Eta","visible":true,"searchable":true,"filterType":"DateRange"},
+      {"fieldName":"Mawb","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+      {"fieldName":"Hawb","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+      {"fieldName":"Flt","visible":true,"searchable":true,"filterType":"Text"},
+      {"fieldName":"DeliveryDate","visible":true,"searchable":true,"filterType":"DateRange"},
+      {"fieldName":"MdpFlag","visible":true,"searchable":true,"filterType":"Checkbox"},
+      {"fieldName":"ReasonForDeliveryDelay","visible":true,"searchable":true,"filterType":"Text"},
+      {"fieldName":"DelayNotificationDate","visible":true,"searchable":true,"filterType":"DateRange"}
+    ] }
   },
-  "detail": {
-    "list": {
-      "fields": [
-        { "fieldName": "Id", "visible": false, "searchable": false },
-        { "fieldName": "InvoiceSeq", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "Description", "visible": true, "searchable": true, "filterType": "Text" }
-      ]
-    }
-  }
+  "detail": { "list": { "fields": [] } }
 }

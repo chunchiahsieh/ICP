@@ -30,7 +30,7 @@ public static class ShipInfoFieldCatalog
         "Id", "CreateTime", "CreateUser", "UpdateTime", "UpdateUser",
         "InvoiceNo", "TetPo", "TetPoLine", "InvoiceSeq", "ItemNo", "Description", "Qty", "Uom", "Coo",
         "Price", "Amount", "Currency", "Rate", "PackingType", "CartonNo", "Length", "Width", "Hight",
-        "GrossWeight", "NetWeightOfTheItem", "DeliveryLineNo", "Eccn", "ElFlag", "SdsFlag", "Hazmat",
+        "GrossWeight", "NetWeightOfTheItem", "DeliveryLineNo", "Eccn", "ElFlag", "SdsFlag", "Hazmat", "WbsElement",
         "DepositCaseStatus", "ArurCaseStatus"
     ];
 

@@ -12,6 +12,7 @@
     <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
         <h4 class="mb-0">@Localizer["Setting.CountryOfOrigin.Title"]</h4>
         <div class="d-flex gap-2">
+            @await Html.PartialAsync("~/Views/Setting/Shared/_ExcelActions.cshtml", "CountryOfOrigin")
             <button type="button" class="btn btn-outline-danger btn-sm" id="btnBatchDelete"
                     data-permissions="Views.Setting.CountryOfOrigin.Delete" data-i18n-key="Views.Setting.CountryOfOrigin.Delete">
                 @Localizer["Common.BatchDelete"]

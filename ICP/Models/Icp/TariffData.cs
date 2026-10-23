@@ -143,6 +143,9 @@ public class TariffData
     [MaxLength(500)]
     public string? DeclarationFile { get; set; }
 
+    [MaxLength(500)]
+    public string? ImportDoc { get; set; }
+
     [MaxLength(50)]
     public string? Cost { get; set; }
 

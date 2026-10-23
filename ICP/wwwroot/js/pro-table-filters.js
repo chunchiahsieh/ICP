@@ -66,7 +66,11 @@
 
         var active = 0;
         if (filterType === FILTER_TYPES.Text) {
-            active = ($filter.find('.pro-table-filter-text-input').val() || '').trim() ? 1 : 0;
+            var $input = $filter.find('.pro-table-filter-text-input');
+            var text = ($input.val() || '').trim();
+            active = $input.is('[data-multi-value-text="true"]')
+                ? new Set(text.split(/\r?\n|\r/).map(function (line) { return line.trim(); }).filter(Boolean)).size
+                : (text ? 1 : 0);
         } else if (filterType === FILTER_TYPES.DateRange) {
             var from = ($filter.find('.pro-table-filter-date-from').val() || '').trim();
             var to = ($filter.find('.pro-table-filter-date-to').val() || '').trim();
@@ -249,7 +253,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 var $filter = $(this).closest('.pro-table-filter');
-                $filter.find('input').val('');
+                $filter.find('input, textarea').val('');
                 var filterType = normalizeFilterType($filter.data('filter-type'));
                 updateProTableFilterCount($filter, filterType);
                 closeProTableFilterDropdown($filter);

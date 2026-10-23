@@ -1,0 +1,23 @@
+﻿部署前先在 ICP 資料庫執行 016_AddControlledGoodsNoticeFields.sql。
+本次無需部署 Hub 或 FileGenerator。
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\sql\016_AddControlledGoodsNoticeFields.sql
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\Icp\IcpHeader.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Data\ApplicationDbContext.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\ShipInfo\ShipInfoHeaderRowDto.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\ShipInfo\ShipInfoFieldCatalog.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Repositories\ShipInfoRowDtoMapper.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\shipinfo-header-form-fields.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ShipInfoService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\AddDiSaImportService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\NotificationMail\ControlledGoodsNoticeContent.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\NotificationMail\ControlledGoodsNoticeScheduleService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\NotificationMail\ControlledGoodsNoticeMailWorker.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\FUNCTION\ShipInfo\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\wwwroot\js\shipinfo-controlled-goods.js
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.zh-TW.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.en.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.ja.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\appsettings.TEL.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\appsettings.TEL.TETIS87181.json

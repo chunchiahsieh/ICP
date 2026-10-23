@@ -56,6 +56,10 @@
              data-i18n-key="Views.Broker.TariffData.UploadDeclarationPdf">
             <div id="declarationPdfUploader"></div>
         </div>
+        <div data-permissions="Views.Broker.TariffData.UploadDeclarationPdf"
+             data-i18n-key="Views.Broker.TariffData.UploadDeclarationPdf">
+            <div id="importDocUploader"></div>
+        </div>
         <div data-permissions="Views.Broker.TariffData.UploadCost"
              data-i18n-key="Views.Broker.TariffData.UploadCost">
             <div id="costUploader"></div>
@@ -496,10 +500,18 @@
                     title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadDeclarationPdfTitle"].Value)),
                     buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadDeclarationPdfButton"].Value)),
                     uploadUrl: '@Url.Action("UploadDeclarationPdf", "TariffData")',
-                    fileTypes: '.pdf'
+                    fileTypes: '.pdf,.tif'
                 });
             }
 
+            if (hasPermission('Views.Broker.TariffData.UploadDeclarationPdf')) {
+                createTariffUploader('#importDocUploader', {
+                    title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadImportDocTitle"].Value)),
+                    buttonText: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadImportDocButton"].Value)),
+                    uploadUrl: '@Url.Action("UploadImportDoc", "TariffData")',
+                    fileTypes: '.pdf,.xls,.xlsx'
+                });
+            }
             if (hasPermission('Views.Broker.TariffData.UploadCost')) {
                 createTariffUploader('#costUploader', {
                     title: @Html.Raw(JsonSerializer.Serialize(Localizer["Broker.TariffData.UploadCostTitle"].Value)),
@@ -555,7 +567,7 @@
                 attachmentState.hawb = String($(this).data('hawb') || '');
                 attachmentState.kind = String($(this).data('kind') || '');
                 $('#tariffAttachmentHawb').text(attachmentState.hawb);
-                $('#tariffAttachmentTitle').text(attachmentState.kind === 'pdf' ? 'PDF' : 'Cost');
+                $('#tariffAttachmentTitle').text(attachmentState.kind === 'pdf' ? 'Declaration PDF' : (attachmentState.kind === 'import-doc' ? 'Import Doc' : 'Cost'));
                 loadAttachments();
                 attachmentModal.show();
             });

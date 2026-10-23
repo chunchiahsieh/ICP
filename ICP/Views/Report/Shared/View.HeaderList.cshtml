@@ -3,6 +3,8 @@
 @using ICP.Models.ShipInfo
 @{
     var isHeader = string.Equals(Model.TableKind, "Header", StringComparison.OrdinalIgnoreCase);
+    var isMassDataReport = string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "MassDataReport", StringComparison.OrdinalIgnoreCase);
+    var showSelection = isHeader && Model.ShowHeaderSelection && !isMassDataReport;
     var visibleFields = ShipInfoTableViewHelper.GetVisibleFields(Model.Fields);
     var hasFilterRow = visibleFields.Any(field => field.Searchable);
     var tableUi = Model.TableUi ?? ShipInfoTableUiOptions.MergeDefaults(null);
@@ -51,7 +53,7 @@
        data-empty-table="@emptyTableMessage">
     <thead class="@theadClasses">
         <tr>
-            @if (isHeader)
+            @if (showSelection)
             {
                 <th class="shipinfo-radio-col sorting_disabled">
                     <span class="visually-hidden">@Localizer["Report.SelectHeaderFirst"]</span>
@@ -65,7 +67,7 @@
         @if (hasFilterRow)
         {
             <tr class="users-filter-row">
-                @if (isHeader)
+                @if (showSelection)
                 {
                     <th class="shipinfo-radio-col sorting_disabled"></th>
                 }
@@ -75,7 +77,14 @@
                         @if (field.Searchable)
                         {
                             var filterId = $"filter-{Model.TableId}-{field.FieldName}";
-                            @await Html.PartialAsync("_ProDataTablesFilterByType", (filterId, field.FieldName, ShipInfoMetadataHelper.ResolveFilterType(field)))
+                            @if (field.MultiValueText && ShipInfoMetadataHelper.ResolveFilterType(field) == ShipInfoFilterTypes.Text)
+                            {
+                                @await Html.PartialAsync("~/Views/Report/Shared/_MultiValueTextFilter.cshtml", (filterId, field.FieldName))
+                            }
+                            else
+                            {
+                                @await Html.PartialAsync("_ProDataTablesFilterByType", (filterId, field.FieldName, ShipInfoMetadataHelper.ResolveFilterType(field)))
+                            }
                         }
                     </th>
                 }
@@ -90,7 +99,7 @@
             <tr data-entity-id="@entityId"
                 data-row="@rowJson"
                 @(isHeader ? Html.Raw($"data-header-id=\"{entityId}\"") : Html.Raw($"data-detail-id=\"{entityId}\""))>
-                @if (isHeader)
+                @if (showSelection)
                 {
                     <td class="shipinfo-radio-col text-center">
                         <input type="radio"

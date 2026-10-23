@@ -139,6 +139,57 @@ public class ForwarderDataUploadController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetUploadHistory(CancellationToken cancellationToken = default) =>
+        Json(new { success = true, files = await new ForwarderUploadHistoryService(_db, _environment, _options).GetAsync(cancellationToken) });
+
+    private ForwarderHistoryTableMetadataProvider HistoryMetadata => HttpContext.RequestServices.GetRequiredService<ForwarderHistoryTableMetadataProvider>();
+
+    [HttpGet]
+    public IActionResult GetHistoryTableConfig() => Json(HistoryMetadata.GetConfig());
+
+    [HttpPost]
+    [IgnoreAntiforgeryToken]
+    public async Task<IActionResult> QueryUploadHistory([FromForm] ICP.Models.Tariff.TariffDataQueryModel criteria, CancellationToken cancellationToken = default)
+    {
+        var config = HistoryMetadata.GetConfig();
+        var rows = await new ForwarderUploadHistoryService(_db, _environment, _options).GetAsync(cancellationToken);
+        return PartialView("~/Views/FORWARDER/ForwarderDataUpload/View.History.cshtml", new ForwarderHistoryListViewModel
+        {
+            Config = config, Items = ForwarderHistoryTableMetadataProvider.Filter(rows, criteria, config)
+        });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetHistoryFilterOptions(string column, string? search = null, CancellationToken cancellationToken = default)
+    {
+        var config = HistoryMetadata.GetConfig();
+        if (!config.Fields.Any(field => field.FieldName == column && field.Searchable && field.FilterType == "Checkbox")) return BadRequest();
+        var rows = await new ForwarderUploadHistoryService(_db, _environment, _options).GetAsync(cancellationToken);
+        var values = rows.Select(row => ForwarderHistoryTableMetadataProvider.Value(row, column))
+            .Select(value => string.IsNullOrWhiteSpace(value) ? "__BLANK__" : value).Distinct().Order().AsEnumerable();
+        if (!string.IsNullOrWhiteSpace(search)) values = values.Where(value => value.Contains(search, StringComparison.OrdinalIgnoreCase)
+            || _localizer[value == "__BLANK__" ? "ShipInfo.Blank" : column == "Status" ? "Forwarder.Upload.Imported"
+                : column == "DownloadOriginal" ? value == "Has" ? "Forwarder.Upload.DownloadOriginal" : "Forwarder.Upload.MissingFile" : value]
+                .Value.Contains(search, StringComparison.OrdinalIgnoreCase));
+        return Json(values.ToList());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DownloadUploadedFile(string? fileName, CancellationToken cancellationToken = default)
+    {
+        var path = await new ForwarderUploadHistoryService(_db, _environment, _options).GetDownloadPathAsync(fileName, cancellationToken);
+        if (path is null) return NotFound();
+        var contentType = Path.GetExtension(path).ToLowerInvariant() switch
+        {
+            ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ".xls" => "application/vnd.ms-excel",
+            _ => "text/csv"
+        };
+        return PhysicalFile(path, contentType, ForwarderUploadHistoryService.OriginalName(Path.GetFileName(path)));
+    }
+
+    [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult DownloadTemplate()
     {
         var templatePath = Path.Combine(_environment.ContentRootPath, "Files", TemplateFileName);

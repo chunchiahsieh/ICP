@@ -58,6 +58,79 @@ public abstract class SystemConfigControllerBase : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> DownloadExcel(CancellationToken cancellationToken = default)
+    {
+        var rows = await ScopeQuery(_icpDb.SystemConfigs.AsNoTracking()).OrderBy(row => row.Id).ToListAsync(cancellationToken);
+        return File(SettingsExcelHelper.Export(rows), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            $"{Category}_Settings.xlsx");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequestSizeLimit(52_428_800)]
+    public async Task<IActionResult> UploadExcel(IFormFile? file, CancellationToken cancellationToken = default)
+    {
+        if (file is null || file.Length == 0 || file.Length > 50 * 1024L * 1024
+            || !string.Equals(Path.GetExtension(file.FileName), ".xlsx", StringComparison.OrdinalIgnoreCase))
+            return BadRequest(new { success = false, message = "請上傳 50 MB 以下的 .xlsx 檔案。" });
+        try
+        {
+            await using var stream = file.OpenReadStream();
+            var parsed = SettingsExcelHelper.Parse(stream);
+            var errors = new List<string>();
+            var replacements = new List<(int RowNumber, SystemConfig Entity)>();
+            foreach (var (rowNumber, model) in parsed)
+            {
+                ModelState.Clear();
+                ValidateSaveModel(model);
+                if (Category != "Customized" && !string.Equals(model.Category, DataCategory, StringComparison.Ordinal))
+                    ModelState.AddModelError("Category", $"只允許此頁分類：{DataCategory}");
+                errors.AddRange(ModelState.Values.SelectMany(value => value.Errors)
+                    .Select(error => $"第 {rowNumber} 列：{error.ErrorMessage}"));
+                if (!ModelState.IsValid) continue;
+                var entity = new SystemConfig
+                {
+                    FunctionCode = string.IsNullOrWhiteSpace(model.FunctionCode) ? null : model.FunctionCode,
+                    Key2 = model.Key2 ?? "", Value1 = model.Value1, Value2 = model.Value2, Value3 = model.Value3,
+                    Value4 = model.Value4, Value5 = model.Value5, Value6 = model.Value6
+                };
+                ApplyCreateCategory(entity, model);
+                ApplyEditModel(entity, model);
+                if (ScopeQuery(new[] { entity }.AsQueryable()).Count() != 1)
+                    errors.Add($"第 {rowNumber} 列：資料超出此頁可管理的範圍。");
+                CrudAuditHelper.ApplyCreateAudit(entity, User.Identity?.Name);
+                replacements.Add((rowNumber, entity));
+            }
+            errors.AddRange(SettingsExcelHelper.DuplicateErrors(replacements));
+            if (errors.Count > 0)
+                return BadRequest(new { success = false, message = string.Join(Environment.NewLine, errors.Take(30)) });
+
+            await using var transaction = await _icpDb.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, cancellationToken);
+            var previous = await ScopeQuery(_icpDb.SystemConfigs).ToListAsync(cancellationToken);
+            foreach (var row in previous)
+            {
+                row.IsDeleted = true;
+                CrudAuditHelper.ApplyUpdateAudit(row, User.Identity?.Name);
+            }
+            // Release the active-row unique keys before inserting the replacement set.
+            await _icpDb.SaveChangesAsync(cancellationToken);
+            _icpDb.SystemConfigs.AddRange(replacements.Select(row => row.Entity));
+            await _icpDb.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return Json(new { success = true, message = $"已取代此頁全部資料，共匯入 {replacements.Count} 筆。" });
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+        catch (Exception ex) when (ex is InvalidOperationException or ArgumentException or System.IO.InvalidDataException or FormatException)
+        {
+            return BadRequest(new { success = false, message = ex.Message });
+        }
+        catch (DbUpdateException)
+        {
+            return BadRequest(new { success = false, message = "匯入失敗，原資料已保留。請確認是否有重複鍵或資料庫限制。" });
+        }
+    }
+
+    [HttpGet]
     public async Task<IActionResult> Get(int id, CancellationToken cancellationToken = default)
     {
         var entity = await ScopeQuery(_icpDb.SystemConfigs.AsNoTracking())

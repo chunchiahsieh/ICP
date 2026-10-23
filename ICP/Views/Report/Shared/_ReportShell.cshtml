@@ -1,6 +1,8 @@
 @{
     var permissionCode = ViewData["PermissionCode"] as string ?? string.Empty;
     var titleKey = ViewData["TitleKey"] as string ?? permissionCode;
+    var headerOnly = string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "MassDataReport", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(ViewData["ReportKey"] as string, ICP.Models.Report.ReportKeys.MassDataReport, StringComparison.OrdinalIgnoreCase);
 }
 
 <div class="container-fluid shipinfo-page report-data-page pro-datatables-page report-split-page"
@@ -17,11 +19,13 @@
         </div>
     </div>
 
-    <div class="report-split-panes">
+    <div class="report-split-panes @(headerOnly ? "report-header-only" : "")">
         <section class="report-split-pane">
             <h6 class="report-pane-title mb-2">@Localizer["Report.HeaderTitle"]</h6>
             <div id="reportHeaderDataDiv" class="report-split-table"></div>
         </section>
+        @if (!headerOnly)
+        {
         <section class="report-split-pane">
             <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
                 <h6 class="report-pane-title mb-0">@Localizer["Report.DetailTitle"]</h6>
@@ -31,5 +35,6 @@
             </div>
             <div id="reportDetailDataDiv" class="report-split-table"></div>
         </section>
+        }
     </div>
 </div>

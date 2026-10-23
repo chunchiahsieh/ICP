@@ -41,12 +41,13 @@ public class ReportDataService : IReportDataService
         CancellationToken cancellationToken = default)
     {
         var config = GetPageConfig(reportKey);
-        var items = await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken);
+        var items = SortReportHeaders(reportKey, await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken));
         await ApplyShipperDisplayValuesAsync(reportKey, items, cancellationToken);
         return new ShipInfoTableListViewModel
         {
             TableId = "reportHeaderTable",
             TableKind = "Header",
+            ShowHeaderSelection = reportKey != Models.Report.ReportKeys.MassDataReport,
             Culture = config.Culture,
             Fields = config.HeaderFields,
             TableUi = config.HeaderTableUi,
@@ -93,6 +94,11 @@ public class ReportDataService : IReportDataService
         CancellationToken cancellationToken = default)
     {
         EnsureCheckboxField(GetPageConfig(reportKey).HeaderFields, column);
+        if (reportKey == Models.Report.ReportKeys.ShippingReport)
+        {
+            return ShipInfoDistinctValuesHelper.GetHeaderDistinctValuesAsync(
+                _scope.Apply(_db.IcpHeaders).AsNoTracking(), column, search, cancellationToken, includeAllValues: true);
+        }
         return _repository.GetDistinctHeaderValuesAsync(column, search, cancellationToken);
     }
 
@@ -109,6 +115,13 @@ public class ReportDataService : IReportDataService
         }
 
         EnsureCheckboxField(GetPageConfig(reportKey).DetailFields, column);
+        if (reportKey == Models.Report.ReportKeys.ShippingReport)
+        {
+            var invoiceNo = ShipInfoKeyHelper.ParseInvoiceNo(headerKey);
+            return ShipInfoDistinctValuesHelper.GetDetailDistinctValuesAsync(
+                _scope.ApplyDetails(_db.IcpDetails).AsNoTracking().Where(detail => detail.InvoiceNo == invoiceNo),
+                column, search, cancellationToken, includeAllValues: true);
+        }
         return _repository.GetDistinctDetailValuesAsync(column, headerKey, search, cancellationToken);
     }
 
@@ -119,9 +132,10 @@ public class ReportDataService : IReportDataService
         CancellationToken cancellationToken = default)
     {
         var config = GetPageConfig(reportKey);
-        var headers = await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken);
+        var headers = SortReportHeaders(reportKey, await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken));
         await ApplyShipperDisplayValuesAsync(reportKey, headers, cancellationToken);
         var headerFields = ShipInfoTableViewHelper.GetVisibleFields(config.HeaderFields);
+        var headerOnly = reportKey == Models.Report.ReportKeys.MassDataReport;
         var detailFields = ShipInfoTableViewHelper.GetVisibleFields(config.DetailFields)
             .Where(field => !SharedKeyFields.Contains(field.FieldName))
             .ToList();
@@ -134,7 +148,7 @@ public class ReportDataService : IReportDataService
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        var detailEntities = invoiceNos.Count == 0
+        var detailEntities = headerOnly || invoiceNos.Count == 0
             ? []
             : await _scope.ApplyDetails(_db.IcpDetails)
                 .AsNoTracking()
@@ -191,6 +205,14 @@ public class ReportDataService : IReportDataService
         var stamp = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         return (stream.ToArray(), $"{SanitizeFileName(reportDisplayName, reportKey)}_{stamp}.xlsx");
     }
+
+    private static IReadOnlyList<Dictionary<string, object?>> SortReportHeaders(
+        string reportKey, IReadOnlyList<Dictionary<string, object?>> rows) =>
+        reportKey == Models.Report.ReportKeys.MassDataReport
+            ? rows.OrderByDescending(row => ShipInfoTableViewHelper.GetItemValue(row, "CreateTime") as DateTime? ?? DateTime.MinValue)
+                .ThenBy(row => Convert.ToString(ShipInfoTableViewHelper.GetItemValue(row, "InvoiceNo")), StringComparer.Ordinal)
+                .ToList()
+            : rows;
 
     private static void EnsureCheckboxField(
         IReadOnlyList<ShipInfoFieldMetadata> fields,
@@ -304,6 +326,10 @@ public class ReportDataService : IReportDataService
 
     private static void SetCellValue(IXLCell cell, object? value, ShipInfoFieldMetadata field)
     {
+        if (string.Equals(field.FieldName, "NetWeightOfTheItem", StringComparison.OrdinalIgnoreCase))
+        {
+            cell.Style.NumberFormat.Format = "0.000";
+        }
         switch (value)
         {
             case null:

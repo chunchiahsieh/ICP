@@ -83,6 +83,8 @@ public class ShipInfoDetailRowDto
 
     public double? DeliveryLineNo { get; init; }
 
+    public string? WbsElement { get; init; }
+
     public string? Eccn { get; init; }
 
     public string? ElFlag { get; init; }

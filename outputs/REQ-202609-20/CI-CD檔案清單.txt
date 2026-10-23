@@ -1,0 +1,39 @@
+REQ-202609-20 Forwarder Data Upload 改修（程式與新版範本）
+共 19 個程式、資源與範本檔案
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\ICP.csproj
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Files\ForwarderDataUploadTemplate.xlsx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Controllers\ForwarderDataUploadController.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\ForwarderImportRules.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\PermissionRequestResolver.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\Icp\ForwarderDataUpload.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ForwarderDataImportService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ForwarderUploadHistoryService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\FORWARDER\ForwarderDataUpload\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\wwwroot\js\forwarder-upload-history.js
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.zh-TW.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.en.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.ja.resx
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Program.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ForwarderHistoryTableMetadataProvider.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\forwarder-upload-history-table-fields.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\forwarder-upload-history-table-fields.example.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\FORWARDER\ForwarderDataUpload\View.History.cshtml
+
+部署順序：更新檔案 → 建置 ICP → 重新啟動 → 瀏覽器 Ctrl+F5。
+資料庫結構未變更，不需 SQL；UploadRowNumber 為 NotMapped。
+上傳紀錄由現有 ForwarderDataUpload 與 ForwarderDataUploadArchive 統計，不另建資料表。
+原始附件位於既有 ForwarderDataUpload:StoragePath，部署請保留此資料夾與舊檔案。
+僅正式 Save 成功的批次列入紀錄；覆蓋後的封存批次仍可下載原檔；缺檔顯示檔案不存在。
+紀錄與原檔下載使用頁面 View 權限；上傳/預覽/Save 維持原 Upload 權限。
+只有 Customer Reference、FLIGHT 2#、Action、MDP 可空白；其餘18欄必填。
+C/B 比對有效 Broker Key；三日期欄接受 yyyy/MM/dd 及 yyyy-MM-dd，畫面顯示 yyyy-MM-dd。
+Excel 只讀第一分頁，名稱須 Upload Data；CSV 保留，套用相同必填、日期及 Broker 檢核。
+已替換為使用者提供的新版 ICP/Files/ForwarderDataUploadTemplate.xlsx；來源與應用程式範本 SHA256 一致。ICP.csproj 已設定複製至建置/發布目錄。
+tests/ForwarderUploadChecks 是測試，不需部署至網站；未操作正式資料庫、未寄信。
+
+新版範本與既有程式檢核共151項通過；Type列舉EMG/NML及MDP列舉Y/空白目前屬範例，程式未增加列舉限制。
+
+上傳紀錄已支援獨立Config與每欄篩選，新增19項過濾檢查通過。

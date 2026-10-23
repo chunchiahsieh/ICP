@@ -81,6 +81,7 @@ public static class ShipInfoFieldConfigMerger
         }
 
         field.Searchable = entry.Searchable ?? true;
+        field.MultiValueText = entry.MultiValueText ?? false;
 
         if (!string.IsNullOrWhiteSpace(entry.FilterType))
         {
@@ -107,6 +108,7 @@ public static class ShipInfoFieldConfigMerger
             Visible = source.Visible,
             Searchable = source.Searchable,
             FilterType = source.FilterType,
+            MultiValueText = source.MultiValueText,
             Editable = source.Editable,
             Required = source.Required,
             ControlType = source.ControlType,

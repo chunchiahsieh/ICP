@@ -69,6 +69,8 @@
     <Content Update="Config\shipinfo-header-form-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\shipinfo-detail-form-fields.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Update="Config\forwarder-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Config\forwarder-upload-history-table-fields.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Update="Config\forwarder-upload-history-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Update="Config\forwarder-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\tariff-table-fields.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Update="Config\tariff-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
@@ -82,7 +84,8 @@
     <Content Update="Config\mass-data-report-table-fields.example.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Files\Mass Update Sample File.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="Files\CustomsDataUploadTemplate.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-    <Content Include="Files\AddDiSaTemplate.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Files\DISA_Data Upload Template.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Files\ForwarderDataUploadTemplate.xlsx" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

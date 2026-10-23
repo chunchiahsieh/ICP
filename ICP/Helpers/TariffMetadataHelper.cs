@@ -15,9 +15,11 @@ public static class TariffMetadataHelper
         string.Equals(fieldName, "Actions", StringComparison.OrdinalIgnoreCase)
         || string.Equals(fieldName, "RowNo", StringComparison.OrdinalIgnoreCase)
         || string.Equals(fieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(fieldName, "ImportDoc", StringComparison.OrdinalIgnoreCase)
         || string.Equals(fieldName, "CostFile", StringComparison.OrdinalIgnoreCase);
 
     public static bool IsAttachmentPresenceField(string fieldName) =>
-        string.Equals(fieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase)
+        string.Equals(fieldName, "ImportDoc", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(fieldName, "DeclarationPdf", StringComparison.OrdinalIgnoreCase)
         || string.Equals(fieldName, "CostFile", StringComparison.OrdinalIgnoreCase);
 }

@@ -4,12 +4,37 @@
     "initialSort": { "fieldName": "SaDate", "direction": "desc" },
     "list": {
       "fields": [
-        { "fieldName": "Id", "visible": false, "searchable": false },
-        { "fieldName": "SaDate", "visible": true, "searchable": true, "filterType": "DateRange" },
-        { "fieldName": "InvoiceNo", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "TetPo", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "Broker", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "Shipper", "visible": true, "searchable": true, "filterType": "Checkbox" }
+        {"fieldName":"Id","visible":false,"searchable":false},
+        {"fieldName":"SaDate","visible":false,"searchable":true,"filterType":"DateRange"},
+        {"fieldName":"InvoiceNo","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+        {"fieldName":"Forwarder","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Broker","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Shipper","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Etd","visible":true,"searchable":true,"filterType":"DateRange"},
+        {"fieldName":"Eta","visible":true,"searchable":true,"filterType":"DateRange"},
+        {"fieldName":"InvoiceDate","visible":true,"searchable":true,"filterType":"DateRange"},
+        {"fieldName":"Mawb","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+        {"fieldName":"Hawb","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+        {"fieldName":"Flt","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Freight","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"DestinationPort","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Warehouse","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"OrderType","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"DeliveryDate","visible":true,"searchable":true,"filterType":"DateRange"},
+        {"fieldName":"DeliveryTo","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Bu","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"TetPo","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+        {"fieldName":"MdpFlag","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"TotalCartons","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"NcdrNo","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+        {"fieldName":"NcdrRequestor","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"EndUser","visible":true,"searchable":true,"filterType":"Text","multiValueText":true},
+        {"fieldName":"RtNo","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"ReasonForDeliveryDelay","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"EmgFlight","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Deposit","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Notes","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"ReasonForCancellation","visible":true,"searchable":true,"filterType":"Text"}
       ]
     }
   },
@@ -18,9 +43,30 @@
     "initialSort": { "fieldName": "InvoiceSeq", "direction": "asc" },
     "list": {
       "fields": [
-        { "fieldName": "Id", "visible": false, "searchable": false },
-        { "fieldName": "InvoiceSeq", "visible": true, "searchable": true, "filterType": "Checkbox" },
-        { "fieldName": "ItemNo", "visible": true, "searchable": true, "filterType": "Text" }
+        {"fieldName":"Id","visible":false,"searchable":false},
+        {"fieldName":"TetPo","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"TetPoLine","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"InvoiceSeq","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"ItemNo","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Description","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Qty","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Uom","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Price","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Amount","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Currency","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Rate","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Coo","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"PackingType","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"CartonNo","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Length","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Width","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Hight","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"GrossWeight","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"NetWeightOfTheItem","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"Eccn","visible":true,"searchable":true,"filterType":"Text"},
+        {"fieldName":"ElFlag","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"SdsFlag","visible":true,"searchable":true,"filterType":"Checkbox"},
+        {"fieldName":"Hazmat","visible":true,"searchable":true,"filterType":"Checkbox"}
       ]
     }
   }

@@ -1,0 +1,18 @@
+BUG-202609-016 Shipping Report CI/CD 原始碼清單（13 個檔案）
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\shipping-report-table-fields.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\shipping-report-table-fields.example.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\ShipInfo\ShipInfoFieldMetadata.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\ShipInfo\ShipInfoProDataTableFieldsOptions.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ShipInfoFieldConfigMerger.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\ShipInfoQueryFilterApplier.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\ShipInfoDistinctValuesHelper.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\ReportDataService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Report\Shared\View.HeaderList.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Report\Shared\_MultiValueTextFilter.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\Report\Shared\_ReportScripts.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\wwwroot\js\report-data.js
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\wwwroot\js\pro-table-filters.js
+
+無資料庫欄位異動，不需執行 SQL。
+tests/ShippingReportChecks 為測試程式，不需部署到主機。

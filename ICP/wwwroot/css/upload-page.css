@@ -61,6 +61,22 @@
     background-color: #fff3cd !important;
 }
 
+.upload-page-preview-scroll.adddisa-preview {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.upload-page-preview-scroll.adddisa-preview table {
+    width: max-content;
+    min-width: max(100%, 1800px);
+}
+
+.upload-page-preview-scroll.adddisa-preview th,
+.upload-page-preview-scroll.adddisa-preview td {
+    white-space: nowrap;
+}
+
 .upload-page-preview-scroll.adddisa-preview .adddisa-canupload-cell {
     white-space: normal;
     min-width: 8rem;

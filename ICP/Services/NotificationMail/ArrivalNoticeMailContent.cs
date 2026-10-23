@@ -197,7 +197,7 @@ public static class ArrivalNoticeMailContent
                 Cell(html, detail.Qty); Cell(html, header.Hawb); Cell(html, header.Flt);
                 Cell(html, header.Eta); Cell(html, header.TetPo); Cell(html, detail.Length);
                 Cell(html, detail.Width); Cell(html, detail.Hight); Cell(html, detail.GrossWeight);
-                Cell(html, detail.PackingType); Cell(html, header.WbsElement);
+                Cell(html, detail.PackingType); Cell(html, detail.WbsElement ?? header.WbsElement);
                 html.Append("</tr>");
             }
         }

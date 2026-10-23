@@ -4,6 +4,14 @@ namespace ICP.Helpers;
 
 public static class ForwarderImportRules
 {
+    public static readonly IReadOnlyDictionary<string, string> RequiredFields = new Dictionary<string, string>
+    {
+        ["Type"] = "Type", ["InvoiceNo"] = "Invoice No", ["MaterialCode"] = "Material Code",
+        ["OrderMaterialName"] = "Order Material Name", ["Quantity"] = "Quantity", ["PortOfLoading"] = "Port of Loading",
+        ["ShipToName"] = "Ship to Name", ["ShipToAddress"] = "Ship to Address", ["ShipToPartyCountryCode"] = "Ship to Party Country Code",
+        ["ShipToPortCode"] = "Ship to Port Code", ["FreightCharge"] = "Freight charge", ["ConfirmedCustomDate"] = "Confirmed Custom Date",
+        ["Hawb"] = "HAWB", ["Mawb"] = "MAWB", ["Etd"] = "ETD", ["Eta"] = "ETA", ["Flight1"] = "FLIGHT 1#", ["Cb"] = "C/B"
+    };
     public static void ValidatePerInvoiceFieldConsistency(
         IReadOnlyList<ForwarderDataUpload> rows,
         List<string> errors)

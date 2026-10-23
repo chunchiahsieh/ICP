@@ -1,0 +1,41 @@
+@model ICP.Services.ForwarderHistoryListViewModel
+@using ICP.Services
+@using ICP.Helpers
+@{
+    var fields = Model.Config.Fields.Where(field => field.Visible).ToList();
+    var sticky = Model.Config.TableUi.StickyHeader == true;
+}
+<div class="forwarder-table-wrap @(sticky ? "forwarder-sticky-enabled" : "")" style="max-height:@Model.Config.TableUi.MaxHeight">
+<table id="forwarderHistoryTable" class="table table-striped table-bordered align-middle w-100 forwarder-pro-table">
+    <thead class="table-light @(sticky ? "forwarder-sticky-header" : "")">
+        <tr>@foreach (var field in fields) { <th>@Localizer[field.HeaderLabelKey!]</th> }</tr>
+        <tr class="users-filter-row">
+        @foreach (var field in fields)
+        {
+            <th class="sorting_disabled pro-table-filter-cell">
+            @if (field.Searchable) { @await Html.PartialAsync("_ProDataTablesFilterByType", ($"filter-forwarderHistoryTable-{field.FieldName}", field.FieldName, field.FilterType)) }
+            </th>
+        }
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var row in Model.Items)
+    {
+        <tr>
+        @foreach (var field in fields)
+        {
+            if (field.FieldName == "DownloadOriginal")
+            {
+                <td>
+                @if (row.FileExists) { <a class="btn btn-outline-success btn-sm" href="@Url.Action("DownloadUploadedFile", "ForwarderDataUpload", new { fileName = row.StoredFileName })">@Localizer["Forwarder.Upload.DownloadOriginal"]</a> }
+                else { @Localizer["Forwarder.Upload.MissingFile"] }
+                </td>
+            }
+            else if (field.FieldName == "Status") { <td>@Localizer["Forwarder.Upload.Imported"]</td> }
+            else { <td class="@(field.FieldName == "RowCount" ? "text-end" : "")">@ForwarderHistoryTableMetadataProvider.Value(row, field.FieldName)</td> }
+        }
+        </tr>
+    }
+    </tbody>
+</table>
+</div>

@@ -1,0 +1,18 @@
+通知信 SMTP 共用元件與設定更新
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\NotificationMail\NotificationMailOptions.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\NotificationMail\NotificationSmtpClient.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\NotificationMail\NotificationMailSender.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\appsettings.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\appsettings.Development.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\appsettings.TEL.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\appsettings.TEL.TETIS87181.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\appsettings.example.json
+
+Host=smtp.tel.co.jp; Port=25; EnableSsl=false。
+原本 FromAddress 非空白則保留；空白、null 或未設定時預設 TETIS87GEMSAdmin@tel.com。
+四份實際 appsettings 的 MailTo/CcTo 與排程、啟用狀態保持原值。
+appsettings.example.json 同步更新參考設定。
+實際環境 appsettings 被 Git 忽略，需依環境設定管理流程另行更新；不強制加入版本控制。
+無資料庫異動；未連線 SMTP、未實際寄信。
+tests/NotificationSmtpChecks 是測試程式，不需部署至網站。

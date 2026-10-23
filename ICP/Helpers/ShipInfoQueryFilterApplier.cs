@@ -108,7 +108,10 @@ public static class ShipInfoQueryFilterApplier
                 continue;
             }
 
-            query = ApplyTextFilter(query, entityColumn, term.Trim(), properties);
+            query = meta.MultiValueText
+                ? ApplyCheckboxFilter(query, entityColumn, term.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Distinct(StringComparer.Ordinal).ToList(), properties)
+                : ApplyTextFilter(query, entityColumn, term.Trim(), properties);
         }
 
         foreach (var (fieldName, fromValue) in criteria.DateFrom)

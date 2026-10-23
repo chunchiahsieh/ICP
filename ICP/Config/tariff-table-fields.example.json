@@ -15,6 +15,7 @@
       { "fieldName": "RowNo", "visible": true, "searchable": false },
       { "fieldName": "Actions", "visible": true, "searchable": false },
       { "fieldName": "DeclarationPdf", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "ImportDoc", "visible": true, "searchable": true, "filterType": "Checkbox" },
       { "fieldName": "MAWB", "visible": true, "searchable": true, "filterType": "Text" },
       { "fieldName": "HAWB", "visible": true, "searchable": true, "filterType": "Text" },
       { "fieldName": "EntryNumber", "visible": true, "searchable": true, "filterType": "Text" },

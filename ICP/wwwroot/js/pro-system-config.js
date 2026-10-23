@@ -66,6 +66,26 @@
   global.ProSystemConfig.init = function (config) {
     config = config || {};
 
+    $(document).off('change.settingExcel', '.setting-excel-file')
+      .on('change.settingExcel', '.setting-excel-file', function () {
+        var input = this;
+        var file = input.files && input.files[0];
+        if (!file) return;
+        var $actions = $(input).closest('.setting-excel-actions');
+        if (!window.confirm($actions.find('.setting-excel-confirm').text())) { input.value = ''; return; }
+        var payload = new FormData();
+        payload.append('file', file);
+        payload.append('__RequestVerificationToken', $actions.find('[name="__RequestVerificationToken"]').val());
+        $(input).prop('disabled', true);
+        $.ajax({url: $actions.data('upload-url'), type: 'POST', data: payload, processData: false, contentType: false})
+          .done(function (result) {
+            window.alert(result.message);
+            if (result.success && typeof config.onSuccess === 'function') config.onSuccess();
+          })
+          .fail(function (xhr) { window.alert((xhr.responseJSON && xhr.responseJSON.message) || $actions.find('.setting-excel-failed').text()); })
+          .always(function () { input.value = ''; $(input).prop('disabled', false); });
+      });
+
     var $form = $(config.formSelector || '#editForm');
     var editModalInstance = getModalInstance(config.editModalSelector || '#editModal');
     var confirmModalInstance = getModalInstance(config.confirmModalSelector || '#crudConfirmModal');

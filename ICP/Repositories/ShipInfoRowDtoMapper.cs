@@ -161,6 +161,7 @@ public static class ShipInfoRowDtoMapper
             Weight = weight,
             NetWeightOfTheItem = detail.NetWeightOfTheItem,
             DeliveryLineNo = detail.DeliveryLineNo,
+            WbsElement = detail.WbsElement,
             Eccn = detail.Eccn,
             ElFlag = detail.ElFlag,
             SdsFlag = detail.SdsFlag,

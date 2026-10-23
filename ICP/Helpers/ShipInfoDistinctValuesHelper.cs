@@ -23,7 +23,7 @@ public static class ShipInfoDistinctValuesHelper
         IQueryable<IcpHeader> query,
         string column,
         string? search,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default, bool includeAllValues = false)
     {
         if (string.IsNullOrWhiteSpace(column))
         {
@@ -53,14 +53,14 @@ public static class ShipInfoDistinctValuesHelper
             return Task.FromResult<IReadOnlyList<string>>([]);
         }
 
-        return GetDistinctByPropertyTypeAsync(query, entityColumn, property, term, cancellationToken);
+        return GetDistinctByPropertyTypeAsync(query, entityColumn, property, term, cancellationToken, includeAllValues);
     }
 
     public static Task<IReadOnlyList<string>> GetDetailDistinctValuesAsync(
         IQueryable<IcpDetail> query,
         string column,
         string? search,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default, bool includeAllValues = false)
     {
         if (string.IsNullOrWhiteSpace(column))
         {
@@ -85,7 +85,7 @@ public static class ShipInfoDistinctValuesHelper
             return Task.FromResult<IReadOnlyList<string>>([]);
         }
 
-        return GetDistinctByPropertyTypeAsync(query, entityColumn, property, term, cancellationToken);
+        return GetDistinctByPropertyTypeAsync(query, entityColumn, property, term, cancellationToken, includeAllValues);
     }
 
     private static bool IsCaseStatusColumn(string column) =>
@@ -140,7 +140,7 @@ public static class ShipInfoDistinctValuesHelper
         string column,
         PropertyInfo property,
         string? search,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, bool includeAllValues)
         where TEntity : class
     {
         var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
@@ -150,7 +150,7 @@ public static class ShipInfoDistinctValuesHelper
             return DistinctStringColumnAsync(
                 query.Select(entity => EF.Property<string?>(entity, column)),
                 search,
-                cancellationToken);
+                cancellationToken, includeAllValues);
         }
 
         if (propertyType == typeof(double))
@@ -199,7 +199,7 @@ public static class ShipInfoDistinctValuesHelper
     private static async Task<IReadOnlyList<string>> DistinctStringColumnAsync(
         IQueryable<string?> source,
         string? search,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, bool includeAllValues = false)
     {
         var includeBlank = string.IsNullOrWhiteSpace(search)
             && await source.AnyAsync(x => x == null || x.Trim() == string.Empty, cancellationToken);
@@ -213,7 +213,7 @@ public static class ShipInfoDistinctValuesHelper
             .Select(x => x!)
             .Distinct()
             .OrderBy(x => x)
-            .Take(Limit)
+            .Take(includeAllValues ? int.MaxValue : Limit)
             .ToListAsync(cancellationToken);
 
         if (includeBlank)

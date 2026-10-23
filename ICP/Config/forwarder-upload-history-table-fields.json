@@ -1,0 +1,14 @@
+{
+  "tableUi": { "stickyHeader": true, "stickyLeftColumns": false, "maxHeight": "600px" },
+  "initialSort": { "fieldName": "ImportedTime", "direction": "desc" },
+  "list": {
+    "fields": [
+      { "fieldName": "FileName", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "ImportedTime", "visible": true, "searchable": true, "filterType": "DateRange" },
+      { "fieldName": "ImportedBy", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "RowCount", "visible": true, "searchable": true, "filterType": "Text" },
+      { "fieldName": "Status", "visible": true, "searchable": true, "filterType": "Checkbox" },
+      { "fieldName": "DownloadOriginal", "visible": true, "searchable": true, "filterType": "Checkbox" }
+    ]
+  }
+}

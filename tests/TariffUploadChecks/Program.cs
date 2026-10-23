@@ -222,9 +222,10 @@ Check(!TariffOverwriteConfirmation.IsValid(protector, token, "other", "user", "s
     && !TariffOverwriteConfirmation.IsValid(protector, token, "hash", "user", "changed")
     && !TariffOverwriteConfirmation.IsValid(protector, "invalid", "hash", "user", "snapshot"),
     "Confirmation rejects a different file, user, changed data and invalid tokens");
+var allowedAirSea = new HashSet<string>(StringComparer.Ordinal) { "Air", "Sea" };
 var parse = typeof(TariffDataImportService).GetMethod("ParseCustomsExcel", BindingFlags.NonPublic | BindingFlags.Static)!;
 var templatePath = Path.GetFullPath(Path.Combine("ICP", "Files", "CustomsDataUploadTemplate.xlsx"));
-Check(((List<TariffData>)parse.Invoke(null, new object[] { templatePath, "template.xlsx", allowedShippers })!).Count == 0,
+Check(((List<TariffData>)parse.Invoke(null, new object[] { templatePath, "template.xlsx", allowedShippers, allowedAirSea })!).Count == 0,
     "New template headers parse successfully and empty rows are skipped");
 var testPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
 try
@@ -235,7 +236,7 @@ try
         workbook.SaveAs(testPath);
     }
     bool invalidSheet = false;
-    try { parse.Invoke(null, new object[] { testPath, "wrong.xlsx", allowedShippers }); }
+    try { parse.Invoke(null, new object[] { testPath, "wrong.xlsx", allowedShippers, allowedAirSea }); }
     catch (TargetInvocationException ex) { invalidSheet = ex.InnerException is InvalidOperationException && ex.InnerException.Message.Contains("Upload Data"); }
     Check(invalidSheet, "Wrong first sheet name is rejected");
     using (var workbook = new ClosedXML.Excel.XLWorkbook(templatePath))
@@ -244,11 +245,43 @@ try
         workbook.SaveAs(testPath);
     }
     bool duplicateHeader = false;
-    try { parse.Invoke(null, new object[] { testPath, "duplicate.xlsx", allowedShippers }); }
+    try { parse.Invoke(null, new object[] { testPath, "duplicate.xlsx", allowedShippers, allowedAirSea }); }
     catch (TargetInvocationException ex) { duplicateHeader = ex.InnerException is InvalidOperationException && ex.InnerException.Message.Contains("重複"); }
     Check(duplicateHeader, "Duplicate mapped headers are rejected");
 }
 finally { File.Delete(testPath); }
+
+foreach (var missingCif in new[] { false, true })
+{
+    var cells = ValidCells();
+    if (missingCif) cells.Remove("CIFValue"); else cells["CIFValue"] = "   ";
+    var (row, errors) = Map(cells);
+    Check(errors.Count == 0 && row.CIFValue is null, "CIF accepts blank or absent column");
+}
+Check(!TariffCustomsImportRules.IsRequiredCellColumn("CIFValue") && !TariffExcelColumnMap.IsRequiredColumn("CIFValue"), "CIF is optional in both metadata sets");
+foreach (var amount in new[] { "0", "31669", "31669.25", "31,669.25" })
+{
+    var cells = ValidCells(); cells["DeclarationAmountTWD"] = amount;
+    var (row, errors) = Map(cells);
+    Check(errors.Count == 0 && row.DeclarationAmountTWD == amount, "Numeric declaration amount accepted: " + amount);
+}
+foreach (var amount in new[] { "", "ABC", "NaN", "Infinity", "TWD 100" })
+{
+    var cells = ValidCells(); cells["DeclarationAmountTWD"] = amount;
+    var (_, errors) = Map(cells);
+    Check(errors.Count == 1 && errors[0].Contains("Declaration Amount"), "Invalid declaration amount rejected once: " + amount);
+}
+foreach (var value in new[] { "Air", "Sea", " Air " })
+{
+    var errors = new List<string>(); TariffCustomsImportRules.ValidateAirSea(value, allowedAirSea, 6, errors);
+    Check(errors.Count == 0, "Configured Air/Sea accepted: " + value);
+}
+var invalidAirSea = new List<string>(); TariffCustomsImportRules.ValidateAirSea("Truck", allowedAirSea, 7, invalidAirSea);
+Check(invalidAirSea.Count == 1 && invalidAirSea[0].Contains("第 7 列") && invalidAirSea[0].Contains("Truck"), "Unknown Air/Sea reports row and value");
+var emptyAirSeaSettings = new List<string>(); TariffCustomsImportRules.ValidateAirSea("Air", new HashSet<string>(), 8, emptyAirSeaSettings);
+Check(emptyAirSeaSettings.Count == 1, "Empty settings do not silently permit Air/Sea");
+var blankAirCells = ValidCells(); blankAirCells["AirSea"] = "";
+Check(Map(blankAirCells).Errors.Count == 1, "Air/Sea remains required");
 
 Console.WriteLine($"{count} checks passed; no database connections were used.");
 

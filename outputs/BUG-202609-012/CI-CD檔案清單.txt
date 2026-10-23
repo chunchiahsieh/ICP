@@ -1,0 +1,31 @@
+﻿BUG-202609-012 Add DI/SA 改修
+
+部署順序：
+1. 備份資料庫，先在 ICP 資料庫執行 017_AddDetailWbsElement.sql。
+2. 由 CI/CD 建置並部署 ICP 網站。
+3. 確認 Download Sample 下載 DISA_Data Upload Template.xlsx。
+
+本次修改的程式碼／設定／範本／SQL：
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Controllers\AddDiSaController.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\AddDiSaExcelColumnMap.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\AddDiSaImportRules.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\AddDiSaImportService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Files\DISA_Data Upload Template.xlsx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\ICP.csproj
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\Icp\IcpDetail.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\ShipInfo\ShipInfoDetailRowDto.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\ShipInfo\ShipInfoFieldCatalog.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Repositories\ShipInfoRowDtoMapper.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\shipinfo-detail-form-fields.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\shipinfo-pro-datatable-fields.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\NotificationMail\ArrivalNoticeMailContent.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.zh-TW.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.en.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.ja.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\sql\017_AddDetailWbsElement.sql
+
+測試程式（提交原始碼供 CI 驗證，主機不用部署）：
+C:\Disk F\Aga\EY\TEL\ICP\Projects\tests\AddDiSaImportChecks
+
+測試結果：AddDiSaImportChecks 159 項；ArrivalNoticeScheduleChecks 29 項。未操作正式資料庫、未實際寄信。

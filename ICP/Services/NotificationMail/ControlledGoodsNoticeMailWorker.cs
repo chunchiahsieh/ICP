@@ -14,12 +14,20 @@ public sealed class ControlledGoodsNoticeMailWorker(
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            try { await PollAsync(stoppingToken); }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            try
             {
-                logger.LogError(ex, "Controlled goods notice polling failed.");
+                try { await PollAsync(stoppingToken); }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    logger.LogError(ex, "Controlled goods notice polling failed.");
+                }
+                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
-            await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                // Host shutdown is expected during IIS recycling or stopping debugging.
+                break;
+            }
         }
     }
 

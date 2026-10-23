@@ -26,12 +26,20 @@ public sealed class ArrivalNoticeMailWorker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            try { await PollAsync(stoppingToken); }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            try
             {
-                _logger.LogError(ex, "Arrival notice mail polling failed.");
+                try { await PollAsync(stoppingToken); }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    _logger.LogError(ex, "Arrival notice mail polling failed.");
+                }
+                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
-            await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                // Normal host shutdown (IIS recycling or stopping debugging).
+                break;
+            }
         }
     }
 

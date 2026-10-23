@@ -13,6 +13,7 @@ public class TariffTableMetadataProvider
             ["Actions"] = "Broker.TariffData.Column.Actions",
             ["RowNo"] = "Broker.TariffData.Column.RowNo",
             ["DeclarationPdf"] = "Broker.TariffData.Column.PDF",
+            ["ImportDoc"] = "Broker.TariffData.Column.ImportDoc",
             ["CostFile"] = "Broker.TariffData.Column.Cost",
             ["MAWB"] = "Broker.TariffData.Column.MAWB",
             ["HAWB"] = "Broker.TariffData.Column.HAWB",

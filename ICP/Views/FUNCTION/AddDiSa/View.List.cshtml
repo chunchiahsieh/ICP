@@ -1,5 +1,5 @@
 @model List<ICP.Helpers.AddDiSaImportRowViewModel>
-@using System.Globalization
+@using ICP.Helpers
 
 <div class="adddisa-preview" data-can-save="@(Model.Count > 0 && Model.All(r => r.CanUpload) ? "true" : "false")">
     <div class="upload-page-preview-toolbar">
@@ -20,15 +20,10 @@
             <tr>
                 <th>@Localizer["Function.AddDiSa.Column.CanUpload"]</th>
                 <th class="text-center">@Localizer["Function.AddDiSa.Column.RowNo"]</th>
-                <th>InvoiceNo</th>
-                <th>TetPo</th>
-                <th>Shipper</th>
-                <th>Mawb</th>
-                <th>Hawb</th>
-                <th>Flt</th>
-                <th>Eta</th>
-                <th>ItemNo</th>
-                <th>Qty</th>
+                @foreach (var column in AddDiSaExcelColumnMap.PreviewColumns)
+                {
+                    <th>@column</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -73,15 +68,10 @@
                     }
                 </td>
                 <td class="text-center" data-sort="@rowIndex">@rowIndex</td>
-                <td>@row.InvoiceNo</td>
-                <td>@row.TetPo</td>
-                <td>@row.Header.Shipper</td>
-                <td>@row.Mawb</td>
-                <td>@row.Hawb</td>
-                <td>@row.Flt</td>
-                <td>@row.Eta</td>
-                <td>@row.Detail.ItemNo</td>
-                <td>@(row.Detail.Qty?.ToString(CultureInfo.InvariantCulture))</td>
+                @foreach (var column in AddDiSaExcelColumnMap.PreviewColumns)
+                {
+                    <td>@AddDiSaExcelColumnMap.GetPreviewValue(row, column)</td>
+                }
             </tr>
         }
         </tbody>

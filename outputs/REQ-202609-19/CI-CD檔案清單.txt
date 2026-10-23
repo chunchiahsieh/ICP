@@ -1,0 +1,33 @@
+REQ-202609-19 Customs Clearance Data 新增 Import Doc
+部署原始碼、設定、資源與 SQL：16 個檔案
+
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Controllers\TariffDataController.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\TariffAttachmentHelper.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\TariffMetadataHelper.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Helpers\PermissionRequestResolver.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Models\Icp\TariffData.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\TariffDataImportService.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Services\TariffTableMetadataProvider.cs
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\tariff-table-fields.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Config\tariff-table-fields.example.json
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\BROKER\TariffData\View.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Views\BROKER\TariffData\View.List.cshtml
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.zh-TW.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.en.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\Resources\SharedResource.ja.resx
+C:\Disk F\Aga\EY\TEL\ICP\Projects\ICP\sql\018_AddTariffImportDoc.sql
+
+部署順序：
+1. 備份 ICP 資料庫與既有附件。
+2. 在 ICP 資料庫執行 ICP/sql/018_AddTariffImportDoc.sql。
+3. 由 CI/CD 建置並部署 ICP。VS 測試則先停止偵錯，重建成功後重新啟動。
+4. 瀏覽器 Ctrl+F5，確認 Declaration PDF → Import Doc → MAWB 欄位及新增 Upload Import Doc 按鈕。
+5. 提單：HAWB.pdf/.xls/.xlsx；報單：HAWB.pdf/.tif；Cost 維持原規則。
+
+儲存位置：沿用 TariffData:StoragePath，新增 import-doc 子資料夾。
+Import Doc 沿用 Views.Broker.TariffData.UploadDeclarationPdf 上傳權限；下載沿用頁面檢視權限；刪除沿用刪除權限。
+同 HAWB 共用附件；重複上傳保留版本；刪除目前版本時回復上一版本。
+無需新增 appsettings 設定。
+測試：TariffAttachmentChecks 40 項、TariffUploadChecks 103 項通過；未操作主機資料庫、未發信。
+tests/TariffAttachmentChecks 是測試程式，不需部署至網站。

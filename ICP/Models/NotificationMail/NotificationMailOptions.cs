@@ -13,12 +13,19 @@ public sealed class NotificationMailOptions
 
 public sealed class NotificationSmtpOptions
 {
-    public string Host { get; set; } = string.Empty;
-    public int Port { get; set; } = 587;
-    public bool EnableSsl { get; set; } = true;
+    public const string DefaultFromAddress = "TETIS87GEMSAdmin@tel.com";
+    private string? _fromAddress;
+
+    public string Host { get; set; } = "smtp.tel.co.jp";
+    public int Port { get; set; } = 25;
+    public bool EnableSsl { get; set; }
     public string UserName { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public string FromAddress { get; set; } = string.Empty;
+    public string FromAddress
+    {
+        get => string.IsNullOrWhiteSpace(_fromAddress) ? DefaultFromAddress : _fromAddress.Trim();
+        set => _fromAddress = value;
+    }
     public string FromName { get; set; } = string.Empty;
 }
 

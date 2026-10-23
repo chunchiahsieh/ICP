@@ -41,7 +41,6 @@ public static class HubServiceCollectionExtensions
         services.AddScoped<IExportOrchestrationService, ExportOrchestrationService>();
         services.AddScoped<IIlcDepositWriteService, IlcDepositWriteService>();
         services.AddScoped<IIlcArurWriteService, IlcArurWriteService>();
-        services.AddSingleton<IRoutingService, StubRoutingService>();
         services.AddSingleton<ITargetWriter>(_ => new NoOpTargetWriter("GEM"));
         services.AddSingleton<ITargetWriter>(_ => new NoOpTargetWriter("ARUR"));
         services.AddSingleton<ITargetWriter>(_ => new NoOpTargetWriter("ICP"));

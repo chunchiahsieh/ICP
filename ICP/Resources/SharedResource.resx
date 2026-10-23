@@ -817,7 +817,7 @@
     <value>系統已存在，不可上傳</value>
   </data>
   <data name="Function.AddDiSa.CanUpload.InvoiceInconsistent" xml:space="preserve">
-    <value>Invoice MAWB/HAWB/FLT/ETA 不一致</value>
+    <value>同 Invoice 的非例外欄位資料不一致</value>
   </data>
   <data name="Function.AddDiSa.CannotSaveMessage" xml:space="preserve">
     <value>檔案無法儲存，請修正「可否上傳」欄位問題後重新上傳</value>
@@ -1169,7 +1169,7 @@
     <value>No.</value>
   </data>
   <data name="Broker.TariffData.Column.PDF" xml:space="preserve">
-    <value>PDF</value>
+    <value>Declaration PDF</value>
   </data>
   <data name="Broker.TariffData.Column.Cost" xml:space="preserve">
     <value>Cost</value>
@@ -2819,4 +2819,24 @@
   <data name="NotificationMail.ControlledGoodsAlreadySent" xml:space="preserve"><value>管制品發信 Flag 為 Y；改為 N 並儲存後可再次發信。</value></data>
   <data name="NotificationMail.ScheduleDate" xml:space="preserve"><value>排程日期</value></data>
   <data name="NotificationMail.DepositPreview" xml:space="preserve"><value>郵件預覽</value></data>
+  <data name="ShipInfo.Detail.Field.WbsElement" xml:space="preserve"><value>WBS Element</value></data>
+  <data name="Broker.TariffData.Column.ImportDoc" xml:space="preserve"><value>Import Doc</value></data>
+  <data name="Broker.TariffData.UploadImportDocTitle" xml:space="preserve"><value>Upload Import Doc</value></data>
+  <data name="Broker.TariffData.UploadImportDocButton" xml:space="preserve"><value>Upload Import Doc</value></data>
+  <data name="Broker.TariffData.UploadImportDocSuccess" xml:space="preserve"><value>Import Doc uploaded: {0}</value></data>
+  <data name="Setting.Excel.Download" xml:space="preserve"><value>Download Excel</value></data>
+  <data name="Setting.Excel.Upload" xml:space="preserve"><value>Upload Excel</value></data>
+  <data name="Setting.Excel.ReplaceConfirm" xml:space="preserve"><value>This will replace all data managed by this Settings page. The entire workbook is validated before replacement. Continue?</value></data>
+  <data name="Setting.Excel.Failed" xml:space="preserve"><value>Import failed. Existing data has been preserved.</value></data>
+  <data name="Forwarder.Upload.CheckTab" xml:space="preserve"><value>Upload Check</value></data>
+  <data name="Forwarder.Upload.HistoryTab" xml:space="preserve"><value>Upload History</value></data>
+  <data name="Forwarder.Upload.DownloadOriginal" xml:space="preserve"><value>Download original</value></data>
+  <data name="Forwarder.Upload.MissingFile" xml:space="preserve"><value>File not found</value></data>
+  <data name="Forwarder.Upload.Imported" xml:space="preserve"><value>Imported</value></data>
+  <data name="Forwarder.Upload.Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Forwarder.Upload.FileName" xml:space="preserve"><value>File name</value></data>
+  <data name="Forwarder.Upload.ImportedTime" xml:space="preserve"><value>Imported time</value></data>
+  <data name="Forwarder.Upload.ImportedBy" xml:space="preserve"><value>Imported by</value></data>
+  <data name="Forwarder.Upload.RowCount" xml:space="preserve"><value>Rows</value></data>
+  <data name="Forwarder.Upload.Status" xml:space="preserve"><value>Status</value></data>
 </root>

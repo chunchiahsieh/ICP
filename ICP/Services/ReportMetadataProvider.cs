@@ -49,7 +49,7 @@ public class ReportMetadataProvider
         {
             Culture = normalizedCulture,
             HeaderFields = headerFields,
-            DetailFields = detailFields,
+            DetailFields = reportKey == ReportKeys.MassDataReport ? [] : detailFields,
             HeaderInitialSort = report.Header.InitialSort,
             DetailInitialSort = report.Detail.InitialSort,
             HeaderTableUi = ShipInfoTableUiOptions.MergeDefaults(report.Header.TableUi),

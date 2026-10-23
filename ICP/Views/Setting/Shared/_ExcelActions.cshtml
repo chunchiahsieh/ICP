@@ -1,0 +1,12 @@
+@model string
+<span class="d-inline-flex gap-2 setting-excel-actions" data-upload-url="@Url.Action("UploadExcel", Model)">
+    <a class="btn btn-outline-success btn-sm" href="@Url.Action("DownloadExcel", Model)"
+       data-permissions="@($"Views.Setting.{Model}.View")">@Localizer["Setting.Excel.Download"]</a>
+    <label class="btn btn-outline-primary btn-sm mb-0" data-permissions="@($"Views.Setting.{Model}.Create")">
+        @Localizer["Setting.Excel.Upload"]
+        <input type="file" class="d-none setting-excel-file" accept=".xlsx" />
+    </label>
+    @Html.AntiForgeryToken()
+    <span class="d-none setting-excel-confirm">@Localizer["Setting.Excel.ReplaceConfirm"]</span>
+    <span class="d-none setting-excel-failed">@Localizer["Setting.Excel.Failed"]</span>
+</span>

@@ -1,0 +1,81 @@
+using System.Text.Json;
+using ICP;
+using ICP.Data;
+using ICP.Helpers;
+using ICP.Models.Icp;
+using ICP.Models.Report;
+using ICP.Models.ShipInfo;
+using ICP.Repositories;
+using ICP.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Localization;
+using ClosedXML.Excel;
+
+int checks = 0;
+void Check(bool ok, string message) { if (!ok) throw new Exception(message); checks++; Console.WriteLine("PASS " + message); }
+var root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../"));
+var options = JsonSerializer.Deserialize<ShipInfoProDataTableFieldsOptions>(File.ReadAllText(Path.Combine(root, "ICP/Config/shipping-report-table-fields.json")))!;
+var services = new ServiceCollection();
+services.AddLogging(); services.AddLocalization();
+services.Configure<ShipInfoProDataTableFieldsOptions>(ReportKeys.ShippingReport, o => { o.Header = options.Header; o.Detail = options.Detail; });
+services.AddSingleton<ReportTableFieldsOptions>();
+using var provider = services.BuildServiceProvider();
+var metadata = new ReportMetadataProvider(provider.GetRequiredService<ReportTableFieldsOptions>(), provider.GetRequiredService<IStringLocalizer<SharedResource>>(), provider.GetRequiredService<IStringLocalizerFactory>(), NullLogger<ReportMetadataProvider>.Instance);
+var config = metadata.GetPageConfig(ReportKeys.ShippingReport, "en");
+Check(config.HeaderFields.Count == options.Header.List!.Fields.Count, "all header fields resolve to actual DTO fields");
+Check(config.DetailFields.Count == options.Detail.List!.Fields.Count, "all detail fields resolve to actual DTO fields");
+var multi = new[] { "InvoiceNo", "Mawb", "Hawb", "TetPo", "NcdrNo", "EndUser" };
+Check(config.HeaderFields.Where(f => f.MultiValueText).Select(f => f.FieldName).Order().SequenceEqual(multi.Order()), "only the six requested text fields use exact multiline matching");
+Check(config.HeaderFields.Single(f => f.FieldName == "Freight").FilterType == "Checkbox", "AIR/SEA maps to Freight");
+foreach (var field in new[] { "Etd", "Eta", "InvoiceDate", "DeliveryDate" }) Check(config.HeaderFields.Single(f => f.FieldName == field).FilterType == "DateRange", field + " is DateRange");
+using var db = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+db.IcpHeaders.AddRange(new IcpHeader { InvoiceNo="1", TetPo="P1", Mawb="1", Hawb="1", NcdrNo="1", EndUser="1", SaDate="2026-10-20", Etd="2026-10-20", Broker=null }, new IcpHeader { InvoiceNo="2", TetPo="P2", Mawb="2", Hawb="2", NcdrNo="2", EndUser="2", SaDate="2026-10-21", Etd="2026-10-21", Broker="" }, new IcpHeader { InvoiceNo="12", TetPo="P12", Mawb="12", Hawb="12", NcdrNo="12", EndUser="12", Etd="2026-10-22", Broker=" " });
+db.IcpDetails.Add(new IcpDetail { InvoiceNo="1", TetPo="P1", ItemNo="ITEM", NetWeightOfTheItem=1.23456, Price=12.3456, Uom=null });
+for (var i=0; i<250; i++) db.IcpHeaders.Add(new IcpHeader { InvoiceNo="extra"+i, TetPo="P", Broker="B"+i.ToString("D3") });
+await db.SaveChangesAsync();
+foreach (var field in multi) {
+ var input = field == "TetPo" ? " P1\r\nP2\nP1\r \n" : " 1\r\n2\n1\r \n";
+ var criteria = new ShipInfoHeaderQueryModel { Text = new() { [field] = input } };
+ var result = ShipInfoQueryFilterApplier.ApplyHeaderFilters(db.IcpHeaders, criteria, config.HeaderFields).Select(h=>h.InvoiceNo).ToList();
+ Check(result.Order().SequenceEqual(new[]{"1","2"}), field + " CRLF/LF/CR trim, deduplicate, exact IN (excludes 12)");
+ criteria.Text[field] = field == "TetPo" ? "P1" : "1";
+ Check(ShipInfoQueryFilterApplier.ApplyHeaderFilters(db.IcpHeaders, criteria, config.HeaderFields).Count()==1, field+" single value also uses exact match");
+}
+var blank = ShipInfoDistinctValuesHelper.BlankFilterValue;
+var all = await ShipInfoDistinctValuesHelper.GetHeaderDistinctValuesAsync(db.IcpHeaders, "Broker", null, includeAllValues:true);
+Check(all.Count==251 && all.Contains(blank) && all.Contains("B249"), "all 250 checkbox values plus blank are available");
+var searched = await ShipInfoDistinctValuesHelper.GetHeaderDistinctValuesAsync(db.IcpHeaders,"Broker","B249",includeAllValues:true);
+Check(searched.SequenceEqual(new[]{"B249"}), "checkbox search reaches values beyond original 200 limit");
+var blankCriteria = new ShipInfoHeaderQueryModel { Checkbox=new(){["Broker"]=[blank]} };
+Check(ShipInfoQueryFilterApplier.ApplyHeaderFilters(db.IcpHeaders,blankCriteria,config.HeaderFields).Count()==3,"blank matches null, empty, whitespace");
+blankCriteria.Checkbox["Broker"].Add("B249");
+Check(ShipInfoQueryFilterApplier.ApplyHeaderFilters(db.IcpHeaders,blankCriteria,config.HeaderFields).Count()==4,"blank and nonblank combine with OR");
+var dates = new ShipInfoHeaderQueryModel { DateFrom=new(){["Etd"]="2026-10-20"}, DateTo=new(){["Etd"]="2026-10-21"} };
+Check(ShipInfoQueryFilterApplier.ApplyHeaderFilters(db.IcpHeaders,dates,config.HeaderFields).Count()==2,"date range includes both endpoints");
+var detailBlank = await ShipInfoDistinctValuesHelper.GetDetailDistinctValuesAsync(db.IcpDetails,"Uom",null,includeAllValues:true);
+Check(detailBlank.SequenceEqual(new[]{blank}),"detail checkbox includes blank");
+Check(ShipInfoQueryFilterApplier.ApplyDetailFilters(db.IcpDetails,new ShipInfoDetailQueryModel { Checkbox=new(){["Uom"]=[blank]} },config.DetailFields).Count()==1,"detail blank selection filters actual rows");
+using var sqlDb = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlServer("Server=localhost;Database=Unused;Trusted_Connection=True;TrustServerCertificate=True").Options);
+var sql = ShipInfoQueryFilterApplier.ApplyHeaderFilters(sqlDb.IcpHeaders,new ShipInfoHeaderQueryModel { Text=new(){["InvoiceNo"]="1\n2"} },config.HeaderFields).ToQueryString();
+Check(sql.Contains("IN") && !sql.Contains("LIKE"),"SQL Server translates multiline text into IN without connecting");
+var ordinarySql = ShipInfoQueryFilterApplier.ApplyHeaderFilters(sqlDb.IcpHeaders,
+    new ShipInfoHeaderQueryModel { Text=new(){["Flt"]="12"} },config.HeaderFields).ToQueryString();
+Check(ordinarySql.Contains("LIKE"), "ordinary Text fields retain contains matching");
+Check(ShipInfoQueryFilterApplier.ApplyHeaderFilters(db.IcpHeaders,
+    new ShipInfoHeaderQueryModel { Text=new(){["InvoiceNo"]=" \r\n "} },config.HeaderFields).Count()==253,
+    "empty multiline input does not filter data");
+var scope = new PageDataScopeService(db,null!,new HttpContextAccessor());
+var report = new ReportDataService(metadata,new ShipInfoRepository(db,scope),db,scope);
+Check((await report.GetHeaderFilterOptionsAsync(ReportKeys.ShippingReport,"Broker",null)).Count==251,"report service exposes full checkbox list");
+var export = await report.ExportExcelAsync(ReportKeys.ShippingReport,new ShipInfoHeaderQueryModel { Text=new(){["InvoiceNo"]="1\n2"} },"Shipping Report");
+using var workbook = new XLWorkbook(new MemoryStream(export.Content));
+var sheet=workbook.Worksheet(1);
+Check(sheet.LastRowUsed()!.RowNumber()==3,"Excel export uses same multiline filters");
+var weightColumn = sheet.Row(1).CellsUsed().Single(c=>c.GetString().Contains("NetWeightOfTheItem") || c.GetString().Contains("Net Weight of the Item", StringComparison.OrdinalIgnoreCase)).Address.ColumnNumber;
+var weightCell = sheet.Column(weightColumn).CellsUsed().Single(c => c.DataType == XLDataType.Number);
+Check(weightCell.Style.NumberFormat.Format=="0.000","Excel net weight format matches Ship Info 3 decimals");
+Check(Math.Abs(weightCell.GetDouble()-1.23456)<0.000001,"display format retains underlying precision");
+Console.WriteLine($"{checks} checks passed. No production database connection.");

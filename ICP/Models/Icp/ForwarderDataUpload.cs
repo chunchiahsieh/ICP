@@ -6,6 +6,8 @@ namespace ICP.Models.Icp;
 [Table("ForwarderDataUpload")]
 public class ForwarderDataUpload
 {
+    [NotMapped]
+    public int UploadRowNumber { get; set; }
     [Key]
     public long Id { get; set; }
 

@@ -37,6 +37,9 @@ public class ShipInfoFieldMetadata
     [JsonPropertyName("filterType")]
     public string FilterType { get; set; } = ShipInfoFilterTypes.Checkbox;
 
+    [JsonPropertyName("multiValueText")]
+    public bool MultiValueText { get; set; }
+
     [JsonPropertyName("editable")]
     public bool Editable { get; set; } = true;
 

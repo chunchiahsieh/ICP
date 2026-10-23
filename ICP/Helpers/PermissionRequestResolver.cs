@@ -59,7 +59,8 @@ public static class PermissionRequestResolver
                 return ResolveIfRegistered(registry, "Views.Broker.TariffData.UploadCustomsData");
             }
 
-            if (action.Equals("UploadDeclarationPdf", StringComparison.OrdinalIgnoreCase)
+            if ((action.Equals("UploadDeclarationPdf", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("UploadImportDoc", StringComparison.OrdinalIgnoreCase))
                 && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
             {
                 return ResolveIfRegistered(registry, "Views.Broker.TariffData.UploadDeclarationPdf");
@@ -120,6 +121,14 @@ public static class PermissionRequestResolver
 
         if (controller.Equals("ForwarderDataUpload", StringComparison.OrdinalIgnoreCase))
         {
+            if (action.Equals("GetHistoryTableConfig", StringComparison.OrdinalIgnoreCase)
+                || action.Equals("GetHistoryFilterOptions", StringComparison.OrdinalIgnoreCase)
+                || action.Equals("QueryUploadHistory", StringComparison.OrdinalIgnoreCase))
+                return "Views.Forwarder.ForwarderDataUpload.View";
+            if (httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase)
+                && (action.Equals("GetUploadHistory", StringComparison.OrdinalIgnoreCase)
+                    || action.Equals("DownloadUploadedFile", StringComparison.OrdinalIgnoreCase)))
+                return "Views.Forwarder.ForwarderDataUpload.View";
             if ((action.Equals("Upload", StringComparison.OrdinalIgnoreCase)
                     || action.Equals("Save", StringComparison.OrdinalIgnoreCase)
                     || action.Equals("CancelPending", StringComparison.OrdinalIgnoreCase)
@@ -233,6 +242,14 @@ public static class PermissionRequestResolver
             {
                 return $"Views.Report.{controller}.View";
             }
+        }
+
+        if (SettingCategories.IsKnown(controller))
+        {
+            if (action.Equals("DownloadExcel", StringComparison.OrdinalIgnoreCase) && httpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+                return $"Views.Setting.{controller}.View";
+            if (action.Equals("UploadExcel", StringComparison.OrdinalIgnoreCase) && httpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+                return $"Views.Setting.{controller}.Create";
         }
 
         if (action.Equals("Index", StringComparison.OrdinalIgnoreCase)

@@ -112,7 +112,22 @@
                                     <button type="button" class="btn btn-sm btn-outline-secondary tariff-open-folder"
                                             data-hawb="@item.HAWB" data-kind="pdf"
                                             title="@Localizer["Broker.TariffData.Attachment.OpenFolder"]">
-                                        <i class="fas fa-folder-open text-warning" aria-hidden="true"></i> PDF
+                                        <i class="fas fa-folder-open text-warning" aria-hidden="true"></i> Declaration PDF
+                                    </button>
+                                }
+                            </td>
+                        }
+                        else if (string.Equals(field.FieldName, "ImportDoc", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var hasPdf = !string.IsNullOrWhiteSpace(item.HAWB)
+                                && TariffAttachmentHelper.FindImportDocPath(Model.StorageRoot, item) is not null;
+                            <td class="text-center">
+                                @if (hasPdf)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-secondary tariff-open-folder"
+                                            data-hawb="@item.HAWB" data-kind="import-doc"
+                                            title="@Localizer["Broker.TariffData.Attachment.OpenFolder"]">
+                                        <i class="fas fa-folder-open text-warning" aria-hidden="true"></i> Import Doc
                                     </button>
                                 }
                             </td>
@@ -135,13 +150,14 @@
                         else
                         {
                             var cellValue = TariffTableViewHelper.FormatCellValue(item, field.FieldName);
+                            var cellClass = TariffTableViewHelper.IsNumericField(field.FieldName) ? "text-end" : string.Empty;
                             if (new[] { "MAWB", "HAWB", "InvoiceNumber", "LineNo" }.Contains(field.FieldName, StringComparer.OrdinalIgnoreCase))
                             {
-                                <td data-order="@cellValue">@cellValue</td>
+                                <td class="@cellClass" data-order="@cellValue">@cellValue</td>
                             }
                             else
                             {
-                                <td>@cellValue</td>
+                                <td class="@cellClass">@cellValue</td>
                             }
                         }
                     }

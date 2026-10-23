@@ -92,6 +92,15 @@
         return map[key] || key;
     }
 
+    function configureFilterDropdowns($scope) {
+        if (!global.bootstrap || !global.bootstrap.Dropdown) return;
+        $scope.find('.pro-table-filter > [data-bs-toggle="dropdown"], .column-filter-dropdown > [data-bs-toggle="dropdown"]').each(function () {
+            global.bootstrap.Dropdown.getOrCreateInstance(this, {
+                popperConfig: { strategy: 'fixed' }
+            });
+        });
+    }
+
     function syncStickyHeaderOffset($scope) {
         ($scope || $('#reportHeaderDataDiv, #reportDetailDataDiv')).find('.shipinfo-pro-table').each(function () {
             var table = this;
@@ -123,7 +132,7 @@
         var sortConfig = kind === 'detail'
             ? (pageConfig.detailInitialSort || pageConfig.DetailInitialSort)
             : (pageConfig.headerInitialSort || pageConfig.HeaderInitialSort);
-        var leadingOffset = kind === 'header' ? 1 : 0;
+        var leadingOffset = kind === 'header' && $('#reportDetailDataDiv').length ? 1 : 0;
         var fallback = kind === 'header' ? [[1, 'desc']] : [[0, 'asc']];
 
         if (!sortConfig) {
@@ -144,7 +153,7 @@
         });
 
         if (fieldIndex < 0) {
-            return fallback;
+            return $('#reportDetailDataDiv').length ? fallback : [];
         }
 
         var direction = String(sortConfig.direction || sortConfig.Direction || 'asc').toLowerCase() === 'desc'
@@ -171,7 +180,7 @@
             preserveSort: false,
             initialSort: resolveInitialSort(kind, pageConfig),
             dataTableOptions: {
-                columnDefs: kind === 'header'
+                columnDefs: kind === 'header' && $('#reportDetailDataDiv').length
                     ? [{ orderable: false, targets: [0] }]
                     : []
             },
@@ -179,6 +188,9 @@
                 syncStickyHeaderOffset($div);
             },
             formatFilterOptionLabel: function (column, value) {
+                if (value === '__BLANK__') {
+                    return app.messages.blank || '(Blank)';
+                }
                 if (column === 'DepositCaseStatus' || column === 'ArurCaseStatus') {
                     return formatCaseStatusLabel(value);
                 }
@@ -198,6 +210,7 @@
                 return { headerKey: app.state.selectedHeaderKey || '' };
             };
             base.onAfterRender = function ($div) {
+                configureFilterDropdowns($div);
                 syncStickyHeaderOffset($div);
                 if (filtersApi && filtersApi.updateAllProTableFilterCounts) {
                     filtersApi.updateAllProTableFilterCounts($div, base.filterFieldMap);
@@ -205,6 +218,7 @@
             };
         } else {
             base.onAfterRender = function ($div) {
+                configureFilterDropdowns($div);
                 restoreHeaderSelection($div);
                 syncStickyHeaderOffset($div);
                 if (filtersApi && filtersApi.updateAllProTableFilterCounts) {
@@ -329,7 +343,9 @@
                 }
 
                 headerTableInstance = ProDataTables.initUsers(buildTableConfig('header'));
-                detailTableInstance = ProDataTables.initUsers(buildTableConfig('detail'));
+                if ($('#reportDetailDataDiv').length) {
+                    detailTableInstance = ProDataTables.initUsers(buildTableConfig('detail'));
+                }
 
                 if (global.ProTableFilters) {
                     global.ProTableFilters.bindProTableFilterActions({
@@ -364,6 +380,7 @@
         $(document)
             .off('click.reportHeaderRow', '#reportHeaderDataDiv #reportHeaderTable tbody tr[data-header-id]')
             .on('click.reportHeaderRow', '#reportHeaderDataDiv #reportHeaderTable tbody tr[data-header-id]', function (e) {
+                if (!$('#reportDetailDataDiv').length) return;
                 if ($(e.target).closest('.report-header-radio, .dropdown-menu, .column-filter-dropdown, .pro-table-filter').length) {
                     return;
                 }

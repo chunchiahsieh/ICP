@@ -31,12 +31,20 @@ public sealed class DeliveryDelayMailWorker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            try { await PollAsync(stoppingToken); }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            try
             {
-                _logger.LogError(ex, "Delivery delay mail polling failed.");
+                try { await PollAsync(stoppingToken); }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    _logger.LogError(ex, "Delivery delay mail polling failed.");
+                }
+                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
-            await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                // Normal host shutdown (IIS recycling or stopping debugging).
+                break;
+            }
         }
     }
 
@@ -209,7 +217,7 @@ public sealed class DeliveryDelayMailWorker : BackgroundService
             html.Append("<tr>");
             AppendCell(html, h.Hawb); AppendCell(html, h.Warehouse); AppendCell(html, h.Flt);
             AppendCell(html, h.Eta); AppendCell(html, h.ReasonForDeliveryDelay);
-            AppendCell(html, h.DelayNotificationDate);
+            AppendCell(html, h.DeliveryDate);
             html.Append("</tr>");
         }
         html.Append("</tbody></table><table style=\"").Append(tableStyle).Append("\"><thead><tr>");
