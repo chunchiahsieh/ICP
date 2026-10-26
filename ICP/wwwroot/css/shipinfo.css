@@ -383,6 +383,13 @@
     word-break: break-word;
 }
 
+.shipinfo-drawer-header-report .shipinfo-drawer-report-label.shipinfo-drawer-report-highlight {
+    background-color: #ffff00;
+    --bs-table-bg: #ffff00;
+    --bs-table-accent-bg: transparent;
+    color: #212529;
+}
+
 .shipinfo-drawer-header-report .shipinfo-drawer-report-empty {
     background-color: var(--bs-body-bg, #fff);
 }

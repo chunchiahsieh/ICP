@@ -1,4 +1,11 @@
 from pathlib import Path
+from icp_manual_updates import add_updates
+from icp_manual_rules import append_rules
+from icp_manual_screenshots import add_fresh_screenshot_guide
+from icp_manual_examples import append_examples
+from icp_manual_navigation import finalize_navigation
+from icp_manual_operations import quick_reference, append_operations
+from icp_manual_wayfinding import scenario_guide, annotated_details, append_lookup
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -11,7 +18,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(r"C:\Disk F\Aga\EY\TEL\ICP\Projects")
 OUT = ROOT / "outputs" / "manual"
 OUT.mkdir(parents=True, exist_ok=True)
-DOCX = OUT / "ICP系統操作手冊.docx"
+DOCX = OUT / "ICP系統操作手冊-v1.5.docx"
 SHIP = Path(r"C:\Users\User\AppData\Local\Temp\codex-clipboard-73676402-59d7-4f96-9ec8-fb91495920d9.png")
 SCOPE = Path(r"C:\Users\User\AppData\Local\Temp\codex-clipboard-4b7f1bf3-9b33-4f1e-bf72-abecdb662680.png")
 SCREENSHOTS = OUT / "screenshots"
@@ -93,6 +100,14 @@ def add_table(headers, rows, widths=None):
         for row in t.rows:
             for i, width in enumerate(widths):
                 row.cells[i].width = Inches(width)
+    # Repeat column labels and keep compact operation cards together.
+    repeat = OxmlElement("w:tblHeader")
+    t.rows[0]._tr.get_or_add_trPr().append(repeat)
+    for ri, row in enumerate(t.rows):
+        row._tr.get_or_add_trPr().append(OxmlElement("w:cantSplit"))
+        for cell in row.cells:
+            for p in cell.paragraphs:
+                p.paragraph_format.keep_with_next = (ri == 0 or (len(rows) <= 4 and ri < len(t.rows)-1))
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
     return t
 
@@ -116,9 +131,11 @@ def picture(path, caption, max_height=None):
         picture_width = min(picture_width, max_height * image_width / image_height)
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.keep_with_next = True
     p.add_run().add_picture(str(path), width=Inches(picture_width))
     cap = doc.add_paragraph(caption)
     cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    cap.paragraph_format.keep_with_next = True
     for r in cap.runs:
         r.italic = True
         r.font.size = Pt(9)
@@ -187,23 +204,29 @@ if title_border is not None:
     title_ppr.remove(title_border)
 sub = doc.add_paragraph("功能操作與權限管理指南", style="Subtitle")
 sub.alignment = WD_ALIGN_PARAGRAPH.LEFT
-doc.add_paragraph("版本 1.1　更新日期 2026 年 9 月 12 日")
+doc.add_paragraph("版本 1.5　更新日期 2026 年 10 月 26 日")
 doc.add_paragraph(
     "本手冊說明 ICP 系統的導覽、查詢、維護、上傳、報表與權限管理方式。"
     "畫面及可用按鈕會依登入者的角色、資源權限與 DataScope 資料範圍而不同。"
 )
-doc.add_paragraph("本版已逐頁開啟並核對目前帳號可見的 31 個功能頁；操作名稱與頁面說明以英文介面為主，中文作必要補充。")
+doc.add_paragraph("本版於 2026 年 10 月 26 日補拍已登入系統的新版畫面，並依程式與欄位設定整理操作、卡控及成功／失敗教學案例。案例不代表本次已寫入資料；畫面依權限與環境而不同。目錄、章節及卡控入口皆可點擊跳轉。")
+doc.add_paragraph("第一次使用先看 [[1.0|工作情境導覽]]；已遇到問題可直達 [[17|錯誤快速索引]]，需要申請異動請看 [[18|管理者申請總表]]。")
 
 doc.add_heading("目錄", level=1)
 for item in [
     "1 Quick Start", "2 Common Operations", "3 Functions", "4 Settings", "5 Reports and Data Exchange",
     "6 Languages", "7 Administration", "8 Role Permissions and DataScope", "9 常見問題", "10 Menu Page Index",
-    "11 Visual Guide for Every Page"
+    "11 新版畫面操作對照", "12 卡控條件與處理邏輯", "13 上傳案例與錯誤修正", "14 填寫建議與系統卡控的差別",
+    "15 完成判斷與異常處理", "16 文件版本與適用範圍", "17 錯誤快速索引", "18 哪些變更需通知管理者"
 ]:
-    doc.add_paragraph(item)
+    toc_entry = doc.add_paragraph(item)
+    toc_entry.paragraph_format.space_after = Pt(1)
+    toc_entry.paragraph_format.line_spacing = 1.0
 
 doc.add_page_break()
 doc.add_heading("1 Quick Start", level=1)
+scenario_guide(doc, add_table)
+doc.add_page_break()
 doc.add_heading("1.1 登入與首頁", level=2)
 step("開啟 ICP 網址並完成公司帳號驗證。")
 step("登入後確認左下角 Logged in as 顯示正確人員。")
@@ -220,58 +243,31 @@ add_table(["區域", "用途"], [
     ("Functions", "Ship Info、Add DI/SA、Mass Update 及 Export。"),
     ("Settings", "維護 BU、Warehouse、Delivery To 與各項代碼。"),
     ("Reports", "Shipping Report、Compare ICP vs AR/UR 及 Mass Data Report。"),
-    ("Forwarder / Broker", "Forwarder Data Upload、Customs Data Download 及 Tariff Data。"),
+    ("Forwarder / Broker", "Forwarder Data Upload、Customs Data Download 及 Customs Clearance Data。"),
     ("Administration", "Users、Resources、Roles 及角色指派。"),
 ], [1.5, 5.5])
 step("在左側選單找到常用頁面，按頁面右側的 Pin 圖示加入 Pinned。")
 step("從 Pinned 可直接開啟已固定頁面；若不再需要，按 Unpin／圖釘圖示取消固定。")
 bullet("Pinned 只調整個人導覽捷徑，不會新增頁面權限，也不會改變 DataScope。")
 
-pinned_recent_source = SCREENSHOTS / "00-pinned-recent.png"
-if pinned_recent_source.exists():
-    with Image.open(pinned_recent_source) as nav_image:
-        nav_w, nav_h = nav_image.size
-    pinned_recent_markers = [
-        (1, int(nav_w*0.15), int(nav_h*0.10), int(nav_w*0.03), int(nav_h*0.10)),
-        (2, int(nav_w*0.15), int(nav_h*0.13), int(nav_w*0.08), int(nav_h*0.13)),
-        (3, int(nav_w*0.15), int(nav_h*0.17), int(nav_w*0.03), int(nav_h*0.17)),
-        (4, int(nav_w*0.19), int(nav_h*0.17), int(nav_w*0.145), int(nav_h*0.17)),
-        (5, int(nav_w*0.15), int(nav_h*0.23), int(nav_w*0.04), int(nav_h*0.20)),
-        (6, int(nav_w*0.15), int(nav_h*0.56), int(nav_w*0.14), int(nav_h*0.56)),
-    ]
-    pinned_recent_annotated = annotate_screenshot(
-        pinned_recent_source,
-        ANNOTATED / "00-pinned-recent.png",
-        pinned_recent_markers,
-        crop_height=min(nav_h, 780),
-    )
-    picture(pinned_recent_annotated, "Pinned and Recent navigation", max_height=5.0)
-    add_table(["No.", "Operation"], [
-        ("1", "Pinned 顯示已固定的常用頁面。"),
-        ("2", "按 Pinned 內的頁面名稱可直接開啟；按右側 Unpin 圖示可取消固定。"),
-        ("3", "Recent 自動列出最近開啟的頁面。"),
-        ("4", "按 Recent 右側的垃圾桶圖示可清除近期紀錄，不會刪除系統資料。"),
-        ("5", "按 Recent 內的頁面名稱可快速返回該頁。"),
-        ("6", "在分類選單中按頁面右側的 Pin 圖示，即可把頁面加入 Pinned。"),
-    ], [0.65, 6.35])
-
+nav_source = OUT / "screenshots-20261026" / "40-navigation.jpg"
+nav_crop = OUT / "screenshots-20261026-crops" / "navigation.jpg"
+nav_crop.parent.mkdir(exist_ok=True)
+with Image.open(nav_source) as nav_image:
+    nav_image.crop((0, 0, 900, min(800, nav_image.height))).save(nav_crop)
+picture(nav_crop, "實拍局部 左側釘選與最近使用 2026-10-26", max_height=3.4)
+doc.add_paragraph("Search menu 搜尋選單；Pinned／釘選保留常用頁，Recent／最近使用列出近期開啟頁面。按圖釘只調整導覽，不會變更權限。")
 doc.add_heading("1.3 Language", level=2)
-if pinned_recent_source.exists():
-    language_markers = [
-        (1, int(nav_w*0.79), int(nav_h*0.065), int(nav_w*0.88), int(nav_h*0.025)),
-    ]
-    language_annotated = annotate_screenshot(
-        pinned_recent_source,
-        ANNOTATED / "00-language-switch.png",
-        language_markers,
-        crop_height=min(nav_h, 460),
-    )
-    picture(language_annotated, "Language selector", max_height=3.5)
-    add_table(["No.", "Operation"], [
-        ("1", "按右上角 Language，選擇要使用的介面語言。"),
-        ("2", "切換後確認 Menu、欄位及按鈕文字；頁面資料、角色權限與 DataScope 不會改變。"),
-    ], [0.65, 6.35])
+language_source = OUT / "screenshots-20261026" / "41-language-menu.jpg"
+language_crop = nav_crop.with_name("language.jpg")
+with Image.open(language_source) as language_image:
+    language_image.crop((max(0,language_image.width-650),0,language_image.width,350)).save(language_crop)
+picture(language_crop, "實拍局部 語言選單 2026-10-26", max_height=2.0)
+doc.add_paragraph("右上角語言可選繁體中文、English、日本語；切換不改變資料及權限。本版截圖以繁體中文介面為主，保留部分英文按鈕名稱供對照。")
 
+doc.add_page_break()
+quick_reference(doc, add_table)
+doc.add_page_break()
 doc.add_heading("2 Common Operations", level=1)
 doc.add_heading("2.1 清單查詢與篩選", level=2)
 step("進入清單頁後，先確認頁面標題與資料筆數。")
@@ -287,10 +283,12 @@ bullet("編輯：在清單的操作欄按編輯，確認資料後儲存。")
 bullet("刪除：僅在確認資料不再使用時執行；若系統要求再次確認，核對目標後再提交。")
 bullet("上傳：先核對檔案格式、工作表名稱與欄位，再執行上傳。")
 
+add_updates("common", doc, add_table, step, bullet, ROOT)
+
 doc.add_heading("3 Functions", level=1)
 doc.add_heading("3.1 Ship Info", level=2)
 doc.add_paragraph("Ship Info 頁分為 Ship Header 與 Ship Detail。先選取 Header 列，系統才會載入對應 Detail，並啟用 Deposit 或 ARUR Case 等可用操作。")
-picture(SHIP, "圖 1　Ship Info 頁面與 Ship Header 清單")
+
 step("在 Ship Header 欄位使用 Filter 或排序找到目標 Invoice No。")
 step("點選資料列左側單選按鈕，載入該筆 Ship Detail。")
 step("需要修改時，按 Action 欄的 Edit 圖示。")
@@ -298,15 +296,35 @@ step("核對表頭、明細與附件後儲存。")
 bullet("若直接網址或 API 指向無權限的 Header，系統仍應拒絕存取。")
 bullet("BROKER、BU、FORWARDER、MDP FLAG 等欄位可能受 DataScope 限制。")
 
+add_updates("ship", doc, add_table, step, bullet, ROOT)
+
 for heading, purpose, steps in [
-    ("3.2 Add DI/SA", "建立新的 DI/SA 資料。", ["進入 Add DI/SA。", "依畫面填寫或上傳必要資料。", "檢查驗證訊息後提交。"]),
+    ("3.2 Add DI/SA", "建立新的 DI/SA 資料。", ["進入 Add DI/SA。", "下載新版 Sample 並填寫 Upload Data。", "上傳驗證、核對完整預覽，再按 Save。"]),
     ("3.3 Mass Update Non NCPI", "以批次檔案更新非 NCPI 資料。", ["下載或準備規定格式。", "選擇檔案並執行驗證。", "確認預覽與錯誤列後提交更新。"]),
     ("3.4 Mass Update NCPI", "以批次檔案更新 NCPI 資料。", ["準備 NCPI 專用格式。", "上傳並檢查驗證結果。", "確認影響範圍後提交。"]),
-    ("3.5 Export", "依條件匯出可見的船務資料。", ["設定匯出條件。", "確認資料範圍與筆數。", "執行下載並核對檔案內容。"]),
+    ("3.5 Export", "上傳 Shipping advice Excel，透過 Hub 與 FileGenerator 產生檔案。", ["選擇 Shipping advice Excel。", "核對檔案後按上傳並通知 Hub，此動作會建立背景產檔工作。", "查看工作狀態與錯誤；Completed 後按檢視檔案，逐檔下載或全部下載 ZIP。"]),
 ]:
     doc.add_heading(heading, level=2)
     doc.add_paragraph(purpose)
     for s in steps: step(s)
+    add_updates(heading.split()[0], doc, add_table, step, bullet, ROOT)
+
+doc.add_heading("3.6 通知信獨立頁面", level=2)
+doc.add_paragraph("從系統管理或已釘選的通知信開啟。上方 SMTP 與各類通知設定僅供查看；更改啟用、收件者或時段由管理者維護 appsettings，本頁不提供直接編輯。")
+step("在下方選取到貨延遲、Arrival notice、管制品到貨通知或押金平台起案分頁。")
+step("使用欄位 Filter 查詢 Invoice、時間或狀態；點預覽核對信件及錯誤。")
+step("預覽不會寄信；狀態與寄送規則見第 12 章。範例畫面的啟用與收件者只是目前環境，不應照抄到其他主機。")
+doc.add_heading("通知信使用者須知與變更申請", level=3)
+doc.add_paragraph("需要新增、移除或修改通知信 MailTo（主要收件者）／CcTo（副本收件者）時，請通知系統管理者更新。Notification Mail 頁面的共用設定僅供查看，使用者不能在此直接修改；也不要把預覽畫面當作已完成設定變更。")
+add_table(["項目", "使用者應如何處理"], [
+    ("共用收件者與副本", "延遲交貨通知、管制品到貨通知及押金起案通知的共用 MailTo／CcTo，由管理者維護。到貨通知的共用 CcTo 亦由管理者維護。請明確說明新增、移除或取代，不要只提供一份無異動說明的名單。"),
+    ("到貨通知的個別收件者", "到貨通知實際 To 取自 Ship Info 的 Arrival Notice 欄位；具編輯權限者可依流程修改，多個地址以分號分隔。儲存後重新核對待寄排程與預覽；此欄不會修改共用 CcTo。沒有編輯權限時，請交由有權限人員處理。"),
+    ("寄件者與寄送時段", "寄件者、SMTP、通知啟用狀態、寄送頻率與時段均請管理者處理。一般使用者不需自行修改設定檔。沒有指定寄件者時，系統預設使用 TETIS87GEMSAdmin@tel.com；現有有效寄件者設定會保留。"),
+    ("申請時提供的資訊", "提供環境（測試／正式及網址）、通知種類、原收件者、新增／移除後的 MailTo 與 CcTo、預定生效時間、申請原因及聯絡人。若僅影響個別到貨通知，另附 Invoice No。"),
+    ("變更完成後的核對", "請管理者確認已更新正確環境及設定已生效，再重新開啟設定頁與相關郵件預覽核對 To／Cc。既有待寄排程與已寄紀錄不應假設會全部同步改寫；需要調整特定待寄通知時，請一併提供 Invoice 與排程時間，由管理者確認處理方式。"),
+    ("寄送結果與異常", "Pending 為待寄、Sending 為寄送中、Sent 為系統已完成寄送作業、Failed 為失敗。Sent 不保證對方信箱已收件。未收到信時先核對收件者、狀態、排程時間與垃圾郵件，再提供 Invoice、通知種類、發生時間及錯誤畫面給管理者；不要反覆建立通知，以免重複寄送。")
+], [1.4, 5.6])
+doc.add_paragraph("變更申請範例：正式環境／延遲交貨通知，請自 2026-10-27 起在 MailTo 新增 user@example.com、在 CcTo 移除 old@example.com，其餘收件者與排程保持不變。以上地址僅為教學範例，請填入實際核准地址。")
 
 doc.add_heading("4 Settings", level=1)
 doc.add_paragraph("設定頁供管理者維護系統選項。異動會影響其他頁面的下拉選單、預設值或計算邏輯，儲存前應先確認代碼是否已被使用。")
@@ -323,7 +341,11 @@ add_table(["頁面", "管理內容", "基本操作"], [
     ("Invoice Type", "Invoice Type 選項", "Search, Add, Edit"),
     ("Order Priority", "Order Priority 選項", "Search, Add, Edit"),
     ("Customized", "系統自訂參數", "Search and Maintain"),
+    ("Shipper", "發貨方設定", "Search, Add, Edit"),
+    ("Country of Origin", "原產國設定", "Search, Add, Edit"),
 ], [1.6, 3.0, 2.4])
+
+add_updates("settings", doc, add_table, step, bullet, ROOT)
 
 doc.add_heading("5 Reports and Data Exchange", level=1)
 for heading, body, notes in [
@@ -332,13 +354,13 @@ for heading, body, notes in [
     ("5.3 Mass Data Report", "查詢及匯出大量船務資料。", "清單、篩選與匯出均套用 DataScope。"),
     ("5.4 Forwarder Data Upload", "上傳貨代提供的資料檔案。", "本頁目前不套用 DataScope；上傳前先核對模板。"),
     ("5.5 Customs Data Download", "依條件下載報關所需資料。", "下載內容依登入者的 DataScope 限制。"),
-    ("5.6 Tariff Data", "查詢、維護及匯出關稅資料與附件。", "清單、篩選、附件與匯出均套用 DataScope。"),
+    ("5.6 Customs Clearance Data", "查詢、維護及匯出關稅資料與附件。", "清單、篩選、附件與匯出均套用 DataScope。"),
 ]:
     doc.add_heading(heading, level=2)
     doc.add_paragraph(body)
-    step("設定查詢或檔案條件。")
-    step("執行查詢、上傳或下載。")
-    step("核對筆數、錯誤訊息與輸出內容。")
+    if heading.startswith(("5.2", "5.5")):
+        step("設定查詢條件，核對結果後下載。")
+    add_updates(heading.split()[0], doc, add_table, step, bullet, ROOT)
     doc.add_paragraph("注意：" + notes)
 
 doc.add_heading("6 Languages", level=1)
@@ -357,6 +379,7 @@ add_table(["頁面", "用途"], [
     ("User Roles", "將角色指派給特定 TELID。"),
     ("Department Roles", "依部門指派角色。"),
     ("Mail Group Roles", "依郵件群組指派角色。"),
+    ("Notification Mail", "檢視通知設定、各類清單、郵件預覽與錯誤訊息；設定由管理者維護 appsettings。"),
 ], [1.7, 5.3])
 doc.add_heading("7.1 建議設定順序", level=2)
 step("先確認資源已存在且 ResourceCode、Route 與 Action 正確。")
@@ -385,7 +408,7 @@ add_table(["頁面", "常用資料表", "常用欄位"], [
     ("Ship Info", "ICP_HEADER", "BROKER、BU、FORWARDER、MDP_FLAG"),
     ("Shipping Report", "ICP_HEADER", "BROKER、BU、FORWARDER"),
     ("Mass Data Report", "ICP_HEADER", "BROKER、BU、FORWARDER"),
-    ("Tariff Data", "TariffData", "Broker、AirSea、Shipper"),
+    ("Customs Clearance Data", "TariffData", "Broker、AirSea、Shipper"),
     ("Customs Data Download", "實際下載資料來源", "依下載資料欄位設定"),
 ], [1.8, 2.0, 3.2])
 doc.add_paragraph("目前系統規則：DataScope JSON、資料表、欄位、型別或運算子無法解析時，該規則視為未設定，因此不限制資料。管理者應在正式授權前使用目標帳號驗證。")
@@ -399,6 +422,12 @@ add_table(["現象", "檢查方式"], [
     ("Ship Info 明細未出現", "先選取一筆 Ship Header；確認該 Header 在可見範圍。"),
     ("匯出筆數不同", "確認匯出條件、目前篩選與 DataScope 是否一致。"),
     ("上傳失敗", "檢查檔案格式、必填欄位、重複資料及畫面錯誤訊息。"),
+    ("上傳通過但未新增資料", "確認是否已按 Save；預覽成功不代表正式儲存。"),
+    ("Upload Data 無法辨識", "確認第一個分頁名稱為 Upload Data、第一列保留欄位標題，第二列開始填資料。"),
+    ("Delivery To 驗證失敗", "Add DI/SA 使用 Delivery To List 的 Customer Code，並非 Key 或 Name。"),
+    ("歷史紀錄顯示 File not found", "已匯入紀錄仍存在，原檔目前不可取得；請管理者檢查檔案保存位置。"),
+    ("Mass Data Report 沒有 Detail", "目前設計僅保留 Header；下載內容與 Header 一致。"),
+    ("Settings Excel 上傳失敗", "原資料保留；依錯誤修正所有列後重傳，不要用空白檔案清空資料。"),
 ], [2.3, 4.7])
 
 doc.add_heading("10 Menu Page Index", level=1)
@@ -409,114 +438,34 @@ pages = [
     ("Settings", "Delivery To List", "/DeliveryToList"), ("Settings", "Pick Up Location", "/PickUpLocation"),
     ("Settings", "ETA Delivery Date Table", "/EtaDelDateTable"), ("Settings", "Default Delivery Warehouse", "/DefaultDeliveryWh"),
     ("Settings", "Order Type", "/OrderType"), ("Settings", "Air Sea", "/AirSea"), ("Settings", "Broker", "/Broker"),
+    ("Settings", "Shipper", "/Shipper"), ("Settings", "Country of Origin", "/CountryOfOrigin"),
     ("Settings", "Invoice Type", "/InvoiceType"), ("Settings", "Order Priority", "/OrderPriority"), ("Settings", "Customized", "/Customized"),
     ("Reports", "Shipping Report", "/ShippingReport"), ("Reports", "Compare ICP vs AR/UR", "/CompareIcpVsArUr"),
     ("Reports", "Mass Data Report", "/MassDataReport"), ("Forwarder", "Forwarder Data Upload", "/ForwarderDataUpload"),
-    ("Broker", "Customs Data Download", "/CustomsDataDownload"), ("Broker", "Tariff Data", "/TariffData"),
+    ("Broker", "Customs Data Download", "/CustomsDataDownload"), ("Broker", "Customs Clearance Data", "/TariffData"),
     ("Languages", "Languages", "/LocalizationManagement"), ("Administration", "Users", "/Users"),
     ("Administration", "Resources", "/Resources"), ("Administration", "Roles", "/Roles"), ("Administration", "Role Permissions", "/RolePermissions"),
     ("Administration", "User Roles", "/RoleTelIds"), ("Administration", "Department Roles", "/RoleDepIds"),
     ("Administration", "Mail Group Roles", "/RoleMailGroups"),
+    ("Administration", "Notification Mail", "/NotificationMail"),
 ]
 add_table(["Category", "Page", "Route"], pages, [1.5, 3.3, 2.2])
 
-doc.add_heading("11 Visual Guide for Every Page", level=1)
-doc.add_paragraph("本章使用目前英文介面的實際畫面。圖中的紅色編號對應下方操作說明；畫面資料會隨環境、角色、DataScope 與當下資料而不同。")
+add_fresh_screenshot_guide(doc, add_table, picture, ROOT)
+annotated_details(doc, picture, ROOT)
 
-login_source = SCREENSHOTS / "00-login.png"
-if login_source.exists():
-    with Image.open(login_source) as login_image:
-        w, h = login_image.size
-    login_markers = [
-        (1, int(w*0.27), int(h*0.15), int(w*0.36), int(h*0.15)),
-        (2, int(w*0.27), int(h*0.21), int(w*0.36), int(h*0.21)),
-        (3, int(w*0.27), int(h*0.255), int(w*0.36), int(h*0.255)),
-        (4, int(w*0.73), int(h*0.30), int(w*0.65), int(h*0.30)),
-    ]
-    login_annotated = annotate_screenshot(login_source, ANNOTATED / "00-login.png", login_markers, crop_height=min(h, 520))
-    doc.add_page_break()
-    doc.add_heading("Guide 01 — Login", level=2)
-    picture(login_annotated, "Login page")
-    add_table(["No.", "Operation"], [
-        ("1", "在 Staff ID 輸入 620256。"),
-        ("2", "Password 依部署環境要求輸入；目前測試環境可依現行登入規則操作。"),
-        ("3", "需要時勾選 Remember Password；共用電腦不建議勾選。"),
-        ("4", "按 Login。成功後確認頁面進入 Ship Info，且左下角顯示登入狀態。"),
-    ], [0.65, 6.35])
-
-screen_pages = [
-    ("11.2", "Ship Info", "01-ship-info.png", "用 Filter 找到 Header；選取資料列後查看 Detail，並依權限使用 Deposit 或 ARUR。"),
-    ("11.3", "Add DI/SA", "02-add-di-sa.png", "輸入或上傳 DI/SA 資料，檢查必填欄位與驗證訊息後提交。"),
-    ("11.4", "Mass Update Non NCPI", "03-mass-update-non-ncpi.png", "選擇非 NCPI 模板檔，先驗證預覽，再執行批次更新。"),
-    ("11.5", "Mass Update NCPI", "04-mass-update-ncpi.png", "選擇 NCPI 模板檔，確認影響筆數與錯誤列後更新。"),
-    ("11.6", "Export", "05-export.png", "設定匯出條件，確認範圍後產生並下載檔案。"),
-    ("11.7", "BU Codes", "06-bu-codes.png", "搜尋 BU Code；使用新增或編輯維護代碼。"),
-    ("11.8", "Warehouse Codes", "07-warehouse-codes.png", "搜尋 Warehouse Code；使用新增或編輯維護資料。"),
-    ("11.9", "Delivery To List", "08-delivery-to-list.png", "搜尋 Delivery To；新增或編輯交貨對象。"),
-    ("11.10", "Pick Up Location", "09-pick-up-location.png", "搜尋提貨地點；新增或編輯可用地點。"),
-    ("11.11", "ETA Delivery Date Table", "10-eta-delivery-date-table.png", "搜尋並維護 ETA 與 Delivery Date 對應規則。"),
-    ("11.12", "Default Delivery Warehouse", "11-default-delivery-warehouse.png", "維護預設交貨倉庫對應，儲存前確認條件沒有衝突。"),
-    ("11.13", "Order Type", "12-order-type.png", "搜尋並維護 Order Type 選項。"),
-    ("11.14", "Air Sea", "13-air-sea.png", "搜尋並維護 Air 或 Sea 選項。"),
-    ("11.15", "Broker", "14-broker.png", "搜尋並維護 Broker 選項。"),
-    ("11.16", "Invoice Type", "15-invoice-type.png", "搜尋並維護 Invoice Type 選項。"),
-    ("11.17", "Order Priority", "16-order-priority.png", "搜尋並維護 Order Priority 選項。"),
-    ("11.18", "Customized", "17-customized.png", "搜尋並維護系統自訂參數；變更前確認使用範圍。"),
-    ("11.19", "Shipping Report", "18-shipping-report.png", "設定條件後查詢或匯出；結果會套用 DataScope。"),
-    ("11.20", "Compare ICP vs AR UR", "19-compare-icp-arur.png", "設定比對條件，執行後檢查 ICP 與 AR/UR 差異。"),
-    ("11.21", "Mass Data Report", "20-mass-data-report.png", "設定大量資料查詢條件並匯出；結果會套用 DataScope。"),
-    ("11.22", "Forwarder Data Upload", "21-forwarder-data-upload.png", "選擇規定格式檔案，上傳前確認模板與檔案內容。"),
-    ("11.23", "Customs Data Download", "22-customs-data-download.png", "設定下載條件並產生檔案；輸出資料會依權限範圍限制。"),
-    ("11.24", "Tariff Data", "23-tariff-data.png", "查詢、維護或匯出 Tariff Data；清單與附件會套用 DataScope。"),
-    ("11.25", "Languages", "24-languages.png", "搜尋資源鍵並維護各語言文字，儲存後重新載入驗證。"),
-    ("11.26", "Users", "25-users.png", "搜尋使用者並查看其角色與 Permissions。"),
-    ("11.27", "Resources", "26-resources.png", "搜尋或維護 ResourceCode、Route 與 Action。"),
-    ("11.28", "Roles", "27-roles.png", "建立、搜尋或編輯角色。"),
-    ("11.29", "Role Permissions", "28-role-permissions.png", "選擇角色與資源；需要限制資料時設定 DataScope。"),
-    ("11.30", "User Roles", "29-user-roles.png", "輸入 TELID 並指派角色，完成後讓使用者重新登入。"),
-    ("11.31", "Department Roles", "30-department-roles.png", "選擇部門並指派角色，確認套用範圍。"),
-    ("11.32", "Mail Group Roles", "31-mail-group-roles.png", "選擇 Mail Group 並指派角色，確認群組成員與權限。"),
-]
-
-for screen_number, (_, page_name, file_name, operation) in enumerate(screen_pages, start=2):
-    source = SCREENSHOTS / file_name
-    if not source.exists():
-        continue
-    with Image.open(source) as page_image:
-        w, h = page_image.size
-    active_y = active_menu_center_y(source)
-    markers = [
-        (1, int(w*0.16), active_y, int(w*0.09), active_y),
-        (2, int(w*0.31), int(h*0.08), int(w*0.40), int(h*0.08)),
-        (3, int(w*0.82), int(h*0.14), int(w*0.43), int(h*0.15)),
-        (4, int(w*0.33), int(h*0.34), int(w*0.48), int(h*0.34)),
-    ]
-    crop_height = min(h, max(720, active_y + 70))
-    annotated = annotate_screenshot(source, ANNOTATED / file_name, markers, redact_identity=False, crop_height=crop_height)
-    doc.add_page_break()
-    doc.add_heading(f"Guide {screen_number:02d} — {page_name}", level=2)
-    picture(annotated, f"{page_name} page", max_height=5.4)
-    if "Upload" in page_name or page_name in {"Add DI/SA", "Mass Update Non NCPI", "Mass Update NCPI"}:
-        main_area_note = "在主要工作區選擇檔案；上傳後查看預覽、驗證結果或錯誤訊息，再決定是否儲存。"
-    elif page_name in {"User Roles", "Department Roles", "Mail Group Roles"}:
-        main_area_note = "在清單確認既有角色指派；新增指派後重新載入權限，並以目標帳號驗證。"
-    elif page_name == "Languages":
-        main_area_note = "在翻譯表格編輯各語言欄位；儲存後重新載入頁面確認新文字。"
-    else:
-        main_area_note = "在主要資料區查看結果或使用欄位 Filter；儲存、下載或匯出前先核對目前條件。"
-    add_table(["No.", "Operation"], [
-        ("1", "使用 Search menu 或左側分類切換頁面；常用頁面可按 Pin 加入 Pinned，再按一次取消。"),
-        ("2", f"確認目前頁面為 {page_name}。"),
-        ("3", operation),
-        ("4", main_area_note),
-    ], [0.65, 6.35])
+append_rules(doc, add_table, bullet, ROOT)
+append_examples(doc, add_table, bullet, ROOT)
+append_operations(doc, add_table, bullet)
+append_lookup(doc, add_table)
 
 footer = sec.footer.paragraphs[0]
 footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
-footer.add_run("ICP 系統操作手冊 版本 1.1")
+footer.add_run("ICP 系統操作手冊 版本 1.5")
 
 doc.core_properties.title = "ICP 系統操作手冊"
 doc.core_properties.subject = "ICP 功能操作與權限管理"
 doc.core_properties.author = "ICP Project Team"
+finalize_navigation(doc)
 doc.save(DOCX)
 print(DOCX)

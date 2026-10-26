@@ -11,6 +11,40 @@
     var urls = app.urls;
     var messages = app.messages;
 
+    // Highlight ARUR preview labels to match the reviewed field layout.
+    var arurHighlightedHeaderFields = new Set([
+        'mawb', 'etd', 'ncdrno', 'carmethod', 'wastedisposal', 'freight',
+        'wbselement', 'enduser', 'deliveryno', 'hawb', 'ncdrrequestor',
+        'receiver', 'driverdetails', 'machineno', 'depositcasestatus',
+        'forwarder', 'incoterms', 'tetpo', 'forklift', 'arurcasestatus', 'rtno'
+    ]);
+
+    // Three label/value pairs per row, matching the supplied ARUR preview.
+    var arurHeaderOrder = [
+        'InvoiceType', 'Bu', 'CreateDate',
+        'InvoiceDate', 'OrderPriority', 'SaDate',
+        'Mawb', 'Hawb', 'Incoterms',
+        'Etd', 'InvoiceNo', 'EmgFlight',
+        'NcdrNo', 'NcdrRequestor', 'TetPo',
+        'Shipper', 'DeliveryTo', 'ArriveTime',
+        'CarMethod', 'Receiver', 'Forklift',
+        'WasteDisposal', 'DriverDetails', 'MovingLabor',
+        'Freight', 'ArrivalNotice', 'ControlledGoodsNoticeFlag',
+        'ControlledGoodsNoticeReason', 'MachineNo', 'MdpFlag',
+        'TotalCartons', 'MachineType', 'ShipReason',
+        'WbsElement', 'DepositCaseStatus', 'ArurCaseStatus',
+        'EndUserCode', 'Forwarder', 'RtNo',
+        'SoldToPartyCode', 'SoldToParty', 'ShipToPartyCode',
+        'ShipToParty', 'ShipToPartyAddress', 'SapRemarks',
+        'Notes', 'Flt', 'ReasonForCancellation',
+        'CreateTime', 'CreateUser', 'UpdateTime',
+        'UpdateUser', 'Eta', 'Broker',
+        'DestinationPort', 'Warehouse', 'OrderType',
+        'EndUser', 'DelayNotificationDate', 'DeliveryDate',
+        'DeliveryNo', 'ArrivalNoticeFlag', 'ReasonForDeliveryDelay',
+        'Owner', 'Cancellation'
+    ];
+
     // Deposit verification uses a compact, fixed set of fields. ARUR keeps its
     // existing full-field report and ordering.
     var depositHeaderOrder = [
@@ -97,17 +131,11 @@
         });
 
         if (isArurDrawer()) {
-            var delayIndex = entries.findIndex(function (entry) {
-                return entry.fieldName.toLowerCase() === 'delaynotificationdate';
-            });
-            var deliveryIndex = entries.findIndex(function (entry) {
-                return entry.fieldName.toLowerCase() === 'deliveryto';
-            });
-            if (delayIndex >= 0 && deliveryIndex >= 0) {
-                var delayEntry = entries[delayIndex];
-                entries[delayIndex] = entries[deliveryIndex];
-                entries[deliveryIndex] = delayEntry;
-            }
+            return arurHeaderOrder.map(function (name) {
+                return entries.find(function (entry) {
+                    return entry.fieldName.toLowerCase() === name.toLowerCase();
+                });
+            }).filter(Boolean);
         }
 
         return entries;
@@ -127,6 +155,8 @@
                 if (entry) {
                     $tr.append(
                         '<th scope="row" class="shipinfo-drawer-report-label'
+                        + (isArurDrawer() && arurHighlightedHeaderFields.has(entry.fieldName.toLowerCase())
+                            ? ' shipinfo-drawer-report-highlight' : '')
                         + (entry.invalid ? ' shipinfo-drawer-report-invalid' : '') + '">'
                         + $('<span>').text(entry.label).html()
                         + '</th>'
