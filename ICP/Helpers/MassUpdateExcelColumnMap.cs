@@ -6,6 +6,13 @@ public static class MassUpdateExcelColumnMap
 {
     public const string InvoiceNo = "InvoiceNo";
 
+    public static readonly IReadOnlyDictionary<string, string> RequiredFields = new Dictionary<string, string>
+    {
+        [InvoiceNo] = "Invoice No", ["SaDate"] = "SA Date", ["Forwarder"] = "Forwarder",
+        ["Broker"] = "Broker", ["Shipper"] = "Shipper", ["Eta"] = "ETA",
+        ["Mawb"] = "MAWB", ["Hawb"] = "HAWB", ["Flt"] = "FLT", ["DeliveryDate"] = "Delivery Date"
+    };
+
     public static readonly IReadOnlyList<string> UpdateProperties =
     [
         "ArrivalNotice", "SaDate", "Forwarder", "Broker", "Shipper", "Eta", "Mawb", "Hawb", "Flt",
@@ -34,6 +41,7 @@ public static class MassUpdateExcelColumnMap
         ["flt"] = "Flt",
         ["deliverydate"] = "DeliveryDate",
         ["mdpflag"] = "MdpFlag",
+        ["mdp"] = "MdpFlag",
         ["reasonfordeliverydelay"] = "ReasonForDeliveryDelay",
         ["delaynotificationdate"] = "DelayNotificationDate"
     };

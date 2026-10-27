@@ -14,7 +14,7 @@ public static class ShipInfoKeyHelper
         BuildHeaderKey(header.InvoiceNo);
 
     /// <summary>Header 資料列唯一識別（INVOICE_NO + TET_PO）。</summary>
-    public static string BuildHeaderRowKey(string invoiceNo, string tetPo) =>
+    public static string BuildHeaderRowKey(string invoiceNo, string? tetPo) =>
         $"{(invoiceNo ?? string.Empty).Trim()}{Separator}{(tetPo ?? string.Empty).Trim()}";
 
     public static string BuildHeaderRowKey(IcpHeader header) =>
@@ -40,7 +40,7 @@ public static class ShipInfoKeyHelper
         }
 
         var parts = headerRowKey.Split(Separator, 2, StringSplitOptions.None);
-        if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]) || string.IsNullOrWhiteSpace(parts[1]))
+        if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]))
         {
             throw new ArgumentException("Header row key is invalid.", nameof(headerRowKey));
         }
@@ -50,14 +50,14 @@ public static class ShipInfoKeyHelper
 
     public static string BuildDetailKey(
         string invoiceNo,
-        string tetPo,
+        string? tetPo,
         string tetPoLine,
         double invoiceSeq,
         string itemNo) =>
         string.Join(
             Separator,
             invoiceNo.Trim(),
-            tetPo.Trim(),
+            tetPo?.Trim() ?? string.Empty,
             tetPoLine.Trim(),
             invoiceSeq.ToString(System.Globalization.CultureInfo.InvariantCulture),
             itemNo.Trim());

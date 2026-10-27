@@ -873,7 +873,13 @@ public class ShipInfoService : IShipInfoService
         AddOptionalNonNegativeDecimalError(values, "Rate", 4, errors);
         AddOptionalNonNegativeDecimalError(values, "NetWeightOfTheItem", 3, errors);
 
-        foreach (var fieldName in new[] { "CartonNo", "Length", "Width", "Hight", "GrossWeight" })
+        AddOptionalNonNegativeDecimalError(values, "GrossWeight", 3, errors);
+        if (values.TryGetValue("GrossWeight", out var grossWeight)
+            && decimal.TryParse(grossWeight, NumberStyles.Number, CultureInfo.InvariantCulture, out var weight)
+            && weight > 9999999999.999m)
+            errors.Add("GrossWeight 不可超過 9999999999.999");
+
+        foreach (var fieldName in new[] { "CartonNo", "Length", "Width", "Hight" })
         {
             AddNonNegativeIntegerError(values, fieldName, errors);
         }

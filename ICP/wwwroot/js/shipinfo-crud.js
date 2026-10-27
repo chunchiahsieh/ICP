@@ -49,9 +49,13 @@
             { name: 'Qty', places: 3, required: true },
             { name: 'Price', places: 2, required: true },
             { name: 'Amount', places: 2, required: true },
-            { name: 'Rate', places: 4, required: false }
+            { name: 'Rate', places: 4, required: false },
+            { name: 'GrossWeight', places: 3, required: false }
         ];
-        var integerFields = ['CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight'];
+        var integerFields = ['CartonNo', 'Length', 'Width', 'Hight'];
+        if (Number(values.GrossWeight) > 9999999999.999) {
+            return 'GrossWeight must not exceed 9999999999.999.';
+        }
 
         if (Object.prototype.hasOwnProperty.call(values, 'InvoiceSeq')
             && String(values.InvoiceSeq || '').trim() !== ''

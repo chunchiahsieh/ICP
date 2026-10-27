@@ -183,6 +183,18 @@ public abstract class SystemConfigControllerBase : Controller
                 _icpDb.SystemConfigs.Add(entity);
             }
 
+            foreach (var entry in _icpDb.ChangeTracker.Entries<SystemConfig>()
+                .Where(e => e.State is EntityState.Added or EntityState.Modified))
+            {
+                var row = entry.Entity;
+                if (await _icpDb.SystemConfigs.AsNoTracking().AnyAsync(e => !e.IsDeleted && e.Id != row.Id
+                    && e.Category == row.Category && e.FunctionCode == row.FunctionCode
+                    && e.Key1 == row.Key1 && e.Key2 == row.Key2
+                    && e.Value1 == row.Value1 && e.Value2 == row.Value2 && e.Value3 == row.Value3
+                    && e.Value4 == row.Value4 && e.Value5 == row.Value5 && e.Value6 == row.Value6,
+                    cancellationToken))
+                    return CrudJsonHelper.Failure("設定重複：Category、FunctionCode、Key1、Key2、Value1–Value6 不可全部相同。");
+            }
             await _icpDb.SaveChangesAsync(cancellationToken);
             return CrudJsonHelper.Success();
         }

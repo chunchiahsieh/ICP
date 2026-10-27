@@ -449,7 +449,9 @@
             $input.attr('step', '1').attr('min', '1');
         }
 
-        if (fieldName === 'Qty') {
+        if (fieldName === 'GrossWeight') {
+            $input.attr('step', '0.001').attr('min', '0').attr('max', '9999999999.999');
+        } else if (fieldName === 'Qty') {
             $input.attr('step', '0.001').attr('min', '0');
         } else if (fieldName === 'Rate') {
             $input.attr('step', '0.0001').attr('min', '0');
@@ -457,7 +459,7 @@
             $input.attr('step', '0.001').attr('min', '0');
         } else if (['Price', 'Amount'].indexOf(fieldName) >= 0) {
             $input.attr('step', '0.01').attr('min', '0');
-        } else if (['CartonNo', 'Length', 'Width', 'Hight', 'GrossWeight', 'TotalCartons'].indexOf(fieldName) >= 0) {
+        } else if (['CartonNo', 'Length', 'Width', 'Hight', 'TotalCartons'].indexOf(fieldName) >= 0) {
             $input.attr('step', '1').attr('min', '0');
         }
 

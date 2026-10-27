@@ -397,7 +397,7 @@ public class AddDiSaImportService
             InvoiceDate = Trim(values, "InvoiceDate", 10),
             Mawb = Trim(values, "Mawb", 20),
             Hawb = Trim(values, "Hawb", 20),
-            Flt = Trim(values, "Flt", 20),
+            Flt = Trim(values, "Flt", 40),
             Freight = Trim(values, "Freight", 10),
             DestinationPort = Trim(values, "DestinationPort", 10),
             DestinationCountry = Trim(values, "DestinationCountry", 3),
@@ -471,7 +471,7 @@ public class AddDiSaImportService
             NetWeightOfTheItem = ParseDouble(GetValue(values, "NetWeightOfTheItem")),
             DeliveryLineNo = ParseDouble(GetValue(values, "DeliveryLineNo")),
             WbsElement = Trim(values, "WbsElement", 30),
-            Eccn = Trim(values, "Eccn", 10),
+            Eccn = Trim(values, "Eccn", 20),
             ElFlag = Trim(values, "ElFlag", 5),
             SdsFlag = Trim(values, "SdsFlag", 5),
             Hazmat = Trim(values, "Hazmat", 5)

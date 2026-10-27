@@ -133,7 +133,8 @@ public class ReportDataService : IReportDataService
     {
         var config = GetPageConfig(reportKey);
         var headers = SortReportHeaders(reportKey, await _repository.QueryHeadersAsync(criteria, config.HeaderFields, cancellationToken));
-        await ApplyShipperDisplayValuesAsync(reportKey, headers, cancellationToken);
+        if (!reportKey.Equals(Models.Report.ReportKeys.MassDataReport, StringComparison.OrdinalIgnoreCase))
+            await ApplyShipperDisplayValuesAsync(reportKey, headers, cancellationToken);
         var headerFields = ShipInfoTableViewHelper.GetVisibleFields(config.HeaderFields);
         var headerOnly = reportKey == Models.Report.ReportKeys.MassDataReport;
         var detailFields = ShipInfoTableViewHelper.GetVisibleFields(config.DetailFields)
@@ -267,8 +268,8 @@ public class ReportDataService : IReportDataService
         }
     }
 
-    private static string BuildCompositeKey(string invoiceNo, string tetPo) =>
-        $"{invoiceNo.Trim()}\u001f{tetPo.Trim()}";
+    private static string BuildCompositeKey(string invoiceNo, string? tetPo) =>
+        $"{invoiceNo.Trim()}\u001f{tetPo?.Trim() ?? string.Empty}";
 
     private static IReadOnlyList<ExportColumn> BuildExportColumns(
         IReadOnlyList<ShipInfoFieldMetadata> headerFields,

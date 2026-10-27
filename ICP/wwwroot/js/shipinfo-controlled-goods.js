@@ -60,6 +60,19 @@
             }
             var rows = response.data || [];
             var current = String(app.state.viewModalKey || '').toLowerCase();
+            var groups = new Map();
+            rows.forEach(function (row) {
+                var etaKey = String(row.eta || row.Eta || '').trim().replace(/\//g, '-');
+                if (!groups.has(etaKey)) groups.set(etaKey, []);
+                groups.get(etaKey).push(row);
+            });
+            var previewGroups = Array.from(groups, function (entry) {
+                var members = entry[1];
+                return { id: members[0].id || members[0].Id, eta: entry[0], members: members,
+                    headerId: members.some(function (member) {
+                        return String(member.headerId || member.HeaderId || '').toLowerCase() === current;
+                    }) ? current : '' };
+            });
             rows.sort(function (a, b) {
                 var aCurrent = String(a.headerId || a.HeaderId || '').toLowerCase() === current;
                 var bCurrent = String(b.headerId || b.HeaderId || '').toLowerCase() === current;
@@ -95,10 +108,17 @@
                     .append($('<td>').append($('<span class="badge">').addClass(colors[state] || 'bg-secondary')
                         .text(labels[state] || state)))
                     .append($('<td>').append($action)));
-
+            });
+            previewGroups.sort(function (a, b) {
+                return (b.headerId === current ? 1 : 0) - (a.headerId === current ? 1 : 0);
+            });
+            previewGroups.forEach(function (row) {
+                var id = row.id;
+                var isCurrent = row.headerId === current;
+                var invoices = row.members.map(function (member) { return member.invoiceNo || member.InvoiceNo || ''; });
                 var $card = $('<div class="border rounded p-3 mb-3">');
                 var $heading = $('<h6>').text(app.messages.controlledGoodsPreview + ' — '
-                    + (row.invoiceNo || row.InvoiceNo || ''));
+                    + row.eta + ' — ' + invoices.join(', '));
                 if (isCurrent) $heading.append($('<span class="badge bg-primary ms-2">')
                     .text(app.messages.arrivalScheduleCurrent));
                 var $content = $('<div>').text(app.messages.loading || '...');

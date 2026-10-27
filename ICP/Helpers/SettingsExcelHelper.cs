@@ -65,9 +65,12 @@ public static class SettingsExcelHelper
     }
 
     public static List<string> DuplicateErrors(IEnumerable<(int RowNumber, SystemConfig Entity)> rows) => rows
-        .GroupBy(row => (row.Entity.Category.ToUpperInvariant(), (row.Entity.FunctionCode ?? "").ToUpperInvariant(),
-            row.Entity.Key1.ToUpperInvariant(), row.Entity.Key2.ToUpperInvariant()))
+        .GroupBy(row => (row.Entity.Category.ToUpperInvariant(), row.Entity.FunctionCode?.ToUpperInvariant(),
+            row.Entity.Key1.ToUpperInvariant(), row.Entity.Key2.ToUpperInvariant(),
+            row.Entity.Value1?.ToUpperInvariant(), row.Entity.Value2?.ToUpperInvariant(),
+            row.Entity.Value3?.ToUpperInvariant(), row.Entity.Value4?.ToUpperInvariant(),
+            row.Entity.Value5?.ToUpperInvariant(), row.Entity.Value6?.ToUpperInvariant()))
         .Where(group => group.Count() > 1)
-        .Select(group => $"重複鍵（Category / FunctionCode / Key1 / Key2），Excel 列：{string.Join(", ", group.Select(row => row.RowNumber))}")
+        .Select(group => $"十欄設定重複（Category / FunctionCode / Key1 / Key2 / Value1–Value6），Excel 列：{string.Join(", ", group.Select(row => row.RowNumber))}")
         .ToList();
 }

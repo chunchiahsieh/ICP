@@ -178,12 +178,27 @@ public sealed class ControlledGoodsNoticeScheduleService(
         var header = await scope.Apply(db.IcpHeaders).AsNoTracking()
             .FirstOrDefaultAsync(h => h.Id == schedule.HeaderId, cancellationToken)
             ?? throw new ShipInfoNotFoundException("Ship Info header not found.");
+        var localDate = new DateTimeOffset(DateTime.SpecifyKind(schedule.ScheduledAtUtc, DateTimeKind.Utc))
+            .ToOffset(TimeSpan.FromHours(8)).Date;
+        var start = new DateTimeOffset(localDate, TimeSpan.FromHours(8)).UtcDateTime;
+        var end = start.AddDays(1);
+        var eta = ControlledGoodsNoticeContent.NormalizeEta(schedule.Eta);
+        var visibleIds = scope.Apply(db.IcpHeaders).Select(h => h.Id);
+        var sameDay = await db.ControlledGoodsNoticeSchedules.AsNoTracking()
+            .Where(row => row.State != "Cancelled" && row.ScheduledAtUtc >= start
+                && row.ScheduledAtUtc < end && visibleIds.Contains(row.HeaderId))
+            .ToListAsync(cancellationToken);
+        var headerIds = sameDay.Where(row => ControlledGoodsNoticeContent.NormalizeEta(row.Eta) == eta)
+            .Select(row => row.HeaderId).Distinct().ToList();
+        var headers = await scope.Apply(db.IcpHeaders).AsNoTracking()
+            .Where(h => headerIds.Contains(h.Id)).ToListAsync(cancellationToken);
+        foreach (var item in headers) item.Eta = eta;
         var current = options.CurrentValue;
         var mail = current.ControlledGoodsArrival;
         return new ControlledGoodsNoticePreview(
             string.Join("; ", mail.MailTo), string.Join("; ", mail.CcTo),
-            ControlledGoodsNoticeContent.BuildSubject(mail.Title, header.Eta),
-            await ControlledGoodsNoticeContent.BuildBodyAsync(db, header,
+            ControlledGoodsNoticeContent.BuildSubject(mail.Title, eta),
+            await ControlledGoodsNoticeContent.BuildCombinedBodyAsync(db, headers,
                 current.ShipInfoUrl, cancellationToken));
     }
 

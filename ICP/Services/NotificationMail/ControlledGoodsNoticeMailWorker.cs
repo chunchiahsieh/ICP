@@ -1,4 +1,5 @@
 using ICP.Data;
+using ICP.Models.Icp;
 using ICP.Models.NotificationMail;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -47,20 +48,25 @@ public sealed class ControlledGoodsNoticeMailWorker(
         if (string.IsNullOrWhiteSpace(current.Smtp.Host)
             || string.IsNullOrWhiteSpace(current.Smtp.FromAddress)
             || !mail.MailTo.Any(address => !string.IsNullOrWhiteSpace(address))) return;
-        var due = await db.ControlledGoodsNoticeSchedules.AsNoTracking()
-            .Where(row => row.State == "Pending" && row.ScheduledAtUtc <= DateTime.UtcNow)
-            .OrderBy(row => row.ScheduledAtUtc).ThenBy(row => row.InvoiceNo)
-            .ToListAsync(cancellationToken);
+        var claimTime = DateTime.UtcNow;
+        List<ControlledGoodsNoticeSchedule> due;
+        // Reserve the whole due set atomically so concurrent workers cannot split an ETA group.
+        await using (var transaction = await db.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable, cancellationToken))
+        {
+            due = await db.ControlledGoodsNoticeSchedules.AsNoTracking()
+                .Where(row => row.State == "Pending" && row.ScheduledAtUtc <= claimTime)
+                .OrderBy(row => row.ScheduledAtUtc).ThenBy(row => row.InvoiceNo)
+                .ToListAsync(cancellationToken);
+            await db.ControlledGoodsNoticeSchedules
+                .Where(row => row.State == "Pending" && row.ScheduledAtUtc <= claimTime)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(row => row.State, "Sending")
+                    .SetProperty(row => row.SendingUtc, claimTime), cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        var ready = new List<(ControlledGoodsNoticeSchedule Schedule, IcpHeader Header)>();
         foreach (var schedule in due)
         {
-            var claimTime = DateTime.UtcNow;
-            var reserved = await db.ControlledGoodsNoticeSchedules
-                .Where(row => row.Id == schedule.Id && row.State == "Pending")
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(row => row.State, "Sending")
-                    .SetProperty(row => row.SendingUtc, claimTime), cancellationToken);
-            if (reserved != 1) continue;
-            var smtpAccepted = false;
             try
             {
                 var header = await db.IcpHeaders.AsNoTracking()
@@ -72,19 +78,41 @@ public sealed class ControlledGoodsNoticeMailWorker(
                     .AnyAsync(d => d.InvoiceNo == header.InvoiceNo && d.TetPo == header.TetPo
                         && d.ElFlag != null && d.ElFlag.Trim() == "2", cancellationToken);
                 if (!eligible) throw new InvalidOperationException("EL Flag 2 is no longer present.");
-                var body = await ControlledGoodsNoticeContent.BuildBodyAsync(db, header,
+                ready.Add((schedule, header));
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                await db.ControlledGoodsNoticeSchedules.Where(row => row.Id == schedule.Id
+                        && row.State == "Sending" && row.SendingUtc == claimTime)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(row => row.State, "Failed")
+                        .SetProperty(row => row.SendingUtc, (DateTime?)null), cancellationToken);
+                logger.LogError(ex, "Controlled goods notice validation failed: {ScheduleId}", schedule.Id);
+            }
+        }
+        foreach (var group in ready.GroupBy(item => ControlledGoodsNoticeContent.NormalizeEta(item.Header.Eta)))
+        {
+            var scheduleIds = group.Select(item => item.Schedule.Id).ToList();
+            var headers = group.Select(item => item.Header).DistinctBy(header => header.Id).ToList();
+            var headerIds = headers.Select(header => header.Id).ToList();
+            var smtpAccepted = false;
+            try
+            {
+                var body = await ControlledGoodsNoticeContent.BuildCombinedBodyAsync(db, headers,
                     current.ShipInfoUrl, cancellationToken);
+                var batchKey = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
+                    System.Text.Encoding.UTF8.GetBytes(string.Join(",", scheduleIds.Order()))));
                 await NotificationMailSender.SendAsync(db, current.Smtp,
-                    "ControlledGoodsArrival", $"controlled-goods:{schedule.Id:N}",
+                    "ControlledGoodsArrival", $"controlled-goods:{batchKey}",
                     mail.MailTo.Where(address => !string.IsNullOrWhiteSpace(address)).ToList(),
                     mail.CcTo.Where(address => !string.IsNullOrWhiteSpace(address)).ToList(),
-                    ControlledGoodsNoticeContent.BuildSubject(mail.Title, header.Eta), body, cancellationToken);
+                    ControlledGoodsNoticeContent.BuildSubject(mail.Title, group.Key), body, cancellationToken);
                 smtpAccepted = true;
-                await db.IcpHeaders.Where(h => h.Id == header.Id && h.ControlledGoodsNoticeFlag == "N")
+                await db.IcpHeaders.Where(h => headerIds.Contains(h.Id) && h.ControlledGoodsNoticeFlag == "N")
                     .ExecuteUpdateAsync(setters => setters.SetProperty(h => h.ControlledGoodsNoticeFlag, "Y")
                         .SetProperty(h => h.UpdateTime, DateTime.Now)
                         .SetProperty(h => h.UpdateUser, "ControlledGoodsNoticeMailWorker"), cancellationToken);
-                await db.ControlledGoodsNoticeSchedules.Where(row => row.Id == schedule.Id && row.State == "Sending")
+                await db.ControlledGoodsNoticeSchedules.Where(row => scheduleIds.Contains(row.Id)
+                        && row.State == "Sending" && row.SendingUtc == claimTime)
                     .ExecuteUpdateAsync(setters => setters
                         .SetProperty(row => row.State, "Sent")
                         .SetProperty(row => row.SentUtc, DateTime.UtcNow)
@@ -92,13 +120,14 @@ public sealed class ControlledGoodsNoticeMailWorker(
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                await db.ControlledGoodsNoticeSchedules.Where(row => row.Id == schedule.Id
+                await db.ControlledGoodsNoticeSchedules.Where(row => scheduleIds.Contains(row.Id)
                         && row.State == "Sending" && row.SendingUtc == claimTime)
                     .ExecuteUpdateAsync(setters => setters
                         .SetProperty(row => row.State, smtpAccepted ? "Sent" : "Failed")
                         .SetProperty(row => row.SentUtc, smtpAccepted ? DateTime.UtcNow : (DateTime?)null)
                         .SetProperty(row => row.SendingUtc, (DateTime?)null), cancellationToken);
-                logger.LogError(ex, "Controlled goods notice send failed: {ScheduleId}", schedule.Id);
+                logger.LogError(ex, "Controlled goods notice batch send failed: ETA {Eta}, schedules {ScheduleIds}",
+                    group.Key, scheduleIds);
             }
         }
     }

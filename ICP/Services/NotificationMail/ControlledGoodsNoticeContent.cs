@@ -11,6 +11,38 @@ public static class ControlledGoodsNoticeContent
 {
     private static readonly TimeSpan TaipeiOffset = TimeSpan.FromHours(8);
 
+    public static string NormalizeEta(string? eta) =>
+        DateOnly.TryParseExact(eta?.Trim(), ["yyyy-MM-dd", "yyyy/MM/dd"],
+            CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+            ? date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+            : eta?.Trim() ?? string.Empty;
+
+    public static async Task<string> BuildCombinedBodyAsync(ApplicationDbContext db,
+        IReadOnlyList<IcpHeader> headers, string shipInfoUrl, CancellationToken cancellationToken)
+    {
+        var html = new StringBuilder();
+        string? tableStart = null;
+        var rows = new StringBuilder();
+        var reasons = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var header in headers.OrderBy(header => header.InvoiceNo).ThenBy(header => header.TetPo))
+        {
+            var body = await BuildBodyAsync(db, header, shipInfoUrl, cancellationToken);
+            var tableIndex = body.IndexOf("<table", StringComparison.Ordinal);
+            var rowsStart = body.IndexOf("<tbody>", StringComparison.Ordinal) + "<tbody>".Length;
+            var rowsEnd = body.IndexOf("</tbody>", StringComparison.Ordinal);
+            var contentStart = body.IndexOf('>') + 1;
+            var reasonEnd = body.IndexOf("</p>", contentStart, StringComparison.Ordinal) + "</p>".Length;
+            if (reasons.Add(header.ControlledGoodsNoticeReason?.Trim() ?? string.Empty))
+                html.Append(body[contentStart..reasonEnd]);
+            // Keep each shipment link even when its notification reason is repeated.
+            html.Append(body[reasonEnd..tableIndex]);
+            tableStart ??= body[tableIndex..rowsStart];
+            rows.Append(body[rowsStart..rowsEnd]);
+        }
+        return "<div>" + html + (tableStart is null ? string.Empty
+            : tableStart + rows + "</tbody></table>") + "</div>";
+    }
+
     public static bool TryScheduleUtc(string? eta, DateTime nowUtc,
         IReadOnlyList<string> sendTimes, out DateTime scheduledUtc)
     {
@@ -39,9 +71,7 @@ public static class ControlledGoodsNoticeContent
         var title = string.IsNullOrWhiteSpace(configuredTitle)
             ? "【通知】管制品到貨 - ETA:"
             : configuredTitle.Trim();
-        return title + (DateOnly.TryParseExact(eta, ["yyyy-MM-dd", "yyyy/MM/dd"],
-            CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
-            ? date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : eta?.Trim() ?? string.Empty);
+        return title + NormalizeEta(eta);
     }
 
     public static async Task<string> BuildBodyAsync(ApplicationDbContext db, IcpHeader header,

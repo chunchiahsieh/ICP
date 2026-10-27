@@ -20,7 +20,7 @@ public static class DepositCaseMailContent
         {
             object? D(string key) => detail.TryGetValue(key, out var value) ? value : null;
             html.Append("<tr>");
-            foreach (var value in new[] { H("EndUser"), H("Mawb"), H("Hawb"), H("InvoiceNo"), H("Flt"), D("ItemNo"), D("Description"), D("Qty") })
+            foreach (var value in new[] { H("Shipper"), H("Mawb"), H("Hawb"), H("InvoiceNo"), H("Flt"), D("ItemNo"), D("Description"), D("Qty") })
                 html.Append("<td style=\"border:1px solid #333;padding:5px\">").Append(E(value)).Append("</td>");
             html.Append("</tr>");
         }

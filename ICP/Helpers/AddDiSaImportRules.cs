@@ -118,7 +118,12 @@ public static class AddDiSaImportRules
             if (numericType == typeof(decimal))
             {
                 if (decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out var number))
+                {
+                    if (field.Equals("GrossWeight", StringComparison.OrdinalIgnoreCase)
+                        && (number < 0 || number > 9999999999.999m || decimal.Round(number, 3) != number))
+                        errors.Add($"第 {rowNumber} 列 GROSS_WEIGHT 須為 0 至 9999999999.999，最多 3 位小數");
                     values[field] = number.ToString(CultureInfo.InvariantCulture);
+                }
                 else errors.Add($"第 {rowNumber} 列 {ExcelName(field)} 須為有效數字");
             }
             else if (numericType == typeof(double))

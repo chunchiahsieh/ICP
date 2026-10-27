@@ -58,7 +58,32 @@ public class MassUpdateImportService
             throw new InvalidOperationException("檔案中沒有可更新的資料列");
         }
 
+        await ValidateSettingsAsync(rows, cancellationToken);
         return rows;
+    }
+
+    public async Task ValidateSettingsAsync(
+        IReadOnlyList<MassUpdateRow> rows,
+        CancellationToken cancellationToken = default)
+    {
+        var settings = await _db.SystemConfigs.AsNoTracking()
+            .Where(config => !config.IsDeleted && (config.Category == "Broker" || config.Category == "Shipper"))
+            .Select(config => new { config.Category, config.Key1 })
+            .ToListAsync(cancellationToken);
+        var errors = new List<string>();
+        foreach (var category in new[] { "Broker", "Shipper" })
+        {
+            var valid = settings.Where(config => config.Category == category)
+                .Select(config => config.Key1.Trim())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            foreach (var row in rows)
+            {
+                var value = category == "Broker" ? row.Broker : row.Shipper;
+                if (!string.IsNullOrWhiteSpace(value) && !valid.Contains(value.Trim()))
+                    errors.Add($"第 {row.RowNumber} 列 {category}「{value}」不存在於 Settings → {category} 的 Key，請先新增設定後再上傳。");
+            }
+        }
+        AddDiSaImportRules.ThrowIfErrors(errors);
     }
 
     public async Task<List<MassUpdatePreviewRow>> BuildPreviewRowsAsync(
@@ -208,10 +233,10 @@ public class MassUpdateImportService
             }
         }
 
-        if (!columnMap.Values.Contains(MassUpdateExcelColumnMap.InvoiceNo, StringComparer.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("標題列缺少必填欄位 Invoice No");
-        }
+        var missingColumns = MassUpdateExcelColumnMap.RequiredFields
+            .Where(field => !columnMap.Values.Contains(field.Key, StringComparer.OrdinalIgnoreCase))
+            .Select(field => $"標題列缺少必填欄位 {field.Value}").ToList();
+        AddDiSaImportRules.ThrowIfErrors(missingColumns);
 
         var errors = new List<string>();
         var rows = new List<MassUpdateRow>();
@@ -234,9 +259,17 @@ public class MassUpdateImportService
             }
 
             var invoiceNo = AddDiSaImportRules.TrimToMax(Get(values, "InvoiceNo"), 30);
+            foreach (var field in MassUpdateExcelColumnMap.RequiredFields)
+                if (string.IsNullOrWhiteSpace(Get(values, field.Key)))
+                    errors.Add($"第 {excelRow} 列：{field.Value} 為必填");
+            if (Get(values, "Flt") is { Length: > 40 })
+                errors.Add($"第 {excelRow} 列：FLT 不可超過 40 字元");
+            if (Get(values, "Broker") is { Length: > 30 })
+                errors.Add($"第 {excelRow} 列：Broker 不可超過 30 字元");
+            if (Get(values, "Shipper") is { Length: > IcpHeader.ShipperMaxLength })
+                errors.Add($"第 {excelRow} 列：Shipper 不可超過 {IcpHeader.ShipperMaxLength} 字元");
             if (string.IsNullOrWhiteSpace(invoiceNo))
             {
-                errors.Add($"第 {excelRow} 列：Invoice No 為必填");
                 continue;
             }
 
@@ -255,7 +288,7 @@ public class MassUpdateImportService
                 Eta = Trim(values, "Eta", 10),
                 Mawb = Trim(values, "Mawb", 20),
                 Hawb = Trim(values, "Hawb", 20),
-                Flt = Trim(values, "Flt", 20),
+                Flt = Trim(values, "Flt", 40),
                 DeliveryDate = Trim(values, "DeliveryDate", 10),
                 MdpFlag = Trim(values, "MdpFlag", 5),
                 ReasonForDeliveryDelay = Trim(values, "ReasonForDeliveryDelay", 200),

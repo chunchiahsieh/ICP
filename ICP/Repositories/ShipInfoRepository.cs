@@ -151,7 +151,7 @@ public class ShipInfoRepository : IShipInfoRepository
 
     public async Task<IReadOnlyList<IcpDetail>> GetDetailEntitiesForUpdateByInvoiceNoAndTetPoAsync(
         string invoiceNo,
-        string tetPo,
+        string? tetPo,
         CancellationToken cancellationToken = default) =>
         await Details()
             .Where(x => x.InvoiceNo == invoiceNo && x.TetPo == tetPo)
@@ -319,7 +319,7 @@ public class ShipInfoRepository : IShipInfoRepository
 
         if (filters.TryGetValue("TetPo", out var tetPo) && !string.IsNullOrWhiteSpace(tetPo))
         {
-            query = query.Where(x => x.TetPo.Contains(tetPo));
+            query = query.Where(x => x.TetPo != null && x.TetPo.Contains(tetPo));
         }
 
         if (filters.TryGetValue("Broker", out var broker) && !string.IsNullOrWhiteSpace(broker))

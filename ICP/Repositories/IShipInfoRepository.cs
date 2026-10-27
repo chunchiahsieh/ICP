@@ -54,7 +54,7 @@ public interface IShipInfoRepository
 
     Task<IReadOnlyList<IcpDetail>> GetDetailEntitiesForUpdateByInvoiceNoAndTetPoAsync(
         string invoiceNo,
-        string tetPo,
+        string? tetPo,
         CancellationToken cancellationToken = default);
 
     Task UpdateHeaderAsync(IcpHeader header, CancellationToken cancellationToken = default);

@@ -16,7 +16,8 @@ using ClosedXML.Excel;
 
 int checks=0;
 void Check(bool ok,string message) { if(!ok) throw new Exception(message); checks++; Console.WriteLine("PASS "+message); }
-var root=Path.GetFullPath(Path.Combine(AppContext.BaseDirectory,"../../../../../"));
+var root=File.Exists("ICP/Config/mass-data-report-table-fields.json")
+ ? Directory.GetCurrentDirectory() : Path.GetFullPath(Path.Combine(AppContext.BaseDirectory,"../../../../../"));
 var options=JsonSerializer.Deserialize<ShipInfoProDataTableFieldsOptions>(File.ReadAllText(Path.Combine(root,"ICP/Config/mass-data-report-table-fields.json")))!;
 var services=new ServiceCollection(); services.AddLogging(); services.AddLocalization();
 services.Configure<ShipInfoProDataTableFieldsOptions>(ReportKeys.MassDataReport,o=>{o.Header=options.Header;o.Detail=options.Detail;}); services.AddSingleton<ReportTableFieldsOptions>();
@@ -35,7 +36,11 @@ foreach(var (invoice,create,sa) in new[]{("1",new DateTime(2026,10,20),"2026-01-
  db.IcpHeaders.Add(new IcpHeader {InvoiceNo=invoice,TetPo="P",NcdrNo=invoice,Mawb=invoice,Hawb=invoice,CreateTime=create,SaDate=sa,DelayNotificationDate="2026-10-20",Broker=invoice=="12"?null:"B"});
 db.IcpDetails.AddRange(new IcpDetail {InvoiceNo="1",TetPo="P",InvoiceSeq=1,ItemNo="A"},new IcpDetail {InvoiceNo="1",TetPo="P",InvoiceSeq=2,ItemNo="B"}); await db.SaveChangesAsync();
 var scope=new PageDataScopeService(db,null!,new HttpContextAccessor());var report=new ReportDataService(metadata,new ShipInfoRepository(db,scope),db,scope);
+db.SystemConfigs.Add(new SystemConfig {Category="Shipper",Key1="SHIPPER_KEY",Key2="",Value1="Shipper display name"});
+foreach(var header in db.IcpHeaders.Local) header.Shipper="SHIPPER_KEY";
+await db.SaveChangesAsync();
 var result=await report.QueryHeaderTableAsync(ReportKeys.MassDataReport,new());
+Check(result.Items.All(row=>Convert.ToString(row["Shipper"])=="Shipper display name"),"screen displays Shipper Settings Value");
 Check(!result.ShowHeaderSelection,"no header selection radio column");
 Check(result.Items.Select(r=>r["InvoiceNo"]?.ToString()).SequenceEqual(new[]{"12","1","2"}),"query sorts by creation time rather than SA date or invoice");
 foreach(var field in multi) {
@@ -49,6 +54,8 @@ Check(blank.Contains(ShipInfoDistinctValuesHelper.BlankFilterValue),"checkbox re
 var export=await report.ExportExcelAsync(ReportKeys.MassDataReport,new(){Text=new(){["InvoiceNo"]="1\n2"}},"Mass Data Report");
 using var workbook=new XLWorkbook(new MemoryStream(export.Content));var sheet=workbook.Worksheet(1);
 Check(sheet.LastColumnUsed()!.ColumnNumber()==17,"Excel contains exactly 17 Header columns");
+var shipperColumn=ShipInfoTableViewHelper.GetVisibleFields(report.GetPageConfig(ReportKeys.MassDataReport).HeaderFields).ToList().FindIndex(field=>field.FieldName=="Shipper")+1;
+Check(shipperColumn>0&&sheet.Cell(2,shipperColumn).GetString()=="SHIPPER_KEY"&&sheet.Cell(3,shipperColumn).GetString()=="SHIPPER_KEY","Excel exports Shipper Settings Key");
 Check(sheet.Row(1).CellsUsed().Select(c=>c.GetString()).SequenceEqual(ShipInfoTableViewHelper.GetVisibleFields(report.GetPageConfig(ReportKeys.MassDataReport).HeaderFields).Select(f=>ShipInfoTableViewHelper.ResolveLabel(f,report.GetPageConfig(ReportKeys.MassDataReport).Culture))),"Excel labels and order equal visible Header");
 Check(sheet.LastRowUsed()!.RowNumber()==3,"two Headers export two rows despite multiple Detail records");
 Check(sheet.Cell(2,1).GetString()=="1"&&sheet.Cell(3,1).GetString()=="2","Excel uses multiline filter and CreateTime ordering");

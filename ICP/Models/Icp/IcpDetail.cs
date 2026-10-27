@@ -13,7 +13,7 @@ public class IcpDetail : IcpAuditableEntity
 
     [Column("TET_PO")]
     [MaxLength(35)]
-    public string TetPo { get; set; } = string.Empty;
+    public string? TetPo { get; set; }
 
     [Column("TET_PO_LINE")]
     [MaxLength(35)]
@@ -70,7 +70,7 @@ public class IcpDetail : IcpAuditableEntity
     [Column("HIGHT")]
     public double? Hight { get; set; }
 
-    [Column("GROSS_WEIGHT", TypeName = "numeric(6, 3)")]
+    [Column("GROSS_WEIGHT", TypeName = "numeric(13, 3)")]
     public decimal? GrossWeight { get; set; }
 
     [Column("NET_WEIGHT_OF_THE_ITEM")]
@@ -84,7 +84,7 @@ public class IcpDetail : IcpAuditableEntity
     public string? WbsElement { get; set; }
 
     [Column("ECCN")]
-    [MaxLength(10)]
+    [MaxLength(20)]
     public string? Eccn { get; set; }
 
     [Column("EL_FLAG")]

@@ -25,7 +25,7 @@ public class ShipInfoDetailRowDto
 
     public string InvoiceNo { get; init; } = string.Empty;
 
-    public string TetPo { get; init; } = string.Empty;
+    public string? TetPo { get; init; }
 
     public string? TetPoLine { get; init; }
 

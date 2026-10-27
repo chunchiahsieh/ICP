@@ -56,7 +56,7 @@ public class IcpHeader : IcpAuditableEntity
     public string? Hawb { get; set; }
 
     [Column("FLT")]
-    [MaxLength(20)]
+    [MaxLength(40)]
     public string? Flt { get; set; }
 
     [Column("FREIGHT")]
@@ -101,7 +101,7 @@ public class IcpHeader : IcpAuditableEntity
 
     [Column("TET_PO")]
     [MaxLength(35)]
-    public string TetPo { get; set; } = string.Empty;
+    public string? TetPo { get; set; }
 
     [Column("ORDER_PRIORITY")]
     public int? OrderPriority { get; set; }

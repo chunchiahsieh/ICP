@@ -97,7 +97,7 @@
             function activate() {
                 pendingFilePath = nextPath;
                 $title.removeClass('text-success').text(previewTitleText);
-                $message.removeClass('d-none alert-success')
+                $message.removeClass('d-none alert-success alert-danger')
                     .toggleClass('alert-info', canSave)
                     .toggleClass('alert-warning', !canSave)
                     .text(response.message || '');
@@ -118,7 +118,7 @@
             $data.empty();
             $title.removeClass('text-success').text(previewTitleText);
             $message
-                .removeClass('d-none alert-info alert-warning alert-success')
+                .removeClass('d-none alert-info alert-warning alert-success alert-danger')
                 .addClass(isSuccess ? 'alert-success' : 'alert-info')
                 .text(message || '');
             $save.prop('disabled', true);
@@ -159,6 +159,12 @@
             maxSizeHint: $page.data('max-size-hint'),
             fieldName: 'file',
             onSuccess: showUploadResult,
+            onError: function () {
+                var previousPath = pendingFilePath;
+                clearPendingUi('', false);
+                cancelPendingQuietly(cancelUrl, previousPath);
+                $result.addClass('d-none');
+            },
             onRemove: function (filePath) {
                 if (!filePath) {
                     return;

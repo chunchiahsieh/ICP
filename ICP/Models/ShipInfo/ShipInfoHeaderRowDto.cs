@@ -78,10 +78,10 @@ public class ShipInfoHeaderRowDto
 
     public string? Bu { get; init; }
 
-    public string TetPo { get; init; } = string.Empty;
+    public string? TetPo { get; init; }
 
     [ShipInfoComputed]
-    public string ShipNo { get; init; } = string.Empty;
+    public string? ShipNo { get; init; }
 
     public int? OrderPriority { get; init; }
 

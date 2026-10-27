@@ -108,7 +108,7 @@ public class ApplicationDbContext : DbContext
         });
         modelBuilder.Entity<SystemConfig>(entity =>
         {
-            entity.ToTable("SystemConfigs");
+            entity.ToTable("SystemConfigs", table => table.UseSqlOutputClause(false));
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Category).HasMaxLength(50).IsRequired();
             entity.Property(e => e.FunctionCode).HasMaxLength(50);
@@ -126,7 +126,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.UpdateUser).HasMaxLength(100);
 
             entity.HasIndex(e => new { e.Category, e.FunctionCode, e.Key1, e.Key2 })
-                .IsUnique()
+                .IsUnique(false)
                 .HasDatabaseName("UX_SystemConfigs")
                 .HasFilter("[IsDeleted] = 0");
         });
@@ -316,7 +316,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasDefaultValueSql("newid()");
             entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
-            entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired();
+            entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired(false);
             entity.Property(e => e.CreateDate).HasMaxLength(20);
             entity.Property(e => e.SaDate).HasMaxLength(10);
             entity.Property(e => e.Forwarder).HasMaxLength(50);
@@ -326,7 +326,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.InvoiceDate).HasMaxLength(10);
             entity.Property(e => e.Mawb).HasMaxLength(20);
             entity.Property(e => e.Hawb).HasMaxLength(20);
-            entity.Property(e => e.Flt).HasMaxLength(20);
+            entity.Property(e => e.Flt).HasMaxLength(40);
             entity.Property(e => e.Freight).HasMaxLength(10);
             entity.Property(e => e.DestinationPort).HasMaxLength(10);
             entity.Property(e => e.DestinationCountry).HasMaxLength(3);
@@ -412,7 +412,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasDefaultValueSql("newid()");
             entity.Property(e => e.InvoiceNo).HasMaxLength(30).IsRequired();
-            entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired();
+            entity.Property(e => e.TetPo).HasMaxLength(35).IsRequired(false);
             entity.Ignore(e => e.Header);
             entity.Property(e => e.TetPoLine).HasMaxLength(35);
             entity.Property(e => e.ItemNo).HasMaxLength(47);
@@ -423,8 +423,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Currency).HasMaxLength(3);
             entity.Property(e => e.Rate).HasColumnType("numeric(18, 4)");
             entity.Property(e => e.PackingType).HasMaxLength(50);
-            entity.Property(e => e.GrossWeight).HasColumnType("numeric(6, 3)");
-            entity.Property(e => e.Eccn).HasMaxLength(10);
+            entity.Property(e => e.GrossWeight).HasColumnType("numeric(13, 3)");
+            entity.Property(e => e.Eccn).HasMaxLength(20);
             entity.Property(e => e.ElFlag).HasMaxLength(5);
             entity.Property(e => e.SdsFlag).HasMaxLength(5);
             entity.Property(e => e.Hazmat).HasMaxLength(5);
@@ -642,7 +642,7 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<SystemConfig>(entity =>
         {
-            entity.ToTable("SystemConfigs");
+            entity.ToTable("SystemConfigs", table => table.UseSqlOutputClause(false));
             entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Category).HasMaxLength(50).IsRequired();
@@ -659,7 +659,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.UpdateUser).HasMaxLength(100);
 
             entity.HasIndex(e => new { e.Category, e.FunctionCode, e.Key1, e.Key2 })
-                .IsUnique()
+                .IsUnique(false)
                 .HasDatabaseName("UX_SystemConfigs")
                 .HasFilter("[IsDeleted] = 0");
         });

@@ -52,9 +52,10 @@ public static class CrudAuditHelper
             return localizer["Error.RolePermissionExists"];
         }
 
-        if (message.Contains("UX_SystemConfigs", StringComparison.OrdinalIgnoreCase))
+        if (message.Contains("UX_SystemConfigs", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("SystemConfigs_ExactDuplicate", StringComparison.OrdinalIgnoreCase))
         {
-            return localizer["Error.SystemConfigDuplicate"];
+            return "設定重複：Category、FunctionCode、Key1、Key2、Value1–Value6 不可全部相同。";
         }
 
         return null;
