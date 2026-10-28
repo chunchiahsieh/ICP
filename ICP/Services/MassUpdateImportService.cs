@@ -67,7 +67,7 @@ public class MassUpdateImportService
         CancellationToken cancellationToken = default)
     {
         var settings = await _db.SystemConfigs.AsNoTracking()
-            .Where(config => !config.IsDeleted && (config.Category == "Broker" || config.Category == "Shipper"))
+            .Where(config => config.Category == "Broker" || config.Category == "Shipper")
             .Select(config => new { config.Category, config.Key1 })
             .ToListAsync(cancellationToken);
         var errors = new List<string>();

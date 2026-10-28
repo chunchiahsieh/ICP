@@ -74,7 +74,7 @@ public class AddDiSaImportService
     {
         var categories = AddDiSaImportRules.SettingCategories.Values.Distinct().ToList();
         var settings = await _db.SystemConfigs.AsNoTracking()
-            .Where(config => !config.IsDeleted && categories.Contains(config.Category))
+            .Where(config => categories.Contains(config.Category))
             .Select(config => new { config.Category, config.Key1, config.Value1 }).ToListAsync(cancellationToken);
         var errors = new List<string>();
         foreach (var (field, category) in AddDiSaImportRules.SettingCategories)

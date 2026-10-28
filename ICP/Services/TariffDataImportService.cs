@@ -76,14 +76,14 @@ public class TariffDataImportService
         string? overwriteToken = null)
     {
         var shipperValues = await _db.SystemConfigs.AsNoTracking()
-            .Where(x => x.Category == "Shipper" && !x.IsDeleted && x.Value1 != null)
+            .Where(x => x.Category == "Shipper" && x.Value1 != null)
             .Select(x => x.Value1!)
             .ToListAsync(cancellationToken);
         var allowedShippers = new HashSet<string>(
             shipperValues.Select(TariffCustomsImportRules.NormalizeCellText).Where(x => x.Length > 0),
             StringComparer.Ordinal);
         var airSeaValues = await _db.SystemConfigs.AsNoTracking()
-            .Where(x => x.Category == "AirSea" && !x.IsDeleted && x.Value1 != null)
+            .Where(x => x.Category == "AirSea" && x.Value1 != null)
             .Select(x => x.Value1!)
             .ToListAsync(cancellationToken);
         var allowedAirSea = new HashSet<string>(

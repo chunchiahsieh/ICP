@@ -38,7 +38,7 @@ public static class CaseMarkPdfGenerator
                 continue;
             }
 
-            // One case mark per carton; multiple item rows in the same carton share its origin list.
+            // One case mark per carton; multiple item rows in the same carton share its origin and RMA lists.
             var pages = orderedRows
                 .Select((row, index) => new
                 {
@@ -52,6 +52,7 @@ public static class CaseMarkPdfGenerator
                 .Select(carton => new
                 {
                     Row = carton.First().Row,
+                    Reference = CartonRmaFormatter.Join(carton.Select(item => item.Row.ColumnK)),
                     Origins = string.Join(" & ", carton
                         .Select(item => item.Row.CountryOfOriginName)
                         .Distinct(StringComparer.OrdinalIgnoreCase))
@@ -83,7 +84,7 @@ public static class CaseMarkPdfGenerator
 
                                 if (isNoCharge)
                                 {
-                                    BuildNoCharge(frame, carton.Row);
+                                    BuildNoCharge(frame, carton.Row, carton.Reference);
                                 }
                                 else
                                 {
@@ -102,11 +103,11 @@ public static class CaseMarkPdfGenerator
         return created;
     }
 
-    private static void BuildNoCharge(ColumnDescriptor col, ShippingAdviceRow row)
+    private static void BuildNoCharge(ColumnDescriptor col, ShippingAdviceRow row, string reference)
     {
         col.Item().Text(row.CompanyNameBf);
         col.Item().Text($"PORT OF DISCHARGE : {row.PortOfDischargeAu}");
-        col.Item().Text($"REF : {row.ColumnK}");
+        col.Item().Text($"REF : {reference}");
         col.Item().Text($"INV NO. : {row.InvoiceNo}").Bold().FontSize(38);
         col.Item().Text($"FORWARDER : {row.ForwarderBl}");
         col.Item().Text($"C/NO. : {row.CnoDisplay}");
@@ -115,7 +116,7 @@ public static class CaseMarkPdfGenerator
 
     private static void BuildCharge(ColumnDescriptor col, ShippingAdviceRow row)
     {
-        col.Item().Text(row.SoldToCompany);
+        col.Item().Text(row.CompanyNameBf);
         col.Item().Text($"PORT OF DISCHARGE : {row.PortOfDischargeAu}");
         col.Item().Text($"PO NO. : {row.TeaPoE}");
         col.Item().Text($"TET SO NO. : {row.TetSoG}");

@@ -18,7 +18,6 @@ db.SystemConfigs.AddRange(
     new SystemConfig { Category = "Country of Origin", Key1 = "JP", Value1 = "Japan" },
     new SystemConfig { Category = "Country of Origin", Key1 = "TW", Value1 = "Taiwan" },
     new SystemConfig { Category = "Country of Origin", Key1 = "US", Value1 = "United States" },
-    new SystemConfig { Category = "Country of Origin", Key1 = "DE", IsDeleted = true },
     new SystemConfig { Category = "Other", Key1 = "FR" });
 await db.SaveChangesAsync();
 var scope = new PageDataScopeService(db, null!, new HttpContextAccessor());

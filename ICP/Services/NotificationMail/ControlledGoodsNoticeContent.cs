@@ -90,7 +90,7 @@ public static class ControlledGoodsNoticeContent
         if (!string.IsNullOrWhiteSpace(deliveryTo))
         {
             var configuredName = await db.SystemConfigs.AsNoTracking()
-                .Where(config => !config.IsDeleted && config.Category == "DeliveryToList"
+                .Where(config => config.Category == "DeliveryToList"
                     && config.Key1 == deliveryTo)
                 .Select(config => config.Value1).FirstOrDefaultAsync(cancellationToken);
             if (!string.IsNullOrWhiteSpace(configuredName)) deliveryTo = configuredName;

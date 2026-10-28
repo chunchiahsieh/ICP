@@ -37,10 +37,10 @@ public static class PickupNoticeExcelGenerator
         var datePart = stampDate.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
         var filePath = Path.Combine(outputDirectory, $"PickupNotice_{datePart}.xlsx");
 
-        var ordered = KeepFirstRowPerCarton(rows)
-            .OrderBy(r => r.InvoiceNo, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(r => ParseCartonSortKey(r.CartonNo))
-            .ThenBy(r => r.CartonNo, StringComparer.OrdinalIgnoreCase)
+        var ordered = GroupRowsByCarton(rows)
+            .OrderBy(group => group.Row.InvoiceNo, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(group => ParseCartonSortKey(group.Row.CartonNo))
+            .ThenBy(group => group.Row.CartonNo, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
         using var workbook = new XLWorkbook();
@@ -54,15 +54,16 @@ public static class PickupNoticeExcelGenerator
 
         for (var i = 0; i < ordered.Count; i++)
         {
-            var row = ordered[i];
+            var row = ordered[i].Row;
+            var rmas = CartonRmaFormatter.Join(ordered[i].Rmas);
             var excelRow = i + 2;
             ResolvePickUp(row.ColumnC, pickUpBySloc, out var location, out var contact, out var phone);
 
             sheet.Cell(excelRow, 1).Value = row.InvoiceNo;
             sheet.Cell(excelRow, 2).Value = row.ShipToAddress;
             sheet.Cell(excelRow, 3).Value = row.Customer;
-            sheet.Cell(excelRow, 4).Value = row.ColumnK;
-            sheet.Cell(excelRow, 5).Value = row.ColumnK;
+            sheet.Cell(excelRow, 4).Value = rmas;
+            sheet.Cell(excelRow, 5).Value = rmas;
             sheet.Cell(excelRow, 6).Value = location;
             sheet.Cell(excelRow, 7).Value = contact;
             sheet.Cell(excelRow, 8).Value = phone;
@@ -81,17 +82,18 @@ public static class PickupNoticeExcelGenerator
         return filePath;
     }
 
-    private static IEnumerable<ShippingAdviceRow> KeepFirstRowPerCarton(IEnumerable<ShippingAdviceRow> rows)
+    private static IReadOnlyList<CartonGroup> GroupRowsByCarton(IEnumerable<ShippingAdviceRow> rows)
     {
-        var seen = new HashSet<(string InvoiceNo, string CartonNo)>();
+        var groups = new List<CartonGroup>();
+        var firstByCarton = new Dictionary<(string InvoiceNo, string CartonNo), CartonGroup>();
 
-        // Select in source order so sorting cannot change which duplicate row is retained.
+        // Keep the previous invoice/carton matching and first-row selection.
         foreach (var row in rows)
         {
             var cartonNo = row.CartonNo.Trim();
             if (cartonNo.Length == 0)
             {
-                yield return row;
+                groups.Add(new CartonGroup(row));
                 continue;
             }
 
@@ -104,11 +106,25 @@ public static class PickupNoticeExcelGenerator
                 }
             }
 
-            if (seen.Add((row.InvoiceNo.Trim(), cartonNo)))
+            var key = (row.InvoiceNo.Trim(), cartonNo);
+            if (firstByCarton.TryGetValue(key, out var existing))
             {
-                yield return row;
+                existing.Rmas.Add(row.ColumnK);
+                continue;
             }
+
+            var group = new CartonGroup(row);
+            firstByCarton.Add(key, group);
+            groups.Add(group);
         }
+
+        return groups;
+    }
+
+    private sealed class CartonGroup(ShippingAdviceRow row)
+    {
+        public ShippingAdviceRow Row { get; } = row;
+        public List<string> Rmas { get; } = [row.ColumnK];
     }
 
     private static void ResolvePickUp(

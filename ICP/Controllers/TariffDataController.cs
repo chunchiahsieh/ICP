@@ -869,7 +869,7 @@ public class TariffDataController : Controller
             "Shipper" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Shipper), search, cancellationToken),
             "COO" => await SearchFilterHelper.DistinctNonEmptyAsync(
                 _db.SystemConfigs.AsNoTracking()
-                    .Where(e => e.Category == "Country of Origin" && !e.IsDeleted)
+                    .Where(e => e.Category == "Country of Origin")
                     .Select(e => e.Key1), search, cancellationToken),
             "TermsOfTrade" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.TermsOfTrade), search, cancellationToken),
             "Currency" => await SearchFilterHelper.DistinctNonEmptyAsync(query.Select(e => e.Currency), search, cancellationToken),

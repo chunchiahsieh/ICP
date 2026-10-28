@@ -69,7 +69,7 @@ try {
  var display=new ForwarderDataUploadRowViewModel {Row=parsed[0]};
  foreach(var field in new[]{"ConfirmedCustomDate","Etd","Eta"}) Check(ForwarderTableViewHelper.FormatCellValue(display,field)=="2026-10-20",field+" displays yyyy-MM-dd");
  var wrong=Valid();wrong["C/B"]="Broker Display";await Reject("C/B",wrong);
- var broker=await db.SystemConfigs.SingleAsync();broker.IsDeleted=true;await db.SaveChangesAsync();await Reject("C/B",Valid());broker.IsDeleted=false;await db.SaveChangesAsync();
+ var broker=await db.SystemConfigs.SingleAsync();db.SystemConfigs.Remove(broker);await db.SaveChangesAsync();await Reject("C/B",Valid());db.SystemConfigs.Add(broker);await db.SaveChangesAsync();
  await Reject("Upload Data",Valid(),sheet:"Wrong");
  var history=new ForwarderUploadHistoryService(db,new Env {ContentRootPath=temp},new ForwarderDataUploadOptions {StoragePath=temp});
  Check((await history.GetAsync()).Count==0,"preview-only files are not history");

@@ -23,7 +23,6 @@ public sealed class CountryOfOriginLookup : ICountryOfOriginLookup
             SELECT Key1, Value1
             FROM dbo.SystemConfigs
             WHERE Category = N'Country of Origin'
-              AND IsDeleted = 0
               AND Key1 IS NOT NULL
               AND LTRIM(RTRIM(Key1)) <> N'';
             """;

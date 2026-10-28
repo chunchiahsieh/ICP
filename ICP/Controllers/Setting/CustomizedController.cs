@@ -28,8 +28,15 @@ public class CustomizedController : SystemConfigControllerBase
 
     protected override IQueryable<SystemConfig> ScopeQuery(IQueryable<SystemConfig> query)
     {
-        var customizedQuery = query.Where(e => !e.IsDeleted
-            && e.Category != null
+        var customizedQuery = query.Where(e => e.Category != null
+            && e.Category != ""
+            && !ExcludedCategories.Contains(e.Category));
+        return _dataScope.Apply(customizedQuery);
+    }
+
+    protected override IQueryable<SystemConfig> ReplacementScopeQuery(IQueryable<SystemConfig> query)
+    {
+        var customizedQuery = query.Where(e => e.Category != null
             && e.Category != ""
             && !ExcludedCategories.Contains(e.Category));
         return _dataScope.Apply(customizedQuery);
@@ -59,15 +66,15 @@ public class CustomizedController : SystemConfigControllerBase
 
     protected override void ApplyEditModel(SystemConfig entity, SystemConfigEditModel model)
     {
-        entity.FunctionCode = model.FunctionCode?.Trim();
+        entity.FunctionCode = OptionalText(model.FunctionCode);
         entity.Key1 = model.Key1!.Trim();
         entity.Key2 = model.Key2?.Trim() ?? string.Empty;
-        entity.Value1 = model.Value1?.Trim();
-        entity.Value2 = model.Value2?.Trim();
-        entity.Value3 = model.Value3?.Trim();
-        entity.Value4 = model.Value4?.Trim();
-        entity.Value5 = model.Value5?.Trim();
-        entity.Value6 = model.Value6?.Trim();
+        entity.Value1 = OptionalText(model.Value1);
+        entity.Value2 = OptionalText(model.Value2);
+        entity.Value3 = OptionalText(model.Value3);
+        entity.Value4 = OptionalText(model.Value4);
+        entity.Value5 = OptionalText(model.Value5);
+        entity.Value6 = OptionalText(model.Value6);
     }
 
     protected override SystemConfigEditModel MapToEditModel(SystemConfig entity)

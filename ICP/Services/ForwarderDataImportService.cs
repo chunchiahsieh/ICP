@@ -81,7 +81,7 @@ public class ForwarderDataImportService
         var consistencyErrors = new List<string>();
         ForwarderImportRules.ValidatePerInvoiceFieldConsistency(rows, consistencyErrors);
         var brokerKeys = (await _db.SystemConfigs.AsNoTracking()
-            .Where(setting => setting.Category == "Broker" && !setting.IsDeleted)
+            .Where(setting => setting.Category == "Broker")
             .Select(setting => setting.Key1).ToListAsync(cancellationToken))
             .Select(key => key.Trim()).ToHashSet(StringComparer.OrdinalIgnoreCase);
         foreach (var row in rows)

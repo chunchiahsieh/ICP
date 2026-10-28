@@ -90,9 +90,10 @@ public abstract class SystemConfigControllerBase : Controller
                 if (!ModelState.IsValid) continue;
                 var entity = new SystemConfig
                 {
-                    FunctionCode = string.IsNullOrWhiteSpace(model.FunctionCode) ? null : model.FunctionCode,
-                    Key2 = model.Key2 ?? "", Value1 = model.Value1, Value2 = model.Value2, Value3 = model.Value3,
-                    Value4 = model.Value4, Value5 = model.Value5, Value6 = model.Value6
+                    FunctionCode = OptionalText(model.FunctionCode),
+                    Key2 = model.Key2 ?? "", Value1 = OptionalText(model.Value1), Value2 = OptionalText(model.Value2),
+                    Value3 = OptionalText(model.Value3), Value4 = OptionalText(model.Value4),
+                    Value5 = OptionalText(model.Value5), Value6 = OptionalText(model.Value6)
                 };
                 ApplyCreateCategory(entity, model);
                 ApplyEditModel(entity, model);
@@ -106,14 +107,37 @@ public abstract class SystemConfigControllerBase : Controller
                 return BadRequest(new { success = false, message = string.Join(Environment.NewLine, errors.Take(30)) });
 
             await using var transaction = await _icpDb.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, cancellationToken);
-            var previous = await ScopeQuery(_icpDb.SystemConfigs).ToListAsync(cancellationToken);
-            foreach (var row in previous)
-            {
-                row.IsDeleted = true;
-                CrudAuditHelper.ApplyUpdateAudit(row, User.Identity?.Name);
-            }
-            // Release the active-row unique keys before inserting the replacement set.
+            var previous = await ReplacementScopeQuery(_icpDb.SystemConfigs).ToListAsync(cancellationToken);
+            // Replacing a page removes its old rows before inserting replacements.
+            _icpDb.SystemConfigs.RemoveRange(previous);
             await _icpDb.SaveChangesAsync(cancellationToken);
+
+            // Validate conflicts with rows outside the replacement scope before
+            // inserting anything. Returning here rolls back the transaction.
+            var categories = replacements.Select(row => row.Entity.Category).Distinct().ToArray();
+            if (await _icpDb.SystemConfigs.AsNoTracking()
+                .AnyAsync(row => categories.Contains(row.Category), cancellationToken))
+            {
+                var conflictErrors = new List<string>();
+                foreach (var (rowNumber, entity) in replacements)
+                {
+                    var conflictId = await _icpDb.SystemConfigs.AsNoTracking()
+                        .Where(row => row.Category == entity.Category
+                            && row.FunctionCode == entity.FunctionCode
+                            && row.Key1 == entity.Key1 && row.Key2 == entity.Key2
+                            && row.Value1 == entity.Value1 && row.Value2 == entity.Value2
+                            && row.Value3 == entity.Value3 && row.Value4 == entity.Value4
+                            && row.Value5 == entity.Value5 && row.Value6 == entity.Value6)
+                        .Select(row => (int?)row.Id)
+                        .FirstOrDefaultAsync(cancellationToken);
+                    if (conflictId.HasValue)
+                        conflictErrors.Add($"第 {rowNumber} 列：十欄設定與現有資料 Id {conflictId.Value} 重複。");
+                    if (conflictErrors.Count >= 30) break;
+                }
+                if (conflictErrors.Count > 0)
+                    return BadRequest(new { success = false, message = string.Join(Environment.NewLine, conflictErrors) });
+            }
+
             _icpDb.SystemConfigs.AddRange(replacements.Select(row => row.Entity));
             await _icpDb.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
@@ -174,8 +198,7 @@ public abstract class SystemConfigControllerBase : Controller
             {
                 var entity = new SystemConfig
                 {
-                    Key2 = string.Empty,
-                    IsDeleted = false
+                    Key2 = string.Empty
                 };
                 ApplyCreateCategory(entity, model);
                 ApplyEditModel(entity, model);
@@ -187,7 +210,7 @@ public abstract class SystemConfigControllerBase : Controller
                 .Where(e => e.State is EntityState.Added or EntityState.Modified))
             {
                 var row = entry.Entity;
-                if (await _icpDb.SystemConfigs.AsNoTracking().AnyAsync(e => !e.IsDeleted && e.Id != row.Id
+                if (await _icpDb.SystemConfigs.AsNoTracking().AnyAsync(e => e.Id != row.Id
                     && e.Category == row.Category && e.FunctionCode == row.FunctionCode
                     && e.Key1 == row.Key1 && e.Key2 == row.Key2
                     && e.Value1 == row.Value1 && e.Value2 == row.Value2 && e.Value3 == row.Value3
@@ -217,8 +240,7 @@ public abstract class SystemConfigControllerBase : Controller
             return CrudJsonHelper.Failure(Localizer["Message.RecordsNotFound"]);
         }
 
-        entity.IsDeleted = true;
-        CrudAuditHelper.ApplyUpdateAudit(entity, User.Identity?.Name);
+        _icpDb.SystemConfigs.Remove(entity);
         await _icpDb.SaveChangesAsync(cancellationToken);
         return CrudJsonHelper.Success();
     }
@@ -244,11 +266,7 @@ public abstract class SystemConfigControllerBase : Controller
             return CrudJsonHelper.Failure(Localizer["Message.RecordsNotFound"]);
         }
 
-        foreach (var entity in entities)
-        {
-            entity.IsDeleted = true;
-            CrudAuditHelper.ApplyUpdateAudit(entity, User.Identity?.Name);
-        }
+        _icpDb.SystemConfigs.RemoveRange(entities);
 
         await _icpDb.SaveChangesAsync(cancellationToken);
 
@@ -296,8 +314,11 @@ public abstract class SystemConfigControllerBase : Controller
     protected virtual void ApplyEditModel(SystemConfig entity, SystemConfigEditModel model)
     {
         entity.Key1 = model.Key1!.Trim();
-        entity.Value1 = model.Value1?.Trim();
+        entity.Value1 = OptionalText(model.Value1);
     }
+
+    protected static string? OptionalText(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     protected virtual SystemConfigEditModel MapToEditModel(SystemConfig entity)
     {
@@ -325,7 +346,12 @@ public abstract class SystemConfigControllerBase : Controller
 
     protected virtual IQueryable<SystemConfig> ScopeQuery(IQueryable<SystemConfig> query)
     {
-        return query.Where(e => e.Category == DataCategory && !e.IsDeleted);
+        return query.Where(e => e.Category == DataCategory);
+    }
+
+    protected virtual IQueryable<SystemConfig> ReplacementScopeQuery(IQueryable<SystemConfig> query)
+    {
+        return query.Where(e => e.Category == DataCategory);
     }
 
     private IQueryable<SystemConfig> BaseQuery()

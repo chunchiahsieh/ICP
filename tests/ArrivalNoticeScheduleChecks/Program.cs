@@ -43,12 +43,11 @@ try { await service.SyncAfterSaveAsync(header, "tester", default); } catch (ICP.
 Check(busyRejected, "Saves cannot change a Sending notice");
 Check(!File.ReadAllText("ICP/Views/FUNCTION/ShipInfo/View.cshtml").Contains("btnShipInfoArrivalScheduleAdd"), "Manual Add button is removed");
 db.SystemConfigs.AddRange(new SystemConfig { Category = "YesNo", Key1 = "Y", Value1 = "Yes" },
-    new SystemConfig { Category = "YesNo", Key1 = "N", Value1 = "No" },
-    new SystemConfig { Category = "YesNo", Key1 = "DELETED", Value1 = "Hidden", IsDeleted = true });
+    new SystemConfig { Category = "YesNo", Key1 = "N", Value1 = "No" });
 await db.SaveChangesAsync();
 var lookup = await new ICP.Services.ShipInfoLookupService(db, null!).GetOptionsAsync("YesNo");
 Check(lookup.Count == 2 && lookup.Single(x => x.Value == "Y").Text == "Yes"
-    && lookup.Single(x => x.Value == "N").Text == "No", "Customized YesNo stores Key1, displays Value1 and excludes deleted settings");
+    && lookup.Single(x => x.Value == "N").Text == "No", "Customized YesNo stores Key1 and displays Value1");
 var controlled = new ControlledGoodsNoticeScheduleService(db, null!, null!, new Monitor());
 var controlledHeader = new IcpHeader { Id = Guid.NewGuid(), InvoiceNo = "CONTROL", TetPo = "PO", Eta = DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd") };
 Check(controlledHeader.ControlledGoodsNoticeFlag == "N" && controlledHeader.ControlledGoodsNoticeReason == "管制品到貨", "Controlled goods header defaults are N and 管制品到貨");
@@ -80,11 +79,11 @@ Check(ControlledGoodsNoticeContent.TryScheduleUtc(null, new DateTime(2026,10,14,
 var mappedHeader = ICP.Repositories.ShipInfoRowDtoMapper.MapHeader(new IcpHeader { ArrivalNoticeFlag = "N", ArrivalNotice = "test@example.com" });
 Check((string?)mappedHeader["ArrivalNoticeFlag"] == "N", "Header display no longer changes Arrival Notice N to Y when email exists");
 Check(config.RootElement.GetProperty("fields").GetProperty("ControlledGoodsNoticeFlag").GetProperty("optionsSource").GetString() == "yesNo", "Controlled flag uses Customized YesNo");
-var depositHeader = new Dictionary<string, object?> { ["EndUser"] = "TEK", ["Mawb"] = "MAWB001", ["Hawb"] = "HAWB001", ["InvoiceNo"] = "INV001", ["Flt"] = "CI123" };
+var depositHeader = new Dictionary<string, object?> { ["Shipper"] = "TEK", ["Mawb"] = "MAWB001", ["Hawb"] = "HAWB001", ["InvoiceNo"] = "INV001", ["Flt"] = "CI123" };
 var depositDetails = new[] { new Dictionary<string, object?> { ["ItemNo"] = "ITEM001", ["Description"] = "<script>unsafe</script>", ["Qty"] = 2 } };
 var depositBody = DepositCaseMailContent.BuildBody(depositHeader, depositDetails);
 Check(DepositCaseMailContent.BuildSubject("INV001") == "Deposit 起案通知 - Invoice#INV001", "Deposit notification subject includes Invoice number");
-Check(depositBody.Contains("TEK") && depositBody.Contains("MAWB001") && depositBody.Contains("HAWB001") && depositBody.Contains("CI123") && depositBody.Contains("ITEM001"), "Deposit mail maps End User, airway bills, FLT and item details");
+Check(depositBody.Contains("TEK") && depositBody.Contains("MAWB001") && depositBody.Contains("HAWB001") && depositBody.Contains("CI123") && depositBody.Contains("ITEM001"), "Deposit mail maps Shipper, airway bills, FLT and item details");
 Check(depositBody.Contains("&lt;script&gt;") && !depositBody.Contains("<script>"), "Deposit mail safely encodes field contents");
 Check(new[] { "Customer", "MAWB", "HAWB", "Invoice No", "Flight", "Item No", "Description", "QTY" }.Select(x => depositBody.IndexOf(">" + x + "</th>")).SequenceEqual(new[] { "Customer", "MAWB", "HAWB", "Invoice No", "Flight", "Item No", "Description", "QTY" }.Select(x => depositBody.IndexOf(">" + x + "</th>")).Order()), "Deposit mail has requested column order");
 Console.WriteLine($"{checks} checks passed without SMTP or a production database.");

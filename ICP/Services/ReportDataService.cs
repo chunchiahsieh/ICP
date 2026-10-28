@@ -241,7 +241,7 @@ public class ReportDataService : IReportDataService
 
         var valuesByKey = await _db.SystemConfigs
             .AsNoTracking()
-            .Where(config => !config.IsDeleted && config.Category == "Shipper")
+            .Where(config => config.Category == "Shipper")
             .GroupBy(config => config.Key1)
             .Select(group => group
                 .OrderByDescending(config => config.UpdateTime ?? config.CreateTime)

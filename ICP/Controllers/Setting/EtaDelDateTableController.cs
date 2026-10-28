@@ -43,7 +43,7 @@ public class EtaDelDateTableController : SystemConfigControllerBase
         }
 
         var query = _icpDb.SystemConfigs.AsNoTracking()
-            .Where(e => e.Category == field && !e.IsDeleted);
+            .Where(e => e.Category == field);
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -80,12 +80,12 @@ public class EtaDelDateTableController : SystemConfigControllerBase
     {
         entity.Key1 = model.Key1!.Trim();
         entity.Key2 = string.Empty;
-        entity.Value1 = model.Value1?.Trim();
-        entity.Value2 = model.Value2?.Trim();
-        entity.Value3 = model.Value3?.Trim();
-        entity.Value4 = model.Value4?.Trim();
-        entity.Value5 = model.Value5?.Trim();
-        entity.Value6 = model.Value6?.Trim();
+        entity.Value1 = OptionalText(model.Value1);
+        entity.Value2 = OptionalText(model.Value2);
+        entity.Value3 = OptionalText(model.Value3);
+        entity.Value4 = OptionalText(model.Value4);
+        entity.Value5 = OptionalText(model.Value5);
+        entity.Value6 = OptionalText(model.Value6);
     }
 
     protected override SystemConfigEditModel MapToEditModel(SystemConfig entity)
@@ -135,7 +135,7 @@ public class EtaDelDateTableController : SystemConfigControllerBase
         }
 
         var configs = await _icpDb.SystemConfigs.AsNoTracking()
-            .Where(e => e.Category == "EtaCalendarType" && !e.IsDeleted && keys.Contains(e.Key1))
+            .Where(e => e.Category == "EtaCalendarType" && keys.Contains(e.Key1))
             .Select(e => new { e.Key1, e.Value1 })
             .ToListAsync(cancellationToken);
 

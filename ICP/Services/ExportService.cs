@@ -86,6 +86,13 @@ public sealed class ExportService : IExportService
             throw new InvalidOperationException("File is required.");
         }
 
+        // Reject inconsistent invoice flags before saving a file, creating a
+        // request, or notifying the Integration Hub.
+        await using (var validationStream = file.OpenReadStream())
+        {
+            ShippingAdviceNoChargeFlagValidator.Validate(validationStream, cancellationToken);
+        }
+
         var requestId = Guid.NewGuid();
         var uploadRoot = ResolveInputRoot();
         Directory.CreateDirectory(uploadRoot);

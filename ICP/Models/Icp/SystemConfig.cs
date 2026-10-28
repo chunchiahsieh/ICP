@@ -39,8 +39,6 @@ public class SystemConfig
     [MaxLength(1000)]
     public string? Value6 { get; set; }
 
-    public bool IsDeleted { get; set; }
-
     public DateTime CreateTime { get; set; }
 
     [MaxLength(100)]

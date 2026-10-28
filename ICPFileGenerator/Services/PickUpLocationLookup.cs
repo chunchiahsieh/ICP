@@ -33,7 +33,6 @@ public sealed class PickUpLocationLookup : IPickUpLocationLookup
             SELECT Key1, Value1, Value2, Value3
             FROM dbo.SystemConfigs
             WHERE Category = N'PickUpLocation'
-              AND IsDeleted = 0
               AND Key1 IS NOT NULL
               AND LTRIM(RTRIM(Key1)) <> N'';
             """;

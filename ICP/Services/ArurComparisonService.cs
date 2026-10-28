@@ -40,7 +40,7 @@ public sealed class ArurComparisonService(ApplicationDbContext db, IlcDbContext 
             (h.RtNo != null && h.RtNo != "") || h.ArurCaseStatus == "Initiated");
         if (!string.IsNullOrWhiteSpace(query.InvoiceNo)) headers = headers.Where(h => h.InvoiceNo.Contains(query.InvoiceNo.Trim()));
         if (!string.IsNullOrWhiteSpace(query.RtNo)) headers = headers.Where(h => h.RtNo != null && h.RtNo.Contains(query.RtNo.Trim()));
-        var addresses = await db.SystemConfigs.AsNoTracking().Where(x => !x.IsDeleted && x.Category == "DeliveryToList")
+        var addresses = await db.SystemConfigs.AsNoTracking().Where(x => x.Category == "DeliveryToList")
             .OrderBy(x => x.Id).ToListAsync(ct);
         await ilc.Database.OpenConnectionAsync(ct);
         try

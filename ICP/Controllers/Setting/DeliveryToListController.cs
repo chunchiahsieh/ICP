@@ -20,12 +20,12 @@ public class DeliveryToListController : SystemConfigControllerBase
     protected override void ApplyEditModel(SystemConfig entity, SystemConfigEditModel model)
     {
         entity.Key1 = model.Key1!.Trim();
-        entity.Value1 = model.Value1?.Trim();
-        entity.Value2 = model.Value2?.Trim();
-        entity.Value3 = model.Value3?.Trim();
-        entity.Value4 = model.Value4?.Trim();
-        entity.Value5 = model.Value5?.Trim();
-        entity.Value6 = model.Value6?.Trim();
+        entity.Value1 = OptionalText(model.Value1);
+        entity.Value2 = OptionalText(model.Value2);
+        entity.Value3 = OptionalText(model.Value3);
+        entity.Value4 = OptionalText(model.Value4);
+        entity.Value5 = OptionalText(model.Value5);
+        entity.Value6 = OptionalText(model.Value6);
     }
 
     protected override SystemConfigEditModel MapToEditModel(SystemConfig entity)

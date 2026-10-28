@@ -52,7 +52,11 @@ public static class SettingsExcelHelper
             {
                 var cell = row.Cell(c + 1);
                 if (cell.HasFormula) errors.Add($"第 {row.RowNumber()} 列 {Columns[c]} 不可使用公式，請貼上純值。");
-                typeof(SystemConfigEditModel).GetProperty(Columns[c])!.SetValue(model, cell.GetFormattedString().Trim());
+                var value = cell.GetFormattedString().Trim();
+                // An empty Excel cell represents NULL for optional text fields.
+                // Key2 intentionally uses an empty string as its blank value.
+                typeof(SystemConfigEditModel).GetProperty(Columns[c])!.SetValue(model,
+                    (c == 1 || c >= 4) && value.Length == 0 ? null : value);
             }
             var validation = new List<ValidationResult>();
             Validator.TryValidateObject(model, new ValidationContext(model), validation, true);

@@ -38,7 +38,7 @@ public class ShipInfoLookupService
 
         var rows = await _db.SystemConfigs
             .AsNoTracking()
-            .Where(x => !x.IsDeleted && x.Category == normalizedCategory)
+            .Where(x => x.Category == normalizedCategory)
             .OrderBy(x => x.Key1)
             .Select(x => new
             {

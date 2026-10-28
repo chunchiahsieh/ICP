@@ -120,15 +120,13 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Value4).HasMaxLength(1000);
             entity.Property(e => e.Value5).HasMaxLength(1000);
             entity.Property(e => e.Value6).HasMaxLength(1000);
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.CreateTime).HasDefaultValueSql("sysdatetime()");
             entity.Property(e => e.CreateUser).HasMaxLength(100);
             entity.Property(e => e.UpdateUser).HasMaxLength(100);
 
             entity.HasIndex(e => new { e.Category, e.FunctionCode, e.Key1, e.Key2 })
                 .IsUnique(false)
-                .HasDatabaseName("UX_SystemConfigs")
-                .HasFilter("[IsDeleted] = 0");
+                .HasDatabaseName("UX_SystemConfigs");
         });
 
         modelBuilder.Entity<ForwarderDataUpload>(entity =>
@@ -660,8 +658,7 @@ public class ApplicationDbContext : DbContext
 
             entity.HasIndex(e => new { e.Category, e.FunctionCode, e.Key1, e.Key2 })
                 .IsUnique(false)
-                .HasDatabaseName("UX_SystemConfigs")
-                .HasFilter("[IsDeleted] = 0");
+                .HasDatabaseName("UX_SystemConfigs");
         });
     }
 }

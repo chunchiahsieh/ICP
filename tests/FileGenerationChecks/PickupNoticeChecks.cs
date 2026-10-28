@@ -33,8 +33,8 @@ internal static class PickupNoticeChecks
             VerifyFiveCartons(sheet);
             foreach (var expected in new[]
             {
-                (Invoice: FirstInvoice, Carton: "1/1", Rma: "RMA1"),
-                (Invoice: SecondInvoice, Carton: "1/4", Rma: "RMA3"),
+                (Invoice: FirstInvoice, Carton: "1/1", Rma: "RMA1 & RMA2"),
+                (Invoice: SecondInvoice, Carton: "1/4", Rma: "RMA3 & RMA4"),
                 (Invoice: SecondInvoice, Carton: "2/4", Rma: "RMA5"),
                 (Invoice: SecondInvoice, Carton: "3/4", Rma: "RMA6"),
                 (Invoice: SecondInvoice, Carton: "4/4", Rma: "RMA7")
@@ -43,13 +43,14 @@ internal static class PickupNoticeChecks
                 var row = DataRows(sheet).Single(row => row.Cell(1).GetString() == expected.Invoice &&
                     row.Cell(10).GetString() == expected.Carton);
                 Check(row.Cell(4).GetString() == expected.Rma && row.Cell(5).GetString() == expected.Rma,
-                    $"pickup {expected.Invoice} carton {expected.Carton} uses the first source row for RA and Ref");
+                    $"pickup {expected.Invoice} carton {expected.Carton} combines same-carton RMA for RA and Ref");
             }
         }
         Check(JsonSerializer.Serialize(rows) == original && rows.Count == 7,
             "pickup generation leaves all original item rows and values intact");
 
         VerifyNormalizedDuplicatesAndEmptyCartons(fixtureDirectory);
+        VerifyTwoCartonRma(fixtureDirectory);
     }
 
     public static void RunUploadedWorkbook(string inputPath, string outputDirectory)
@@ -66,10 +67,13 @@ internal static class PickupNoticeChecks
             {
                 var invoice = outputRow.Cell(1).GetString();
                 var carton = outputRow.Cell(10).GetString().Split('/')[0];
-                var source = rows.First(row => row.InvoiceNo.Trim() == invoice &&
-                    row.CartonNo.Trim().TrimStart('0') == carton);
-                Check(outputRow.Cell(4).GetString() == source.ColumnK && outputRow.Cell(5).GetString() == source.ColumnK,
-                    $"actual upload {invoice} carton {carton} retains its first source RA and Ref");
+                var expectedRmas = string.Join(" & ", rows.Where(row => row.InvoiceNo.Trim() == invoice &&
+                    row.CartonNo.Trim().TrimStart('0') == carton)
+                    .Select(row => row.ColumnK.Trim())
+                    .Where(rma => rma.Length > 0)
+                    .Distinct(StringComparer.OrdinalIgnoreCase));
+                Check(outputRow.Cell(4).GetString() == expectedRmas && outputRow.Cell(5).GetString() == expectedRmas,
+                    $"actual upload {invoice} carton {carton} combines its RA and Ref");
             }
         }
         Check(JsonSerializer.Serialize(rows) == original, "actual pickup generation preserves the full source for case marks");
@@ -119,16 +123,42 @@ internal static class PickupNoticeChecks
         var pickupPath = PickupNoticeExcelGenerator.Generate(rows, Path.Combine(outputDirectory, "normalized-cartons"), Stamp);
         using var workbook = new XLWorkbook(pickupPath);
         var outputRows = DataRows(workbook.Worksheet(PickupNoticeExcelGenerator.OutputSheetName)).ToArray();
-        Check(outputRows.Length == 4 && outputRows.Count(row => row.Cell(4).GetString() == "FIRST") == 1 &&
-            outputRows.All(row => !row.Cell(4).GetString().StartsWith("LATER", StringComparison.Ordinal)),
-            "001 and 1 within a trimmed invoice keep the first source row regardless of total-carton denominator");
-        Check(outputRows.Single(row => row.Cell(4).GetString() == "FIRST").Cell(10).GetString() == "1/4",
+        Check(outputRows.Length == 4 && outputRows.Count(row => row.Cell(4).GetString() == "FIRST & LATER & LATER-TRIMMED") == 1,
+            "001 and 1 within a trimmed invoice combine RMA regardless of total-carton denominator");
+        Check(outputRows.Single(row => row.Cell(4).GetString() == "FIRST & LATER & LATER-TRIMMED").Cell(10).GetString() == "1/4",
             "normalized duplicate preserves the first source carton total");
         Check(outputRows.Count(row => row.Cell(4).GetString() == "OTHER-INVOICE") == 1,
             "the same carton number in a different invoice is retained");
         Check(outputRows.Count(row => row.Cell(4).GetString().StartsWith("EMPTY-", StringComparison.Ordinal)) == 2,
             "separate source rows with empty carton identifiers are retained");
         Check(JsonSerializer.Serialize(rows) == original, "deduplication does not mutate or remove source rows");
+    }
+
+    private static void VerifyTwoCartonRma(string outputDirectory)
+    {
+        var fixtureDirectory = Path.Combine(outputDirectory, "two-carton-rma");
+        var rows = new[]
+        {
+            new ShippingAdviceRow { InvoiceNo = "ES26001", CartonNo = "001", TotalCartons = "2", ColumnK = "RMA1", AhFlag = "X", CompanyNameBf = "Ship-to Party", CountryOfOriginName = "Japan" },
+            new ShippingAdviceRow { InvoiceNo = "ES26001", CartonNo = "001", TotalCartons = "2", ColumnK = "RMA2", AhFlag = "X", CompanyNameBf = "Ship-to Party", CountryOfOriginName = "Japan" },
+            new ShippingAdviceRow { InvoiceNo = "ES26001", CartonNo = "001", TotalCartons = "2", ColumnK = "RMA3", AhFlag = "X", CompanyNameBf = "Ship-to Party", CountryOfOriginName = "Japan" },
+            new ShippingAdviceRow { InvoiceNo = "ES26001", CartonNo = "002", TotalCartons = "2", ColumnK = "RMA4", AhFlag = "X", CompanyNameBf = "Ship-to Party", CountryOfOriginName = "Japan" }
+        };
+        var pickupPath = PickupNoticeExcelGenerator.Generate(rows, fixtureDirectory, Stamp);
+        using var workbook = new XLWorkbook(pickupPath);
+        var outputRows = DataRows(workbook.Worksheet(PickupNoticeExcelGenerator.OutputSheetName)).ToArray();
+        Check(outputRows.Length == 2, "four item rows produce two pickup carton rows");
+        Check(outputRows[0].Cell(10).GetString() == "1/2"
+            && outputRows[0].Cell(4).GetString() == "RMA1 & RMA2 & RMA3"
+            && outputRows[0].Cell(5).GetString() == "RMA1 & RMA2 & RMA3",
+            "carton 1 pickup RA and Ref include three RMA values");
+        Check(outputRows[1].Cell(10).GetString() == "2/2"
+            && outputRows[1].Cell(4).GetString() == "RMA4"
+            && outputRows[1].Cell(5).GetString() == "RMA4",
+            "carton 2 pickup RA and Ref contain only RMA4");
+        var pdf = CaseMarkPdfGenerator.GenerateAll(rows, fixtureDirectory, Stamp).Single();
+        Check(File.Exists(pdf), "two-carton case mark PDF is generated");
+        Console.WriteLine("Two-carton case mark: " + pdf);
     }
 
     private static void CreateFixture(string path)

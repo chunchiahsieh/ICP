@@ -36,7 +36,6 @@ INNER JOIN @Source AS source ON source.Key1 = target.Key1
 WHERE target.Category = @Category
   AND target.FunctionCode IS NULL
   AND target.Key2 = N''
-  AND target.IsDeleted = 0
   AND ISNULL(target.Value1, N'') <> source.Value1;
 
 INSERT INTO dbo.SystemConfigs
@@ -51,7 +50,6 @@ INSERT INTO dbo.SystemConfigs
     Value4,
     Value5,
     Value6,
-    IsDeleted,
     CreateTime,
     CreateUser,
     UpdateTime,
@@ -68,7 +66,6 @@ SELECT
     NULL,
     NULL,
     NULL,
-    0,
     @Now,
     @Actor,
     NULL,
@@ -82,7 +79,6 @@ WHERE NOT EXISTS
       AND target.FunctionCode IS NULL
       AND target.Key1 = source.Key1
       AND target.Key2 = N''
-      AND target.IsDeleted = 0
 );
 
 COMMIT TRANSACTION;
@@ -92,6 +88,5 @@ FROM dbo.SystemConfigs
 WHERE Category = N'Shipper'
   AND FunctionCode IS NULL
   AND Key2 = N''
-  AND IsDeleted = 0
 ORDER BY Key1;
 GO

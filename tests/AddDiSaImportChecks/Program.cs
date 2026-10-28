@@ -77,11 +77,11 @@ try
  await Reject("DELIVERY_TO", "DELIVERY-KEY", "Customer Code");
  await Reject("DELIVERY_TO", "DELIVERY-NAME", "Customer Code");
  var deliverySetting = db.SystemConfigs.First(x => x.Category == "DeliveryToList");
- deliverySetting.IsDeleted = true; await db.SaveChangesAsync();
+ db.SystemConfigs.Remove(deliverySetting); await db.SaveChangesAsync();
  await Reject("DELIVERY_TO", "TEST", "Customer Code");
- deliverySetting.IsDeleted = false; await db.SaveChangesAsync();
- var deleted=db.SystemConfigs.First(x=>x.Category=="Shipper");deleted.IsDeleted=true;await db.SaveChangesAsync();
- await Reject("SHIPPER", "TEST", "Settings"); deleted.IsDeleted=false;await db.SaveChangesAsync();
+ db.SystemConfigs.Add(deliverySetting); await db.SaveChangesAsync();
+ var deleted=db.SystemConfigs.First(x=>x.Category=="Shipper");db.SystemConfigs.Remove(deleted);await db.SaveChangesAsync();
+ await Reject("SHIPPER", "TEST", "Settings"); db.SystemConfigs.Add(deleted);await db.SaveChangesAsync();
  var first=Valid();var second=Valid();second["INVOICE_SEQ"]="2";first["WBS_ELEMENT"]="WBS-A";second["WBS_ELEMENT"]="WBS-B";Write(first,second);
  var two=await service.ParseAsync(fixture);
  Check(two.Count==2 && two[0].Detail.WbsElement=="WBS-A" && two[1].Detail.WbsElement=="WBS-B", "Distinct per-line WBS values survive parsing");

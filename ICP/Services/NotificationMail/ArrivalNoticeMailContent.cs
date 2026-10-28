@@ -151,7 +151,7 @@ public static class ArrivalNoticeMailContent
         var deliveryKeys = headers.Select(h => h.DeliveryTo).Where(key => !string.IsNullOrWhiteSpace(key))
             .Distinct().ToList();
         var deliveryNames = await db.SystemConfigs.AsNoTracking()
-            .Where(config => !config.IsDeleted && config.Category == "DeliveryToList"
+            .Where(config => config.Category == "DeliveryToList"
                 && deliveryKeys.Contains(config.Key1))
             .ToDictionaryAsync(config => config.Key1,
                 config => config.Value1 ?? config.Key1, StringComparer.OrdinalIgnoreCase, cancellationToken);
