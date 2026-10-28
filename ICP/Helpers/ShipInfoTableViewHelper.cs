@@ -38,11 +38,14 @@ public static class ShipInfoTableViewHelper
             return string.Empty;
         }
 
-        if (string.Equals(field.FieldName, "NetWeightOfTheItem", StringComparison.OrdinalIgnoreCase)
+        var numberFormat = GetNumberFormat(field.FieldName);
+        if (numberFormat is not null
             && decimal.TryParse(Convert.ToString(value, CultureInfo.InvariantCulture),
-                NumberStyles.Number, CultureInfo.InvariantCulture, out var netWeight))
+                NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var number))
         {
-            return netWeight.ToString("0.000", CultureInfo.InvariantCulture);
+            var decimalPlaces = numberFormat.Length - 2;
+            return decimal.Round(number, decimalPlaces, MidpointRounding.AwayFromZero)
+                .ToString($"F{decimalPlaces}", CultureInfo.InvariantCulture);
         }
 
         if (field.ControlType is ShipInfoControlTypes.Date or ShipInfoControlTypes.DateRange or ShipInfoControlTypes.DateTime)
@@ -76,6 +79,14 @@ public static class ShipInfoTableViewHelper
 
         return Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
     }
+
+    public static string? GetNumberFormat(string fieldName) => fieldName.ToUpperInvariant() switch
+    {
+        "PRICE" or "AMOUNT" => "0.00",
+        "NETWEIGHTOFTHEITEM" => "0.000",
+        "RATE" => "0.0000",
+        _ => null
+    };
 
     public static object? GetItemValue(IReadOnlyDictionary<string, object?> item, string fieldName)
     {

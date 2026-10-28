@@ -327,9 +327,9 @@ public class ReportDataService : IReportDataService
 
     private static void SetCellValue(IXLCell cell, object? value, ShipInfoFieldMetadata field)
     {
-        if (string.Equals(field.FieldName, "NetWeightOfTheItem", StringComparison.OrdinalIgnoreCase))
+        if (ShipInfoTableViewHelper.GetNumberFormat(field.FieldName) is { } numberFormat)
         {
-            cell.Style.NumberFormat.Format = "0.000";
+            cell.Style.NumberFormat.Format = numberFormat;
         }
         switch (value)
         {
